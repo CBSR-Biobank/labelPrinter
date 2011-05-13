@@ -34,5 +34,40 @@
             file="contexts.xml">
       </contexts>
    </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu?after=edu.ualberta.med.biobank.menu.additions">
+         <menu
+               id="edu.ualberta.med.barcodegenerator.menu.barcodegenerator"
+               label="Barcode Generator">
+            <command
+                  commandId="edu.ualberta.med.barcodegenerator.commands.barcodegenerator"
+                  icon="icons/table_lightning.png"
+                  id="edu.ualberta.med.barcodegenerator.menu.makelabels"
+                  label="Make Labels"
+                  style="push">
+            </command>
+         </menu>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="edu.ualberta.med.biobank.barcodegenerator.handlers.BarcodeGenerator"
+            id="edu.ualberta.med.barcodegenerator.commands.barcodegenerator"
+            name="Make Labels">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="false"
+            class="edu.ualberta.med.biobank.barcodegenerator.views.BarcodeView"
+            id="edu.ualberta.med.biobank.barcodegenerator.views.BarcodeView"
+            name="Barcode Label Maker"
+            restorable="true">
+      </view>
+   </extension>
 
 </plugin>

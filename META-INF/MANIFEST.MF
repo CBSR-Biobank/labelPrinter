@@ -3,8 +3,11 @@ Bundle-ManifestVersion: 2
 Bundle-Name: BarcodeGenerator
 Bundle-SymbolicName: barcodeGenerator; singleton:=true
 Bundle-Version: 0.0.1
-Bundle-Activator: barcodegenerator.Activator
+Bundle-Activator: edu.ualberta.med.biobank.barcodegenerator.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: edu.ualberta.med.biobank.barcodegenerator,
+ edu.ualberta.med.biobank.barcodegenerator.handlers,
+ edu.ualberta.med.biobank.barcodegenerator.views
