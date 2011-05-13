@@ -17,7 +17,7 @@ import org.eclipse.ui.PartInitException;
 import edu.ualberta.med.biobank.barcodegenerator.Activator;
 import edu.ualberta.med.biobank.barcodegenerator.views.BarcodeView;
 
-public class BarcodeGenerator extends AbstractHandler implements IHandler,IPerspectiveFactory {
+public class BarcodeGenerator extends AbstractHandler implements IHandler {
 
 	public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.handlers.BarcodeGenerator";
 	
@@ -38,11 +38,6 @@ public class BarcodeGenerator extends AbstractHandler implements IHandler,IPersp
         return null;
 	}
 
-	@Override
-	public void createInitialLayout(IPageLayout layout) {
-		layout.addStandaloneView(BarcodeView.ID, true, IPageLayout.LEFT, 1.0f, layout.getEditorArea());  
-		layout.setEditorAreaVisible(false); //hide the editor in the perspective  
-		
-	}
+
 }
 
