@@ -1,6 +1,7 @@
 package edu.ualberta.med.biobank.barcodegenerator.template.presets;
 
 import java.awt.Font;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -115,8 +116,9 @@ public class CBSRTemplate extends Template {
 			}
 			pbi.getLayout().add(bi);
 		}
-
-		this.setOutline(branding, patientInfo, pbi);
+		
+		//TODO make input stream work
+		this.setOutline(branding, patientInfo, pbi,new ByteArrayInputStream(this.jasperTemplateFileData));
 
 		JasperFiller tm = new JasperFiller(this);
 		byte[] pdfData = tm.generatePdfData();
@@ -125,20 +127,6 @@ public class CBSRTemplate extends Template {
 
 	private Rectangle getKey(String key) {
 		return config.getSettingsKey(key);
-	}
-
-	@Override
-	protected void setOutline(Branding bb, PatientInfo p,
-			PatientBarcodeInformation bi) {
-		this.branding = bb;
-		this.patientInfo = p;
-		this.patientBarcpdeInf = bi;
-
-	}
-
-	@Override
-	public void setJasperStream(InputStream jasperStream) {
-		this.jasperTemplateStream = jasperStream;
 	}
 
 	public void setDefaultConfiguration() {
@@ -203,6 +191,11 @@ public class CBSRTemplate extends Template {
 			}
 		}
 		this.config = c;
+	}
+
+	@Override
+	public void setJasperFileData(byte[] jasperData) {
+		this.jasperTemplateFileData = jasperData;
 	}
 
 }

@@ -1,12 +1,13 @@
 package edu.ualberta.med.biobank.barcodegenerator.template.configuration;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.eclipse.swt.graphics.Rectangle;
 
-
-public class Configuration {
+//TODO make Configuration Serializable
+public class Configuration implements Serializable{
 	protected HashMap<String,Rectangle> settings;
 	
 	public void setSettings(HashMap<String, Rectangle> settings){

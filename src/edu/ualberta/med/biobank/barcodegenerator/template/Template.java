@@ -1,6 +1,7 @@
 package edu.ualberta.med.biobank.barcodegenerator.template;
 
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.HashMap;
 
 import org.eclipse.swt.graphics.Rectangle;
@@ -11,11 +12,13 @@ import edu.ualberta.med.biobank.barcodegenerator.template.jasper.JasperOutline.B
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.JasperOutline.PatientBarcodeInformation;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.containers.PatientInfo;
 
-public abstract class Template extends JasperOutline {
+//TODO make template Serializable
+public abstract class Template extends JasperOutline implements Serializable {
 	
 	protected Configuration config;
 	
-	protected abstract void setJasperStream(InputStream jasperStream);
+	protected byte[] jasperTemplateFileData;
+	protected abstract void setJasperFileData(byte[] jasperData);
 	
 	protected abstract void setConfiguration(Configuration configuration) throws Exception;
 

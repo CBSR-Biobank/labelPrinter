@@ -11,7 +11,32 @@ import edu.ualberta.med.biobank.barcodegenerator.template.jasper.containers.Pati
 
 public abstract class JasperOutline {
 	
-	protected InputStream jasperTemplateStream;
+	private Branding branding;
+	private PatientInfo patientInfo;
+	private PatientBarcodeInformation patientBarcpdeInf;
+	private InputStream jasperTemplateStream;
+	
+	protected void setOutline(Branding bb, PatientInfo p,
+			PatientBarcodeInformation bi,InputStream jasperStream) {
+		branding = bb;
+		patientInfo = p;
+		patientBarcpdeInf = bi;
+		jasperTemplateStream = jasperStream;
+	}
+
+	public PatientInfo getPatientInfo() {
+		return patientInfo;
+	}
+	public PatientBarcodeInformation getPatientBarcpdeInf() {
+		return patientBarcpdeInf;
+	}
+	public InputStream getJasperTemplateStream() {
+		return jasperTemplateStream;
+	}
+	
+	public Branding getBranding() {
+		return branding;
+	}
 
 	public static class Branding {
 		public String projectTitle;
@@ -33,11 +58,6 @@ public abstract class JasperOutline {
 		}
 	}
 
-	protected Branding branding;
-	protected PatientInfo patientInfo;
-	protected PatientBarcodeInformation patientBarcpdeInf;
-	
-	protected abstract void setOutline(Branding bb,PatientInfo p ,PatientBarcodeInformation bi) ;
-	
+
 
 }

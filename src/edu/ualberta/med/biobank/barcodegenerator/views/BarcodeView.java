@@ -918,7 +918,7 @@ public class BarcodeView extends ViewPart {
 				try {
 					//TODO load CBSRTemplate from the GUI combox.
 					CBSRTemplate ct = new CBSRTemplate();
-					ct.setJasperStream(null);
+					ct.setJasperFileData(null);
 					ct.setDefaultConfiguration();
 					
 					pdfdata = ct.generatePdfCBSR(guiData,randStringArray());

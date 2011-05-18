@@ -56,7 +56,7 @@ public class JasperFiller {
 
 		loadTemplateConstants();
 
-		if (templateData.patientBarcpdeInf.getLayout().size() != jasperConstants.barcodeCount) {
+		if (templateData.getPatientBarcpdeInf().getLayout().size() != jasperConstants.barcodeCount) {
 			throw new Exception("Error: requires "
 					+ jasperConstants.barcodeCount + " barcode IDs");
 		}
@@ -112,13 +112,13 @@ public class JasperFiller {
 
 		// place patient image.
 		ByteArrayInputStream patientInfoImg = drawElementsToPngStream(
-				templateData.patientInfo.getElements(),
+				templateData.getPatientInfo().getElements(),
 				jasperConstants.patientImageWidth,
 				jasperConstants.patientImageHeight);
 
 		// place patient barcode images
 		ArrayList<ByteArrayInputStream> barcodeIDBufferList = new ArrayList<ByteArrayInputStream>();
-		for (BarcodeImage bi : templateData.patientBarcpdeInf.getLayout()) {
+		for (BarcodeImage bi : templateData.getPatientBarcpdeInf().getLayout()) {
 			barcodeIDBufferList.add(drawElementsToPngStream(bi.getElements(),
 					jasperConstants.barcodeImageWidth,
 					jasperConstants.barcodeImageHeight));
@@ -146,8 +146,8 @@ public class JasperFiller {
 		HashMap<String, Object> parameters = new HashMap<String, Object>();
 
 		parameters.put(JasperConstants.titleField,
-				templateData.branding.projectTitle);
-		parameters.put(JasperConstants.logoField, templateData.branding.logo);
+				templateData.getBranding().projectTitle);
+		parameters.put(JasperConstants.logoField, templateData.getBranding().logo);
 		parameters.put(JasperConstants.patientImageField, patientInfoImg);
 
 		for (int i = 0; i < barcodeIDImageList.size(); i++)
