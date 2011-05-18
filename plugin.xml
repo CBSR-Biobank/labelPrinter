@@ -54,7 +54,7 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="edu.ualberta.med.biobank.barcodegenerator.handlers.BarcodeGenerator"
+            defaultHandler="edu.ualberta.med.biobank.barcodegenerator.handlers.BarcodeGeneratorHandler"
             id="edu.ualberta.med.barcodegenerator.commands.barcodegenerator"
             name="Make Labels">
       </command>
@@ -68,6 +68,12 @@
             name="Barcode Label Maker"
             restorable="true">
       </view>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="edu.ualberta.med.biobank.barcodegenerator.preferences.PreferenceInitializer">
+      </initializer>
    </extension>
 
 </plugin>

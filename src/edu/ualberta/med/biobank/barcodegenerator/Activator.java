@@ -1,6 +1,9 @@
 package edu.ualberta.med.biobank.barcodegenerator;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -48,6 +51,20 @@ public class Activator extends AbstractUIPlugin {
 		return plugin;
 	}
 
+
+    /**
+     * Display an error message asynchronously
+     */
+    public static void openAsyncError(final String title, final String message) {
+        Display.getDefault().asyncExec(new Runnable() {
+            @Override
+            public void run() {
+                MessageDialog.openError(PlatformUI.getWorkbench()
+                    .getActiveWorkbenchWindow().getShell(), title, message);
+            }
+        });
+    }
+	
 	/**
 	 * Returns an image descriptor for the image file at the given
 	 * plug-in relative path
