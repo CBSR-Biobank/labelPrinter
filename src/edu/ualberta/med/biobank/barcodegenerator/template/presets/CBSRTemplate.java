@@ -117,8 +117,8 @@ public class CBSRTemplate extends Template {
 			pbi.getLayout().add(bi);
 		}
 		
-		//TODO make input stream work
-		this.setOutline(branding, patientInfo, pbi,new ByteArrayInputStream(this.jasperTemplateFileData));
+		//TODO make input stream work new ByteArrayInputStream(this.jasperTemplateFileData)
+		this.setOutline(branding, patientInfo, pbi,null);
 
 		JasperFiller tm = new JasperFiller(this);
 		byte[] pdfData = tm.generatePdfData();
@@ -151,8 +151,9 @@ public class CBSRTemplate extends Template {
 		this.config = new Configuration();
 		this.config.setSettings(data);
 	}
-
-	public static ArrayList<String> getConfigurationKeyList() {
+	
+	@Override
+	public ArrayList<String> getConfigurationKeyList() {
 		String[] configKeyList = new String[] { "PATIENT_INFO_1_TEXT",
 				"PATIENT_INFO_1_BARCODE", "PATIENT_INFO_2_TEXT",
 				"ATIENT_INFO_2_BARCODE", "PATIENT_INFO_3_TEXT",
@@ -196,6 +197,12 @@ public class CBSRTemplate extends Template {
 	@Override
 	public void setJasperFileData(byte[] jasperData) {
 		this.jasperTemplateFileData = jasperData;
+	}
+
+	@Override
+	public Configuration getConfiguration() {
+		return this.config;
+		
 	}
 
 }

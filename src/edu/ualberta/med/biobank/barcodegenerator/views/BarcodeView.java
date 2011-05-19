@@ -11,6 +11,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,6 +75,7 @@ import org.eclipse.swt.custom.TableEditor;
 import edu.ualberta.med.biobank.barcodegenerator.Activator;
 import edu.ualberta.med.biobank.barcodegenerator.preferences.PreferenceConstants;
 import edu.ualberta.med.biobank.barcodegenerator.preferences.PreferenceInitializer;
+import edu.ualberta.med.biobank.barcodegenerator.template.Template;
 import edu.ualberta.med.biobank.barcodegenerator.template.configuration.Configuration;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.JasperFiller;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.JasperOutline;
@@ -595,152 +598,9 @@ public class BarcodeView extends ViewPart {
 		gridData12.verticalAlignment = GridData.FILL;
 		composite9 = new Composite(group2, SWT.NONE);
 		composite9.setLayout(new GridLayout());
-		createTable(composite9);
+		//createTable(composite9);
 	}
 
-	//TODO sort first column when pressed.
-	private void createTable(final Composite c) {
-		GridData gridData13 = new GridData();
-		gridData13.grabExcessHorizontalSpace = true;
-		gridData13.horizontalAlignment = GridData.FILL;
-		gridData13.verticalAlignment = GridData.CENTER;
-		gridData13.heightHint = 150;
-		gridData13.grabExcessVerticalSpace = true;
-
-		configTable = new Table(c, SWT.FULL_SELECTION | SWT.HIDE_SELECTION);
-		configTable.setHeaderVisible(true);
-		configTable.setLayoutData(gridData13);
-		configTable.setLinesVisible(true);
-
-		final TableEditor editor = new TableEditor(configTable);
-		// The editor must have the same size as the cell and must
-		// not be any smaller than 50 pixels.
-		editor.horizontalAlignment = SWT.LEFT;
-		editor.grabHorizontal = true;
-		editor.minimumWidth = 50;
-		// editing the second column
-		final int EDITABLECOLUMN = 1;
-
-		configTable.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				// Clean up any previous editor control
-				Control oldEditor = editor.getEditor();
-				if (oldEditor != null)
-					oldEditor.dispose();
-
-				// Identify the selected row
-				final TableItem item = (TableItem) e.item;
-				
-				if (item == null)
-					return;
-				// The control that will be the editor must be a child of the
-				// Table
-				Text newEditor = new Text(configTable, SWT.NONE);
-				newEditor.setText(item.getText(EDITABLECOLUMN));
-
-				newEditor.addListener(SWT.Verify, new Listener() {
-					public void handleEvent(Event e) {
-						
-						if (!e.text.matches("[{0-9,}]*")) {
-							e.doit = false;
-							return;
-						}
-					}
-				});
-				newEditor.addModifyListener(new ModifyListener() {
-					public void modifyText(ModifyEvent me) {
-						Text text = (Text) editor.getEditor();
-
-						editor.getItem()
-								.setText(EDITABLECOLUMN, text.getText());
-
-						boolean valid = true;
-						if (item != null && item.getText(1) != null
-								&& item.getText(1).split(",").length == 4)
-							for (String s : item.getText(1).split(",")) {
-								if (s.length() < 1 || s.length() > 3)
-									valid = false;
-							}
-						else
-							valid = false;
-
-						item.setForeground(valid ? new Color(
-								shell.getDisplay(), 0, 0, 0) : new Color(shell
-								.getDisplay(), 255, 0, 0));
-
-					}
-				});
-
-				newEditor.selectAll();
-				newEditor.setFocus();
-				editor.setEditor(newEditor, item, EDITABLECOLUMN);
-			}
-		});
-
-		// create columns
-
-		String[] columnNames = { "Variable", "Value" };
-
-		TableColumn[] column = new TableColumn[2];
-		column[0] = new TableColumn(configTable, SWT.LEFT);
-		column[0].setText(columnNames[0]);
-
-		column[1] = new TableColumn(configTable, SWT.LEFT);
-		column[1].setText(columnNames[1]);
-		column[1].setWidth(100);
-
-		for (int i = 0, n = column.length; i < n; i++) {
-			column[i].pack();
-		}
-
-		// TODO move and improve this. populate table
-		//populateTable(configTable, new CBSRTemplate.Settings().getData());
-
-	}
-
-	private HashMap<String, Rectangle> getTableData(Table t)  {
-		HashMap<String, Rectangle> tableData = new HashMap<String, Rectangle>();
-		for (TableItem ti : t.getItems())
-			tableData.put(ti.getText(0), String2Rect(ti.getText(1)));
-
-		return tableData;
-	}
-
-	private void populateTable(Table t, Map<String, Rectangle> data) {
-
-		for (Entry<String, Rectangle> e : data.entrySet()) {
-
-			TableItem item = new TableItem(t, SWT.NONE);
-			item.setText(new String[] { e.getKey(),rect2String(e.getValue()) });
-		}
-	}
-	
-	private static String rect2String(Rectangle r) {
-		return r.x + "," + r.y + "," + r.width + "," + r.height;
-	}
-	
-	private static Rectangle String2Rect(String s) {
-
-		String[] parts = s.split(",");
-
-		Rectangle r = null;
-		
-		if(parts.length == 4){
-			try{
-			r = new Rectangle(Integer.parseInt(parts[0]),
-					Integer.parseInt(parts[1]), Integer.parseInt(parts[2]),
-					Integer.parseInt(parts[3]));
-			}
-			catch(NumberFormatException nfe){
-				throw new RuntimeException("Failed to parse integers in string to rect converstion.");
-			}
-		}
-		else{
-			throw new RuntimeException("Invalid number of items  in string to rect converstion. ");
-		}
-		return r;
-
-	}
 	
 
 	private void updateSavePreferences() {
@@ -781,9 +641,8 @@ public class BarcodeView extends ViewPart {
 				sampleTypeText.getText());
 	}
 
-	public class BarcodeViewGuiData extends CBSRData{
+	public class BarcodeViewGuiData extends CBSRData {
 
-		
 		// TODO test exceptions
 		public class GuiInputException extends Exception {
 
@@ -797,7 +656,7 @@ public class BarcodeView extends ViewPart {
 				super(message);
 			}
 		};
-		
+
 		public BarcodeViewGuiData() throws GuiInputException {
 
 			projectTileStr = projectTitleText.getText();
@@ -881,8 +740,7 @@ public class BarcodeView extends ViewPart {
 		}
 	};
 
-
-	private static String randString() {
+	public static String randString() {
 		return UUID.randomUUID().toString().replaceAll("[^a-zA-Z0-9]", "")
 				.substring(0, 6)
 				+ UUID.randomUUID().toString().replaceAll("[^a-zA-Z0-9]", "")
@@ -906,24 +764,26 @@ public class BarcodeView extends ViewPart {
 		public void widgetSelected(SelectionEvent e) {
 			System.out.println("Print pressed!");
 
+			CBSRTemplate ct = new CBSRTemplate();
+			ct.setJasperFileData(null);
+			ct.setDefaultConfiguration();
+			ct.setName("Faulty");
+
 			BarcodeViewGuiData guiData = null;
 			byte[] pdfdata = null;
 			try {
 				guiData = new BarcodeViewGuiData();
 			} catch (BarcodeViewGuiData.GuiInputException e1) {
-				System.err.println(e1.getMessage());//TODO dialog error
+				System.err.println(e1.getMessage());// TODO dialog error
 			}
 
 			if (guiData != null) {
 				try {
-					//TODO load CBSRTemplate from the GUI combox.
-					CBSRTemplate ct = new CBSRTemplate();
-					ct.setJasperFileData(null);
-					ct.setDefaultConfiguration();
-					
-					pdfdata = ct.generatePdfCBSR(guiData,randStringArray());
+					// TODO load CBSRTemplate from the GUI combox.
+
+					pdfdata = ct.generatePdfCBSR(guiData, randStringArray());
 				} catch (Exception e1) {
-					System.err.println(e1.getMessage());//TODO dialog error
+					System.err.println(e1.getMessage());// TODO dialog error
 				}
 				if (pdfdata != null) {
 					FileOutputStream fos;
@@ -932,9 +792,9 @@ public class BarcodeView extends ViewPart {
 						fos.write(pdfdata);
 						fos.close();
 					} catch (FileNotFoundException e1) {
-						e1.printStackTrace();//TODO dialog error
+						e1.printStackTrace();// TODO dialog error
 					} catch (IOException ee) {
-						ee.printStackTrace();//TODO dialog error
+						ee.printStackTrace();// TODO dialog error
 					}
 				}
 
@@ -956,14 +816,6 @@ public class BarcodeView extends ViewPart {
 		public void widgetSelected(SelectionEvent e) {
 			// shell.getDisplay().getActiveShell().close(); TODO close
 
-			try {
-				for (Entry<String, Rectangle> entry : getTableData(configTable)
-						.entrySet()) {
-					System.out.println(entry.getKey() + ":" + entry.getValue());
-				}
-			} catch (Exception e1) {
-				e1.printStackTrace();
-			}
 		}
 
 		@Override
