@@ -1,6 +1,9 @@
 package edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions;
 
 public class BarcodeCreationException extends Exception {
+	
+	private static final long serialVersionUID = -8668642570419427542L;
+	
 	String mistake;
 
 	public BarcodeCreationException() {

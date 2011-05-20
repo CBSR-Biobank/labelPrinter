@@ -2,12 +2,8 @@ package edu.ualberta.med.biobank.barcodegenerator.views;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -24,12 +20,9 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -42,9 +35,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.layout.RowLayout;
 
@@ -74,8 +65,6 @@ public class TemplateEditorView extends ViewPart {
 	private Label label1 = null;
 	private Text text1 = null;
 	private Button button5 = null;
-	private Group group2 = null;
-	private Table table = null;
 	private List list = null;
 	private Group composite6 = null;
 	private Table table1 = null;
@@ -147,6 +136,7 @@ public class TemplateEditorView extends ViewPart {
 		createComposite2();
 		composite.setLayoutData(gridData1);
 		composite.setLayout(gridLayout);
+		@SuppressWarnings("unused")
 		Label filler = new Label(composite, SWT.NONE);
 		createComposite3();
 	}
@@ -167,8 +157,11 @@ public class TemplateEditorView extends ViewPart {
 		cancleButton = new Button(composite1, SWT.NONE);
 		cancleButton.setText("Cancle");
 		cancleButton.addSelectionListener(cancleListener);
+		@SuppressWarnings("unused")
 		Label filler21 = new Label(composite1, SWT.NONE);
+		@SuppressWarnings("unused")
 		Label filler22 = new Label(composite1, SWT.NONE);
+		@SuppressWarnings("unused")
 		Label filler2 = new Label(composite1, SWT.NONE);
 		saveAllButton = new Button(composite1, SWT.NONE);
 		saveAllButton.setText("Save All ");
@@ -291,8 +284,7 @@ public class TemplateEditorView extends ViewPart {
 	 * 
 	 */
 	private void createComposite4() {
-		
-		
+
 		composite4 = new Composite(composite2, SWT.NONE);
 		composite4.setLayout(new RowLayout());
 		button = new Button(composite4, SWT.NONE);
@@ -317,7 +309,7 @@ public class TemplateEditorView extends ViewPart {
 				widgetSelected(e);
 			}
 		});
-		//TODO complete copy
+		// TODO complete copy
 		button1 = new Button(composite4, SWT.NONE);
 		button1.setText("Copy ");
 		button1.addSelectionListener(new SelectionListener() {
@@ -344,7 +336,7 @@ public class TemplateEditorView extends ViewPart {
 				widgetSelected(e);
 			}
 		});
-		//TODO complete new
+		// TODO complete new
 		button2 = new Button(composite4, SWT.NONE);
 		button2.setText("New");
 		button2.addSelectionListener(new SelectionListener() {
@@ -399,6 +391,7 @@ public class TemplateEditorView extends ViewPart {
 		text = new Text(composite5, SWT.BORDER);
 		text.setEditable(false);
 		text.setLayoutData(gridData7);
+		@SuppressWarnings("unused")
 		Label filler7 = new Label(composite5, SWT.NONE);
 		label1 = new Label(composite5, SWT.NONE);
 		label1.setText("Jasper File:");
@@ -430,7 +423,8 @@ public class TemplateEditorView extends ViewPart {
 						jasperFileData = getBytesFromFile(selectedFile);
 					} catch (IOException e) {
 						Error("Loading Jasper File",
-								"Could not read the specified jasper file.\n\n" + e.getMessage());
+								"Could not read the specified jasper file.\n\n"
+										+ e.getMessage());
 						return;
 					}
 					((CBSRTemplate) templateSelected)
@@ -471,13 +465,6 @@ public class TemplateEditorView extends ViewPart {
 	 * This method initializes composite6
 	 * 
 	 */
-	private void createComposite6() {
-		GridData gridData5 = new GridData();
-		gridData5.horizontalAlignment = GridData.FILL;
-		gridData5.grabExcessHorizontalSpace = true;
-		gridData5.grabExcessVerticalSpace = true;
-		gridData5.verticalAlignment = GridData.FILL;
-	}
 
 	/**
 	 * This method initializes composite6
@@ -664,7 +651,6 @@ public class TemplateEditorView extends ViewPart {
 
 	}
 
-
 	private void Error(String title, String message) {
 		MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
 		messageBox.setMessage(message);
@@ -677,10 +663,11 @@ public class TemplateEditorView extends ViewPart {
 		public void widgetSelected(SelectionEvent e) {
 			MessageBox messageBox = new MessageBox(shell, SWT.ICON_QUESTION
 					| SWT.YES | SWT.NO);
-			messageBox.setMessage("Do you really want to close the template editor?");
+			messageBox
+					.setMessage("Do you really want to close the template editor?");
 			messageBox.setText("Closing Template Editor");
 			int response = messageBox.open();
-			if (response == SWT.YES){
+			if (response == SWT.YES) {
 				// TODO close view
 			}
 		}
@@ -692,7 +679,8 @@ public class TemplateEditorView extends ViewPart {
 	};
 
 	/**
-	 * Saves the entire preference store and all the changed template information as a serialized object.
+	 * Saves the entire preference store and all the changed template
+	 * information as a serialized object.
 	 */
 	private SelectionListener saveAllListener = new SelectionListener() {
 		@Override

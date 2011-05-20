@@ -2,7 +2,6 @@ package edu.ualberta.med.biobank.barcodegenerator.template;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -12,6 +11,8 @@ import java.util.ArrayList;
 
 public class TemplateStore implements Serializable {
 
+	private static final long serialVersionUID = 5502373669875110097L;
+	
 	ArrayList<Template> templates;
 
 	public TemplateStore() {

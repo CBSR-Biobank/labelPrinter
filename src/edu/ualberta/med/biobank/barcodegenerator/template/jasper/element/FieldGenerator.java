@@ -1,10 +1,7 @@
 package edu.ualberta.med.biobank.barcodegenerator.template.jasper.element;
 
 
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Point;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 import org.eclipse.swt.graphics.Rectangle;

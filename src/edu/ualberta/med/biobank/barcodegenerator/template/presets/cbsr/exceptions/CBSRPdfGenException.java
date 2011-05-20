@@ -1,6 +1,9 @@
 package edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.exceptions;
 
 public class CBSRPdfGenException extends Exception {
+	
+	private static final long serialVersionUID = -6225763254642894265L;
+	
 	String mistake;
 
 	public CBSRPdfGenException() {

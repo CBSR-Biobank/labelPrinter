@@ -1,7 +1,6 @@
 package edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 
 public class CBSRData {
 	public String projectTileStr;

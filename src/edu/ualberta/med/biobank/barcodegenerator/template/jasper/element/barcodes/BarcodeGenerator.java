@@ -10,8 +10,6 @@ import org.krysalis.barcode4j.impl.datamatrix.DataMatrixBean;
 import org.krysalis.barcode4j.output.bitmap.BitmapCanvasProvider;
 
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.BarcodeCreationException;
-import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.ElementCreationException;
-
 
 
 public class BarcodeGenerator {

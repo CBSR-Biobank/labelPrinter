@@ -2,11 +2,8 @@ package edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr;
 
 import java.awt.Font;
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.DataInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map.Entry;
 
 import org.eclipse.swt.graphics.Rectangle;
 
@@ -20,11 +17,12 @@ import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.FieldGe
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.barcodes.Barcode1D;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.barcodes.Barcode2D;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.text.Text;
-import edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView.BarcodeViewGuiData;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.*;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.exceptions.CBSRPdfGenException;
 
 public class CBSRTemplate extends Template {
+
+	private static final long serialVersionUID = -6346822010546940605L;
 
 	public byte[] generatePdfCBSR(CBSRData cbsrData,
 			ArrayList<String> barcodeStrings) throws CBSRPdfGenException {

@@ -1,41 +1,22 @@
 package edu.ualberta.med.biobank.barcodegenerator.views;
 
-import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
-import java.util.Map.Entry;
-
 import javax.imageio.ImageIO;
 
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.events.VerifyEvent;
-import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -43,50 +24,26 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceStore;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.CheckboxCellEditor;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TextCellEditor;
-
-import javax.swing.JTable;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.widgets.Combo;
 
 import edu.ualberta.med.biobank.barcodegenerator.Activator;
 import edu.ualberta.med.biobank.barcodegenerator.preferences.PreferenceConstants;
 import edu.ualberta.med.biobank.barcodegenerator.preferences.PreferenceInitializer;
-import edu.ualberta.med.biobank.barcodegenerator.template.Template;
 import edu.ualberta.med.biobank.barcodegenerator.template.TemplateStore;
-import edu.ualberta.med.biobank.barcodegenerator.template.configuration.Configuration;
-import edu.ualberta.med.biobank.barcodegenerator.template.jasper.JasperFiller;
-import edu.ualberta.med.biobank.barcodegenerator.template.jasper.JasperOutline;
-import edu.ualberta.med.biobank.barcodegenerator.template.jasper.containers.BarcodeImage;
-import edu.ualberta.med.biobank.barcodegenerator.template.jasper.containers.PatientInfo;
-import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.FieldGenerator;
-import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.barcodes.Barcode1D;
-import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.barcodes.Barcode2D;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSRData;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSRTemplate;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.exceptions.CBSRGuiVerificationException;
@@ -147,9 +104,6 @@ public class LabelPrinterView extends ViewPart {
 	private Button printButton = null;
 	private Composite composite9 = null;
 	private CLabel cLabel = null;
-	private TableViewer tableViewer = null;
-	private Table configTable = null;
-	private TableViewer configTableViewer = null;
 	private Shell shell;
 	private IPreferenceStore perferenceStore;
 	private TemplateStore templateStore = new TemplateStore();
@@ -266,7 +220,7 @@ public class LabelPrinterView extends ViewPart {
 		projectTitleText.setTextLimit(12);
 		projectTitleText.setText(perferenceStore
 				.getString(PreferenceConstants.PROJECT_TITLE));
-
+		@SuppressWarnings("unused")
 		Label filler = new Label(composite3, SWT.NONE);
 		label1 = new Label(composite3, SWT.NONE);
 		label1.setText("Logo:");
@@ -552,6 +506,7 @@ public class LabelPrinterView extends ViewPart {
 		sampleTypeText.setTextLimit(15);
 		label8 = new Label(composite7, SWT.LEFT | SWT.HORIZONTAL);
 		label8.setText("");
+		@SuppressWarnings("unused")
 		Label filler61 = new Label(composite7, SWT.NONE);
 	}
 
