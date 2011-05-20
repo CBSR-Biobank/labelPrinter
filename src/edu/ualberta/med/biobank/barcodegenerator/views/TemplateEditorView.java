@@ -51,7 +51,7 @@ import edu.ualberta.med.biobank.barcodegenerator.template.presets.CBSRTemplate;
 
 public class TemplateEditorView extends ViewPart {
 
-	public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.views.TemplateEditorView"; 
+	public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.views.TemplateEditorView";
 	private Composite top = null;
 	private Group group = null;
 	private Composite composite = null;
@@ -76,18 +76,17 @@ public class TemplateEditorView extends ViewPart {
 	private List list = null;
 	private Group composite6 = null;
 	private Table table1 = null;
-	private Shell shell;	
-	
-	
-	private TemplateStore templateStore  = new TemplateStore();
+	private Shell shell;
+
+	private TemplateStore templateStore = new TemplateStore();
 	private Template templateSelected = null;
-	
+
 	@Override
 	public void createPartControl(Composite parent) {
-		
+
 		shell = parent.getShell();
-		
-		//TODO load store from proper location
+
+		// TODO load store from proper location
 		try {
 			templateStore.loadStore(new File("Store.dat"));
 		} catch (IOException e) {
@@ -95,7 +94,7 @@ public class TemplateEditorView extends ViewPart {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		
+
 		top = new Composite(parent, SWT.NONE);
 		top.setLayout(new GridLayout());
 		createGroup();
@@ -106,8 +105,8 @@ public class TemplateEditorView extends ViewPart {
 	}
 
 	/**
-	 * This method initializes group	
-	 *
+	 * This method initializes group
+	 * 
 	 */
 	private void createGroup() {
 		GridData gridData = new GridData();
@@ -124,8 +123,8 @@ public class TemplateEditorView extends ViewPart {
 	}
 
 	/**
-	 * This method initializes composite	
-	 *
+	 * This method initializes composite
+	 * 
 	 */
 	private void createComposite() {
 		GridLayout gridLayout = new GridLayout();
@@ -144,8 +143,8 @@ public class TemplateEditorView extends ViewPart {
 	}
 
 	/**
-	 * This method initializes composite1	
-	 *
+	 * This method initializes composite1
+	 * 
 	 */
 	private void createComposite1() {
 		GridData gridData2 = new GridData();
@@ -168,8 +167,8 @@ public class TemplateEditorView extends ViewPart {
 	}
 
 	/**
-	 * This method initializes composite2	
-	 *
+	 * This method initializes composite2
+	 * 
 	 */
 	private void createComposite2() {
 		GridData gridData3 = new GridData();
@@ -185,8 +184,8 @@ public class TemplateEditorView extends ViewPart {
 	}
 
 	/**
-	 * This method initializes composite3	
-	 *
+	 * This method initializes composite3
+	 * 
 	 */
 	private void createComposite3() {
 		GridData gridData4 = new GridData();
@@ -202,8 +201,8 @@ public class TemplateEditorView extends ViewPart {
 	}
 
 	/**
-	 * This method initializes group1	
-	 *
+	 * This method initializes group1
+	 * 
 	 */
 	private void createGroup1() {
 		GridData gridData6 = new GridData();
@@ -219,22 +218,21 @@ public class TemplateEditorView extends ViewPart {
 		group1.setLayout(fillLayout1);
 		list = new List(group1, SWT.BORDER | SWT.V_SCROLL);
 		list.addSelectionListener(listListener);
-		for(String s : templateStore.getTemplateNames())
+		for (String s : templateStore.getTemplateNames())
 			list.add(s);
 		list.redraw();
 
 	}
-	
+
 	private SelectionListener listListener = new SelectionListener() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			 String[] selectedItems = list.getSelection();
-			if(selectedItems.length == 1){
+			String[] selectedItems = list.getSelection();
+			if (selectedItems.length == 1) {
 				Template t = templateStore.getTemplate(selectedItems[0]);
 
 				setSelectedTemplate(t);
-			}
-			else{
+			} else {
 				setSelectedTemplate(null);
 			}
 		}
@@ -245,45 +243,44 @@ public class TemplateEditorView extends ViewPart {
 
 		}
 	};
-	private void updateJasperFileText(String selectedName){
-		
-		if(templateSelected == null)
+
+	private void updateJasperFileText(String selectedName) {
+
+		if (templateSelected == null)
 			return;
-		
-		if(!((CBSRTemplate)templateSelected).jasperFileDataExists()){
+
+		if (!((CBSRTemplate) templateSelected).jasperFileDataExists()) {
 			text1.setText("Select a Jasper file.");
-			text1.setBackground(new Color(shell.getDisplay(),255,0,0));
-		}
-		else{
-			if(selectedName == null){
+			text1.setBackground(new Color(shell.getDisplay(), 255, 0, 0));
+		} else {
+			if (selectedName == null) {
 				selectedName = "Jasper file loaded";
 			}
 			text1.setText(selectedName);
-			text1.setBackground(new Color(shell.getDisplay(),255,255,255));
+			text1.setBackground(new Color(shell.getDisplay(), 255, 255, 255));
 		}
 		text1.redraw();
 	}
-	
-	private void setSelectedTemplate(Template t){
+
+	private void setSelectedTemplate(Template t) {
 		templateSelected = t;
-		if(t != null){
+		if (t != null) {
 			text.setText(t.getName());
-			
+
 			updateJasperFileText(null);
 
-			populateTable(table1, ((CBSRTemplate)templateSelected).getConfiguration().getSettings());
-		}
-		else{
+			populateTable(table1, ((CBSRTemplate) templateSelected)
+					.getConfiguration().getSettings());
+		} else {
 			text.setText("Select a template.");
 			text1.setText("");
-			populateTable(table1,null);
+			populateTable(table1, null);
 		}
 	}
 
-
 	/**
-	 * This method initializes composite4	
-	 *
+	 * This method initializes composite4
+	 * 
 	 */
 	private void createComposite4() {
 		composite4 = new Composite(composite2, SWT.NONE);
@@ -293,14 +290,13 @@ public class TemplateEditorView extends ViewPart {
 		button.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if(templateSelected != null){
-					if(templateStore.removeTemplate(templateSelected)){
+				if (templateSelected != null) {
+					if (templateStore.removeTemplate(templateSelected)) {
 						list.remove(templateSelected.getName());
 						setSelectedTemplate(null);
-						
-					}
-					else{
-						//TODO warn user dialog against duplicates
+
+					} else {
+						// TODO warn user dialog against duplicates
 					}
 				}
 			}
@@ -315,19 +311,17 @@ public class TemplateEditorView extends ViewPart {
 		button1.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if(templateSelected != null){
-					
+				if (templateSelected != null) {
+
 					Template clone = new CBSRTemplate();
 					Template.Clone(templateSelected, clone);
 					clone.setName(clone.getName() + " copy");
-					
-					
-					if(templateStore.addTemplate(clone)){
+
+					if (templateStore.addTemplate(clone)) {
 						list.add(clone.getName());
 						list.redraw();
-					}
-					else{
-						//TODO warn user dialog against duplicates
+					} else {
+						// TODO warn user dialog against duplicates
 					}
 				}
 			}
@@ -337,7 +331,7 @@ public class TemplateEditorView extends ViewPart {
 				widgetSelected(e);
 			}
 		});
-		
+
 		button2 = new Button(composite4, SWT.NONE);
 		button2.setText("New");
 		button2.addSelectionListener(new SelectionListener() {
@@ -349,12 +343,11 @@ public class TemplateEditorView extends ViewPart {
 				ct.setDefaultConfiguration();
 				ct.setName(LabelPrinterView.randString());
 
-				if(templateStore.addTemplate(ct)){
+				if (templateStore.addTemplate(ct)) {
 					list.add(ct.getName());
 					list.redraw();
-				}
-				else{
-					//TODO warn user dialog against duplicates
+				} else {
+					// TODO warn user dialog against duplicates
 				}
 			}
 
@@ -366,8 +359,8 @@ public class TemplateEditorView extends ViewPart {
 	}
 
 	/**
-	 * This method initializes composite5	
-	 *
+	 * This method initializes composite5
+	 * 
 	 */
 	private void createComposite5() {
 		GridData gridData11 = new GridData();
@@ -402,19 +395,19 @@ public class TemplateEditorView extends ViewPart {
 		button5.setText("Browse...");
 		button5.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent event) {
-				if(templateSelected == null)
+				if (templateSelected == null)
 					return;
-				
+
 				FileDialog fd = new FileDialog(shell, SWT.OPEN);
 				fd.setText("Select Jasper File");
 				String[] filterExt = { "*.jrxml" };
 				fd.setFilterExtensions(filterExt);
 				String selected = fd.open();
 				if (selected != null) {
-					
+
 					File selectedFile = new File(selected);
-					if(!selectedFile.exists()){
-						//TODO error dialog
+					if (!selectedFile.exists()) {
+						// TODO error dialog
 						return;
 					}
 					byte[] jasperFileData;
@@ -422,10 +415,11 @@ public class TemplateEditorView extends ViewPart {
 						jasperFileData = getBytesFromFile(selectedFile);
 					} catch (IOException e) {
 						e.printStackTrace();
-						//error dialog
+						// error dialog
 						return;
 					}
-					((CBSRTemplate)templateSelected).setJasperFileData(jasperFileData);
+					((CBSRTemplate) templateSelected)
+							.setJasperFileData(jasperFileData);
 					updateJasperFileText(selected);
 				}
 			}
@@ -435,42 +429,43 @@ public class TemplateEditorView extends ViewPart {
 			}
 		});
 	}
-	
-	//http://www.java-tips.org/java-se-tips/java.io/reading-a-file-into-a-byte-array.html
+
+	// http://www.java-tips.org/java-se-tips/java.io/reading-a-file-into-a-byte-array.html
 	public static byte[] getBytesFromFile(File file) throws IOException {
-        InputStream is = new FileInputStream(file);
-    
-        // Get the size of the file
-        long length = file.length();
-    
-        if (length > Integer.MAX_VALUE) {
-            // File is too large
-        }
-    
-        // Create the byte array to hold the data
-        byte[] bytes = new byte[(int)length];
-    
-        // Read in the bytes
-        int offset = 0;
-        int numRead = 0;
-        while (offset < bytes.length
-               && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
-            offset += numRead;
-        }
-    
-        // Ensure all the bytes have been read in
-        if (offset < bytes.length) {
-            throw new IOException("Could not completely read file "+file.getName());
-        }
-    
-        // Close the input stream and return bytes
-        is.close();
-        return bytes;
-    }
+		InputStream is = new FileInputStream(file);
+
+		// Get the size of the file
+		long length = file.length();
+
+		if (length > Integer.MAX_VALUE) {
+			// File is too large
+		}
+
+		// Create the byte array to hold the data
+		byte[] bytes = new byte[(int) length];
+
+		// Read in the bytes
+		int offset = 0;
+		int numRead = 0;
+		while (offset < bytes.length
+				&& (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
+			offset += numRead;
+		}
+
+		// Ensure all the bytes have been read in
+		if (offset < bytes.length) {
+			throw new IOException("Could not completely read file "
+					+ file.getName());
+		}
+
+		// Close the input stream and return bytes
+		is.close();
+		return bytes;
+	}
 
 	/**
-	 * This method initializes composite6	
-	 *
+	 * This method initializes composite6
+	 * 
 	 */
 	private void createComposite6() {
 		GridData gridData5 = new GridData();
@@ -481,8 +476,8 @@ public class TemplateEditorView extends ViewPart {
 	}
 
 	/**
-	 * This method initializes composite6	
-	 *
+	 * This method initializes composite6
+	 * 
 	 */
 	private void createComposite62() {
 		GridData gridData10 = new GridData();
@@ -501,7 +496,7 @@ public class TemplateEditorView extends ViewPart {
 		composite6.setLayoutData(gridData10);
 		createTable(composite6);
 	}
-	
+
 	// TODO sort first column when pressed.
 	private void createTable(final Composite c) {
 		GridData gridData9 = new GridData();
@@ -551,12 +546,12 @@ public class TemplateEditorView extends ViewPart {
 						}
 					}
 				});
-				newEditor.addKeyListener(new KeyListener(){
+				newEditor.addKeyListener(new KeyListener() {
 
 					@Override
 					public void keyPressed(KeyEvent e) {
 						// TODO newEditor return stop edit
-						if(e.keyCode == SWT.CR){
+						if (e.keyCode == SWT.CR) {
 							System.out.println("return");
 							table1.deselectAll();
 						}
@@ -564,7 +559,8 @@ public class TemplateEditorView extends ViewPart {
 
 					@Override
 					public void keyReleased(KeyEvent e) {
-					}});
+					}
+				});
 				newEditor.addModifyListener(new ModifyListener() {
 					public void modifyText(ModifyEvent me) {
 						Text text = (Text) editor.getEditor();
@@ -582,17 +578,18 @@ public class TemplateEditorView extends ViewPart {
 						else
 							valid = false;
 
-						
-						if(valid)
-							item.setForeground(new Color(
-									shell.getDisplay(), 0, 0, 0));
+						if (valid)
+							item.setForeground(new Color(shell.getDisplay(), 0,
+									0, 0));
 						else
-							item.setForeground(new Color(shell
-									.getDisplay(), 255, 0, 0));
-						
+							item.setForeground(new Color(shell.getDisplay(),
+									255, 0, 0));
 
-						if(templateSelected != null && valid){
-							((CBSRTemplate)templateSelected).getConfiguration().setSettingsEntry(item.getText(0),String2Rect(item.getText(1)));
+						if (templateSelected != null && valid) {
+							((CBSRTemplate) templateSelected)
+									.getConfiguration().setSettingsEntry(
+											item.getText(0),
+											String2Rect(item.getText(1)));
 						}
 
 					}
@@ -621,21 +618,13 @@ public class TemplateEditorView extends ViewPart {
 		}
 	}
 
-	private HashMap<String, Rectangle> getTableData(Table t) {
-		HashMap<String, Rectangle> tableData = new HashMap<String, Rectangle>();
-		for (TableItem ti : t.getItems())
-			tableData.put(ti.getText(0), String2Rect(ti.getText(1)));
-
-		return tableData;
-	}
-
 	private void populateTable(Table t, Map<String, Rectangle> data) {
 		t.removeAll();
-		
-		if(data == null){
+
+		if (data == null) {
 			return;
 		}
-		
+
 		for (Entry<String, Rectangle> e : data.entrySet()) {
 
 			TableItem item = new TableItem(t, SWT.NONE);
@@ -670,12 +659,12 @@ public class TemplateEditorView extends ViewPart {
 		return r;
 
 	}
-	
+
 	private SelectionListener cancleListener = new SelectionListener() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 
-			//TODO exit dialog
+			// TODO exit dialog
 		}
 
 		@Override
@@ -694,7 +683,7 @@ public class TemplateEditorView extends ViewPart {
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
-			//TODO exit dialog
+			// TODO exit dialog
 		}
 
 		@Override
@@ -704,5 +693,4 @@ public class TemplateEditorView extends ViewPart {
 		}
 	};
 
-
-}  //  @jve:decl-index=0:visual-constraint="10,10,559,504"
+} // @jve:decl-index=0:visual-constraint="10,10,559,504"

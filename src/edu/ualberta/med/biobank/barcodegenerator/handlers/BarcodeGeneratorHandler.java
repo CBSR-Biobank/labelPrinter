@@ -29,8 +29,6 @@ public class BarcodeGeneratorHandler extends AbstractHandler implements IHandler
         IWorkbenchPage page = workbench.getActiveWorkbenchWindow()
             .getActivePage();
         try {
-        	
-        	
             page.showView(LabelPrinterView.ID);
         } catch (PartInitException e) {
             throw new ExecutionException("View cannot be opened", e);

@@ -79,6 +79,7 @@ import edu.ualberta.med.biobank.barcodegenerator.preferences.PreferenceInitializ
 import edu.ualberta.med.biobank.barcodegenerator.template.Template;
 import edu.ualberta.med.biobank.barcodegenerator.template.TemplateStore;
 import edu.ualberta.med.biobank.barcodegenerator.template.configuration.Configuration;
+import edu.ualberta.med.biobank.barcodegenerator.template.exceptions.CBSRPdfGenException;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.JasperFiller;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.JasperOutline;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.containers.BarcodeImage;
@@ -792,8 +793,8 @@ public class LabelPrinterView extends ViewPart {
 			if (guiData != null) {
 				try {
 					pdfdata = selectedTemplate.generatePdfCBSR(guiData, randStringArray());
-				} catch (Exception e1) {
-					System.err.println(e1.getMessage());// TODO dialog error
+				} catch (CBSRPdfGenException e1) {
+					System.err.println(e1.getError());// TODO dialog error
 				}
 				if (pdfdata != null) {
 					FileOutputStream fos;

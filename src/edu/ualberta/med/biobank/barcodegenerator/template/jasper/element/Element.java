@@ -8,6 +8,8 @@ import java.io.IOException;
 
 import org.eclipse.swt.graphics.Rectangle;
 
+import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.BarcodeCreationException;
+
 public abstract  class Element{
 	public static enum TYPE {
 		GenCode128, DataMatrix, Text,None,
@@ -17,6 +19,5 @@ public abstract  class Element{
 	protected TYPE type = TYPE.None;
 	protected String message = null;
 	
-	abstract public boolean verify();
-	abstract public void render(Graphics2D g)  throws IOException;
+	abstract public void render(Graphics2D g)  throws BarcodeCreationException;
 };

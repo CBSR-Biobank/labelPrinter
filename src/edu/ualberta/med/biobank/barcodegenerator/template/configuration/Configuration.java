@@ -27,6 +27,7 @@ public class Configuration implements Serializable {
 	public Rectangle getSettingsKey(String key) {
 		return this.settings.get(key);
 	}
+	
 	public void setSettingsEntry(String key,Rectangle value) {
 		this.settings.put(key,value);
 	}

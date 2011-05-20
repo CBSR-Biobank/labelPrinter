@@ -17,9 +17,12 @@ import javax.imageio.ImageIO;
 
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.containers.BarcodeImage;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.Element;
+import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.BarcodeCreationException;
+import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.JasperFillException;
 
 import net.sf.jasperreports.engine.JRElement;
 import net.sf.jasperreports.engine.JREmptyDataSource;
+import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -50,26 +53,30 @@ public class JasperFiller {
 		public int patientImageHeight = 182;
 	}
 
-	public JasperFiller(JasperOutline req) throws Exception {
+	public JasperFiller(JasperOutline req) throws JasperFillException {
+		
+		if(req == null)
+			throw new JasperFillException("Null request for jasper filler.");
+		
+		
 		this.templateData = req;
 
 		loadTemplateConstants();
-
-		if (templateData.getPatientBarcpdeInf().getLayout().size() != jasperConstants.barcodeCount) {
-			throw new Exception("Error: requires "
-					+ jasperConstants.barcodeCount + " barcode IDs");
-		}
 	}
 
-	private void loadTemplateConstants() throws Exception {
+	private void loadTemplateConstants() throws JasperFillException {
 
-		templateData.getJasperTemplateStream().reset();
-		JasperDesign jasperSubDesign = JRXmlLoader.load(templateData
-				.getJasperTemplateStream());
-
-		if (jasperSubDesign == null) {
-			// TODO implment proper error handling
-			throw new Exception("Failed to load jasper design");
+		try {
+			templateData.getJasperTemplateStream().reset();
+		} catch (IOException e) {
+			throw new JasperFillException("Failed to reset template data stream : " + e.getMessage());
+		}
+		JasperDesign jasperSubDesign;
+		try {
+			jasperSubDesign = JRXmlLoader.load(templateData
+					.getJasperTemplateStream());
+		} catch (JRException e) {
+			throw new JasperFillException("Failed to load jasper design: " + e.getMessage());
 		}
 
 		JRElement patientImg = jasperSubDesign.getTitle().getElementByKey(
@@ -78,7 +85,7 @@ public class JasperFiller {
 			jasperConstants.barcodeImageWidth = patientImg.getWidth();
 			jasperConstants.patientImageHeight = patientImg.getHeight();
 		} else {
-			throw new Exception(
+			throw new JasperFillException(
 					"Failed to patient image dimensions from the jasper report.");
 		}
 
@@ -95,44 +102,79 @@ public class JasperFiller {
 			for (JRElement jr : jasperSubDesign.getPageFooter().getElements()) {
 				if (jr.getWidth() != jasperConstants.barcodeImageWidth
 						|| jr.getHeight() != jasperConstants.barcodeImageHeight) {
-					throw new Exception(
+					throw new JasperFillException(
 							"All barcode image fields must be of equal size.");
 				}
 			}
 		} else {
-			throw new Exception(
+			throw new JasperFillException(
 					"Failed to barcode image dimensions from the jasper report.");
 		}
+		
+		if (templateData.getPatientBarcpdeInf().getLayout().size() != jasperConstants.barcodeCount) {
+			throw new JasperFillException("Error: requires "
+					+ jasperConstants.barcodeCount + " barcode IDs");
+		}
+		
+	
 	}
 
-	public byte[] generatePdfData() throws Exception {
+	public byte[] generatePdfData() throws JasperFillException {
 
-		// place patient image.
-		ByteArrayInputStream patientInfoImg = drawElementsToPngStream(
-				templateData.getPatientInfo().getElements(),
-				jasperConstants.patientImageWidth,
-				jasperConstants.patientImageHeight);
-
-		// place patient barcode images
+		
+		ByteArrayInputStream patientInfoImg;
 		ArrayList<ByteArrayInputStream> barcodeIDBufferList = new ArrayList<ByteArrayInputStream>();
-		for (BarcodeImage bi : templateData.getPatientBarcpdeInf().getLayout()) {
-			barcodeIDBufferList.add(drawElementsToPngStream(bi.getElements(),
-					jasperConstants.barcodeImageWidth,
-					jasperConstants.barcodeImageHeight));
+		
+		// place patient image.
+		try {
+			patientInfoImg = drawElementsToPngStream(
+					templateData.getPatientInfo().getElements(),
+					jasperConstants.patientImageWidth,
+					jasperConstants.patientImageHeight);
+		} catch (IOException e) {
+			throw new JasperFillException("Failed to draw patientInfoImg to image buffer" + e.getMessage());
+		} catch (BarcodeCreationException e) {
+			throw new JasperFillException("Failed to create barcode patientInfoImg : " + e.getError());
+		}
+		// place patient barcode images
+		try {
+			for (BarcodeImage bi : templateData.getPatientBarcpdeInf()
+					.getLayout()) {
+				barcodeIDBufferList.add(drawElementsToPngStream(
+						bi.getElements(), jasperConstants.barcodeImageWidth,
+						jasperConstants.barcodeImageHeight));
+			}
+		} catch (IOException e) {
+			throw new JasperFillException(
+					"Failed to draw barcodeinfo to image buffer" + e.getMessage());
+		} catch (BarcodeCreationException e) {
+			throw new JasperFillException(
+					"Failed to create barcode barcodeinfo : " + e.getError());
 		}
 
 		// generate parameters for jasper
 		HashMap<String, Object> parameters = generateParameters(patientInfoImg,
 				barcodeIDBufferList);
 
+		byte[] reportPdfBtyes = null;
+		
+		try{
 		// generate jasper report from template
 		templateData.getJasperTemplateStream().reset();
 		JasperReport jasperReport = JasperCompileManager
 				.compileReport(templateData.getJasperTemplateStream());
 		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport,
 				parameters, new JREmptyDataSource());
-		byte[] reportPdfBtyes = JasperExportManager
+		reportPdfBtyes  = JasperExportManager
 				.exportReportToPdf(jasperPrint);
+		}
+		catch(JRException e){
+			throw new JasperFillException(
+					"Jasper failed to create pdf. Reason : " + e.getMessage());
+		} catch (IOException e) {
+			throw new JasperFillException(
+					"Could not reset jasper file stream : " + e.getMessage());
+		}
 
 		return reportPdfBtyes;
 	}
@@ -153,28 +195,12 @@ public class JasperFiller {
 			parameters.put(JasperConstants.patientBarcodeBase + i,
 					barcodeIDImageList.get(i));
 
-		parameters.put("REPORT_FILE_RESOLVER", new FileResolver() {
-			@Override
-			public File resolveFile(String fileName) {
-				URI uri;
-				try {
-					uri = new URI(this.getClass().getResource(fileName)
-							.getPath());
-					return new File(uri.getPath());
-				} catch (URISyntaxException e) {
-
-					e.printStackTrace();
-					return null;
-				}
-			}
-		});
-
 		return parameters;
 	}
 
 	private ByteArrayInputStream drawElementsToPngStream(
 			ArrayList<Element> elementList, int width, int height)
-			throws IOException {
+			throws IOException, BarcodeCreationException {
 
 		BufferedImage bi = new BufferedImage(width * 4, height * 4,
 				BufferedImage.TYPE_4BYTE_ABGR);
@@ -189,23 +215,11 @@ public class JasperFiller {
 		g.drawRect(0, 0, width * 4 - 1, height * 4 - 1);
 
 		for (Element e : elementList) {
-			if (e.verify()) {
-				e.render(g);
-			} else {
-				// TODO handle element verificiation failure
-				throw new RuntimeException("Failed to verify layout element.");
-			}
+			e.render(g);
 		}
-		// convert to our bufferedImage to a png based ByteArrayInputStream
+
 		ByteArrayOutputStream binaryOutputStream = new ByteArrayOutputStream();
-		try {
-
-			ImageIO.write(bi, "PNG", binaryOutputStream);
-
-		} catch (IOException e) {
-			e.printStackTrace();
-			binaryOutputStream = null;
-		}
+		ImageIO.write(bi, "PNG", binaryOutputStream);
 		return new ByteArrayInputStream(binaryOutputStream.toByteArray());
 	}
 }

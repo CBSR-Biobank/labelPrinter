@@ -10,31 +10,43 @@ import java.io.IOException;
 import org.eclipse.swt.graphics.Rectangle;
 
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.Element;
+import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.BarcodeCreationException;
+import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.ElementCreationException;
 
 public class Barcode1D extends Element {
 
 	Font font;
+	//TODO set font default as 22
+	public Barcode1D(Rectangle rect, String message, Font font) throws ElementCreationException {
 
-	public Barcode1D(Rectangle rect, String message, Font font) {
+		if (message == null || message.length() == 0)
+			throw new ElementCreationException(
+					"empty or null message specified to 1D barcode element.");
+		
+		if (rect == null)
+			throw new ElementCreationException(
+					"null dimensions specified to 1D barcode element.");
+		
+		if (font == null)
+			throw new ElementCreationException(
+					"null font specified to 1D barcode element.");
+		
+		this.font = font;
 		this.rect = rect;
 		this.type = Element.TYPE.GenCode128;
 		this.message = message;
-
-		if (font != null) {
-			this.font = font;
-		} else {
-			this.font = new Font("Times New Roman", Font.PLAIN, 22);
-		}
+		
 	}
 
-	public boolean verify() {
-		return (message != null && message.replaceAll("[^a-zA-Z0-9 ]", "")
-				.length() == message.length());
-	}
-
-	public void render(Graphics2D g) throws IOException {
-			BufferedImage barcode1DImg = BarcodeGenerator.generate1DBarcode(
-					message, font, rect, 200);
+	public void render(Graphics2D g) throws BarcodeCreationException {
+			BufferedImage barcode1DImg;
+			try {
+				barcode1DImg = BarcodeGenerator.generate1DBarcode(
+						message, font, rect, 200);
+			} catch (IOException e) {
+			throw new BarcodeCreationException(
+					"Failed to create image buffer for barcode");
+			}
 			g.drawImage(barcode1DImg,  rect.x, rect.y, null);
 	}
 }
