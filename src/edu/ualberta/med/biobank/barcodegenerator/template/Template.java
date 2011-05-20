@@ -13,7 +13,6 @@ import edu.ualberta.med.biobank.barcodegenerator.template.jasper.JasperOutline.B
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.JasperOutline.PatientBarcodeInformation;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.containers.PatientInfo;
 
-//TODO make template Serializable
 public abstract class Template extends JasperOutline implements Serializable{
 	
 	private String name = "default";
@@ -43,10 +42,11 @@ public abstract class Template extends JasperOutline implements Serializable{
 	}
 	
 
-	protected byte[] jasperTemplateFileData;
+	protected byte[] jasperTemplateFileData = null;
 	protected abstract void setJasperFileData(byte[] jasperData);
+	protected abstract boolean jasperFileDataExists();
 
-	protected Configuration config;
+	protected Configuration config = null;
 	protected abstract Configuration getConfiguration();
 	public abstract void setConfiguration(Configuration configuration) throws Exception;
 	public abstract  ArrayList<String> getConfigurationKeyList();

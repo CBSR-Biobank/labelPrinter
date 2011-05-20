@@ -50,8 +50,7 @@ public class JasperFiller {
 		public int patientImageHeight = 182;
 	}
 
-	public JasperFiller(JasperOutline req)
-			throws Exception {
+	public JasperFiller(JasperOutline req) throws Exception {
 		this.templateData = req;
 
 		loadTemplateConstants();
@@ -63,12 +62,10 @@ public class JasperFiller {
 	}
 
 	private void loadTemplateConstants() throws Exception {
-		
-		//System.out.println("Available jasper file bytes: " +this.templateData.jasperTemplateStream.available());
 
-		//TODO make input stream work with jasper
-		//has to do with the classloader and eclipse.
-		JasperDesign jasperSubDesign = JRXmlLoader.load(new File("LabelFormTemplate.jrxml")); //this.templateData.jasperTemplateStream
+		templateData.getJasperTemplateStream().reset();
+		JasperDesign jasperSubDesign = JRXmlLoader.load(templateData
+				.getJasperTemplateStream());
 
 		if (jasperSubDesign == null) {
 			// TODO implment proper error handling
@@ -88,8 +85,8 @@ public class JasperFiller {
 		if (jasperSubDesign.getPageFooter() != null
 				&& jasperSubDesign.getPageFooter().getElements() != null
 				&& jasperSubDesign.getPageFooter().getElements().length > 0) {
-			jasperConstants.barcodeImageWidth = jasperSubDesign
-					.getPageFooter().getElements()[0].getWidth();
+			jasperConstants.barcodeImageWidth = jasperSubDesign.getPageFooter()
+					.getElements()[0].getWidth();
 			jasperConstants.barcodeImageHeight = jasperSubDesign
 					.getPageFooter().getElements()[0].getHeight();
 			jasperConstants.barcodeCount = jasperSubDesign.getPageFooter()
@@ -129,8 +126,9 @@ public class JasperFiller {
 				barcodeIDBufferList);
 
 		// generate jasper report from template
-		JasperReport jasperReport = JasperCompileManager//TODO replace with stream
-				.compileReport("LabelFormTemplate.jrxml");
+		templateData.getJasperTemplateStream().reset();
+		JasperReport jasperReport = JasperCompileManager
+				.compileReport(templateData.getJasperTemplateStream());
 		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport,
 				parameters, new JREmptyDataSource());
 		byte[] reportPdfBtyes = JasperExportManager
@@ -147,7 +145,8 @@ public class JasperFiller {
 
 		parameters.put(JasperConstants.titleField,
 				templateData.getBranding().projectTitle);
-		parameters.put(JasperConstants.logoField, templateData.getBranding().logo);
+		parameters.put(JasperConstants.logoField,
+				templateData.getBranding().logo);
 		parameters.put(JasperConstants.patientImageField, patientInfoImg);
 
 		for (int i = 0; i < barcodeIDImageList.size(); i++)

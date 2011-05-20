@@ -27,14 +27,14 @@ public abstract class JasperOutline {
 	public PatientInfo getPatientInfo() {
 		return patientInfo;
 	}
-	public PatientBarcodeInformation getPatientBarcpdeInf() {
+	protected PatientBarcodeInformation getPatientBarcpdeInf() {
 		return patientBarcpdeInf;
 	}
-	public InputStream getJasperTemplateStream() {
+	protected InputStream getJasperTemplateStream() {
 		return jasperTemplateStream;
 	}
 	
-	public Branding getBranding() {
+	protected Branding getBranding() {
 		return branding;
 	}
 

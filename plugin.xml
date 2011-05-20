@@ -63,7 +63,7 @@
          point="org.eclipse.ui.views">
       <view
             allowMultiple="false"
-            class="edu.ualberta.med.biobank.barcodegenerator.views.BarcodeView"
+            class="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView"
             id="edu.ualberta.med.biobank.barcodegenerator.views.BarcodeView"
             name="Barcode Label Maker"
             restorable="true">

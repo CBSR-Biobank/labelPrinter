@@ -71,11 +71,13 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import javax.swing.JTable;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.TableEditor;
+import org.eclipse.swt.widgets.Combo;
 
 import edu.ualberta.med.biobank.barcodegenerator.Activator;
 import edu.ualberta.med.biobank.barcodegenerator.preferences.PreferenceConstants;
 import edu.ualberta.med.biobank.barcodegenerator.preferences.PreferenceInitializer;
 import edu.ualberta.med.biobank.barcodegenerator.template.Template;
+import edu.ualberta.med.biobank.barcodegenerator.template.TemplateStore;
 import edu.ualberta.med.biobank.barcodegenerator.template.configuration.Configuration;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.JasperFiller;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.JasperOutline;
@@ -87,9 +89,9 @@ import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.barcode
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.CBSRData;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.CBSRTemplate;
 
-public class BarcodeView extends ViewPart {
+public class LabelPrinterView extends ViewPart {
 
-	public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.views.BarcodeView";
+	public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView";
 	private Composite top = null;
 	private Composite composite = null;
 	private Composite composite1 = null;
@@ -134,8 +136,7 @@ public class BarcodeView extends ViewPart {
 	private Button sampleTypeCheckbox = null;
 	private Text sampleTypeText = null;
 	private Label label9 = null;
-	private Text templateText = null;
-	private Button templateButton = null;
+	private Combo templateCombo = null;
 	private Composite composite8 = null;
 	private Group group3 = null;
 	private Group group4 = null;
@@ -148,6 +149,7 @@ public class BarcodeView extends ViewPart {
 	private TableViewer configTableViewer = null;
 	private Shell shell;
 	private IPreferenceStore store;
+	private TemplateStore templateStore  = new TemplateStore();
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -163,9 +165,17 @@ public class BarcodeView extends ViewPart {
 			store = new PreferenceStore("barcodegen.properties");
 			PreferenceInitializer.setDefaults(store);
 		}
+		
+		//TODO load store from proper location
+		try {
+			templateStore.loadStore(new File("Store.dat"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 
 		shell = parent.getShell();
-		// TODO Auto-generated method stub
 		RowLayout rowLayout = new RowLayout();
 		rowLayout.type = org.eclipse.swt.SWT.VERTICAL;
 		rowLayout.fill = true;
@@ -180,7 +190,6 @@ public class BarcodeView extends ViewPart {
 
 	@Override
 	public void setFocus() {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -275,26 +284,13 @@ public class BarcodeView extends ViewPart {
 		});
 		label9 = new Label(composite3, SWT.NONE);
 		label9.setText("Template:");
-		templateText = new Text(composite3, SWT.BORDER);
-		templateText.setEditable(false);
-		templateText.setLayoutData(gridData21);
-		templateButton = new Button(composite3, SWT.NONE);
-		templateButton.setText("Browse...");
-		templateButton.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent event) {
-				FileDialog fd = new FileDialog(shell, SWT.OPEN);
-				fd.setText("Select Template");
-				String[] filterExt = { "*.jrxml", "*.*" };
-				fd.setFilterExtensions(filterExt);
-				String selected = fd.open();
-				if (selected != null)
-					templateText.setText(selected);
-			}
-
-			public void widgetDefaultSelected(SelectionEvent event) {
-				widgetSelected(event);
-			}
-		});
+		templateCombo = new Combo(composite3, SWT.DROP_DOWN | SWT.BORDER);
+		templateCombo.setLayoutData(gridData21);
+		for(String s: this.templateStore.getTemplateNames()){
+			templateCombo.add(s);
+		}
+		if(templateCombo.getItemCount() > 0)
+			templateCombo.select(0);
 	}
 
 	/**
@@ -764,11 +760,27 @@ public class BarcodeView extends ViewPart {
 		public void widgetSelected(SelectionEvent e) {
 			System.out.println("Print pressed!");
 
-			CBSRTemplate ct = new CBSRTemplate();
-			ct.setJasperFileData(null);
-			ct.setDefaultConfiguration();
-			ct.setName("Faulty");
-
+			CBSRTemplate selectedTemplate = null;
+			
+			int selectedTemplateIndex = templateCombo.getSelectionIndex();
+			if(selectedTemplateIndex < 0){
+				System.err.println("Error:  Selected a valid template.");// TODO dialog error
+				return;
+			}
+			else{
+				selectedTemplate = (CBSRTemplate)templateStore.getTemplate(templateCombo.getItem(selectedTemplateIndex));
+			}
+			if(selectedTemplate == null){
+				System.err.println("Error: loading template.");// TODO dialog error
+				return;
+			}
+			System.out.println("Using template : " + selectedTemplate.getName());
+			
+			if(!((CBSRTemplate)selectedTemplate).jasperFileDataExists()){
+				System.err.println("Error: template lacking a jasper file.");// TODO dialog error
+				return;
+			}
+			
 			BarcodeViewGuiData guiData = null;
 			byte[] pdfdata = null;
 			try {
@@ -779,9 +791,7 @@ public class BarcodeView extends ViewPart {
 
 			if (guiData != null) {
 				try {
-					// TODO load CBSRTemplate from the GUI combox.
-
-					pdfdata = ct.generatePdfCBSR(guiData, randStringArray());
+					pdfdata = selectedTemplate.generatePdfCBSR(guiData, randStringArray());
 				} catch (Exception e1) {
 					System.err.println(e1.getMessage());// TODO dialog error
 				}

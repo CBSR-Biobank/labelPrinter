@@ -3,6 +3,7 @@ package edu.ualberta.med.biobank.barcodegenerator.template.presets;
 import java.awt.Font;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.DataInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -18,7 +19,7 @@ import edu.ualberta.med.biobank.barcodegenerator.template.jasper.containers.Pati
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.FieldGenerator;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.barcodes.Barcode1D;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.barcodes.Barcode2D;
-import edu.ualberta.med.biobank.barcodegenerator.views.BarcodeView.BarcodeViewGuiData;
+import edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView.BarcodeViewGuiData;
 
 public class CBSRTemplate extends Template {
 
@@ -116,9 +117,8 @@ public class CBSRTemplate extends Template {
 			}
 			pbi.getLayout().add(bi);
 		}
-		
-		//TODO make input stream work new ByteArrayInputStream(this.jasperTemplateFileData)
-		this.setOutline(branding, patientInfo, pbi,null);
+		ByteArrayInputStream inputStream = new  ByteArrayInputStream(jasperTemplateFileData);
+		this.setOutline(branding, patientInfo, pbi,inputStream);
 
 		JasperFiller tm = new JasperFiller(this);
 		byte[] pdfData = tm.generatePdfData();
@@ -203,6 +203,11 @@ public class CBSRTemplate extends Template {
 	public Configuration getConfiguration() {
 		return this.config;
 		
+	}
+
+	@Override
+	public boolean jasperFileDataExists(){
+		return (this.jasperTemplateFileData != null);
 	}
 
 }

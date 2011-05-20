@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
@@ -11,6 +12,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.swt.custom.TableEditor;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -28,6 +31,7 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
@@ -45,9 +49,9 @@ import edu.ualberta.med.biobank.barcodegenerator.template.Template;
 import edu.ualberta.med.biobank.barcodegenerator.template.TemplateStore;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.CBSRTemplate;
 
-public class BarcodeSelector extends ViewPart {
+public class TemplateEditorView extends ViewPart {
 
-	public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.views.BarcodeSelector"; // TODO Needs to be whatever is mentioned in plugin.xml
+	public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.views.TemplateEditorView"; 
 	private Composite top = null;
 	private Group group = null;
 	private Composite composite = null;
@@ -215,7 +219,10 @@ public class BarcodeSelector extends ViewPart {
 		group1.setLayout(fillLayout1);
 		list = new List(group1, SWT.BORDER | SWT.V_SCROLL);
 		list.addSelectionListener(listListener);
-		syncListWithStore();
+		for(String s : templateStore.getTemplateNames())
+			list.add(s);
+		list.redraw();
+
 	}
 	
 	private SelectionListener listListener = new SelectionListener() {
@@ -238,34 +245,41 @@ public class BarcodeSelector extends ViewPart {
 
 		}
 	};
+	private void updateJasperFileText(String selectedName){
+		
+		if(templateSelected == null)
+			return;
+		
+		if(!((CBSRTemplate)templateSelected).jasperFileDataExists()){
+			text1.setText("Select a Jasper file.");
+			text1.setBackground(new Color(shell.getDisplay(),255,0,0));
+		}
+		else{
+			if(selectedName == null){
+				selectedName = "Jasper file loaded";
+			}
+			text1.setText(selectedName);
+			text1.setBackground(new Color(shell.getDisplay(),255,255,255));
+		}
+		text1.redraw();
+	}
 	
 	private void setSelectedTemplate(Template t){
 		templateSelected = t;
 		if(t != null){
 			text.setText(t.getName());
+			
+			updateJasperFileText(null);
+
 			populateTable(table1, ((CBSRTemplate)templateSelected).getConfiguration().getSettings());
 		}
 		else{
 			text.setText("Select a template.");
+			text1.setText("");
 			populateTable(table1,null);
 		}
 	}
 
-	private void syncListWithStore(){
-
-		this.list.removeAll();
-		for(String s : templateStore.getTemplateNames())
-			this.list.add(s);
-
-		if (templateSelected != null) {
-			setSelectedTemplate(templateStore.getTemplate(templateSelected
-					.getName()));
-			
-			this.list.deselectAll();
-		}
-		
-		this.list.redraw();
-	}
 
 	/**
 	 * This method initializes composite4	
@@ -283,6 +297,7 @@ public class BarcodeSelector extends ViewPart {
 					if(templateStore.removeTemplate(templateSelected)){
 						list.remove(templateSelected.getName());
 						setSelectedTemplate(null);
+						
 					}
 					else{
 						//TODO warn user dialog against duplicates
@@ -332,7 +347,7 @@ public class BarcodeSelector extends ViewPart {
 				CBSRTemplate ct = new CBSRTemplate();
 				ct.setJasperFileData(null);
 				ct.setDefaultConfiguration();
-				ct.setName(BarcodeView.randString());
+				ct.setName(LabelPrinterView.randString());
 
 				if(templateStore.addTemplate(ct)){
 					list.add(ct.getName());
@@ -385,7 +400,73 @@ public class BarcodeSelector extends ViewPart {
 		text1.setLayoutData(gridData8);
 		button5 = new Button(composite5, SWT.NONE);
 		button5.setText("Browse...");
+		button5.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent event) {
+				if(templateSelected == null)
+					return;
+				
+				FileDialog fd = new FileDialog(shell, SWT.OPEN);
+				fd.setText("Select Jasper File");
+				String[] filterExt = { "*.jrxml" };
+				fd.setFilterExtensions(filterExt);
+				String selected = fd.open();
+				if (selected != null) {
+					
+					File selectedFile = new File(selected);
+					if(!selectedFile.exists()){
+						//TODO error dialog
+						return;
+					}
+					byte[] jasperFileData;
+					try {
+						jasperFileData = getBytesFromFile(selectedFile);
+					} catch (IOException e) {
+						e.printStackTrace();
+						//error dialog
+						return;
+					}
+					((CBSRTemplate)templateSelected).setJasperFileData(jasperFileData);
+					updateJasperFileText(selected);
+				}
+			}
+
+			public void widgetDefaultSelected(SelectionEvent event) {
+				widgetSelected(event);
+			}
+		});
 	}
+	
+	//http://www.java-tips.org/java-se-tips/java.io/reading-a-file-into-a-byte-array.html
+	public static byte[] getBytesFromFile(File file) throws IOException {
+        InputStream is = new FileInputStream(file);
+    
+        // Get the size of the file
+        long length = file.length();
+    
+        if (length > Integer.MAX_VALUE) {
+            // File is too large
+        }
+    
+        // Create the byte array to hold the data
+        byte[] bytes = new byte[(int)length];
+    
+        // Read in the bytes
+        int offset = 0;
+        int numRead = 0;
+        while (offset < bytes.length
+               && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
+            offset += numRead;
+        }
+    
+        // Ensure all the bytes have been read in
+        if (offset < bytes.length) {
+            throw new IOException("Could not completely read file "+file.getName());
+        }
+    
+        // Close the input stream and return bytes
+        is.close();
+        return bytes;
+    }
 
 	/**
 	 * This method initializes composite6	
@@ -458,7 +539,7 @@ public class BarcodeSelector extends ViewPart {
 					return;
 				// The control that will be the editor must be a child of the
 				// Table
-				Text newEditor = new Text(table1, SWT.NONE);
+				final Text newEditor = new Text(table1, SWT.NONE);
 				newEditor.setText(item.getText(EDITABLECOLUMN));
 
 				newEditor.addListener(SWT.Verify, new Listener() {
@@ -470,6 +551,20 @@ public class BarcodeSelector extends ViewPart {
 						}
 					}
 				});
+				newEditor.addKeyListener(new KeyListener(){
+
+					@Override
+					public void keyPressed(KeyEvent e) {
+						// TODO newEditor return stop edit
+						if(e.keyCode == SWT.CR){
+							System.out.println("return");
+							table1.deselectAll();
+						}
+					}
+
+					@Override
+					public void keyReleased(KeyEvent e) {
+					}});
 				newEditor.addModifyListener(new ModifyListener() {
 					public void modifyText(ModifyEvent me) {
 						Text text = (Text) editor.getEditor();
@@ -487,9 +582,18 @@ public class BarcodeSelector extends ViewPart {
 						else
 							valid = false;
 
-						item.setForeground(valid ? new Color(
-								shell.getDisplay(), 0, 0, 0) : new Color(shell
-								.getDisplay(), 255, 0, 0));
+						
+						if(valid)
+							item.setForeground(new Color(
+									shell.getDisplay(), 0, 0, 0));
+						else
+							item.setForeground(new Color(shell
+									.getDisplay(), 255, 0, 0));
+						
+
+						if(templateSelected != null && valid){
+							((CBSRTemplate)templateSelected).getConfiguration().setSettingsEntry(item.getText(0),String2Rect(item.getText(1)));
+						}
 
 					}
 				});
@@ -526,9 +630,9 @@ public class BarcodeSelector extends ViewPart {
 	}
 
 	private void populateTable(Table t, Map<String, Rectangle> data) {
-
+		t.removeAll();
+		
 		if(data == null){
-			t.removeAll();
 			return;
 		}
 		
@@ -537,6 +641,7 @@ public class BarcodeSelector extends ViewPart {
 			TableItem item = new TableItem(t, SWT.NONE);
 			item.setText(new String[] { e.getKey(), rect2String(e.getValue()) });
 		}
+		t.redraw();
 	}
 
 	private static String rect2String(Rectangle r) {

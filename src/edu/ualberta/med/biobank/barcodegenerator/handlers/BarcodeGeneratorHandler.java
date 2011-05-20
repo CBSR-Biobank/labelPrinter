@@ -15,7 +15,7 @@ import org.eclipse.ui.PartInitException;
 
 
 import edu.ualberta.med.biobank.barcodegenerator.Activator;
-import edu.ualberta.med.biobank.barcodegenerator.views.BarcodeView;
+import edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView;
 
 public class BarcodeGeneratorHandler extends AbstractHandler implements IHandler {
 
@@ -31,7 +31,7 @@ public class BarcodeGeneratorHandler extends AbstractHandler implements IHandler
         try {
         	
         	
-            page.showView(BarcodeView.ID);
+            page.showView(LabelPrinterView.ID);
         } catch (PartInitException e) {
             throw new ExecutionException("View cannot be opened", e);
         }
