@@ -54,20 +54,20 @@ public class TemplateEditorView extends ViewPart {
 	private Composite composite3 = null;
 	private Group group1 = null;
 	private Composite composite4 = null;
-	private Button button = null;
-	private Button button1 = null;
-	private Button button2 = null;
+	private Button deleteButton = null;
+	private Button copyButton = null;
+	private Button newButton = null;
 	private Button cancleButton = null;
 	private Button saveAllButton = null;
 	private Composite composite5 = null;
 	private Label label = null;
-	private Text text = null;
+	private Text templateNameText = null;
 	private Label label1 = null;
-	private Text text1 = null;
-	private Button button5 = null;
+	private Text jasperFileText = null;
+	private Button browseButton = null;
 	private List list = null;
 	private Group composite6 = null;
-	private Table table1 = null;
+	private Table configTable = null;
 	private Shell shell;
 
 	private TemplateStore templateStore = new TemplateStore();
@@ -90,11 +90,12 @@ public class TemplateEditorView extends ViewPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
+		shell = parent.getShell();
 		loadTemplateStore();
 
 		top = new Composite(parent, SWT.NONE);
 		top.setLayout(new GridLayout());
-		shell = top.getShell();
+
 		createGroup();
 	}
 
@@ -251,31 +252,33 @@ public class TemplateEditorView extends ViewPart {
 			return;
 
 		if (!((CBSRTemplate) templateSelected).jasperFileDataExists()) {
-			text1.setText("Select a Jasper file.");
-			text1.setBackground(new Color(shell.getDisplay(), 255, 0, 0));
+			jasperFileText.setText("Select a Jasper file.");
+			jasperFileText.setBackground(new Color(shell.getDisplay(), 255, 0,
+					0));
 		} else {
 			if (selectedName == null) {
 				selectedName = "Jasper file loaded";
 			}
-			text1.setText(selectedName);
-			text1.setBackground(new Color(shell.getDisplay(), 255, 255, 255));
+			jasperFileText.setText(selectedName);
+			jasperFileText.setBackground(new Color(shell.getDisplay(), 255,
+					255, 255));
 		}
-		text1.redraw();
+		jasperFileText.redraw();
 	}
 
 	private void setSelectedTemplate(Template t) {
 		templateSelected = t;
 		if (t != null) {
-			text.setText(t.getName());
+			templateNameText.setText(t.getName());
 
 			updateJasperFileText(null);
 
-			populateTable(table1, ((CBSRTemplate) templateSelected)
+			populateTable(configTable, ((CBSRTemplate) templateSelected)
 					.getConfiguration().getSettings());
 		} else {
-			text.setText("Select a template.");
-			text1.setText("");
-			populateTable(table1, null);
+			templateNameText.setText("Select a template.");
+			jasperFileText.setText("");
+			populateTable(configTable, null);
 		}
 	}
 
@@ -287,9 +290,9 @@ public class TemplateEditorView extends ViewPart {
 
 		composite4 = new Composite(composite2, SWT.NONE);
 		composite4.setLayout(new RowLayout());
-		button = new Button(composite4, SWT.NONE);
-		button.setText("Delete ");
-		button.addSelectionListener(new SelectionListener() {
+		deleteButton = new Button(composite4, SWT.NONE);
+		deleteButton.setText("Delete ");
+		deleteButton.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (templateSelected != null) {
@@ -310,9 +313,9 @@ public class TemplateEditorView extends ViewPart {
 			}
 		});
 		// TODO complete copy
-		button1 = new Button(composite4, SWT.NONE);
-		button1.setText("Copy ");
-		button1.addSelectionListener(new SelectionListener() {
+		copyButton = new Button(composite4, SWT.NONE);
+		copyButton.setText("Copy ");
+		copyButton.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (templateSelected != null) {
@@ -337,9 +340,9 @@ public class TemplateEditorView extends ViewPart {
 			}
 		});
 		// TODO complete new
-		button2 = new Button(composite4, SWT.NONE);
-		button2.setText("New");
-		button2.addSelectionListener(new SelectionListener() {
+		newButton = new Button(composite4, SWT.NONE);
+		newButton.setText("New");
+		newButton.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
@@ -388,19 +391,19 @@ public class TemplateEditorView extends ViewPart {
 		composite5.setLayoutData(gridData11);
 		label = new Label(composite5, SWT.NONE);
 		label.setText("Template Name:");
-		text = new Text(composite5, SWT.BORDER);
-		text.setEditable(false);
-		text.setLayoutData(gridData7);
+		templateNameText = new Text(composite5, SWT.BORDER);
+		templateNameText.setEditable(false);
+		templateNameText.setLayoutData(gridData7);
 		@SuppressWarnings("unused")
 		Label filler7 = new Label(composite5, SWT.NONE);
 		label1 = new Label(composite5, SWT.NONE);
 		label1.setText("Jasper File:");
-		text1 = new Text(composite5, SWT.BORDER);
-		text1.setEditable(false);
-		text1.setLayoutData(gridData8);
-		button5 = new Button(composite5, SWT.NONE);
-		button5.setText("Browse...");
-		button5.addSelectionListener(new SelectionListener() {
+		jasperFileText = new Text(composite5, SWT.BORDER);
+		jasperFileText.setEditable(false);
+		jasperFileText.setLayoutData(gridData8);
+		browseButton = new Button(composite5, SWT.NONE);
+		browseButton.setText("Browse...");
+		browseButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent event) {
 				if (templateSelected == null)
 					return;
@@ -497,12 +500,12 @@ public class TemplateEditorView extends ViewPart {
 		gridData9.widthHint = -1;
 		gridData9.horizontalAlignment = GridData.FILL;
 
-		table1 = new Table(c, SWT.FULL_SELECTION | SWT.HIDE_SELECTION);
-		table1.setHeaderVisible(true);
-		table1.setLayoutData(gridData9);
-		table1.setLinesVisible(true);
+		configTable = new Table(c, SWT.FULL_SELECTION | SWT.HIDE_SELECTION);
+		configTable.setHeaderVisible(true);
+		configTable.setLayoutData(gridData9);
+		configTable.setLinesVisible(true);
 
-		final TableEditor editor = new TableEditor(table1);
+		final TableEditor editor = new TableEditor(configTable);
 		// The editor must have the same size as the cell and must
 		// not be any smaller than 50 pixels.
 		editor.horizontalAlignment = SWT.LEFT;
@@ -511,7 +514,7 @@ public class TemplateEditorView extends ViewPart {
 		// editing the second column
 		final int EDITABLECOLUMN = 1;
 
-		table1.addSelectionListener(new SelectionAdapter() {
+		configTable.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				// Clean up any previous editor control
 				Control oldEditor = editor.getEditor();
@@ -525,7 +528,7 @@ public class TemplateEditorView extends ViewPart {
 					return;
 				// The control that will be the editor must be a child of the
 				// Table
-				final Text newEditor = new Text(table1, SWT.NONE);
+				final Text newEditor = new Text(configTable, SWT.NONE);
 				newEditor.setText(item.getText(EDITABLECOLUMN));
 
 				newEditor.addListener(SWT.Verify, new Listener() {
@@ -544,7 +547,7 @@ public class TemplateEditorView extends ViewPart {
 						// TODO newEditor return stop edit
 						if (e.keyCode == SWT.CR) {
 							System.out.println("return");
-							table1.deselectAll();
+							configTable.deselectAll();
 						}
 					}
 
@@ -597,10 +600,10 @@ public class TemplateEditorView extends ViewPart {
 		String[] columnNames = { "Variable", "Value" };
 
 		TableColumn[] column = new TableColumn[2];
-		column[0] = new TableColumn(table1, SWT.LEFT);
+		column[0] = new TableColumn(configTable, SWT.LEFT);
 		column[0].setText(columnNames[0]);
 
-		column[1] = new TableColumn(table1, SWT.LEFT);
+		column[1] = new TableColumn(configTable, SWT.LEFT);
 		column[1].setText(columnNames[1]);
 		column[1].setWidth(100);
 
