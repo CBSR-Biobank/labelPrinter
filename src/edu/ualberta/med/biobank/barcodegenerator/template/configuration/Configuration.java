@@ -11,7 +11,6 @@ import java.util.HashMap;
 
 import org.eclipse.swt.graphics.Rectangle;
 
-//TODO make Configuration Serializable
 public class Configuration implements Serializable {
 	protected HashMap<String, Rectangle> settings;
 

@@ -1,4 +1,4 @@
-package edu.ualberta.med.biobank.barcodegenerator.template.exceptions;
+package edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.exceptions;
 
 public class CBSRPdfGenException extends Exception {
 	String mistake;

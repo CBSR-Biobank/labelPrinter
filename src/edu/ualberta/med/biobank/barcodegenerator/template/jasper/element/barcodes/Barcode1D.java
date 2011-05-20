@@ -16,7 +16,7 @@ import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.Elem
 public class Barcode1D extends Element {
 
 	Font font;
-	//TODO set font default as 22
+	
 	public Barcode1D(Rectangle rect, String message, Font font) throws ElementCreationException {
 
 		if (message == null || message.length() == 0)

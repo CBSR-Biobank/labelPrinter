@@ -56,6 +56,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -79,7 +80,6 @@ import edu.ualberta.med.biobank.barcodegenerator.preferences.PreferenceInitializ
 import edu.ualberta.med.biobank.barcodegenerator.template.Template;
 import edu.ualberta.med.biobank.barcodegenerator.template.TemplateStore;
 import edu.ualberta.med.biobank.barcodegenerator.template.configuration.Configuration;
-import edu.ualberta.med.biobank.barcodegenerator.template.exceptions.CBSRPdfGenException;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.JasperFiller;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.JasperOutline;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.containers.BarcodeImage;
@@ -87,8 +87,10 @@ import edu.ualberta.med.biobank.barcodegenerator.template.jasper.containers.Pati
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.FieldGenerator;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.barcodes.Barcode1D;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.barcodes.Barcode2D;
-import edu.ualberta.med.biobank.barcodegenerator.template.presets.CBSRData;
-import edu.ualberta.med.biobank.barcodegenerator.template.presets.CBSRTemplate;
+import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSRData;
+import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSRTemplate;
+import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.exceptions.CBSRGuiVerificationException;
+import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.exceptions.CBSRPdfGenException;
 
 public class LabelPrinterView extends ViewPart {
 
@@ -149,32 +151,14 @@ public class LabelPrinterView extends ViewPart {
 	private Table configTable = null;
 	private TableViewer configTableViewer = null;
 	private Shell shell;
-	private IPreferenceStore store;
-	private TemplateStore templateStore  = new TemplateStore();
+	private IPreferenceStore perferenceStore;
+	private TemplateStore templateStore = new TemplateStore();
 
 	@Override
 	public void createPartControl(Composite parent) {
 
-		store = null;
-
-		if (Activator.getDefault() != null)
-			store = Activator.getDefault().getPreferenceStore();
-
-		// TODO remove store hack
-		if (store == null) {
-			System.err.println("WARNING: preference store was NULL!");
-			store = new PreferenceStore("barcodegen.properties");
-			PreferenceInitializer.setDefaults(store);
-		}
-		
-		//TODO load store from proper location
-		try {
-			templateStore.loadStore(new File("Store.dat"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
+		loadPreferenceStore();
+		loadTemplateStore();
 
 		shell = parent.getShell();
 		RowLayout rowLayout = new RowLayout();
@@ -187,6 +171,32 @@ public class LabelPrinterView extends ViewPart {
 		top.setLayout(rowLayout);
 		createComposite2();
 		createComposite8();
+	}
+
+	private void loadPreferenceStore() {
+		perferenceStore = null;
+
+		if (Activator.getDefault() != null)
+			perferenceStore = Activator.getDefault().getPreferenceStore();
+
+		// TODO remove store hack
+		if (perferenceStore == null) {
+			System.err.println("WARNING: preference store was NULL!");
+			perferenceStore = new PreferenceStore("barcodegen.properties");
+			PreferenceInitializer.setDefaults(perferenceStore);
+		}
+	}
+
+	private void loadTemplateStore() {
+		// TODO load store from proper location
+		try {
+			templateStore.loadStore(new File("Store.dat"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	@Override
@@ -254,7 +264,7 @@ public class LabelPrinterView extends ViewPart {
 		projectTitleText = new Text(composite3, SWT.BORDER);
 		projectTitleText.setLayoutData(gridData);
 		projectTitleText.setTextLimit(12);
-		projectTitleText.setText(store
+		projectTitleText.setText(perferenceStore
 				.getString(PreferenceConstants.PROJECT_TITLE));
 
 		Label filler = new Label(composite3, SWT.NONE);
@@ -287,10 +297,10 @@ public class LabelPrinterView extends ViewPart {
 		label9.setText("Template:");
 		templateCombo = new Combo(composite3, SWT.DROP_DOWN | SWT.BORDER);
 		templateCombo.setLayoutData(gridData21);
-		for(String s: this.templateStore.getTemplateNames()){
+		for (String s : this.templateStore.getTemplateNames()) {
 			templateCombo.add(s);
 		}
-		if(templateCombo.getItemCount() > 0)
+		if (templateCombo.getItemCount() > 0)
 			templateCombo.select(0);
 	}
 
@@ -416,15 +426,16 @@ public class LabelPrinterView extends ViewPart {
 		label6.setText("Print Barcode:");
 
 		label1Checkbox = new Button(composite5, SWT.CHECK);
-		label1Checkbox.setSelection(store
+		label1Checkbox.setSelection(perferenceStore
 				.getBoolean(PreferenceConstants.LABEL_CHECKBOX_1));
 		label1Text = new Text(composite5, SWT.BORDER);
 		label1Text.setLayoutData(gridData6);
 		label1Text.setTextLimit(12);
-		label1Text.setText(store.getString(PreferenceConstants.LABEL_TEXT_1));
+		label1Text.setText(perferenceStore
+				.getString(PreferenceConstants.LABEL_TEXT_1));
 
 		value1Checkbox = new Button(composite5, SWT.CHECK);
-		value1Checkbox.setSelection(store
+		value1Checkbox.setSelection(perferenceStore
 				.getBoolean(PreferenceConstants.VALUE_CHECKBOX_1));
 		value1Text = new Text(composite5, SWT.BORDER);
 		value1Text.setLayoutData(gridData7);
@@ -432,42 +443,44 @@ public class LabelPrinterView extends ViewPart {
 
 		printBarcode1Checkbox = new Button(composite5, SWT.CHECK);
 		printBarcode1Checkbox.setLayoutData(gridData11);
-		printBarcode1Checkbox.setSelection(store
+		printBarcode1Checkbox.setSelection(perferenceStore
 				.getBoolean(PreferenceConstants.BARCODE_CHECKBOX_1));
 
 		label2Checkbox = new Button(composite5, SWT.CHECK);
-		label2Checkbox.setSelection(store
+		label2Checkbox.setSelection(perferenceStore
 				.getBoolean(PreferenceConstants.LABEL_CHECKBOX_2));
 		label2Text = new Text(composite5, SWT.BORDER);
 		label2Text.setLayoutData(gridData8);
 		label2Text.setTextLimit(12);
-		label2Text.setText(store.getString(PreferenceConstants.LABEL_TEXT_2));
+		label2Text.setText(perferenceStore
+				.getString(PreferenceConstants.LABEL_TEXT_2));
 
 		value2Checkbox = new Button(composite5, SWT.CHECK);
-		value2Checkbox.setSelection(store
+		value2Checkbox.setSelection(perferenceStore
 				.getBoolean(PreferenceConstants.VALUE_CHECKBOX_2));
 		value2Text = new Text(composite5, SWT.BORDER);
 		value2Text.setLayoutData(gridData5);
 		value2Text.setTextLimit(24);
 		printBarcode2Checkbox = new Button(composite5, SWT.CHECK);
-		printBarcode2Checkbox.setSelection(store
+		printBarcode2Checkbox.setSelection(perferenceStore
 				.getBoolean(PreferenceConstants.BARCODE_CHECKBOX_2));
 
 		label3Checkbox = new Button(composite5, SWT.CHECK);
-		label3Checkbox.setSelection(store
+		label3Checkbox.setSelection(perferenceStore
 				.getBoolean(PreferenceConstants.LABEL_CHECKBOX_3));
 		label3Text = new Text(composite5, SWT.BORDER);
 		label3Text.setLayoutData(gridData10);
 		label3Text.setTextLimit(12);
-		label3Text.setText(store.getString(PreferenceConstants.LABEL_TEXT_3));
+		label3Text.setText(perferenceStore
+				.getString(PreferenceConstants.LABEL_TEXT_3));
 		value3Checkbox = new Button(composite5, SWT.CHECK);
-		value3Checkbox.setSelection(store
+		value3Checkbox.setSelection(perferenceStore
 				.getBoolean(PreferenceConstants.VALUE_CHECKBOX_3));
 		value3Text = new Text(composite5, SWT.BORDER);
 		value3Text.setLayoutData(gridData9);
 		value3Text.setTextLimit(24);
 		printBarcode3Checkbox = new Button(composite5, SWT.CHECK);
-		printBarcode3Checkbox.setSelection(store
+		printBarcode3Checkbox.setSelection(perferenceStore
 				.getBoolean(PreferenceConstants.BARCODE_CHECKBOX_3));
 	}
 
@@ -528,13 +541,13 @@ public class LabelPrinterView extends ViewPart {
 		composite7.setLayout(new FillLayout());
 		sampleTypeCheckbox = new Button(composite7, SWT.CHECK | SWT.LEFT);
 		sampleTypeCheckbox.setText("Enable");
-		sampleTypeCheckbox.setSelection(store
+		sampleTypeCheckbox.setSelection(perferenceStore
 				.getBoolean(PreferenceConstants.SAMPLETYPE_CHECKBOX));
 		cLabel = new CLabel(composite7, SWT.NONE);
 		cLabel.setText("Sample Type (on labels):");
 		sampleTypeText = new Text(composite7, SWT.BORDER | SWT.V_SCROLL
 				| SWT.SINGLE);
-		sampleTypeText.setText(store
+		sampleTypeText.setText(perferenceStore
 				.getString(PreferenceConstants.SAMPLETYPE_TEXT));
 		sampleTypeText.setTextLimit(15);
 		label8 = new Label(composite7, SWT.LEFT | SWT.HORIZONTAL);
@@ -595,71 +608,57 @@ public class LabelPrinterView extends ViewPart {
 		gridData12.verticalAlignment = GridData.FILL;
 		composite9 = new Composite(group2, SWT.NONE);
 		composite9.setLayout(new GridLayout());
-		//createTable(composite9);
 	}
-
-	
 
 	private void updateSavePreferences() {
 
-		store.setValue(PreferenceConstants.LOGO_FILE_LOCATION,
+		perferenceStore.setValue(PreferenceConstants.LOGO_FILE_LOCATION,
 				logoText.getText());
-		store.setValue(PreferenceConstants.PROJECT_TITLE,
+		perferenceStore.setValue(PreferenceConstants.PROJECT_TITLE,
 				projectTitleText.getText());
 
-		store.setValue(PreferenceConstants.LABEL_CHECKBOX_1,
+		perferenceStore.setValue(PreferenceConstants.LABEL_CHECKBOX_1,
 				label1Checkbox.getSelection());
-		store.setValue(PreferenceConstants.LABEL_CHECKBOX_2,
+		perferenceStore.setValue(PreferenceConstants.LABEL_CHECKBOX_2,
 				label2Checkbox.getSelection());
-		store.setValue(PreferenceConstants.LABEL_CHECKBOX_3,
+		perferenceStore.setValue(PreferenceConstants.LABEL_CHECKBOX_3,
 				label3Checkbox.getSelection());
 
-		store.setValue(PreferenceConstants.LABEL_TEXT_1, label1Text.getText());
-		store.setValue(PreferenceConstants.LABEL_TEXT_2, label2Text.getText());
-		store.setValue(PreferenceConstants.LABEL_TEXT_3, label3Text.getText());
+		perferenceStore.setValue(PreferenceConstants.LABEL_TEXT_1,
+				label1Text.getText());
+		perferenceStore.setValue(PreferenceConstants.LABEL_TEXT_2,
+				label2Text.getText());
+		perferenceStore.setValue(PreferenceConstants.LABEL_TEXT_3,
+				label3Text.getText());
 
-		store.setValue(PreferenceConstants.VALUE_CHECKBOX_1,
+		perferenceStore.setValue(PreferenceConstants.VALUE_CHECKBOX_1,
 				value1Checkbox.getSelection());
-		store.setValue(PreferenceConstants.VALUE_CHECKBOX_2,
+		perferenceStore.setValue(PreferenceConstants.VALUE_CHECKBOX_2,
 				value2Checkbox.getSelection());
-		store.setValue(PreferenceConstants.VALUE_CHECKBOX_3,
+		perferenceStore.setValue(PreferenceConstants.VALUE_CHECKBOX_3,
 				value3Checkbox.getSelection());
 
-		store.setValue(PreferenceConstants.BARCODE_CHECKBOX_1,
+		perferenceStore.setValue(PreferenceConstants.BARCODE_CHECKBOX_1,
 				printBarcode1Checkbox.getSelection());
-		store.setValue(PreferenceConstants.BARCODE_CHECKBOX_2,
+		perferenceStore.setValue(PreferenceConstants.BARCODE_CHECKBOX_2,
 				printBarcode2Checkbox.getSelection());
-		store.setValue(PreferenceConstants.BARCODE_CHECKBOX_3,
+		perferenceStore.setValue(PreferenceConstants.BARCODE_CHECKBOX_3,
 				printBarcode3Checkbox.getSelection());
 
-		store.setValue(PreferenceConstants.SAMPLETYPE_CHECKBOX,
+		perferenceStore.setValue(PreferenceConstants.SAMPLETYPE_CHECKBOX,
 				sampleTypeCheckbox.getSelection());
-		store.setValue(PreferenceConstants.SAMPLETYPE_TEXT,
+		perferenceStore.setValue(PreferenceConstants.SAMPLETYPE_TEXT,
 				sampleTypeText.getText());
 	}
 
 	public class BarcodeViewGuiData extends CBSRData {
 
-		// TODO test exceptions
-		public class GuiInputException extends Exception {
-
-			private static final long serialVersionUID = 4349271754734681511L;
-
-			public GuiInputException(String title, String message) {
-				this(title + " : " + message);
-			}
-
-			public GuiInputException(String message) {
-				super(message);
-			}
-		};
-
-		public BarcodeViewGuiData() throws GuiInputException {
+		public BarcodeViewGuiData() throws CBSRGuiVerificationException {
 
 			projectTileStr = projectTitleText.getText();
 
 			if (projectTileStr == null || projectTileStr.length() == 0) {
-				throw new GuiInputException("Incorrect Title",
+				throw new CBSRGuiVerificationException("Incorrect Title",
 						"A valid title is required.");
 			}
 
@@ -691,7 +690,7 @@ public class LabelPrinterView extends ViewPart {
 
 			patientIdStr = patientIDText.getText();
 			if (patientIdStr == null || patientIdStr.length() == 0) {
-				throw new GuiInputException("Incorrect PatientID",
+				throw new CBSRGuiVerificationException("Incorrect PatientID",
 						"A valid patient Id is required.");
 
 			}
@@ -734,6 +733,25 @@ public class LabelPrinterView extends ViewPart {
 			if (sampleTypeCheckbox.getSelection()) {
 				sampleTypeStr = sampleTypeText.getText();
 			}
+
+			int selectedTemplateIndex = templateCombo.getSelectionIndex();
+			if (selectedTemplateIndex < 0) {
+				throw new CBSRGuiVerificationException("Verifcation Issue",
+						"Selected a valid template.");
+			} else {
+				selectedTemplate = (CBSRTemplate) templateStore
+						.getTemplate(templateCombo
+								.getItem(selectedTemplateIndex));
+			}
+
+			if (selectedTemplate == null) {
+				throw new CBSRGuiVerificationException("Verifcation Issue",
+						"Could not load template.");
+			}
+			if (!((CBSRTemplate) selectedTemplate).jasperFileDataExists()) {
+				throw new CBSRGuiVerificationException("Verifcation Issue",
+						"Template is lacking a jasper file.");
+			}
 		}
 	};
 
@@ -759,42 +777,20 @@ public class LabelPrinterView extends ViewPart {
 	private SelectionListener printButtonListener = new SelectionListener() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			System.out.println("Print pressed!");
-
-			CBSRTemplate selectedTemplate = null;
-			
-			int selectedTemplateIndex = templateCombo.getSelectionIndex();
-			if(selectedTemplateIndex < 0){
-				System.err.println("Error:  Selected a valid template.");// TODO dialog error
-				return;
-			}
-			else{
-				selectedTemplate = (CBSRTemplate)templateStore.getTemplate(templateCombo.getItem(selectedTemplateIndex));
-			}
-			if(selectedTemplate == null){
-				System.err.println("Error: loading template.");// TODO dialog error
-				return;
-			}
-			System.out.println("Using template : " + selectedTemplate.getName());
-			
-			if(!((CBSRTemplate)selectedTemplate).jasperFileDataExists()){
-				System.err.println("Error: template lacking a jasper file.");// TODO dialog error
-				return;
-			}
-			
 			BarcodeViewGuiData guiData = null;
 			byte[] pdfdata = null;
 			try {
 				guiData = new BarcodeViewGuiData();
-			} catch (BarcodeViewGuiData.GuiInputException e1) {
-				System.err.println(e1.getMessage());// TODO dialog error
+			} catch (CBSRGuiVerificationException e1) {
+				Error("Gui Validation", e1.getMessage());
 			}
 
 			if (guiData != null) {
 				try {
-					pdfdata = selectedTemplate.generatePdfCBSR(guiData, randStringArray());
+					pdfdata = guiData.selectedTemplate.generatePdfCBSR(guiData,
+							randStringArray());
 				} catch (CBSRPdfGenException e1) {
-					System.err.println(e1.getError());// TODO dialog error
+					Error("Gui Validation", e1.getError());
 				}
 				if (pdfdata != null) {
 					FileOutputStream fos;
@@ -803,16 +799,16 @@ public class LabelPrinterView extends ViewPart {
 						fos.write(pdfdata);
 						fos.close();
 					} catch (FileNotFoundException e1) {
-						e1.printStackTrace();// TODO dialog error
+						Error("Saving Pdf", "Could find file to save pdf to");
 					} catch (IOException ee) {
-						ee.printStackTrace();// TODO dialog error
+						Error("Saving Pdf",
+								"Problem saving file: " + ee.getMessage());
 					}
 				}
 
 			}
 			updateSavePreferences();
 			System.out.println("Print done.");
-
 		}
 
 		@Override
@@ -825,8 +821,14 @@ public class LabelPrinterView extends ViewPart {
 	private SelectionListener exitButtonListener = new SelectionListener() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			// shell.getDisplay().getActiveShell().close(); TODO close
-
+			MessageBox messageBox = new MessageBox(shell, SWT.ICON_QUESTION
+					| SWT.YES | SWT.NO);
+			messageBox.setMessage("Do you want to close this window?");
+			messageBox.setText("Label Printer Closing");
+			int response = messageBox.open();
+			if (response == SWT.YES) {
+				// TODO close view
+			}
 		}
 
 		@Override
@@ -835,4 +837,11 @@ public class LabelPrinterView extends ViewPart {
 
 		}
 	};
+
+	private void Error(String title, String message) {
+		MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
+		messageBox.setMessage(message);
+		messageBox.setText(title);
+		messageBox.open();
+	}
 }

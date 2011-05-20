@@ -1,4 +1,4 @@
-package edu.ualberta.med.biobank.barcodegenerator.template.presets;
+package edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -22,4 +22,5 @@ public class CBSRData {
 	public boolean barcode3Print;
 
 	public String sampleTypeStr;
+	public CBSRTemplate selectedTemplate;
 }

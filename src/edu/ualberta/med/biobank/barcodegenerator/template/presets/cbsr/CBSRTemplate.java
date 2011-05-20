@@ -1,4 +1,4 @@
-package edu.ualberta.med.biobank.barcodegenerator.template.presets;
+package edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr;
 
 import java.awt.Font;
 import java.io.ByteArrayInputStream;
@@ -19,9 +19,10 @@ import edu.ualberta.med.biobank.barcodegenerator.template.jasper.containers.Pati
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.FieldGenerator;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.barcodes.Barcode1D;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.barcodes.Barcode2D;
+import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.text.Text;
 import edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView.BarcodeViewGuiData;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.*;
-import edu.ualberta.med.biobank.barcodegenerator.template.exceptions.*;
+import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.exceptions.CBSRPdfGenException;
 
 public class CBSRTemplate extends Template {
 
@@ -49,33 +50,38 @@ public class CBSRTemplate extends Template {
 
 		try {
 			patientInfo.getElements().addAll(
-					FieldGenerator.generateElements(
-							this.getKey("PATIENT_INFO_1_TEXT"),
-							cbsrData.label1Str, cbsrData.value1Str, new Font("Times New Roman",Font.PLAIN,23),
-							this.getKey("PATIENT_INFO_1_BARCODE"),
+					FieldGenerator.generateElements(this
+							.getKey("PATIENT_INFO_1_TEXT"), cbsrData.label1Str,
+							cbsrData.value1Str, new Font("Times New Roman",
+									Font.PLAIN, 23), this
+									.getKey("PATIENT_INFO_1_BARCODE"),
 							cbsrData.barcode1Print));
 
 			patientInfo.getElements().addAll(
-					FieldGenerator.generateElements(
-							this.getKey("PATIENT_INFO_2_TEXT"),
-							cbsrData.label2Str, cbsrData.value2Str,  new Font("Times New Roman",Font.PLAIN,23),
-							this.getKey("PATIENT_INFO_2_BARCODE"),
+					FieldGenerator.generateElements(this
+							.getKey("PATIENT_INFO_2_TEXT"), cbsrData.label2Str,
+							cbsrData.value2Str, new Font("Times New Roman",
+									Font.PLAIN, 23), this
+									.getKey("PATIENT_INFO_2_BARCODE"),
 							cbsrData.barcode2Print));
 
 			patientInfo.getElements().addAll(
-					FieldGenerator.generateElements(
-							this.getKey("PATIENT_INFO_3_TEXT"),
-							cbsrData.label3Str, cbsrData.value3Str,  new Font("Times New Roman",Font.PLAIN,23),
-							this.getKey("PATIENT_INFO_3_BARCODE"),
+					FieldGenerator.generateElements(this
+							.getKey("PATIENT_INFO_3_TEXT"), cbsrData.label3Str,
+							cbsrData.value3Str, new Font("Times New Roman",
+									Font.PLAIN, 23), this
+									.getKey("PATIENT_INFO_3_BARCODE"),
 							cbsrData.barcode3Print));
 
 			patientInfo.getElements().add(
 					new Barcode1D(this.getKey("PATIENT_INFO_ID_BARCODE"),
-							cbsrData.patientIdStr,  new Font("Times New Roman",Font.PLAIN,22)));
+							cbsrData.patientIdStr, new Font("Times New Roman",
+									Font.PLAIN, 22)));
 
 		} catch (ElementCreationException e) {
 			throw new CBSRPdfGenException(
-					"Failed to create element in patient info box : " + e.getError());
+					"Failed to create element in patient info box : "
+							+ e.getError());
 		}
 		// -------barcode info------------
 		JasperOutline.PatientBarcodeInformation pbi = new JasperOutline.PatientBarcodeInformation();
@@ -88,7 +94,8 @@ public class CBSRTemplate extends Template {
 
 				i++;
 				// 1d barcode
-				if (cbsrData.patientIdStr != null) {
+				if (cbsrData.patientIdStr != null
+						&& cbsrData.patientIdStr.length() > 0) {
 					Rectangle r = new Rectangle(
 							this.getKey("BARCODES_1D_ROOT").x
 									+ this.getKey("BARCODES_1D_NUM_" + i).x,
@@ -100,12 +107,17 @@ public class CBSRTemplate extends Template {
 									+ this.getKey("BARCODES_1D_NUM_" + i).height);
 
 					Barcode1D item1D = new Barcode1D(r, cbsrData.patientIdStr,
-							new Font("Times New Roman",Font.PLAIN,22));
+							new Font("Times New Roman", Font.PLAIN, 22));
 					bi.getElements().add(item1D);
+				} else {
+					throw new CBSRPdfGenException(
+							"Empty or null barcode string was specified.");
 				}
 
 				// 2d barcode;
-				if (rStrArray != null) {
+				if (rStrArray != null
+						&& rStrArray.length() > 0
+						&& rStrArray.replaceAll("[^a-zA-Z0-9 ]", "").length() == 12) {
 					Rectangle r = new Rectangle(
 							this.getKey("BARCODES_2D_ROOT").x
 									+ this.getKey("BARCODES_2D_NUM_" + i).x,
@@ -118,10 +130,14 @@ public class CBSRTemplate extends Template {
 
 					Barcode2D item2D = new Barcode2D(r, rStrArray);
 					bi.getElements().add(item2D);
+				} else {
+					throw new CBSRPdfGenException(
+							"Barcode ID must be a 12 character alphanumeric string.");
 				}
 
-				if (cbsrData.sampleTypeStr != null) {
-					Rectangle r = new Rectangle(
+				if (cbsrData.sampleTypeStr != null
+						&& cbsrData.sampleTypeStr.length() > 0) {
+					Rectangle rectdim = new Rectangle(
 							this.getKey("SAMPLE_TYPE_TEXT_ROOT").x
 									+ this.getKey("BARCODES_SAMPLE_TEXT_NUM_"
 											+ i).x,
@@ -135,16 +151,16 @@ public class CBSRTemplate extends Template {
 									+ this.getKey("BARCODES_SAMPLE_TEXT_NUM_"
 											+ i).height);
 
-					edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.text.Text itemText = new edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.text.Text(
-							r, cbsrData.sampleTypeStr, new Font(
-									"Times New Roman", Font.PLAIN, 22));
+					Text itemText = new Text(rectdim, cbsrData.sampleTypeStr,
+							new Font("Times New Roman", Font.PLAIN, 22));
 					bi.getElements().add(itemText);
 				}
 				pbi.getLayout().add(bi);
 			}
 		} catch (ElementCreationException e) {
 			throw new CBSRPdfGenException(
-					"Failed to create element in PatientBarcodeInformation box : " + e.getError());
+					"Failed to create element in PatientBarcodeInformation box : "
+							+ e.getError());
 		}
 
 		if (jasperTemplateFileData == null) {

@@ -12,7 +12,6 @@ import java.util.ArrayList;
 
 public class TemplateStore implements Serializable {
 
-
 	ArrayList<Template> templates;
 
 	public TemplateStore() {
@@ -37,7 +36,8 @@ public class TemplateStore implements Serializable {
 		}
 		return null;
 	}
-
+	
+	// false if the template you wish to remove does not exist in the store.
 	public boolean removeTemplate(String name) {
 		Template targetTemplate = null;
 		for (Template t : templates) {
@@ -46,29 +46,20 @@ public class TemplateStore implements Serializable {
 				break;
 			}
 		}
-
-		if (targetTemplate == null)
+		
+		if (targetTemplate != null) {
+			templates.remove(targetTemplate);
+			return true;
+		} else {
 			return false;
-
-		templates.remove(targetTemplate);
-		return true;
-	}	
-	public boolean removeTemplate(Template temp) {
-		Template targetTemplate = null;
-		for (Template t : templates) {
-			if (temp.getName().equals(t.getName())) {
-				targetTemplate = t;
-				break;
-			}
 		}
-
-		if (targetTemplate == null)
-			return false;
-
-		templates.remove(targetTemplate);
-		return true;
+		
 	}
 
+	public boolean removeTemplate(Template template) {
+		return removeTemplate(template.getName());
+
+	}
 
 	// false if a template with the same name was found
 	public boolean addTemplate(Template template) {
@@ -81,9 +72,7 @@ public class TemplateStore implements Serializable {
 		return true;
 	}
 
-
-
-	public  void loadStore(File file) throws IOException, ClassNotFoundException{
+	public void loadStore(File file) throws IOException, ClassNotFoundException {
 		TemplateStore templateStore = null;
 		FileInputStream fis = null;
 		ObjectInputStream in = null;

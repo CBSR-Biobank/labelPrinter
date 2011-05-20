@@ -16,7 +16,6 @@ public  class Text extends Element {
 	
 	Font font;
 	
-	//TODO set font default as 20
 	public Text(Rectangle rect,String message,Font font) throws ElementCreationException{
 
 		if (message == null || message.length() == 0)

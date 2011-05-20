@@ -15,7 +15,6 @@ import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.Elem
 
 public class FieldGenerator {
 
-	//TODO font 23 default
 	public static ArrayList<Element> generateElements(Rectangle textRect, String label, String value, Font font,
 			Rectangle barcodeRect, boolean printBarcode) throws ElementCreationException {
 
@@ -42,7 +41,8 @@ public class FieldGenerator {
 			}
 		}
 
-		elements.add(new Text(textRect, textLabel, font));
+		if(textLabel.length() != 0)
+			elements.add(new Text(textRect, textLabel, font));
 		
 		return elements;
 	}

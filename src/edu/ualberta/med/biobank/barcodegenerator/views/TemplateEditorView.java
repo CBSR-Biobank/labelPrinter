@@ -24,6 +24,8 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.layout.FillLayout;
@@ -34,6 +36,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -47,7 +50,7 @@ import org.eclipse.swt.layout.RowLayout;
 
 import edu.ualberta.med.biobank.barcodegenerator.template.Template;
 import edu.ualberta.med.biobank.barcodegenerator.template.TemplateStore;
-import edu.ualberta.med.biobank.barcodegenerator.template.presets.CBSRTemplate;
+import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSRTemplate;
 
 public class TemplateEditorView extends ViewPart {
 
@@ -81,22 +84,28 @@ public class TemplateEditorView extends ViewPart {
 	private TemplateStore templateStore = new TemplateStore();
 	private Template templateSelected = null;
 
-	@Override
-	public void createPartControl(Composite parent) {
-
-		shell = parent.getShell();
-
+	private void loadTemplateStore() {
 		// TODO load store from proper location
 		try {
 			templateStore.loadStore(new File("Store.dat"));
 		} catch (IOException e) {
-			e.printStackTrace();
+			templateStore = new TemplateStore();
+			Error("Preference Store Loading",
+					"Could not load the preference store. IOException ");
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			templateStore = new TemplateStore();
+			Error("Preference Store Loading",
+					"SERIOUS ERROR: Could not load the preference store. Class not found!");
 		}
+	}
+
+	@Override
+	public void createPartControl(Composite parent) {
+		loadTemplateStore();
 
 		top = new Composite(parent, SWT.NONE);
 		top.setLayout(new GridLayout());
+		shell = top.getShell();
 		createGroup();
 	}
 
@@ -230,7 +239,6 @@ public class TemplateEditorView extends ViewPart {
 			String[] selectedItems = list.getSelection();
 			if (selectedItems.length == 1) {
 				Template t = templateStore.getTemplate(selectedItems[0]);
-
 				setSelectedTemplate(t);
 			} else {
 				setSelectedTemplate(null);
@@ -283,6 +291,8 @@ public class TemplateEditorView extends ViewPart {
 	 * 
 	 */
 	private void createComposite4() {
+		
+		
 		composite4 = new Composite(composite2, SWT.NONE);
 		composite4.setLayout(new RowLayout());
 		button = new Button(composite4, SWT.NONE);
@@ -296,7 +306,8 @@ public class TemplateEditorView extends ViewPart {
 						setSelectedTemplate(null);
 
 					} else {
-						// TODO warn user dialog against duplicates
+						Error("Template not in Template Store.",
+								"Template does not exist, already deleted.");
 					}
 				}
 			}
@@ -306,6 +317,7 @@ public class TemplateEditorView extends ViewPart {
 				widgetSelected(e);
 			}
 		});
+		//TODO complete copy
 		button1 = new Button(composite4, SWT.NONE);
 		button1.setText("Copy ");
 		button1.addSelectionListener(new SelectionListener() {
@@ -321,7 +333,8 @@ public class TemplateEditorView extends ViewPart {
 						list.add(clone.getName());
 						list.redraw();
 					} else {
-						// TODO warn user dialog against duplicates
+						Error("Template Exists",
+								"Attempting to copy a  template that already has this name.");
 					}
 				}
 			}
@@ -331,13 +344,13 @@ public class TemplateEditorView extends ViewPart {
 				widgetSelected(e);
 			}
 		});
-
+		//TODO complete new
 		button2 = new Button(composite4, SWT.NONE);
 		button2.setText("New");
 		button2.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				// TODO make dialog
+
 				CBSRTemplate ct = new CBSRTemplate();
 				ct.setJasperFileData(null);
 				ct.setDefaultConfiguration();
@@ -347,7 +360,8 @@ public class TemplateEditorView extends ViewPart {
 					list.add(ct.getName());
 					list.redraw();
 				} else {
-					// TODO warn user dialog against duplicates
+					Error("Template Exists",
+							"Cannot a new template with an already used name.");
 				}
 			}
 
@@ -407,15 +421,16 @@ public class TemplateEditorView extends ViewPart {
 
 					File selectedFile = new File(selected);
 					if (!selectedFile.exists()) {
-						// TODO error dialog
+						Error("Jasper File Non-existant",
+								"Could not find the selected Jasper file.");
 						return;
 					}
 					byte[] jasperFileData;
 					try {
 						jasperFileData = getBytesFromFile(selectedFile);
 					} catch (IOException e) {
-						e.printStackTrace();
-						// error dialog
+						Error("Loading Jasper File",
+								"Could not read the specified jasper file.\n\n" + e.getMessage());
 						return;
 					}
 					((CBSRTemplate) templateSelected)
@@ -434,17 +449,8 @@ public class TemplateEditorView extends ViewPart {
 	public static byte[] getBytesFromFile(File file) throws IOException {
 		InputStream is = new FileInputStream(file);
 
-		// Get the size of the file
-		long length = file.length();
+		byte[] bytes = new byte[(int) file.length()];
 
-		if (length > Integer.MAX_VALUE) {
-			// File is too large
-		}
-
-		// Create the byte array to hold the data
-		byte[] bytes = new byte[(int) length];
-
-		// Read in the bytes
 		int offset = 0;
 		int numRead = 0;
 		while (offset < bytes.length
@@ -452,13 +458,11 @@ public class TemplateEditorView extends ViewPart {
 			offset += numRead;
 		}
 
-		// Ensure all the bytes have been read in
 		if (offset < bytes.length) {
 			throw new IOException("Could not completely read file "
 					+ file.getName());
 		}
 
-		// Close the input stream and return bytes
 		is.close();
 		return bytes;
 	}
@@ -660,30 +664,55 @@ public class TemplateEditorView extends ViewPart {
 
 	}
 
+
+	private void Error(String title, String message) {
+		MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
+		messageBox.setMessage(message);
+		messageBox.setText(title);
+		messageBox.open();
+	}
+
 	private SelectionListener cancleListener = new SelectionListener() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-
-			// TODO exit dialog
+			MessageBox messageBox = new MessageBox(shell, SWT.ICON_QUESTION
+					| SWT.YES | SWT.NO);
+			messageBox.setMessage("Do you really want to close the template editor?");
+			messageBox.setText("Closing Template Editor");
+			int response = messageBox.open();
+			if (response == SWT.YES){
+				// TODO close view
+			}
 		}
 
 		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
 			widgetSelected(e);
-
 		}
 	};
 
+	/**
+	 * Saves the entire preference store and all the changed template information as a serialized object.
+	 */
 	private SelectionListener saveAllListener = new SelectionListener() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			// shell.getDisplay().getActiveShell().close(); TODO close
+
 			try {
 				templateStore.saveStore(new File("Store.dat"));
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
-			// TODO exit dialog
+
+			MessageBox messageBox = new MessageBox(shell, SWT.ICON_QUESTION
+					| SWT.YES | SWT.NO);
+			messageBox
+					.setMessage("Template information has been saved!!\n\nDo you want to close this editor?");
+			messageBox.setText("Template Editor Saving");
+			int response = messageBox.open();
+			if (response == SWT.YES) {
+				// TODO close view
+			}
 		}
 
 		@Override
