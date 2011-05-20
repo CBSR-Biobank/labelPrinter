@@ -514,6 +514,8 @@ public class TemplateEditorView extends ViewPart {
 		// editing the second column
 		final int EDITABLECOLUMN = 1;
 
+		//TODO explain the ROOT fields
+		//TODO add support for negatives
 		configTable.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				// Clean up any previous editor control
