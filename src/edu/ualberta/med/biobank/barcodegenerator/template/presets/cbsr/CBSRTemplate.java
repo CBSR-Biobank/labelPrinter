@@ -20,6 +20,7 @@ import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.text.Te
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.*;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.exceptions.CBSRPdfGenException;
 
+//FIXME CBSRTemplate expects a constant (32) amount of barcodes
 public class CBSRTemplate extends Template {
 
 	private static final long serialVersionUID = -6346822010546940605L;
@@ -30,8 +31,7 @@ public class CBSRTemplate extends Template {
 		if (cbsrData.projectTileStr == null) {
 			throw new CBSRPdfGenException("Cannot have a null project title");
 		}
-
-		// TODO set barcode string count restriction correctly.
+		
 		if (barcodeStrings == null || barcodeStrings.size() == 0) {
 			throw new CBSRPdfGenException(
 					"Require a valid amount of barcode strings");

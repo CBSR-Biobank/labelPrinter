@@ -69,7 +69,12 @@ public class TemplateEditorView extends ViewPart {
 	private Group composite6 = null;
 	private Table configTable = null;
 	private TableEditor editor = null;
+	private Text currentTextEditor = null;
+	private TableItem currentTableItem = null;
 	private Shell shell;
+	
+	// editing the second column
+	final int EDITABLECOLUMN = 1;
 
 	private TemplateStore templateStore = new TemplateStore();
 	private Template templateSelected = null;
@@ -546,8 +551,8 @@ public class TemplateEditorView extends ViewPart {
 		editor.horizontalAlignment = SWT.LEFT;
 		editor.grabHorizontal = true;
 		editor.minimumWidth = 50;
-		// editing the second column
-		final int EDITABLECOLUMN = 1;
+
+
 
 		// TODO explain the ROOT fields and width,height fields
 		configTable.addSelectionListener(new SelectionAdapter() {
@@ -558,16 +563,16 @@ public class TemplateEditorView extends ViewPart {
 					oldEditor.dispose();
 
 				// Identify the selected row
-				final TableItem item = (TableItem) e.item;
+				currentTableItem = (TableItem) e.item;
 
-				if (item == null)
+				if (currentTableItem == null)
 					return;
 				// The control that will be the editor must be a child of the
 				// Table
-				final Text newEditor = new Text(configTable, SWT.NONE);
-				newEditor.setText(item.getText(EDITABLECOLUMN));
+				currentTextEditor = new Text(configTable, SWT.NONE);
+				currentTextEditor.setText(currentTableItem.getText(EDITABLECOLUMN));
 
-				newEditor.addModifyListener(new ModifyListener() {
+				currentTextEditor.addModifyListener(new ModifyListener() {
 					public void modifyText(ModifyEvent me) {
 						Text text = (Text) editor.getEditor();
 
@@ -577,10 +582,10 @@ public class TemplateEditorView extends ViewPart {
 						// must be 4 valid numbers in the range of -1000 to
 						// 1000.
 						boolean valid = true;
-						if (item != null
-								&& item.getText(EDITABLECOLUMN) != null
-								&& item.getText(EDITABLECOLUMN).split(",").length == 4)
-							for (String s : item.getText(EDITABLECOLUMN).split(
+						if (currentTableItem != null
+								&& currentTableItem.getText(EDITABLECOLUMN) != null
+								&& currentTableItem.getText(EDITABLECOLUMN).split(",").length == 4)
+							for (String s : currentTableItem.getText(EDITABLECOLUMN).split(
 									",")) {
 
 								try {
@@ -596,39 +601,33 @@ public class TemplateEditorView extends ViewPart {
 							valid = false;
 
 						if (valid)
-							item.setForeground(new Color(shell.getDisplay(), 0,
+							currentTableItem.setForeground(new Color(shell.getDisplay(), 0,
 									0, 0));
 						else
-							item.setForeground(new Color(shell.getDisplay(),
+							currentTableItem.setForeground(new Color(shell.getDisplay(),
 									255, 0, 0));
 
 						if (templateSelected != null && valid) {
 							((CBSRTemplate) templateSelected)
 									.getConfiguration().setSettingsEntry(
-											item.getText(0),
-											String2Rect(item.getText(1)));
+											currentTableItem.getText(0),
+											String2Rect(currentTableItem.getText(1)));
 						}
 
 					}
 				});
 
-				newEditor.selectAll();
-				newEditor.setFocus();
-				editor.setEditor(newEditor, item, EDITABLECOLUMN);
+				currentTextEditor.selectAll();
+				currentTextEditor.setFocus();
+				editor.setEditor(currentTextEditor, currentTableItem, EDITABLECOLUMN);
 			}
 		});
 
-		configTable.addListener(SWT.MeasureItem, new Listener() {
-			public void handleEvent(Event event) {
-				int clientWidth = configTable.getClientArea().width;
-				event.height = event.gc.getFontMetrics().getHeight() * 2;
-				event.width = clientWidth * 2;
-			}
-		});
-
-		// create columns
-
-		String[] columnNames = { "Variable", "Value" };
+		// FIXME make table set column width work correctly.
+		// remove this column name hack
+		String[] columnNames = {
+				"Variable                                                                              ",
+				"Value" };
 
 		TableColumn[] column = new TableColumn[2];
 		column[0] = new TableColumn(configTable, SWT.LEFT);
@@ -662,10 +661,15 @@ public class TemplateEditorView extends ViewPart {
 			}
 		}
 	}
-
-	// TODO make table refresh even if an editor is active
 	private void populateTable(Table t, Map<String, Rectangle> data) {
 
+		
+		// remove any editor if a cell is a being modified in a previous table layout.
+		if(currentTextEditor != null)
+			currentTextEditor.dispose();
+		currentTextEditor = null;
+		editor.setEditor(null, currentTableItem, EDITABLECOLUMN);
+		
 		t.removeAll();
 
 		if (data == null) {
@@ -756,6 +760,7 @@ public class TemplateEditorView extends ViewPart {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 
+			// TODO save store to proper location
 			try {
 				templateStore.saveStore(new File("Store.dat"));
 			} catch (IOException e1) {

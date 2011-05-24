@@ -14,7 +14,6 @@ import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.Barc
 
 public class BarcodeGenerator {
 
-	// datamatrix TODO implement width,height
 	public static BufferedImage generate2DBarcode(String barcodeMsg,
 			Rectangle rect, int dpi) throws IOException,
 			BarcodeCreationException {
@@ -50,7 +49,6 @@ public class BarcodeGenerator {
 		return provider.getBufferedImage();
 	}
 
-	// Code 128 TODO implement width,height
 	public static BufferedImage generate1DBarcode(String barcodeMsg, Font font,
 			Rectangle rect, int dpi) throws BarcodeCreationException,
 			IOException {

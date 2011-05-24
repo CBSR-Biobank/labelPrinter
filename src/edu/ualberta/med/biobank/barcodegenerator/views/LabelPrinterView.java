@@ -250,6 +250,7 @@ public class LabelPrinterView extends ViewPart {
 		label9.setText("Template:");
 		templateCombo = new Combo(composite3, SWT.DROP_DOWN | SWT.BORDER);
 		templateCombo.setLayoutData(gridData21);
+		
 		for (String s : this.templateStore.getTemplateNames()) {
 			templateCombo.add(s);
 		}
@@ -717,11 +718,11 @@ public class LabelPrinterView extends ViewPart {
 	}
 
 
-	private static ArrayList<String> randStringArray() {
+	private static ArrayList<String> randStringArray(int c) {
 
 		ArrayList<String> l = new ArrayList<String>();
 
-		for (int i = 0; i < 32; i++) {
+		for (int i = 0; i < c; i++) {
 
 			l.add(randString());
 		}
@@ -729,7 +730,6 @@ public class LabelPrinterView extends ViewPart {
 	}
 
 	
-	//TODO set field red when a template selected does not have a jasper file
 	private SelectionListener printButtonListener = new SelectionListener() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
@@ -744,7 +744,7 @@ public class LabelPrinterView extends ViewPart {
 			if (guiData != null) {
 				try {
 					pdfdata = guiData.selectedTemplate.generatePdfCBSR(guiData,
-							randStringArray());
+							randStringArray(32));
 				} catch (CBSRPdfGenException e1) {
 					Error("Gui Validation", e1.getError());
 				}
