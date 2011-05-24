@@ -39,12 +39,12 @@ public class JasperFiller {
 		public static final String patientImageField = "PATIENT_INFO_IMG";
 		public static final String patientBarcodeBase = "PATIENT_BARCODE_";
 
-		public int barcodeCount = 32;
-		public int barcodeImageWidth = 153;
-		public int barcodeImageHeight = 63;
+		public int barcodeCount = 0;
+		public int barcodeImageWidth = 0;
+		public int barcodeImageHeight = 0;
 
-		public int patientImageWidth = 238;
-		public int patientImageHeight = 182;
+		public int patientImageWidth = 0;
+		public int patientImageHeight = 0;
 	}
 
 	public JasperFiller(JasperOutline req) throws JasperFillException {
@@ -56,6 +56,7 @@ public class JasperFiller {
 		this.templateData = req;
 
 		loadTemplateConstants();
+		
 	}
 
 	private void loadTemplateConstants() throws JasperFillException {
@@ -76,7 +77,7 @@ public class JasperFiller {
 		JRElement patientImg = jasperSubDesign.getTitle().getElementByKey(
 				JasperConstants.patientImageField);
 		if (jasperSubDesign.getTitle() != null && patientImg != null) {
-			jasperConstants.barcodeImageWidth = patientImg.getWidth();
+			jasperConstants.patientImageWidth = patientImg.getWidth();
 			jasperConstants.patientImageHeight = patientImg.getHeight();
 		} else {
 			throw new JasperFillException(

@@ -23,7 +23,7 @@ public class Barcode2D extends Element {
 		if (rect == null)
 			throw new ElementCreationException(
 					"null dimensions specified to 2D barcode element.");
-		
+
 		this.rect = rect;
 		this.type = Element.TYPE.DataMatrix;
 		this.message = message;
@@ -33,7 +33,8 @@ public class Barcode2D extends Element {
 	public void render(Graphics2D g) throws BarcodeCreationException {
 		BufferedImage barcode2DImg;
 		try {
-			barcode2DImg = BarcodeGenerator.generate2DBarcode(message);
+			barcode2DImg = BarcodeGenerator.generate2DBarcode(message, rect,
+					100);
 		} catch (IOException e) {
 			throw new BarcodeCreationException(
 					"Failed to create image buffer for barcode");

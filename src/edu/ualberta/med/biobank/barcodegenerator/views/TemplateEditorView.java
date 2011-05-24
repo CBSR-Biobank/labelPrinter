@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.swt.custom.TableEditor;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -58,7 +56,8 @@ public class TemplateEditorView extends ViewPart {
 	private Button deleteButton = null;
 	private Button copyButton = null;
 	private Button newButton = null;
-	private Button cancleButton = null;
+	private Button helpButton = null;
+	private Button cancelButton = null;
 	private Button saveAllButton = null;
 	private Composite composite5 = null;
 	private Label label = null;
@@ -69,6 +68,7 @@ public class TemplateEditorView extends ViewPart {
 	private List list = null;
 	private Group composite6 = null;
 	private Table configTable = null;
+	private TableEditor editor = null;
 	private Shell shell;
 
 	private TemplateStore templateStore = new TemplateStore();
@@ -156,15 +156,20 @@ public class TemplateEditorView extends ViewPart {
 		composite1 = new Composite(group, SWT.NONE);
 		composite1.setLayoutData(gridData2);
 		composite1.setLayout(new FillLayout());
-		cancleButton = new Button(composite1, SWT.NONE);
-		cancleButton.setText("Cancle");
-		cancleButton.addSelectionListener(cancleListener);
-		@SuppressWarnings("unused")
-		Label filler21 = new Label(composite1, SWT.NONE);
+		helpButton = new Button(composite1, SWT.NONE);
+		helpButton.setText("Help");
+		helpButton.addSelectionListener(helpListener);
+
 		@SuppressWarnings("unused")
 		Label filler22 = new Label(composite1, SWT.NONE);
 		@SuppressWarnings("unused")
+		Label filler21 = new Label(composite1, SWT.NONE);
+		@SuppressWarnings("unused")
 		Label filler2 = new Label(composite1, SWT.NONE);
+		cancelButton = new Button(composite1, SWT.NONE);
+		cancelButton.setText("Cancel");
+		cancelButton.addSelectionListener(cancelListener);
+
 		saveAllButton = new Button(composite1, SWT.NONE);
 		saveAllButton.setText("Save All ");
 		saveAllButton.addSelectionListener(saveAllListener);
@@ -535,7 +540,7 @@ public class TemplateEditorView extends ViewPart {
 		configTable.setLayoutData(gridData9);
 		configTable.setLinesVisible(true);
 
-		final TableEditor editor = new TableEditor(configTable);
+		editor = new TableEditor(configTable);
 		// The editor must have the same size as the cell and must
 		// not be any smaller than 50 pixels.
 		editor.horizontalAlignment = SWT.LEFT;
@@ -544,7 +549,7 @@ public class TemplateEditorView extends ViewPart {
 		// editing the second column
 		final int EDITABLECOLUMN = 1;
 
-		// TODO explain the ROOT fields
+		// TODO explain the ROOT fields and width,height fields
 		configTable.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				// Clean up any previous editor control
@@ -562,21 +567,6 @@ public class TemplateEditorView extends ViewPart {
 				final Text newEditor = new Text(configTable, SWT.NONE);
 				newEditor.setText(item.getText(EDITABLECOLUMN));
 
-				newEditor.addKeyListener(new KeyListener() {
-
-					@Override
-					public void keyPressed(KeyEvent e) {
-						// TODO newEditor return stop edit
-						if (e.keyCode == SWT.CR) {
-							System.out.println("return");
-							configTable.deselectAll();
-						}
-					}
-
-					@Override
-					public void keyReleased(KeyEvent e) {
-					}
-				});
 				newEditor.addModifyListener(new ModifyListener() {
 					public void modifyText(ModifyEvent me) {
 						Text text = (Text) editor.getEditor();
@@ -628,6 +618,14 @@ public class TemplateEditorView extends ViewPart {
 			}
 		});
 
+		configTable.addListener(SWT.MeasureItem, new Listener() {
+			public void handleEvent(Event event) {
+				int clientWidth = configTable.getClientArea().width;
+				event.height = event.gc.getFontMetrics().getHeight() * 2;
+				event.width = clientWidth * 2;
+			}
+		});
+
 		// create columns
 
 		String[] columnNames = { "Variable", "Value" };
@@ -635,14 +633,15 @@ public class TemplateEditorView extends ViewPart {
 		TableColumn[] column = new TableColumn[2];
 		column[0] = new TableColumn(configTable, SWT.LEFT);
 		column[0].setText(columnNames[0]);
+		column[0].setWidth(200);
 
 		column[1] = new TableColumn(configTable, SWT.LEFT);
 		column[1].setText(columnNames[1]);
-		column[1].setWidth(100);
 
 		for (int i = 0, n = column.length; i < n; i++) {
 			column[i].pack();
 		}
+
 	}
 
 	private void sortTableColumn1() {
@@ -664,7 +663,9 @@ public class TemplateEditorView extends ViewPart {
 		}
 	}
 
+	// TODO make table refresh even if an editor is active
 	private void populateTable(Table t, Map<String, Rectangle> data) {
+
 		t.removeAll();
 
 		if (data == null) {
@@ -715,7 +716,19 @@ public class TemplateEditorView extends ViewPart {
 		messageBox.open();
 	}
 
-	private SelectionListener cancleListener = new SelectionListener() {
+	private SelectionListener helpListener = new SelectionListener() {
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			// TODO make help dialog.
+		}
+
+		@Override
+		public void widgetDefaultSelected(SelectionEvent e) {
+			widgetSelected(e);
+		}
+	};
+
+	private SelectionListener cancelListener = new SelectionListener() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			MessageBox messageBox = new MessageBox(shell, SWT.ICON_QUESTION

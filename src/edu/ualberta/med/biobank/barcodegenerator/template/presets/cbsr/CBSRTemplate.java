@@ -207,14 +207,14 @@ public class CBSRTemplate extends Template {
 		HashMap<String, Rectangle> data = new HashMap<String, Rectangle>();
 
 		data.put("PATIENT_INFO_1_TEXT", new Rectangle(0, 10, 20, 20));
-		data.put("PATIENT_INFO_1_BARCODE", new Rectangle(450, 10, 20, 20));
+		data.put("PATIENT_INFO_1_BARCODE", new Rectangle(450, 10, 20, 60));
 		data.put("PATIENT_INFO_2_TEXT", new Rectangle(0, 150, 20, 20));
-		data.put("PATIENT_INFO_2_BARCODE", new Rectangle(450, 150, 20, 20));
+		data.put("PATIENT_INFO_2_BARCODE", new Rectangle(450, 150, 20, 60));
 		data.put("PATIENT_INFO_3_TEXT", new Rectangle(0, 300, 20, 20));
-		data.put("PATIENT_INFO_3_BARCODE", new Rectangle(450, 300, 20, 20));
-		data.put("PATIENT_INFO_ID_BARCODE", new Rectangle(1, 400, 20, 20));
-		data.put("BARCODES_1D_ROOT", new Rectangle(23 * 4, 25 * 4, 6, 15));
-		data.put("BARCODES_2D_ROOT", new Rectangle(400, 25 * 4, 100, 1));
+		data.put("PATIENT_INFO_3_BARCODE", new Rectangle(450, 300, 20, 60));
+		data.put("PATIENT_INFO_ID_BARCODE", new Rectangle(1, 400, 20, 60));
+		data.put("BARCODES_1D_ROOT", new Rectangle(23 * 4, 25 * 4, 20, 60));
+		data.put("BARCODES_2D_ROOT", new Rectangle(400, 25 * 4, 10, 18));
 		data.put("SAMPLE_TYPE_TEXT_ROOT", new Rectangle(23 * 4, 28, 100, 1));
 
 		for (int i = 1; i <= 32; i++) {

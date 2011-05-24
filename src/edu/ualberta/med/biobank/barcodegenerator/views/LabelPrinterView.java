@@ -133,7 +133,6 @@ public class LabelPrinterView extends ViewPart {
 		if (Activator.getDefault() != null)
 			perferenceStore = Activator.getDefault().getPreferenceStore();
 
-		// TODO remove store hack
 		if (perferenceStore == null) {
 			System.err.println("WARNING: preference store was NULL!");
 			perferenceStore = new PreferenceStore("barcodegen.properties");
@@ -717,7 +716,7 @@ public class LabelPrinterView extends ViewPart {
 						.toUpperCase().substring(0, 6);
 	}
 
-	// TODO remove randStringArray
+
 	private static ArrayList<String> randStringArray() {
 
 		ArrayList<String> l = new ArrayList<String>();
