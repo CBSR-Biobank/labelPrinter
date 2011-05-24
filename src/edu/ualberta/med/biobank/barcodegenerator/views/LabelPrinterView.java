@@ -729,6 +729,8 @@ public class LabelPrinterView extends ViewPart {
 		return l;
 	}
 
+	
+	//TODO set field red when a template selected does not have a jasper file
 	private SelectionListener printButtonListener = new SelectionListener() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {

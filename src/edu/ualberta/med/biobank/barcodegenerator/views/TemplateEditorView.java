@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.layout.RowLayout;
 
+import edu.ualberta.med.biobank.barcodegenerator.dialogs.StringInputDialog;
 import edu.ualberta.med.biobank.barcodegenerator.template.Template;
 import edu.ualberta.med.biobank.barcodegenerator.template.TemplateStore;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSRTemplate;
@@ -298,7 +299,19 @@ public class TemplateEditorView extends ViewPart {
 				if (templateSelected != null) {
 					if (templateStore.removeTemplate(templateSelected)) {
 						list.remove(templateSelected.getName());
-						setSelectedTemplate(null);
+
+						if (list.getItemCount() > 0) {
+							list.deselectAll();
+
+							int lastItemIndex = list.getItemCount() - 1;
+
+							list.select(lastItemIndex);
+							setSelectedTemplate(templateStore.getTemplate(list
+									.getItem(lastItemIndex)));
+
+						} else {
+							setSelectedTemplate(null);
+						}
 
 					} else {
 						Error("Template not in Template Store.",
@@ -312,7 +325,7 @@ public class TemplateEditorView extends ViewPart {
 				widgetSelected(e);
 			}
 		});
-		// TODO complete copy
+
 		copyButton = new Button(composite4, SWT.NONE);
 		copyButton.setText("Copy ");
 		copyButton.addSelectionListener(new SelectionListener() {
@@ -320,16 +333,26 @@ public class TemplateEditorView extends ViewPart {
 			public void widgetSelected(SelectionEvent e) {
 				if (templateSelected != null) {
 
-					Template clone = new CBSRTemplate();
-					Template.Clone(templateSelected, clone);
-					clone.setName(clone.getName() + " copy");
+					StringInputDialog dialog = new StringInputDialog(
+							"Cloned Template Name",
+							"What is the name of the cloned template?", shell,
+							SWT.NONE);
+					String cloneName = dialog.open(templateSelected.getName()
+							+ " copy");
 
-					if (templateStore.addTemplate(clone)) {
-						list.add(clone.getName());
-						list.redraw();
-					} else {
-						Error("Template Exists",
-								"Attempting to copy a  template that already has this name.");
+					if (cloneName != null) {
+
+						Template clone = new CBSRTemplate();
+						Template.Clone(templateSelected, clone);
+						clone.setName(cloneName);
+
+						if (templateStore.addTemplate(clone)) {
+							list.add(clone.getName());
+							list.redraw();
+						} else {
+							Error("Template Exists",
+									"Duplicate name collision. Your cloned template must have a unique name.");
+						}
 					}
 				}
 			}
@@ -339,24 +362,32 @@ public class TemplateEditorView extends ViewPart {
 				widgetSelected(e);
 			}
 		});
-		// TODO complete new
+
 		newButton = new Button(composite4, SWT.NONE);
 		newButton.setText("New");
 		newButton.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				CBSRTemplate ct = new CBSRTemplate();
-				ct.setJasperFileData(null);
-				ct.setDefaultConfiguration();
-				ct.setName(LabelPrinterView.randString());
+				StringInputDialog dialog = new StringInputDialog(
+						"New Template Name",
+						"What is the name of this new template?", shell,
+						SWT.NONE);
+				String newTemplateName = dialog.open(null);
 
-				if (templateStore.addTemplate(ct)) {
-					list.add(ct.getName());
-					list.redraw();
-				} else {
-					Error("Template Exists",
-							"Cannot a new template with an already used name.");
+				if (newTemplateName != null) {
+					CBSRTemplate ct = new CBSRTemplate();
+					ct.setJasperFileData(null);
+					ct.setDefaultConfiguration();
+					ct.setName(newTemplateName);
+
+					if (templateStore.addTemplate(ct)) {
+						list.add(ct.getName());
+						list.redraw();
+					} else {
+						Error("Template Exists",
+								"Your new template must have a unique name.");
+					}
 				}
 			}
 
@@ -491,7 +522,6 @@ public class TemplateEditorView extends ViewPart {
 		createTable(composite6);
 	}
 
-	// TODO sort first column when pressed.
 	private void createTable(final Composite c) {
 		GridData gridData9 = new GridData();
 		gridData9.grabExcessHorizontalSpace = true;
@@ -514,8 +544,7 @@ public class TemplateEditorView extends ViewPart {
 		// editing the second column
 		final int EDITABLECOLUMN = 1;
 
-		//TODO explain the ROOT fields
-		//TODO add support for negatives
+		// TODO explain the ROOT fields
 		configTable.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				// Clean up any previous editor control
@@ -533,15 +562,6 @@ public class TemplateEditorView extends ViewPart {
 				final Text newEditor = new Text(configTable, SWT.NONE);
 				newEditor.setText(item.getText(EDITABLECOLUMN));
 
-				newEditor.addListener(SWT.Verify, new Listener() {
-					public void handleEvent(Event e) {
-
-						if (!e.text.matches("[{0-9,}]*")) {
-							e.doit = false;
-							return;
-						}
-					}
-				});
 				newEditor.addKeyListener(new KeyListener() {
 
 					@Override
@@ -564,12 +584,23 @@ public class TemplateEditorView extends ViewPart {
 						editor.getItem()
 								.setText(EDITABLECOLUMN, text.getText());
 
+						// must be 4 valid numbers in the range of -1000 to
+						// 1000.
 						boolean valid = true;
-						if (item != null && item.getText(1) != null
-								&& item.getText(1).split(",").length == 4)
-							for (String s : item.getText(1).split(",")) {
-								if (s.length() < 1 || s.length() > 3)
+						if (item != null
+								&& item.getText(EDITABLECOLUMN) != null
+								&& item.getText(EDITABLECOLUMN).split(",").length == 4)
+							for (String s : item.getText(EDITABLECOLUMN).split(
+									",")) {
+
+								try {
+									int parsedInt = Integer.parseInt(s);
+									if (parsedInt <= -1000 || parsedInt >= 1000)
+										valid = false;
+
+								} catch (NumberFormatException e) {
 									valid = false;
+								}
 							}
 						else
 							valid = false;
@@ -614,6 +645,25 @@ public class TemplateEditorView extends ViewPart {
 		}
 	}
 
+	private void sortTableColumn1() {
+		TableItem[] items = configTable.getItems();
+		for (int i = 1; i < items.length; i++) {
+			String value1 = items[i].getText(0);
+			for (int j = 0; j < i; j++) {
+				String value2 = items[j].getText(0);
+				if (value1.compareTo(value2) < 0) {
+					String[] values = { items[i].getText(0),
+							items[i].getText(1) };
+					items[i].dispose();
+					TableItem item = new TableItem(configTable, SWT.NONE, j);
+					item.setText(values);
+					items = configTable.getItems();
+					break;
+				}
+			}
+		}
+	}
+
 	private void populateTable(Table t, Map<String, Rectangle> data) {
 		t.removeAll();
 
@@ -626,6 +676,8 @@ public class TemplateEditorView extends ViewPart {
 			TableItem item = new TableItem(t, SWT.NONE);
 			item.setText(new String[] { e.getKey(), rect2String(e.getValue()) });
 		}
+		sortTableColumn1();
+
 		t.redraw();
 	}
 

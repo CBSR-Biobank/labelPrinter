@@ -96,13 +96,17 @@ public class CBSRTemplate extends Template {
 						&& cbsrData.patientIdStr.length() > 0) {
 					Rectangle r = new Rectangle(
 							this.getKey("BARCODES_1D_ROOT").x
-									+ this.getKey("BARCODES_1D_NUM_" + i).x,
+									+ this.getKey("BARCODES_1D_NUM_"
+											+ addPaddingZeros(i)).x,
 							this.getKey("BARCODES_1D_ROOT").y
-									+ this.getKey("BARCODES_1D_NUM_" + i).y,
+									+ this.getKey("BARCODES_1D_NUM_"
+											+ addPaddingZeros(i)).y,
 							this.getKey("BARCODES_1D_ROOT").width
-									+ this.getKey("BARCODES_1D_NUM_" + i).width,
+									+ this.getKey("BARCODES_1D_NUM_"
+											+ addPaddingZeros(i)).width,
 							this.getKey("BARCODES_1D_ROOT").height
-									+ this.getKey("BARCODES_1D_NUM_" + i).height);
+									+ this.getKey("BARCODES_1D_NUM_"
+											+ addPaddingZeros(i)).height);
 
 					Barcode1D item1D = new Barcode1D(r, cbsrData.patientIdStr,
 							new Font("Times New Roman", Font.PLAIN, 22));
@@ -118,13 +122,17 @@ public class CBSRTemplate extends Template {
 						&& rStrArray.replaceAll("[^a-zA-Z0-9 ]", "").length() == 12) {
 					Rectangle r = new Rectangle(
 							this.getKey("BARCODES_2D_ROOT").x
-									+ this.getKey("BARCODES_2D_NUM_" + i).x,
+									+ this.getKey("BARCODES_2D_NUM_"
+											+ addPaddingZeros(i)).x,
 							this.getKey("BARCODES_2D_ROOT").y
-									+ this.getKey("BARCODES_2D_NUM_" + i).y,
+									+ this.getKey("BARCODES_2D_NUM_"
+											+ addPaddingZeros(i)).y,
 							this.getKey("BARCODES_2D_ROOT").width
-									+ this.getKey("BARCODES_2D_NUM_" + i).width,
+									+ this.getKey("BARCODES_2D_NUM_"
+											+ addPaddingZeros(i)).width,
 							this.getKey("BARCODES_2D_ROOT").height
-									+ this.getKey("BARCODES_2D_NUM_" + i).height);
+									+ this.getKey("BARCODES_2D_NUM_"
+											+ addPaddingZeros(i)).height);
 
 					Barcode2D item2D = new Barcode2D(r, rStrArray);
 					bi.getElements().add(item2D);
@@ -138,16 +146,16 @@ public class CBSRTemplate extends Template {
 					Rectangle rectdim = new Rectangle(
 							this.getKey("SAMPLE_TYPE_TEXT_ROOT").x
 									+ this.getKey("BARCODES_SAMPLE_TEXT_NUM_"
-											+ i).x,
+											+ addPaddingZeros(i)).x,
 							this.getKey("SAMPLE_TYPE_TEXT_ROOT").y
 									+ this.getKey("BARCODES_SAMPLE_TEXT_NUM_"
-											+ i).y,
+											+ addPaddingZeros(i)).y,
 							this.getKey("SAMPLE_TYPE_TEXT_ROOT").width
 									+ this.getKey("BARCODES_SAMPLE_TEXT_NUM_"
-											+ i).width,
+											+ addPaddingZeros(i)).width,
 							this.getKey("SAMPLE_TYPE_TEXT_ROOT").height
 									+ this.getKey("BARCODES_SAMPLE_TEXT_NUM_"
-											+ i).height);
+											+ addPaddingZeros(i)).height);
 
 					Text itemText = new Text(rectdim, cbsrData.sampleTypeStr,
 							new Font("Times New Roman", Font.PLAIN, 22));
@@ -185,6 +193,16 @@ public class CBSRTemplate extends Template {
 		return config.getSettingsKey(key);
 	}
 
+	private String addPaddingZeros(int i) {
+		String out = String.valueOf(i);
+		if (out.length() <= 0) {
+			out = "00";
+		} else if (out.length() <= 1) {
+			out = "0" + out;
+		}
+		return out;
+	}
+
 	public void setDefaultConfiguration() {
 		HashMap<String, Rectangle> data = new HashMap<String, Rectangle>();
 
@@ -200,9 +218,12 @@ public class CBSRTemplate extends Template {
 		data.put("SAMPLE_TYPE_TEXT_ROOT", new Rectangle(23 * 4, 28, 100, 1));
 
 		for (int i = 1; i <= 32; i++) {
-			data.put("BARCODES_1D_NUM_" + i, new Rectangle(0, 0, 0, 0));
-			data.put("BARCODES_2D_NUM_" + i, new Rectangle(0, 0, 0, 0));
-			data.put("BARCODES_SAMPLE_TEXT_NUM_" + i, new Rectangle(0, 0, 0, 0));
+			data.put("BARCODES_1D_NUM_" + addPaddingZeros(i), new Rectangle(0,
+					0, 0, 0));
+			data.put("BARCODES_2D_NUM_" + addPaddingZeros(i), new Rectangle(0,
+					0, 0, 0));
+			data.put("BARCODES_SAMPLE_TEXT_NUM_" + addPaddingZeros(i),
+					new Rectangle(0, 0, 0, 0));
 		}
 		this.config = new Configuration();
 		this.config.setSettings(data);
@@ -224,7 +245,7 @@ public class CBSRTemplate extends Template {
 		}
 		for (String ickl : iteratedConfigKeyList) {
 			for (int i = 1; i <= 32; i++) {
-				output.add(ickl + i);
+				output.add(ickl + addPaddingZeros(i));
 			}
 		}
 		return output;
