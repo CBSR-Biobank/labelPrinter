@@ -9,11 +9,11 @@
             id="barcodeGenerator">
       </category>
       <view
-            name="Barcode View"
+            name="Label Printer"
             icon="icons/sample.gif"
             category="barcodeGenerator"
-            class="barcodegenerator.views.BarcodeView"
-            id="barcodegenerator.views.BarcodeView">
+            class="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView"
+            id="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView">
       </view>
    </extension>
    <extension
@@ -24,16 +24,11 @@
                ratio="0.5"
                relative="org.eclipse.ui.views.TaskList"
                relationship="right"
-               id="barcodegenerator.views.BarcodeView">
+               id="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView">
          </view>
       </perspectiveExtension>
    </extension>
-   <extension
-         point="org.eclipse.help.contexts">
-      <contexts
-            file="contexts.xml">
-      </contexts>
-   </extension>
+
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
@@ -43,7 +38,7 @@
                label="Barcode Generator">
             <command
                   commandId="edu.ualberta.med.barcodegenerator.commands.barcodegenerator"
-                  icon="icons/table_lightning.png"
+                  icon=""
                   id="edu.ualberta.med.barcodegenerator.menu.makelabels"
                   label="Make Labels"
                   style="push">
