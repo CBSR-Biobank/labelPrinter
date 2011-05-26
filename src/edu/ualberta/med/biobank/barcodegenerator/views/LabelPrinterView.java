@@ -739,6 +739,7 @@ public class LabelPrinterView extends ViewPart {
 				guiData = new BarcodeViewGuiData();
 			} catch (CBSRGuiVerificationException e1) {
 				Error("Gui Validation", e1.getMessage());
+				return;
 			}
 
 			if (guiData != null) {
@@ -747,6 +748,7 @@ public class LabelPrinterView extends ViewPart {
 							randStringArray(32));
 				} catch (CBSRPdfGenException e1) {
 					Error("Gui Validation", e1.getError());
+					return;
 				}
 				if (pdfdata != null) {
 					FileOutputStream fos;
@@ -756,9 +758,11 @@ public class LabelPrinterView extends ViewPart {
 						fos.close();
 					} catch (FileNotFoundException e1) {
 						Error("Saving Pdf", "Could find file to save pdf to");
+						return;
 					} catch (IOException ee) {
 						Error("Saving Pdf",
 								"Problem saving file: " + ee.getMessage());
+						return;
 					}
 				}
 

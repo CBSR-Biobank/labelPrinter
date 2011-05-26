@@ -9,8 +9,6 @@ public abstract class Template extends JasperOutline implements Serializable{
 
 	private static final long serialVersionUID = -4213741888020425604L;
 	
-	private String name = "default";
-	
 	public static void Clone(Template original, Template clone){
 		clone.name = original.name;
 		
@@ -35,7 +33,8 @@ public abstract class Template extends JasperOutline implements Serializable{
 		return this.name;
 	}
 	
-
+	private String name = "default";
+	
 	protected byte[] jasperTemplateFileData = null;
 	protected abstract void setJasperFileData(byte[] jasperData);
 	protected abstract boolean jasperFileDataExists();

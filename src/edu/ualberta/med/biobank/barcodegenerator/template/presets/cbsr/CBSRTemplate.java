@@ -3,7 +3,7 @@ package edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr;
 import java.awt.Font;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import org.eclipse.swt.graphics.Rectangle;
 
@@ -31,7 +31,7 @@ public class CBSRTemplate extends Template {
 		if (cbsrData.projectTileStr == null) {
 			throw new CBSRPdfGenException("Cannot have a null project title");
 		}
-		
+
 		if (barcodeStrings == null || barcodeStrings.size() == 0) {
 			throw new CBSRPdfGenException(
 					"Require a valid amount of barcode strings");
@@ -49,30 +49,35 @@ public class CBSRTemplate extends Template {
 		try {
 			patientInfo.getElements().addAll(
 					FieldGenerator.generateElements(this
-							.getKey("PATIENT_INFO_1_TEXT"), cbsrData.label1Str,
-							cbsrData.value1Str, new Font("Times New Roman",
-									Font.PLAIN, 23), this
-									.getKey("PATIENT_INFO_1_BARCODE"),
+							.getKey("Patient Info.Top Field.Field Text"),
+							cbsrData.label1Str, cbsrData.value1Str, new Font(
+									"Times New Roman", Font.PLAIN, 23),
+							this.getKey("Patient Info.Top Field.1D Barcode"),
 							cbsrData.barcode1Print));
 
-			patientInfo.getElements().addAll(
-					FieldGenerator.generateElements(this
-							.getKey("PATIENT_INFO_2_TEXT"), cbsrData.label2Str,
-							cbsrData.value2Str, new Font("Times New Roman",
-									Font.PLAIN, 23), this
-									.getKey("PATIENT_INFO_2_BARCODE"),
+			patientInfo
+					.getElements()
+					.addAll(FieldGenerator.generateElements(
+							this.getKey("Patient Info.Middle Field.Field Text"),
+							cbsrData.label2Str,
+							cbsrData.value2Str,
+							new Font("Times New Roman", Font.PLAIN, 23),
+							this.getKey("Patient Info.Middle Field.1D Barcode"),
 							cbsrData.barcode2Print));
 
-			patientInfo.getElements().addAll(
-					FieldGenerator.generateElements(this
-							.getKey("PATIENT_INFO_3_TEXT"), cbsrData.label3Str,
-							cbsrData.value3Str, new Font("Times New Roman",
-									Font.PLAIN, 23), this
-									.getKey("PATIENT_INFO_3_BARCODE"),
+			patientInfo
+					.getElements()
+					.addAll(FieldGenerator.generateElements(
+							this.getKey("Patient Info.Bottom Field.Field Text"),
+							cbsrData.label3Str,
+							cbsrData.value3Str,
+							new Font("Times New Roman", Font.PLAIN, 23),
+							this.getKey("Patient Info.Bottom Field.1D Barcode"),
 							cbsrData.barcode3Print));
 
 			patientInfo.getElements().add(
-					new Barcode1D(this.getKey("PATIENT_INFO_ID_BARCODE"),
+					new Barcode1D(this
+							.getKey("Patient Info.Patient ID.1D Barcode"),
 							cbsrData.patientIdStr, new Font("Times New Roman",
 									Font.PLAIN, 22)));
 
@@ -94,19 +99,16 @@ public class CBSRTemplate extends Template {
 				// 1d barcode
 				if (cbsrData.patientIdStr != null
 						&& cbsrData.patientIdStr.length() > 0) {
-					Rectangle r = new Rectangle(
-							this.getKey("BARCODES_1D_ROOT").x
-									+ this.getKey("BARCODES_1D_NUM_"
-											+ addPaddingZeros(i)).x,
-							this.getKey("BARCODES_1D_ROOT").y
-									+ this.getKey("BARCODES_1D_NUM_"
-											+ addPaddingZeros(i)).y,
-							this.getKey("BARCODES_1D_ROOT").width
-									+ this.getKey("BARCODES_1D_NUM_"
-											+ addPaddingZeros(i)).width,
-							this.getKey("BARCODES_1D_ROOT").height
-									+ this.getKey("BARCODES_1D_NUM_"
-											+ addPaddingZeros(i)).height);
+
+					Rectangle master = this
+							.getKey("Barcodes.Master.Barcode 1D");
+					Rectangle barcode = this
+							.getKey("Barcodes.Individual.Barcode "
+									+ addPaddingZeros(i) + ".Barcode 1D");
+
+					Rectangle r = new Rectangle(master.x + barcode.x, master.y
+							+ barcode.y, master.width + barcode.width,
+							master.height + barcode.height);
 
 					Barcode1D item1D = new Barcode1D(r, cbsrData.patientIdStr,
 							new Font("Times New Roman", Font.PLAIN, 22));
@@ -120,19 +122,16 @@ public class CBSRTemplate extends Template {
 				if (rStrArray != null
 						&& rStrArray.length() > 0
 						&& rStrArray.replaceAll("[^a-zA-Z0-9 ]", "").length() == 12) {
-					Rectangle r = new Rectangle(
-							this.getKey("BARCODES_2D_ROOT").x
-									+ this.getKey("BARCODES_2D_NUM_"
-											+ addPaddingZeros(i)).x,
-							this.getKey("BARCODES_2D_ROOT").y
-									+ this.getKey("BARCODES_2D_NUM_"
-											+ addPaddingZeros(i)).y,
-							this.getKey("BARCODES_2D_ROOT").width
-									+ this.getKey("BARCODES_2D_NUM_"
-											+ addPaddingZeros(i)).width,
-							this.getKey("BARCODES_2D_ROOT").height
-									+ this.getKey("BARCODES_2D_NUM_"
-											+ addPaddingZeros(i)).height);
+
+					Rectangle master = this
+							.getKey("Barcodes.Master.Barcode 2D");
+					Rectangle barcode = this
+							.getKey("Barcodes.Individual.Barcode "
+									+ addPaddingZeros(i) + ".Barcode 2D");
+
+					Rectangle r = new Rectangle(master.x + barcode.x, master.y
+							+ barcode.y, master.width + barcode.width,
+							master.height + barcode.height);
 
 					Barcode2D item2D = new Barcode2D(r, rStrArray);
 					bi.getElements().add(item2D);
@@ -143,19 +142,17 @@ public class CBSRTemplate extends Template {
 
 				if (cbsrData.sampleTypeStr != null
 						&& cbsrData.sampleTypeStr.length() > 0) {
-					Rectangle rectdim = new Rectangle(
-							this.getKey("SAMPLE_TYPE_TEXT_ROOT").x
-									+ this.getKey("BARCODES_SAMPLE_TEXT_NUM_"
-											+ addPaddingZeros(i)).x,
-							this.getKey("SAMPLE_TYPE_TEXT_ROOT").y
-									+ this.getKey("BARCODES_SAMPLE_TEXT_NUM_"
-											+ addPaddingZeros(i)).y,
-							this.getKey("SAMPLE_TYPE_TEXT_ROOT").width
-									+ this.getKey("BARCODES_SAMPLE_TEXT_NUM_"
-											+ addPaddingZeros(i)).width,
-							this.getKey("SAMPLE_TYPE_TEXT_ROOT").height
-									+ this.getKey("BARCODES_SAMPLE_TEXT_NUM_"
-											+ addPaddingZeros(i)).height);
+
+					Rectangle master = this
+							.getKey("Barcodes.Master.Sample Text");
+
+					Rectangle barcode = this
+							.getKey("Barcodes.Individual.Barcode "
+									+ addPaddingZeros(i) + ".Sample Text");
+
+					Rectangle rectdim = new Rectangle(master.x + barcode.x,
+							master.y + barcode.y, master.width + barcode.width,
+							master.height + barcode.height);
 
 					Text itemText = new Text(rectdim, cbsrData.sampleTypeStr,
 							new Font("Times New Roman", Font.PLAIN, 22));
@@ -204,26 +201,36 @@ public class CBSRTemplate extends Template {
 	}
 
 	public void setDefaultConfiguration() {
-		HashMap<String, Rectangle> data = new HashMap<String, Rectangle>();
+		LinkedHashMap<String, Rectangle> data = new LinkedHashMap<String, Rectangle>();
 
-		data.put("PATIENT_INFO_1_TEXT", new Rectangle(0, 10, 20, 20));
-		data.put("PATIENT_INFO_1_BARCODE", new Rectangle(450, 10, 20, 60));
-		data.put("PATIENT_INFO_2_TEXT", new Rectangle(0, 150, 20, 20));
-		data.put("PATIENT_INFO_2_BARCODE", new Rectangle(450, 150, 20, 60));
-		data.put("PATIENT_INFO_3_TEXT", new Rectangle(0, 300, 20, 20));
-		data.put("PATIENT_INFO_3_BARCODE", new Rectangle(450, 300, 20, 60));
-		data.put("PATIENT_INFO_ID_BARCODE", new Rectangle(1, 400, 20, 60));
-		data.put("BARCODES_1D_ROOT", new Rectangle(23 * 4, 25 * 4, 20, 60));
-		data.put("BARCODES_2D_ROOT", new Rectangle(400, 25 * 4, 10, 18));
-		data.put("SAMPLE_TYPE_TEXT_ROOT", new Rectangle(23 * 4, 28, 100, 1));
+		data.put("Patient Info.Top Field.Field Text", new Rectangle(0, 10, 20,
+				20));
+		data.put("Patient Info.Top Field.1D Barcode", new Rectangle(450, 10,
+				20, 60));
+		data.put("Patient Info.Middle Field.Field Text", new Rectangle(0, 150,
+				20, 20));
+		data.put("Patient Info.Middle Field.1D Barcode", new Rectangle(450,
+				150, 20, 60));
+		data.put("Patient Info.Bottom Field.Field Text", new Rectangle(0, 300,
+				20, 20));
+		data.put("Patient Info.Bottom Field.1D Barcode", new Rectangle(450,
+				300, 20, 60));
+		data.put("Patient Info.Patient ID.1D Barcode", new Rectangle(1, 400, 20,
+				60));
+		data.put("Barcodes.Master.Barcode 1D", new Rectangle(23 * 4, 25 * 4,
+				20, 60));
+		data.put("Barcodes.Master.Barcode 2D", new Rectangle(400, 25 * 4, 10,
+				18));
+		data.put("Barcodes.Master.Sample Text", new Rectangle(23 * 4, 28, 100,
+				1));
 
 		for (int i = 1; i <= 32; i++) {
-			data.put("BARCODES_1D_NUM_" + addPaddingZeros(i), new Rectangle(0,
-					0, 0, 0));
-			data.put("BARCODES_2D_NUM_" + addPaddingZeros(i), new Rectangle(0,
-					0, 0, 0));
-			data.put("BARCODES_SAMPLE_TEXT_NUM_" + addPaddingZeros(i),
-					new Rectangle(0, 0, 0, 0));
+			data.put("Barcodes.Individual.Barcode " + addPaddingZeros(i)
+					+ ".Barcode 1D", new Rectangle(0, 0, 0, 0));
+			data.put("Barcodes.Individual.Barcode " + addPaddingZeros(i)
+					+ ".Barcode 2D", new Rectangle(0, 0, 0, 0));
+			data.put("Barcodes.Individual.Barcode " + addPaddingZeros(i)
+					+ ".Sample Text", new Rectangle(0, 0, 0, 0));
 		}
 		this.config = new Configuration();
 		this.config.setSettings(data);
@@ -231,13 +238,20 @@ public class CBSRTemplate extends Template {
 
 	@Override
 	public ArrayList<String> getConfigurationKeyList() {
-		String[] configKeyList = new String[] { "PATIENT_INFO_1_TEXT",
-				"PATIENT_INFO_1_BARCODE", "PATIENT_INFO_2_TEXT",
-				"ATIENT_INFO_2_BARCODE", "PATIENT_INFO_3_TEXT",
-				"ATIENT_INFO_3_BARCODE", "PATIENT_INFO_ID_BARCODE",
-				"BARCODES_1D_ROOT", "BARCODES_2D_ROOT", "SAMPLE_TYPE_TEXT_ROOT" };
-		String[] iteratedConfigKeyList = new String[] { "BARCODES_1D_NUM_",
-				"BARCODES_2D_NUM_", "BARCODES_SAMPLE_TEXT_NUM_" };
+		String[] configKeyList = new String[] {
+				"Patient Info.Top Field.Field Text",
+				"Patient Info.Top Field.1D Barcode",
+				"Patient Info.Middle Field.Field Text",
+				"Patient Info.Middle Field.1D Barcode",
+				"Patient Info.Bottom Field.Field Text",
+				"Patient Info.Bottom Field.1D Barcode",
+				"Patient Info.Patient ID.1D Barcode",
+				"Barcodes.Master.Barcode 1D", "Barcodes.Master.Barcode 2D",
+				"Barcodes.Master.Sample Text" };
+
+		String[] iteratedConfigKeyList = new String[] {
+				"Barcodes.Individual.Barcode ", "Barcodes.Individual.Barcode ",
+				"Barcodes.Individual.Barcode " };
 
 		ArrayList<String> output = new ArrayList<String>();
 		for (String ckl : configKeyList) {

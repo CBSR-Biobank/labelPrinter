@@ -7,7 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import javax.imageio.ImageIO;
 
@@ -48,15 +48,14 @@ public class JasperFiller {
 	}
 
 	public JasperFiller(JasperOutline req) throws JasperFillException {
-		
-		if(req == null)
+
+		if (req == null)
 			throw new JasperFillException("Null request for jasper filler.");
-		
-		
+
 		this.templateData = req;
 
 		loadTemplateConstants();
-		
+
 	}
 
 	private void loadTemplateConstants() throws JasperFillException {
@@ -64,14 +63,16 @@ public class JasperFiller {
 		try {
 			templateData.getJasperTemplateStream().reset();
 		} catch (IOException e) {
-			throw new JasperFillException("Failed to reset template data stream : " + e.getMessage());
+			throw new JasperFillException(
+					"Failed to reset template data stream : " + e.getMessage());
 		}
 		JasperDesign jasperSubDesign;
 		try {
 			jasperSubDesign = JRXmlLoader.load(templateData
 					.getJasperTemplateStream());
 		} catch (JRException e) {
-			throw new JasperFillException("Failed to load jasper design: " + e.getMessage());
+			throw new JasperFillException("Failed to load jasper design: "
+					+ e.getMessage());
 		}
 
 		JRElement patientImg = jasperSubDesign.getTitle().getElementByKey(
@@ -105,31 +106,32 @@ public class JasperFiller {
 			throw new JasperFillException(
 					"Failed to barcode image dimensions from the jasper report.");
 		}
-		
+
 		if (templateData.getPatientBarcpdeInf().getLayout().size() != jasperConstants.barcodeCount) {
 			throw new JasperFillException("Error: requires "
 					+ jasperConstants.barcodeCount + " barcode IDs");
 		}
-		
-	
+
 	}
 
 	public byte[] generatePdfData() throws JasperFillException {
 
-		
 		ByteArrayInputStream patientInfoImg;
 		ArrayList<ByteArrayInputStream> barcodeIDBufferList = new ArrayList<ByteArrayInputStream>();
-		
+
 		// place patient image.
 		try {
-			patientInfoImg = drawElementsToPngStream(
-					templateData.getPatientInfo().getElements(),
+			patientInfoImg = drawElementsToPngStream(templateData
+					.getPatientInfo().getElements(),
 					jasperConstants.patientImageWidth,
 					jasperConstants.patientImageHeight);
 		} catch (IOException e) {
-			throw new JasperFillException("Failed to draw patientInfoImg to image buffer" + e.getMessage());
+			throw new JasperFillException(
+					"Failed to draw patientInfoImg to image buffer"
+							+ e.getMessage());
 		} catch (BarcodeCreationException e) {
-			throw new JasperFillException("Failed to create barcode patientInfoImg : " + e.getError());
+			throw new JasperFillException(
+					"Failed to create barcode patientInfoImg : " + e.getError());
 		}
 		// place patient barcode images
 		try {
@@ -141,29 +143,28 @@ public class JasperFiller {
 			}
 		} catch (IOException e) {
 			throw new JasperFillException(
-					"Failed to draw barcodeinfo to image buffer" + e.getMessage());
+					"Failed to draw barcodeinfo to image buffer"
+							+ e.getMessage());
 		} catch (BarcodeCreationException e) {
 			throw new JasperFillException(
 					"Failed to create barcode barcodeinfo : " + e.getError());
 		}
 
 		// generate parameters for jasper
-		HashMap<String, Object> parameters = generateParameters(patientInfoImg,
+		LinkedHashMap<String, Object> parameters = generateParameters(patientInfoImg,
 				barcodeIDBufferList);
 
 		byte[] reportPdfBtyes = null;
-		
-		try{
-		// generate jasper report from template
-		templateData.getJasperTemplateStream().reset();
-		JasperReport jasperReport = JasperCompileManager
-				.compileReport(templateData.getJasperTemplateStream());
-		JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport,
-				parameters, new JREmptyDataSource());
-		reportPdfBtyes  = JasperExportManager
-				.exportReportToPdf(jasperPrint);
-		}
-		catch(JRException e){
+
+		try {
+			// generate jasper report from template
+			templateData.getJasperTemplateStream().reset();
+			JasperReport jasperReport = JasperCompileManager
+					.compileReport(templateData.getJasperTemplateStream());
+			JasperPrint jasperPrint = JasperFillManager.fillReport(
+					jasperReport, parameters, new JREmptyDataSource());
+			reportPdfBtyes = JasperExportManager.exportReportToPdf(jasperPrint);
+		} catch (JRException e) {
 			throw new JasperFillException(
 					"Jasper failed to create pdf. Reason : " + e.getMessage());
 		} catch (IOException e) {
@@ -174,11 +175,11 @@ public class JasperFiller {
 		return reportPdfBtyes;
 	}
 
-	private HashMap<String, Object> generateParameters(
+	private LinkedHashMap<String, Object> generateParameters(
 			ByteArrayInputStream patientInfoImg,
 			ArrayList<ByteArrayInputStream> barcodeIDImageList) {
 
-		HashMap<String, Object> parameters = new HashMap<String, Object>();
+		LinkedHashMap<String, Object> parameters = new LinkedHashMap<String, Object>();
 
 		parameters.put(JasperConstants.titleField,
 				templateData.getBranding().projectTitle);

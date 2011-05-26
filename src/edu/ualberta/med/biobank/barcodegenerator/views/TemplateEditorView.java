@@ -4,34 +4,25 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.net.URL;
 
-import org.eclipse.swt.custom.TableEditor;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.layout.RowLayout;
 
@@ -39,6 +30,8 @@ import edu.ualberta.med.biobank.barcodegenerator.dialogs.StringInputDialog;
 import edu.ualberta.med.biobank.barcodegenerator.template.Template;
 import edu.ualberta.med.biobank.barcodegenerator.template.TemplateStore;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSRTemplate;
+import edu.ualberta.med.biobank.barcodegenerator.trees.ConfigurationTree;
+import edu.ualberta.med.biobank.barcodegenerator.trees.TreeException;
 
 public class TemplateEditorView extends ViewPart {
 
@@ -65,17 +58,15 @@ public class TemplateEditorView extends ViewPart {
 	private Button browseButton = null;
 	private List list = null;
 	private Group composite6 = null;
-	private Table configTable = null;
-	private TableEditor editor = null;
-	private Text currentTextEditor = null;
-	private TableItem currentTableItem = null;
+	private ConfigurationTree configTree = null;
+
 	private Shell shell;
-	
-	// editing the second column
-	final int EDITABLECOLUMN = 1;
 
 	private TemplateStore templateStore = new TemplateStore();
 	private Template templateSelected = null;
+
+	// constants
+	final private String HELP_URL = "http://www.example.com/";
 
 	private void loadTemplateStore() {
 		// TODO load store from proper location
@@ -85,10 +76,12 @@ public class TemplateEditorView extends ViewPart {
 			templateStore = new TemplateStore();
 			Error("Preference Store Loading",
 					"Could not load the preference store. IOException ");
+			return;
 		} catch (ClassNotFoundException e) {
 			templateStore = new TemplateStore();
 			Error("Preference Store Loading",
 					"SERIOUS ERROR: Could not load the preference store. Class not found!");
+			return;
 		}
 	}
 
@@ -282,12 +275,23 @@ public class TemplateEditorView extends ViewPart {
 
 			updateJasperFileText(null);
 
-			populateTable(configTable, ((CBSRTemplate) templateSelected)
-					.getConfiguration().getSettings());
+			try {
+				configTree.populateTree(((CBSRTemplate) templateSelected)
+						.getConfiguration());
+			} catch (TreeException e) {
+				Error("Set Templat Error", e.getError());
+				return;
+			}
+
 		} else {
 			templateNameText.setText("Select a template.");
 			jasperFileText.setText("");
-			populateTable(configTable, null);
+			try {
+				configTree.populateTree(null);
+			} catch (TreeException e) {
+				Error("Set Templat Error", e.getError());
+				return;
+			}
 		}
 	}
 
@@ -324,6 +328,7 @@ public class TemplateEditorView extends ViewPart {
 					} else {
 						Error("Template not in Template Store.",
 								"Template does not exist, already deleted.");
+						return;
 					}
 				}
 			}
@@ -360,6 +365,7 @@ public class TemplateEditorView extends ViewPart {
 						} else {
 							Error("Template Exists",
 									"Duplicate name collision. Your cloned template must have a unique name.");
+							return;
 						}
 					}
 				}
@@ -462,7 +468,7 @@ public class TemplateEditorView extends ViewPart {
 					}
 					byte[] jasperFileData;
 					try {
-						jasperFileData = getBytesFromFile(selectedFile);
+						jasperFileData = fileToBytes(selectedFile);
 					} catch (IOException e) {
 						Error("Loading Jasper File",
 								"Could not read the specified jasper file.\n\n"
@@ -481,17 +487,16 @@ public class TemplateEditorView extends ViewPart {
 		});
 	}
 
-	// http://www.java-tips.org/java-se-tips/java.io/reading-a-file-into-a-byte-array.html
-	public static byte[] getBytesFromFile(File file) throws IOException {
+	public static byte[] fileToBytes(File file) throws IOException {
 		InputStream is = new FileInputStream(file);
 
 		byte[] bytes = new byte[(int) file.length()];
 
 		int offset = 0;
-		int numRead = 0;
+		int readCount = 0;
 		while (offset < bytes.length
-				&& (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
-			offset += numRead;
+				&& (readCount = is.read(bytes, offset, bytes.length - offset)) >= 0) {
+			offset += readCount;
 		}
 
 		if (offset < bytes.length) {
@@ -503,15 +508,6 @@ public class TemplateEditorView extends ViewPart {
 		return bytes;
 	}
 
-	/**
-	 * This method initializes composite6
-	 * 
-	 */
-
-	/**
-	 * This method initializes composite6
-	 * 
-	 */
 	private void createComposite62() {
 		GridData gridData10 = new GridData();
 		gridData10.horizontalAlignment = GridData.FILL;
@@ -527,188 +523,7 @@ public class TemplateEditorView extends ViewPart {
 		composite6.setLayout(new GridLayout());
 		composite6.setText("Configuration");
 		composite6.setLayoutData(gridData10);
-		createTable(composite6);
-	}
-
-	private void createTable(final Composite c) {
-		GridData gridData9 = new GridData();
-		gridData9.grabExcessHorizontalSpace = true;
-		gridData9.verticalAlignment = GridData.FILL;
-		gridData9.grabExcessVerticalSpace = true;
-		gridData9.widthHint = -1;
-		gridData9.horizontalAlignment = GridData.FILL;
-
-		configTable = new Table(c, SWT.FULL_SELECTION | SWT.HIDE_SELECTION);
-		configTable.setHeaderVisible(true);
-		configTable.setLayoutData(gridData9);
-		configTable.setLinesVisible(true);
-
-		editor = new TableEditor(configTable);
-		// The editor must have the same size as the cell and must
-		// not be any smaller than 50 pixels.
-		editor.horizontalAlignment = SWT.LEFT;
-		editor.grabHorizontal = true;
-		editor.minimumWidth = 50;
-
-
-
-		// TODO explain the ROOT fields and width,height fields
-		configTable.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				// Clean up any previous editor control
-				Control oldEditor = editor.getEditor();
-				if (oldEditor != null)
-					oldEditor.dispose();
-
-				// Identify the selected row
-				currentTableItem = (TableItem) e.item;
-
-				if (currentTableItem == null)
-					return;
-				// The control that will be the editor must be a child of the
-				// Table
-				currentTextEditor = new Text(configTable, SWT.NONE);
-				currentTextEditor.setText(currentTableItem.getText(EDITABLECOLUMN));
-
-				currentTextEditor.addModifyListener(new ModifyListener() {
-					public void modifyText(ModifyEvent me) {
-						Text text = (Text) editor.getEditor();
-
-						editor.getItem()
-								.setText(EDITABLECOLUMN, text.getText());
-
-						// must be 4 valid numbers in the range of -1000 to
-						// 1000.
-						boolean valid = true;
-						if (currentTableItem != null
-								&& currentTableItem.getText(EDITABLECOLUMN) != null
-								&& currentTableItem.getText(EDITABLECOLUMN).split(",").length == 4)
-							for (String s : currentTableItem.getText(EDITABLECOLUMN).split(
-									",")) {
-
-								try {
-									int parsedInt = Integer.parseInt(s);
-									if (parsedInt <= -1000 || parsedInt >= 1000)
-										valid = false;
-
-								} catch (NumberFormatException e) {
-									valid = false;
-								}
-							}
-						else
-							valid = false;
-
-						if (valid)
-							currentTableItem.setForeground(new Color(shell.getDisplay(), 0,
-									0, 0));
-						else
-							currentTableItem.setForeground(new Color(shell.getDisplay(),
-									255, 0, 0));
-
-						if (templateSelected != null && valid) {
-							((CBSRTemplate) templateSelected)
-									.getConfiguration().setSettingsEntry(
-											currentTableItem.getText(0),
-											String2Rect(currentTableItem.getText(1)));
-						}
-
-					}
-				});
-
-				currentTextEditor.selectAll();
-				currentTextEditor.setFocus();
-				editor.setEditor(currentTextEditor, currentTableItem, EDITABLECOLUMN);
-			}
-		});
-
-		// FIXME make table set column width work correctly.
-		// remove this column name hack
-		String[] columnNames = {
-				"Variable                                                                              ",
-				"Value" };
-
-		TableColumn[] column = new TableColumn[2];
-		column[0] = new TableColumn(configTable, SWT.LEFT);
-		column[0].setText(columnNames[0]);
-		column[0].setWidth(200);
-
-		column[1] = new TableColumn(configTable, SWT.LEFT);
-		column[1].setText(columnNames[1]);
-
-		for (int i = 0, n = column.length; i < n; i++) {
-			column[i].pack();
-		}
-
-	}
-
-	private void sortTableColumn1() {
-		TableItem[] items = configTable.getItems();
-		for (int i = 1; i < items.length; i++) {
-			String value1 = items[i].getText(0);
-			for (int j = 0; j < i; j++) {
-				String value2 = items[j].getText(0);
-				if (value1.compareTo(value2) < 0) {
-					String[] values = { items[i].getText(0),
-							items[i].getText(1) };
-					items[i].dispose();
-					TableItem item = new TableItem(configTable, SWT.NONE, j);
-					item.setText(values);
-					items = configTable.getItems();
-					break;
-				}
-			}
-		}
-	}
-	private void populateTable(Table t, Map<String, Rectangle> data) {
-
-		
-		// remove any editor if a cell is a being modified in a previous table layout.
-		if(currentTextEditor != null)
-			currentTextEditor.dispose();
-		currentTextEditor = null;
-		editor.setEditor(null, currentTableItem, EDITABLECOLUMN);
-		
-		t.removeAll();
-
-		if (data == null) {
-			return;
-		}
-
-		for (Entry<String, Rectangle> e : data.entrySet()) {
-
-			TableItem item = new TableItem(t, SWT.NONE);
-			item.setText(new String[] { e.getKey(), rect2String(e.getValue()) });
-		}
-		sortTableColumn1();
-
-		t.redraw();
-	}
-
-	private static String rect2String(Rectangle r) {
-		return r.x + "," + r.y + "," + r.width + "," + r.height;
-	}
-
-	private static Rectangle String2Rect(String s) {
-
-		String[] parts = s.split(",");
-
-		Rectangle r = null;
-
-		if (parts.length == 4) {
-			try {
-				r = new Rectangle(Integer.parseInt(parts[0]),
-						Integer.parseInt(parts[1]), Integer.parseInt(parts[2]),
-						Integer.parseInt(parts[3]));
-			} catch (NumberFormatException nfe) {
-				throw new RuntimeException(
-						"Failed to parse integers in string to rect converstion.");
-			}
-		} else {
-			throw new RuntimeException(
-					"Invalid number of items  in string to rect converstion. ");
-		}
-		return r;
-
+		configTree = new ConfigurationTree(composite6, SWT.NONE);
 	}
 
 	private void Error(String title, String message) {
@@ -721,7 +536,16 @@ public class TemplateEditorView extends ViewPart {
 	private SelectionListener helpListener = new SelectionListener() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			// TODO make help dialog.
+			try {
+
+				// TODO test url opening
+				PlatformUI.getWorkbench().getBrowserSupport()
+						.getExternalBrowser().openURL(new URL(HELP_URL));
+			} catch (Exception e1) {
+				Error("Open URL Problem",
+						"Could not open help url.\n\n" + e1.getMessage());
+				return;
+			}
 		}
 
 		@Override
@@ -758,11 +582,20 @@ public class TemplateEditorView extends ViewPart {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 
+			try {
+				configTree.resetEditor();
+			} catch (TreeException e2) {
+				Error("Editor Error",
+						"Could not reset editor: " + e2.getError());
+				return;
+			}
 			// TODO save store to proper location
 			try {
 				templateStore.saveStore(new File("Store.dat"));
 			} catch (IOException e1) {
-				e1.printStackTrace();
+				Error("Store Save",
+						"Could not save to store file." + e1.getMessage());
+				return;
 			}
 
 			MessageBox messageBox = new MessageBox(shell, SWT.ICON_QUESTION
