@@ -34,13 +34,15 @@ public class Text extends Element {
 		this.message = message;
 		this.font = font;
 	}
+	
+
 
 	public void render(Graphics2D g, int scale) {
 		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g.setFont(font);
 		
-		g.drawString(message, rect.x * scale, (rect.y + font.getSize()) * scale);
+		g.drawString(message, mmToPixel(rect.x,scale), mmToPixel(rect.y,scale) );
 
 	}
 

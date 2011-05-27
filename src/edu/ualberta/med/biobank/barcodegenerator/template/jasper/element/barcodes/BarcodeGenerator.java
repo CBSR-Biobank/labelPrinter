@@ -54,7 +54,7 @@ public class BarcodeGenerator {
 
 		Code128Bean barcodeGenCode128 = new Code128Bean();
 		barcodeGenCode128.setBarHeight(5);// 6
-		barcodeGenCode128.setModuleWidth(0.15);// 0.2
+		barcodeGenCode128.setModuleWidth(0.2);// 0.2
 		barcodeGenCode128.setFontName(font.getName());
 		barcodeGenCode128.setQuietZone(0);
 		barcodeGenCode128.setVerticalQuietZone(0);

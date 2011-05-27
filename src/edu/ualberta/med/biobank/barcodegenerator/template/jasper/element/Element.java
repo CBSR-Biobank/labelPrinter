@@ -16,7 +16,14 @@ public abstract  class Element{
 				* dpi * scale) / 25.4), (int) ((r.width * dpi * scale) / 25.4),
 				(int) ((r.height * dpi * scale) / 25.4));
 	}
+	
+	
+	protected static int mmToPixel(int mm, int scale) {
+		
+		return (int) ((mm * 75 * scale) / 25.4); //dpi is 75 (jasper)
+	}
 
+	
 	protected Rectangle rect;
 	protected TYPE type = TYPE.None;
 	protected String message = null;

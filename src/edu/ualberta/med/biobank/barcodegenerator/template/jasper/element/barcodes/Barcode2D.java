@@ -38,8 +38,8 @@ public class Barcode2D extends Element {
 			throw new BarcodeCreationException(
 					"Failed to create image buffer for barcode");
 		}
-		g.drawImage(barcode2DImg, rect.x * scale, rect.y * scale, rect.width
-				* scale, rect.height * scale, null);
+		g.drawImage(barcode2DImg, mmToPixel(rect.x,scale), mmToPixel(rect.y,scale), mmToPixel(rect.width,scale),
+				mmToPixel(rect.height,scale), null);
 
 	}
 }

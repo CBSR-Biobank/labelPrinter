@@ -36,7 +36,7 @@ public class Barcode1D extends Element {
 		this.message = message;
 
 	}
-
+	
 	public void render(Graphics2D g, int scale) throws BarcodeCreationException {
 		BufferedImage barcode1DImg;
 		try {
@@ -46,7 +46,8 @@ public class Barcode1D extends Element {
 			throw new BarcodeCreationException(
 					"Failed to create image buffer for barcode");
 		}
-		g.drawImage(barcode1DImg, rect.x * scale, rect.y * scale, rect.width
-				* scale, rect.height * scale, null);
+		g.drawImage(barcode1DImg, mmToPixel(rect.x,scale), mmToPixel(rect.y,scale), mmToPixel(rect.width,scale),
+				mmToPixel(rect.height,scale), null);
+		
 	}
 }
