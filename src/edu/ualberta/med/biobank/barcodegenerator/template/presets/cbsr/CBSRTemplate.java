@@ -101,7 +101,7 @@ public class CBSRTemplate extends Template {
 						&& cbsrData.patientIdStr.length() > 0) {
 
 					Rectangle master = this
-							.getKey("Barcodes.Master.Barcode 1D");
+							.getKey("Barcodes.All.Barcode 1D");
 					Rectangle barcode = this
 							.getKey("Barcodes.Individual.Barcode "
 									+ addPaddingZeros(i) + ".Barcode 1D");
@@ -124,7 +124,7 @@ public class CBSRTemplate extends Template {
 						&& rStrArray.replaceAll("[^a-zA-Z0-9 ]", "").length() == 12) {
 
 					Rectangle master = this
-							.getKey("Barcodes.Master.Barcode 2D");
+							.getKey("Barcodes.All.Barcode 2D");
 					Rectangle barcode = this
 							.getKey("Barcodes.Individual.Barcode "
 									+ addPaddingZeros(i) + ".Barcode 2D");
@@ -144,7 +144,7 @@ public class CBSRTemplate extends Template {
 						&& cbsrData.sampleTypeStr.length() > 0) {
 
 					Rectangle master = this
-							.getKey("Barcodes.Master.Sample Text");
+							.getKey("Barcodes.All.Sample Text");
 
 					Rectangle barcode = this
 							.getKey("Barcodes.Individual.Barcode "
@@ -210,9 +210,9 @@ public class CBSRTemplate extends Template {
 		data.put("Patient Info.Bottom Field.Field Text", new Rectangle(1, 25,0, 0));
 		data.put("Patient Info.Bottom Field.1D Barcode", new Rectangle(38, 25,29, 8));
 		data.put("Patient Info.Patient ID.1D Barcode", new Rectangle(1, 33,29, 8));
-		data.put("Barcodes.Master.Barcode 1D", new Rectangle(8, 7, 29, 8));
-		data.put("Barcodes.Master.Barcode 2D", new Rectangle(40, 7, 6, 6));
-		data.put("Barcodes.Master.Sample Text", new Rectangle(8, 2, 0, 0));
+		data.put("Barcodes.All.Barcode 1D", new Rectangle(8, 7, 29, 8));
+		data.put("Barcodes.All.Barcode 2D", new Rectangle(40, 7, 6, 6));
+		data.put("Barcodes.All.Sample Text", new Rectangle(8, 2, 0, 0));
 
 		for (int i = 1; i <= 32; i++) {
 			data.put("Barcodes.Individual.Barcode " + addPaddingZeros(i)
@@ -236,8 +236,8 @@ public class CBSRTemplate extends Template {
 				"Patient Info.Bottom Field.Field Text",
 				"Patient Info.Bottom Field.1D Barcode",
 				"Patient Info.Patient ID.1D Barcode",
-				"Barcodes.Master.Barcode 1D", "Barcodes.Master.Barcode 2D",
-				"Barcodes.Master.Sample Text" };
+				"Barcodes.All.Barcode 1D", "Barcodes.All.Barcode 2D",
+				"Barcodes.All.Sample Text" };
 
 		String[] iteratedConfigKeyList = new String[] {
 				"Barcodes.Individual.Barcode ", "Barcodes.Individual.Barcode ",

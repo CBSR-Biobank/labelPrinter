@@ -3,7 +3,7 @@
 	<property name="com.jasperassistant.designer.Units" value="Millimeters"/>
 	<property name="ireport.zoom" value="0.8264462809917359"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="169"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -74,8 +74,7 @@
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{LOGO}]]></imageExpression>
 			</image>
 			<image>
-				<!-- Warning: changing the key may cause compatibility issues -->
-				<reportElement key ="PATIENT_INFO_IMG" x="24" y="80" width="238" height="182"/>
+				<reportElement key="PATIENT_INFO_IMG" x="6" y="80" width="238" height="182"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_INFO_IMG}]]></imageExpression>
 			</image>
 		</band>
@@ -91,11 +90,11 @@
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_1}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="307" y="1" width="153" height="63"/>
+				<reportElement x="305" y="1" width="153" height="63"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_2}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="460" y="1" width="153" height="63"/>
+				<reportElement x="458" y="1" width="153" height="63"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_3}]]></imageExpression>
 			</image>
 			<image>
@@ -107,11 +106,11 @@
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_5}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="307" y="64" width="153" height="63"/>
+				<reportElement x="305" y="64" width="153" height="63"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_6}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="460" y="64" width="153" height="63"/>
+				<reportElement x="458" y="64" width="153" height="63"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_7}]]></imageExpression>
 			</image>
 			<image>
@@ -123,11 +122,11 @@
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_9}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="307" y="127" width="153" height="63"/>
+				<reportElement x="305" y="127" width="153" height="63"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_10}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="460" y="127" width="153" height="63"/>
+				<reportElement x="458" y="127" width="153" height="63"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_11}]]></imageExpression>
 			</image>
 			<image>
@@ -139,11 +138,11 @@
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_13}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="307" y="190" width="153" height="63"/>
+				<reportElement x="305" y="190" width="153" height="63"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_14}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="460" y="190" width="153" height="63"/>
+				<reportElement x="458" y="190" width="153" height="63"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_15}]]></imageExpression>
 			</image>
 			<image>
@@ -155,11 +154,11 @@
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_17}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="307" y="253" width="153" height="63"/>
+				<reportElement x="305" y="253" width="153" height="63"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_18}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="460" y="253" width="153" height="63"/>
+				<reportElement x="458" y="253" width="153" height="63"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_19}]]></imageExpression>
 			</image>
 			<image>
@@ -171,11 +170,11 @@
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_21}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="307" y="316" width="153" height="63"/>
+				<reportElement x="305" y="316" width="153" height="63"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_22}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="460" y="316" width="153" height="63"/>
+				<reportElement x="458" y="316" width="153" height="63"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_23}]]></imageExpression>
 			</image>
 			<image>
@@ -187,11 +186,11 @@
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_25}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="307" y="379" width="153" height="63"/>
+				<reportElement x="305" y="379" width="153" height="63"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_26}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="460" y="379" width="153" height="63"/>
+				<reportElement x="458" y="379" width="153" height="63"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_27}]]></imageExpression>
 			</image>
 			<image>
@@ -203,16 +202,13 @@
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_29}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="307" y="442" width="153" height="63"/>
+				<reportElement x="305" y="442" width="153" height="63"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_30}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="460" y="442" width="153" height="63"/>
+				<reportElement x="458" y="442" width="153" height="63"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_31}]]></imageExpression>
 			</image>
 		</band>
 	</pageFooter>
 </jasperReport>
-
-
-
