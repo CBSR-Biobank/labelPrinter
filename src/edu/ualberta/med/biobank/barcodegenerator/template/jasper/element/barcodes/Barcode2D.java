@@ -30,16 +30,16 @@ public class Barcode2D extends Element {
 
 	}
 
-	public void render(Graphics2D g) throws BarcodeCreationException {
+	public void render(Graphics2D g, int scale) throws BarcodeCreationException {
 		BufferedImage barcode2DImg;
 		try {
-			barcode2DImg = BarcodeGenerator.generate2DBarcode(message, rect,
-					100);
+			barcode2DImg = BarcodeGenerator.generate2DBarcode(message, 300);
 		} catch (IOException e) {
 			throw new BarcodeCreationException(
 					"Failed to create image buffer for barcode");
 		}
-		g.drawImage(barcode2DImg, rect.x, rect.y, null);
+		g.drawImage(barcode2DImg, rect.x * scale, rect.y * scale, rect.width
+				* scale, rect.height * scale, null);
 
 	}
 }

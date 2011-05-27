@@ -14,37 +14,39 @@ import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.Elem
 public class Barcode1D extends Element {
 
 	Font font;
-	
-	public Barcode1D(Rectangle rect, String message, Font font) throws ElementCreationException {
+
+	public Barcode1D(Rectangle rect, String message, Font font)
+			throws ElementCreationException {
 
 		if (message == null || message.length() == 0)
 			throw new ElementCreationException(
 					"empty or null message specified to 1D barcode element.");
-		
+
 		if (rect == null)
 			throw new ElementCreationException(
 					"null dimensions specified to 1D barcode element.");
-		
+
 		if (font == null)
 			throw new ElementCreationException(
 					"null font specified to 1D barcode element.");
-		
+
 		this.font = font;
 		this.rect = rect;
 		this.type = Element.TYPE.GenCode128;
 		this.message = message;
-		
+
 	}
 
-	public void render(Graphics2D g) throws BarcodeCreationException {
-			BufferedImage barcode1DImg;
-			try {
-				barcode1DImg = BarcodeGenerator.generate1DBarcode(
-						message, font, rect, 200);
-			} catch (IOException e) {
+	public void render(Graphics2D g, int scale) throws BarcodeCreationException {
+		BufferedImage barcode1DImg;
+		try {
+			barcode1DImg = BarcodeGenerator.generate1DBarcode(message, font,
+					300);
+		} catch (IOException e) {
 			throw new BarcodeCreationException(
 					"Failed to create image buffer for barcode");
-			}
-			g.drawImage(barcode1DImg,  rect.x, rect.y, null);
+		}
+		g.drawImage(barcode1DImg, rect.x * scale, rect.y * scale, rect.width
+				* scale, rect.height * scale, null);
 	}
 }

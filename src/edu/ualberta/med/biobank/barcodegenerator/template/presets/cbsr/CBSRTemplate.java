@@ -203,26 +203,16 @@ public class CBSRTemplate extends Template {
 	public void setDefaultConfiguration() {
 		LinkedHashMap<String, Rectangle> data = new LinkedHashMap<String, Rectangle>();
 
-		data.put("Patient Info.Top Field.Field Text", new Rectangle(0, 10, 20,
-				20));
-		data.put("Patient Info.Top Field.1D Barcode", new Rectangle(450, 10,
-				20, 60));
-		data.put("Patient Info.Middle Field.Field Text", new Rectangle(0, 150,
-				20, 20));
-		data.put("Patient Info.Middle Field.1D Barcode", new Rectangle(450,
-				150, 20, 60));
-		data.put("Patient Info.Bottom Field.Field Text", new Rectangle(0, 300,
-				20, 20));
-		data.put("Patient Info.Bottom Field.1D Barcode", new Rectangle(450,
-				300, 20, 60));
-		data.put("Patient Info.Patient ID.1D Barcode", new Rectangle(1, 400, 20,
-				60));
-		data.put("Barcodes.Master.Barcode 1D", new Rectangle(23 * 4, 25 * 4,
-				20, 60));
-		data.put("Barcodes.Master.Barcode 2D", new Rectangle(400, 25 * 4, 10,
-				18));
-		data.put("Barcodes.Master.Sample Text", new Rectangle(23 * 4, 28, 100,
-				1));
+		data.put("Patient Info.Top Field.Field Text", new Rectangle(1, 3, 20,20));
+		data.put("Patient Info.Top Field.1D Barcode", new Rectangle(113, 3, 42,24));
+		data.put("Patient Info.Middle Field.Field Text", new Rectangle(1, 38,20, 20));
+		data.put("Patient Info.Middle Field.1D Barcode", new Rectangle(113, 38,42, 24));
+		data.put("Patient Info.Bottom Field.Field Text", new Rectangle(1, 75,20, 20));
+		data.put("Patient Info.Bottom Field.1D Barcode", new Rectangle(113, 75,42, 24));
+		data.put("Patient Info.Patient ID.1D Barcode", new Rectangle(1, 100,42, 24));
+		data.put("Barcodes.Master.Barcode 1D", new Rectangle(23, 25, 42, 18));
+		data.put("Barcodes.Master.Barcode 2D", new Rectangle(100, 25, 19, 19));
+		data.put("Barcodes.Master.Sample Text", new Rectangle(23, 5, 100, 1));
 
 		for (int i = 1; i <= 32; i++) {
 			data.put("Barcodes.Individual.Barcode " + addPaddingZeros(i)

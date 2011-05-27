@@ -151,8 +151,8 @@ public class JasperFiller {
 		}
 
 		// generate parameters for jasper
-		LinkedHashMap<String, Object> parameters = generateParameters(patientInfoImg,
-				barcodeIDBufferList);
+		LinkedHashMap<String, Object> parameters = generateParameters(
+				patientInfoImg, barcodeIDBufferList);
 
 		byte[] reportPdfBtyes = null;
 
@@ -198,20 +198,22 @@ public class JasperFiller {
 			ArrayList<Element> elementList, int width, int height)
 			throws IOException, BarcodeCreationException {
 
-		BufferedImage bi = new BufferedImage(width * 4, height * 4,
-				BufferedImage.TYPE_4BYTE_ABGR);
+		int imageScale = 4;
+
+		BufferedImage bi = new BufferedImage(width * imageScale, height
+				* imageScale, BufferedImage.TYPE_4BYTE_ABGR);
 		Graphics2D g = (Graphics2D) bi.getGraphics();
 		g.setPaintMode();
 
 		g.setColor(Color.WHITE);
-		g.fillRect(0, 0, width * 4, height * 4);
+		g.fillRect(0, 0, width * imageScale, height * imageScale);
 
 		// border
 		g.setColor(Color.BLACK);
-		g.drawRect(0, 0, width * 4 - 1, height * 4 - 1);
+		g.drawRect(0, 0, width * imageScale - 1, height * imageScale - 1);
 
 		for (Element e : elementList) {
-			e.render(g);
+			e.render(g,imageScale);
 		}
 
 		ByteArrayOutputStream binaryOutputStream = new ByteArrayOutputStream();

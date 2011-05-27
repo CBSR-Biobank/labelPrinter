@@ -250,7 +250,7 @@ public class LabelPrinterView extends ViewPart {
 		label9.setText("Template:");
 		templateCombo = new Combo(composite3, SWT.DROP_DOWN | SWT.BORDER);
 		templateCombo.setLayoutData(gridData21);
-		
+
 		for (String s : this.templateStore.getTemplateNames()) {
 			templateCombo.add(s);
 		}
@@ -717,7 +717,6 @@ public class LabelPrinterView extends ViewPart {
 						.toUpperCase().substring(0, 6);
 	}
 
-
 	private static ArrayList<String> randStringArray(int c) {
 
 		ArrayList<String> l = new ArrayList<String>();
@@ -729,7 +728,6 @@ public class LabelPrinterView extends ViewPart {
 		return l;
 	}
 
-	
 	private SelectionListener printButtonListener = new SelectionListener() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {

@@ -10,10 +10,16 @@ public abstract  class Element{
 	public static enum TYPE {
 		GenCode128, DataMatrix, Text,None,
 	}
+	
+	protected static Rectangle scaleToPixels(Rectangle r, int scale, int dpi) {
+		return new Rectangle((int) ((r.x * dpi * scale) / 25.4), (int) ((r.y
+				* dpi * scale) / 25.4), (int) ((r.width * dpi * scale) / 25.4),
+				(int) ((r.height * dpi * scale) / 25.4));
+	}
 
 	protected Rectangle rect;
 	protected TYPE type = TYPE.None;
 	protected String message = null;
 	
-	abstract public void render(Graphics2D g)  throws BarcodeCreationException;
+	abstract public void render(Graphics2D g, int ImageScale)  throws BarcodeCreationException;
 };
