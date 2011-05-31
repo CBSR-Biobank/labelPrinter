@@ -109,6 +109,7 @@ public class LabelPrinterView extends ViewPart {
 	private Shell shell;
 	private IPreferenceStore perferenceStore;
 	private TemplateStore templateStore;
+	private Template selectedTemplate;
 
 	@Override
 	public void createPartControl(Composite parent) {
@@ -262,7 +263,7 @@ public class LabelPrinterView extends ViewPart {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				updateIntendedPrinterLabel();
+				loadSelectedTemplate();
 			}
 
 			@Override
@@ -278,20 +279,22 @@ public class LabelPrinterView extends ViewPart {
 		intendedPrinter = new Label(composite3, SWT.NONE);
 		intendedPrinter.setForeground(new Color(shell.getDisplay(), 255, 0, 0));
 		intendedPrinter.setText("default");
-		updateIntendedPrinterLabel();
+		loadSelectedTemplate();
 	}
 
-	private void updateIntendedPrinterLabel() {
+	private void loadSelectedTemplate() {
 
 		if (templateCombo.getSelectionIndex() >= 0) {
 
-			// TODO make this a single templateStore function
-			Template current = templateStore.getTemplate(templateCombo
+			selectedTemplate = templateStore.getTemplate(templateCombo
 					.getItem(templateCombo.getSelectionIndex()));
 
-			if (current != null)
-				intendedPrinter.setText(current.getIntendedPrinter());
-		}
+			// load gui elements that use template data
+			if (selectedTemplate != null)
+				intendedPrinter.setText(selectedTemplate.getIntendedPrinter());
+
+		} else
+			selectedTemplate = null;
 	}
 
 	/**
@@ -726,21 +729,14 @@ public class LabelPrinterView extends ViewPart {
 				sampleTypeStr = sampleTypeText.getText();
 			}
 
-			int selectedTemplateIndex = templateCombo.getSelectionIndex();
-			if (selectedTemplateIndex < 0) {
-				throw new CBSRGuiVerificationException("Verifcation Issue",
-						"Selected a valid template.");
-			} else {
-				selectedTemplate = (CBSRTemplate) templateStore
-						.getTemplate(templateCombo
-								.getItem(selectedTemplateIndex));
-			}
+			CBSRTemplate = (CBSRTemplate) selectedTemplate;
 
-			if (selectedTemplate == null) {
+			if (CBSRTemplate == null) {
 				throw new CBSRGuiVerificationException("Verifcation Issue",
 						"Could not load template.");
 			}
-			if (!((CBSRTemplate) selectedTemplate).jasperFileDataExists()) {
+
+			if (!(CBSRTemplate).jasperFileDataExists()) {
 				throw new CBSRGuiVerificationException("Verifcation Issue",
 						"Template is lacking a jasper file.");
 			}
@@ -779,7 +775,7 @@ public class LabelPrinterView extends ViewPart {
 
 			if (guiData != null) {
 				try {
-					pdfdata = guiData.selectedTemplate.generatePdfCBSR(guiData,
+					pdfdata = guiData.CBSRTemplate.generatePdfCBSR(guiData,
 							randStringArray(32));
 				} catch (CBSRPdfGenException e1) {
 					Error("Gui Validation", e1.getError());
@@ -812,9 +808,9 @@ public class LabelPrinterView extends ViewPart {
 
 		}
 	};
-	//TODO make save to PDF file prompt
-	//TODO add printer selection combobox.
-	//TODO full screen -- only allow one of the two views to exist.
+	// TODO make save to PDF file prompt
+	// TODO add printer selection combobox.
+	// TODO full screen -- only allow one of the two views to exist.
 
 	private SelectionListener exitButtonListener = new SelectionListener() {
 		@Override

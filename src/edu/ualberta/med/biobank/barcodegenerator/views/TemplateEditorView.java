@@ -243,7 +243,7 @@ public class TemplateEditorView extends ViewPart {
 						int response = messageBox.open();
 						if (response == SWT.YES) {
 							try {
-								templateStore.saveTemplate(templateSelected);
+								templateStore.updateTemplate(templateSelected);
 							} catch (IOException e1) {
 								Error("Template Save Error",
 										"Error occured saving template: "
@@ -355,10 +355,12 @@ public class TemplateEditorView extends ViewPart {
 
 								int lastItemIndex = list.getItemCount() - 1;
 
-								list.select(lastItemIndex);
-								setSelectedTemplate(templateStore
-										.getTemplate(list
-												.getItem(lastItemIndex)));
+								if (lastItemIndex >= 0) {
+									list.select(lastItemIndex);
+									setSelectedTemplate(templateStore
+											.getTemplate(list
+													.getItem(lastItemIndex)));
+								}
 
 							} else {
 								setSelectedTemplate(null);
@@ -624,13 +626,12 @@ public class TemplateEditorView extends ViewPart {
 			if (response == SWT.YES) {
 				saveCurrentTemplate();
 				dispose();
-			}
-			else if(response == SWT.NO){
+			} else if (response == SWT.NO) {
 				dispose();
-				//TODO make close work
-				//TODO prompt user if they close the view via the X.
+				// TODO make close work
+				// TODO prompt user if they close the view via the X.
 
-			}else{
+			} else {
 				return;
 			}
 		}
@@ -641,17 +642,15 @@ public class TemplateEditorView extends ViewPart {
 		}
 	};
 
-	
-	private void saveCurrentTemplate(){
+	private void saveCurrentTemplate() {
 
 		try {
 			configTree.resetEditor();
 		} catch (TreeException e2) {
-			Error("Editor Error",
-					"Could not reset editor: " + e2.getError());
+			Error("Editor Error", "Could not reset editor: " + e2.getError());
 			return;
 		}
-		if(!templateDirty && !configTree.isDirty()){
+		if (!templateDirty && !configTree.isDirty()) {
 			return;
 		}
 
@@ -662,14 +661,14 @@ public class TemplateEditorView extends ViewPart {
 		}
 
 		try {
-			templateStore.saveTemplate(templateSelected);
+			templateStore.updateTemplate(templateSelected);
 		} catch (IOException e1) {
 			Error("Save Template Error", "Could not save template: " + e1);
 			return;
 		}
 		templateDirty = false;
 	}
-	
+
 	/**
 	 * Saves the entire preference store and all the changed template
 	 * information as a serialized object.

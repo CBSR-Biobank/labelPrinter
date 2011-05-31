@@ -63,7 +63,7 @@ public class TemplateStore implements Serializable {
 		return false;
 	}
 
-	public boolean saveTemplate(Template updatedTemplate) throws IOException {
+	public boolean updateTemplate(Template updatedTemplate) throws IOException {
 
 		Template oldTemplate = getTemplate(updatedTemplate.getName());
 

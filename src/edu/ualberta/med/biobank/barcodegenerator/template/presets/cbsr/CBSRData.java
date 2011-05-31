@@ -21,5 +21,5 @@ public class CBSRData {
 	public boolean barcode3Print;
 
 	public String sampleTypeStr;
-	public CBSRTemplate selectedTemplate;
+	public CBSRTemplate CBSRTemplate;
 }
