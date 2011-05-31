@@ -100,8 +100,7 @@ public class CBSRTemplate extends Template {
 				if (cbsrData.patientIdStr != null
 						&& cbsrData.patientIdStr.length() > 0) {
 
-					Rectangle master = this
-							.getKey("Barcodes.All.Barcode 1D");
+					Rectangle master = this.getKey("Barcodes.All.Barcode 1D");
 					Rectangle barcode = this
 							.getKey("Barcodes.Individual.Barcode "
 									+ addPaddingZeros(i) + ".Barcode 1D");
@@ -123,8 +122,7 @@ public class CBSRTemplate extends Template {
 						&& rStrArray.length() > 0
 						&& rStrArray.replaceAll("[^a-zA-Z0-9 ]", "").length() == 12) {
 
-					Rectangle master = this
-							.getKey("Barcodes.All.Barcode 2D");
+					Rectangle master = this.getKey("Barcodes.All.Barcode 2D");
 					Rectangle barcode = this
 							.getKey("Barcodes.Individual.Barcode "
 									+ addPaddingZeros(i) + ".Barcode 2D");
@@ -143,8 +141,7 @@ public class CBSRTemplate extends Template {
 				if (cbsrData.sampleTypeStr != null
 						&& cbsrData.sampleTypeStr.length() > 0) {
 
-					Rectangle master = this
-							.getKey("Barcodes.All.Sample Text");
+					Rectangle master = this.getKey("Barcodes.All.Sample Text");
 
 					Rectangle barcode = this
 							.getKey("Barcodes.Individual.Barcode "
@@ -203,13 +200,19 @@ public class CBSRTemplate extends Template {
 	public void setDefaultConfiguration() {
 		LinkedHashMap<String, Rectangle> data = new LinkedHashMap<String, Rectangle>();
 
-		data.put("Patient Info.Top Field.Field Text", new Rectangle(1, 4, 0,0));
-		data.put("Patient Info.Top Field.1D Barcode", new Rectangle(38, 1, 29,8));
-		data.put("Patient Info.Middle Field.Field Text", new Rectangle(1, 13,0, 0));
-		data.put("Patient Info.Middle Field.1D Barcode", new Rectangle(38, 13,29, 8));
-		data.put("Patient Info.Bottom Field.Field Text", new Rectangle(1, 25,0, 0));
-		data.put("Patient Info.Bottom Field.1D Barcode", new Rectangle(38, 25,29, 8));
-		data.put("Patient Info.Patient ID.1D Barcode", new Rectangle(1, 33,29, 8));
+		data.put("Patient Info.Top Field.Field Text", new Rectangle(1, 4, 0, 0));
+		data.put("Patient Info.Top Field.1D Barcode", new Rectangle(38, 1, 29,
+				8));
+		data.put("Patient Info.Middle Field.Field Text", new Rectangle(1, 13,
+				0, 0));
+		data.put("Patient Info.Middle Field.1D Barcode", new Rectangle(38, 13,
+				29, 8));
+		data.put("Patient Info.Bottom Field.Field Text", new Rectangle(1, 25,
+				0, 0));
+		data.put("Patient Info.Bottom Field.1D Barcode", new Rectangle(38, 25,
+				29, 8));
+		data.put("Patient Info.Patient ID.1D Barcode", new Rectangle(1, 33, 29,
+				8));
 		data.put("Barcodes.All.Barcode 1D", new Rectangle(8, 7, 29, 8));
 		data.put("Barcodes.All.Barcode 2D", new Rectangle(40, 7, 6, 6));
 		data.put("Barcodes.All.Sample Text", new Rectangle(8, 2, 0, 0));
@@ -290,5 +293,7 @@ public class CBSRTemplate extends Template {
 	public boolean jasperFileDataExists() {
 		return (this.jasperTemplateFileData != null);
 	}
+
+
 
 }

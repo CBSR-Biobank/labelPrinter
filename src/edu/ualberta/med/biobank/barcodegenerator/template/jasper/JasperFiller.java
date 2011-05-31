@@ -108,8 +108,11 @@ public class JasperFiller {
 		}
 
 		if (templateData.getPatientBarcpdeInf().getLayout().size() != jasperConstants.barcodeCount) {
-			throw new JasperFillException("Error: requires "
-					+ jasperConstants.barcodeCount + " barcode IDs");
+			throw new JasperFillException("Error: jasper file contains "
+					+ jasperConstants.barcodeCount
+					+ " barcode IDs. Configuration data is designed for :"
+					+ templateData.getPatientBarcpdeInf().getLayout().size()
+					+ " barcode IDs.");
 		}
 
 	}
@@ -213,7 +216,7 @@ public class JasperFiller {
 		g.drawRect(0, 0, width * imageScale - 1, height * imageScale - 1);
 
 		for (Element e : elementList) {
-			e.render(g,imageScale);
+			e.render(g, imageScale);
 		}
 
 		ByteArrayOutputStream binaryOutputStream = new ByteArrayOutputStream();

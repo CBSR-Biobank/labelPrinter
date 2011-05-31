@@ -22,6 +22,8 @@ public class ConfigurationTree {
 	private TreeEditor editor;
 	private Text textEdit;
 
+	private boolean isDirty;
+
 	private Configuration configuration;
 
 	/**
@@ -116,7 +118,7 @@ public class ConfigurationTree {
 
 	}
 
-	public void resetEditor() throws TreeException{
+	public void resetEditor() throws TreeException {
 		if (textEdit != null)
 			textEdit.dispose();
 		textEdit = null;
@@ -127,7 +129,7 @@ public class ConfigurationTree {
 		editor.setEditor(null, null, 0);
 
 	}
-	
+
 	/**
 	 * Removes all the TreeItem children of the tree. It then adds all of the
 	 * configuration data to tree. NOTE: the configuration data keys must
@@ -139,8 +141,9 @@ public class ConfigurationTree {
 	 * @throws TreeException
 	 */
 	public void populateTree(Configuration config) throws TreeException {
-		
+
 		resetEditor();
+		isDirty = false;
 
 		if (tree == null)
 			throw new TreeException("Cannot populate tree: Tree is null.");
@@ -259,6 +262,7 @@ public class ConfigurationTree {
 													.setSettingsEntry(
 															location,
 															TreeItemToRectangle(currentTableItem));
+											isDirty = true;
 										} else {
 											System.err
 													.println("Could not find key in configuration :"
@@ -295,6 +299,10 @@ public class ConfigurationTree {
 				}
 			}
 		});
+	}
+	
+	public boolean isDirty(){
+		return isDirty;
 	}
 
 	public Rectangle getTreeValue(String location) {

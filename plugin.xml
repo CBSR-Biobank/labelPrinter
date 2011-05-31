@@ -10,7 +10,7 @@
       </category>
       <view
             name="Label Printer"
-            icon="icons/sample.gif"
+            icon=""
             category="barcodeGenerator"
             class="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView"
             id="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView">
@@ -21,10 +21,16 @@
       <perspectiveExtension
             targetID="org.eclipse.jdt.ui.JavaPerspective">
          <view
-               ratio="0.5"
+               closeable="false"
+               id="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView"
+               minimized="false"
+               moveable="false"
+               ratio="1"
+               relationship="top"
                relative="org.eclipse.ui.views.TaskList"
-               relationship="right"
-               id="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView">
+               showTitle="true"
+               standalone="false"
+               visible="true">
          </view>
       </perspectiveExtension>
    </extension>
@@ -35,12 +41,19 @@
             locationURI="menu:org.eclipse.ui.main.menu?after=edu.ualberta.med.biobank.menu.additions">
          <menu
                id="edu.ualberta.med.barcodegenerator.menu.barcodegenerator"
-               label="Barcode Generator">
+               label="Label Editor">
             <command
-                  commandId="edu.ualberta.med.barcodegenerator.commands.barcodegenerator"
+                  commandId="edu.ualberta.med.barcodegenerator.commands.labelprinter"
                   icon=""
-                  id="edu.ualberta.med.barcodegenerator.menu.makelabels"
-                  label="Make Labels"
+                  id="edu.ualberta.med.barcodegenerator.menu.labelprinter"
+                  label="Label Printer Label"
+                  style="push">
+            </command>
+            <command
+                  commandId="edu.ualberta.med.barcodegenerator.commands.templateditor"
+                  icon=""
+                  id="edu.ualberta.med.barcodegenerator.menu.templateditor"
+                  label="Template Editor Label"
                   style="push">
             </command>
          </menu>
@@ -49,9 +62,14 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="edu.ualberta.med.biobank.barcodegenerator.handlers.BarcodeGeneratorHandler"
-            id="edu.ualberta.med.barcodegenerator.commands.barcodegenerator"
-            name="Make Labels">
+            defaultHandler="edu.ualberta.med.biobank.barcodegenerator.handlers.LabelPrinterHandler"
+            id="edu.ualberta.med.barcodegenerator.commands.labelprinter"
+            name="Label Printer Command">
+      </command>
+     <command
+            defaultHandler="edu.ualberta.med.biobank.barcodegenerator.handlers.TemplateEditorHandler"
+            id="edu.ualberta.med.barcodegenerator.commands.templateditor"
+            name="Template Editor Command">
       </command>
    </extension>
    <extension
@@ -59,8 +77,15 @@
       <view
             allowMultiple="false"
             class="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView"
-            id="edu.ualberta.med.biobank.barcodegenerator.views.BarcodeView"
-            name="Barcode Label Maker"
+            id="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView"
+            name="Label Printer View"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="false"
+            class="edu.ualberta.med.biobank.barcodegenerator.views.TemplateEditorView"
+            id="edu.ualberta.med.biobank.barcodegenerator.views.TemplateEditorView"
+            name="Template Editor View"
             restorable="true">
       </view>
    </extension>

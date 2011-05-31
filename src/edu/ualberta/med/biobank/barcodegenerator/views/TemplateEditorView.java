@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -49,11 +51,12 @@ public class TemplateEditorView extends ViewPart {
 	private Button newButton = null;
 	private Button helpButton = null;
 	private Button cancelButton = null;
-	private Button saveAllButton = null;
+	private Button saveButton = null;
 	private Composite composite5 = null;
 	private Label label = null;
 	private Text templateNameText = null;
 	private Label label1 = null;
+	private Text printerNameText = null;
 	private Text jasperFileText = null;
 	private Button browseButton = null;
 	private List list = null;
@@ -62,33 +65,26 @@ public class TemplateEditorView extends ViewPart {
 
 	private Shell shell;
 
-	private TemplateStore templateStore = new TemplateStore();
+	private TemplateStore templateStore;
 	private Template templateSelected = null;
+
+	boolean templateDirty = false;
 
 	// constants
 	final private String HELP_URL = "http://www.example.com/";
 
-	private void loadTemplateStore() {
-		// TODO load store from proper location
-		try {
-			templateStore.loadStore(new File("Store.dat"));
-		} catch (IOException e) {
-			templateStore = new TemplateStore();
-			Error("Preference Store Loading",
-					"Could not load the preference store. IOException ");
-			return;
-		} catch (ClassNotFoundException e) {
-			templateStore = new TemplateStore();
-			Error("Preference Store Loading",
-					"SERIOUS ERROR: Could not load the preference store. Class not found!");
-			return;
-		}
-	}
-
 	@Override
 	public void createPartControl(Composite parent) {
 		shell = parent.getShell();
-		loadTemplateStore();
+
+		// TODO implement errors for templateStore
+		try {
+			templateStore = new TemplateStore();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 
 		top = new Composite(parent, SWT.NONE);
 		top.setLayout(new GridLayout());
@@ -166,9 +162,9 @@ public class TemplateEditorView extends ViewPart {
 		cancelButton.setText("Cancel");
 		cancelButton.addSelectionListener(cancelListener);
 
-		saveAllButton = new Button(composite1, SWT.NONE);
-		saveAllButton.setText("Save All ");
-		saveAllButton.addSelectionListener(saveAllListener);
+		saveButton = new Button(composite1, SWT.NONE);
+		saveButton.setText("Save Template");
+		saveButton.addSelectionListener(saveAllListener);
 	}
 
 	/**
@@ -234,7 +230,31 @@ public class TemplateEditorView extends ViewPart {
 		public void widgetSelected(SelectionEvent e) {
 			String[] selectedItems = list.getSelection();
 			if (selectedItems.length == 1) {
+
+				if (templateSelected != null) {
+
+					if (templateDirty || configTree.isDirty()) {
+
+						MessageBox messageBox = new MessageBox(shell,
+								SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+						messageBox
+								.setMessage("Template has been modified, do you want to save your changes?");
+						messageBox.setText("Template Editor Saving");
+						int response = messageBox.open();
+						if (response == SWT.YES) {
+							try {
+								templateStore.saveTemplate(templateSelected);
+							} catch (IOException e1) {
+								Error("Template Save Error",
+										"Error occured saving template: "
+												+ e1.getMessage());
+							}
+						}
+					}
+				}
+
 				Template t = templateStore.getTemplate(selectedItems[0]);
+
 				setSelectedTemplate(t);
 			} else {
 				setSelectedTemplate(null);
@@ -269,9 +289,13 @@ public class TemplateEditorView extends ViewPart {
 	}
 
 	private void setSelectedTemplate(Template t) {
-		templateSelected = t;
+
 		if (t != null) {
+			templateSelected = new CBSRTemplate();
+			Template.Clone(t, templateSelected);
+
 			templateNameText.setText(t.getName());
+			printerNameText.setText(t.getIntendedPrinter());
 
 			updateJasperFileText(null);
 
@@ -282,10 +306,15 @@ public class TemplateEditorView extends ViewPart {
 				Error("Set Templat Error", e.getError());
 				return;
 			}
+			templateDirty = false;
 
 		} else {
+			templateSelected = null;
 			templateNameText.setText("Select a template.");
+			printerNameText.setText("");
 			jasperFileText.setText("");
+			jasperFileText.setBackground(new Color(shell.getDisplay(), 255,
+					255, 255));
 			try {
 				configTree.populateTree(null);
 			} catch (TreeException e) {
@@ -293,6 +322,7 @@ public class TemplateEditorView extends ViewPart {
 				return;
 			}
 		}
+		templateDirty = false;
 	}
 
 	/**
@@ -309,26 +339,36 @@ public class TemplateEditorView extends ViewPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (templateSelected != null) {
-					if (templateStore.removeTemplate(templateSelected)) {
-						list.remove(templateSelected.getName());
+					MessageBox messageBox = new MessageBox(shell,
+							SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+					messageBox.setMessage("Are you sure you want to delete "
+							+ templateSelected.getName() + "?");
+					messageBox.setText("Deleting Template");
 
-						if (list.getItemCount() > 0) {
-							list.deselectAll();
+					int response = messageBox.open();
+					if (response == SWT.YES) {
+						if (templateStore.removeTemplate(templateSelected)) {
+							list.remove(templateSelected.getName());
 
-							int lastItemIndex = list.getItemCount() - 1;
+							if (list.getItemCount() > 0) {
+								list.deselectAll();
 
-							list.select(lastItemIndex);
-							setSelectedTemplate(templateStore.getTemplate(list
-									.getItem(lastItemIndex)));
+								int lastItemIndex = list.getItemCount() - 1;
+
+								list.select(lastItemIndex);
+								setSelectedTemplate(templateStore
+										.getTemplate(list
+												.getItem(lastItemIndex)));
+
+							} else {
+								setSelectedTemplate(null);
+							}
 
 						} else {
-							setSelectedTemplate(null);
+							Error("Template not in Template Store.",
+									"Template does not exist, already deleted.");
+							return;
 						}
-
-					} else {
-						Error("Template not in Template Store.",
-								"Template does not exist, already deleted.");
-						return;
 					}
 				}
 			}
@@ -441,6 +481,23 @@ public class TemplateEditorView extends ViewPart {
 		templateNameText.setLayoutData(gridData7);
 		@SuppressWarnings("unused")
 		Label filler7 = new Label(composite5, SWT.NONE);
+		label = new Label(composite5, SWT.NONE);
+		label.setText("Intended Printer:");
+		printerNameText = new Text(composite5, SWT.BORDER);
+		printerNameText.setEditable(true);
+		printerNameText.setLayoutData(gridData7);
+		printerNameText.addModifyListener(new ModifyListener() {
+
+			@Override
+			public void modifyText(ModifyEvent e) {
+				if (templateSelected == null || e.widget == null)
+					return;
+				templateSelected.setIntendedPrinter(((Text) e.widget).getText());
+				templateDirty = true;
+			}
+		});
+
+		filler7 = new Label(composite5, SWT.NONE);
 		label1 = new Label(composite5, SWT.NONE);
 		label1.setText("Jasper File:");
 		jasperFileText = new Text(composite5, SWT.BORDER);
@@ -478,6 +535,7 @@ public class TemplateEditorView extends ViewPart {
 					((CBSRTemplate) templateSelected)
 							.setJasperFileData(jasperFileData);
 					updateJasperFileText(selected);
+					templateDirty = true;
 				}
 			}
 
@@ -558,13 +616,22 @@ public class TemplateEditorView extends ViewPart {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			MessageBox messageBox = new MessageBox(shell, SWT.ICON_QUESTION
-					| SWT.YES | SWT.NO);
+					| SWT.YES | SWT.NO | SWT.CANCEL);
 			messageBox
-					.setMessage("Do you really want to close the template editor?");
+					.setMessage("Closing Template Editor. Do you want to save your changes?");
 			messageBox.setText("Closing Template Editor");
 			int response = messageBox.open();
 			if (response == SWT.YES) {
-				// TODO close view
+				saveCurrentTemplate();
+				dispose();
+			}
+			else if(response == SWT.NO){
+				dispose();
+				//TODO make close work
+				//TODO prompt user if they close the view via the X.
+
+			}else{
+				return;
 			}
 		}
 
@@ -574,6 +641,35 @@ public class TemplateEditorView extends ViewPart {
 		}
 	};
 
+	
+	private void saveCurrentTemplate(){
+
+		try {
+			configTree.resetEditor();
+		} catch (TreeException e2) {
+			Error("Editor Error",
+					"Could not reset editor: " + e2.getError());
+			return;
+		}
+		if(!templateDirty && !configTree.isDirty()){
+			return;
+		}
+
+		if (templateSelected == null) {
+			Error("No Template Selected",
+					"Cannot save template. Please select a template first.");
+			return;
+		}
+
+		try {
+			templateStore.saveTemplate(templateSelected);
+		} catch (IOException e1) {
+			Error("Save Template Error", "Could not save template: " + e1);
+			return;
+		}
+		templateDirty = false;
+	}
+	
 	/**
 	 * Saves the entire preference store and all the changed template
 	 * information as a serialized object.
@@ -581,32 +677,13 @@ public class TemplateEditorView extends ViewPart {
 	private SelectionListener saveAllListener = new SelectionListener() {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
+			saveCurrentTemplate();
+			MessageBox messageBox = new MessageBox(shell, SWT.ICON_INFORMATION
+					| SWT.OK);
+			messageBox.setMessage("Template has been successfully saved.");
+			messageBox.setText("Template Saved");
+			messageBox.open();
 
-			try {
-				configTree.resetEditor();
-			} catch (TreeException e2) {
-				Error("Editor Error",
-						"Could not reset editor: " + e2.getError());
-				return;
-			}
-			// TODO save store to proper location
-			try {
-				templateStore.saveStore(new File("Store.dat"));
-			} catch (IOException e1) {
-				Error("Store Save",
-						"Could not save to store file." + e1.getMessage());
-				return;
-			}
-
-			MessageBox messageBox = new MessageBox(shell, SWT.ICON_QUESTION
-					| SWT.YES | SWT.NO);
-			messageBox
-					.setMessage("Template information has been saved!!\n\nDo you want to close this editor?");
-			messageBox.setText("Template Editor Saving");
-			int response = messageBox.open();
-			if (response == SWT.YES) {
-				// TODO close view
-			}
 		}
 
 		@Override

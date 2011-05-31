@@ -43,6 +43,7 @@ import org.eclipse.swt.widgets.Combo;
 import edu.ualberta.med.biobank.barcodegenerator.Activator;
 import edu.ualberta.med.biobank.barcodegenerator.preferences.PreferenceConstants;
 import edu.ualberta.med.biobank.barcodegenerator.preferences.PreferenceInitializer;
+import edu.ualberta.med.biobank.barcodegenerator.template.Template;
 import edu.ualberta.med.biobank.barcodegenerator.template.TemplateStore;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSRData;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSRTemplate;
@@ -95,6 +96,7 @@ public class LabelPrinterView extends ViewPart {
 	private Label label8 = null;
 	private Button sampleTypeCheckbox = null;
 	private Text sampleTypeText = null;
+	private Label intendedPrinter = null;
 	private Label label9 = null;
 	private Combo templateCombo = null;
 	private Composite composite8 = null;
@@ -106,13 +108,21 @@ public class LabelPrinterView extends ViewPart {
 	private CLabel cLabel = null;
 	private Shell shell;
 	private IPreferenceStore perferenceStore;
-	private TemplateStore templateStore = new TemplateStore();
+	private TemplateStore templateStore;
 
 	@Override
 	public void createPartControl(Composite parent) {
 
+		// TODO implement errors for templateStore
+		try {
+			templateStore = new TemplateStore();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+
 		loadPreferenceStore();
-		loadTemplateStore();
 
 		shell = parent.getShell();
 		RowLayout rowLayout = new RowLayout();
@@ -138,18 +148,6 @@ public class LabelPrinterView extends ViewPart {
 			perferenceStore = new PreferenceStore("barcodegen.properties");
 			PreferenceInitializer.setDefaults(perferenceStore);
 		}
-	}
-
-	private void loadTemplateStore() {
-		// TODO load store from proper location
-		try {
-			templateStore.loadStore(new File("Store.dat"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-
 	}
 
 	@Override
@@ -226,6 +224,8 @@ public class LabelPrinterView extends ViewPart {
 		logoText = new Text(composite3, SWT.BORDER);
 		logoText.setEditable(false);
 		logoText.setLayoutData(gridData1);
+		logoText.setText(perferenceStore
+				.getString(PreferenceConstants.LOGO_FILE_LOCATION));
 		logoButton = new Button(composite3, SWT.NONE);
 		logoButton.setText("Browse...");
 		logoButton.addSelectionListener(new SelectionListener() {
@@ -246,6 +246,7 @@ public class LabelPrinterView extends ViewPart {
 				widgetSelected(event);
 			}
 		});
+
 		label9 = new Label(composite3, SWT.NONE);
 		label9.setText("Template:");
 		templateCombo = new Combo(composite3, SWT.DROP_DOWN | SWT.BORDER);
@@ -256,6 +257,41 @@ public class LabelPrinterView extends ViewPart {
 		}
 		if (templateCombo.getItemCount() > 0)
 			templateCombo.select(0);
+
+		templateCombo.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				updateIntendedPrinterLabel();
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+			}
+		});
+
+		filler = new Label(composite3, SWT.NONE);
+
+		label9 = new Label(composite3, SWT.NONE);
+		label9.setText("Intended Printer:");
+		intendedPrinter = new Label(composite3, SWT.NONE);
+		intendedPrinter.setForeground(new Color(shell.getDisplay(), 255, 0, 0));
+		intendedPrinter.setText("default");
+		updateIntendedPrinterLabel();
+	}
+
+	private void updateIntendedPrinterLabel() {
+
+		if (templateCombo.getSelectionIndex() >= 0) {
+
+			// TODO make this a single templateStore function
+			Template current = templateStore.getTemplate(templateCombo
+					.getItem(templateCombo.getSelectionIndex()));
+
+			if (current != null)
+				intendedPrinter.setText(current.getIntendedPrinter());
+		}
 	}
 
 	/**
@@ -320,6 +356,7 @@ public class LabelPrinterView extends ViewPart {
 			}
 
 		});
+		logoCanvas.redraw();
 	}
 
 	/**
@@ -775,6 +812,9 @@ public class LabelPrinterView extends ViewPart {
 
 		}
 	};
+	//TODO make save to PDF file prompt
+	//TODO add printer selection combobox.
+	//TODO full screen -- only allow one of the two views to exist.
 
 	private SelectionListener exitButtonListener = new SelectionListener() {
 		@Override

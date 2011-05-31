@@ -12,11 +12,12 @@ import java.util.ArrayList;
 public class TemplateStore implements Serializable {
 
 	private static final long serialVersionUID = 5502373669875110097L;
-	
+
 	ArrayList<Template> templates;
 
-	public TemplateStore() {
+	public TemplateStore() throws IOException, ClassNotFoundException {
 		templates = new ArrayList<Template>();
+		loadStore(new File("Store.dat"));
 	}
 
 	public String[] getTemplateNames() {
@@ -37,7 +38,7 @@ public class TemplateStore implements Serializable {
 		}
 		return null;
 	}
-	
+
 	// false if the template you wish to remove does not exist in the store.
 	public boolean removeTemplate(String name) {
 		Template targetTemplate = null;
@@ -47,14 +48,34 @@ public class TemplateStore implements Serializable {
 				break;
 			}
 		}
-		
+
 		if (targetTemplate != null) {
 			templates.remove(targetTemplate);
+
+			try {
+				saveStore(new File("Store.dat"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			return true;
-		} else {
-			return false;
 		}
-		
+
+		return false;
+	}
+
+	public boolean saveTemplate(Template updatedTemplate) throws IOException {
+
+		Template oldTemplate = getTemplate(updatedTemplate.getName());
+
+		if (oldTemplate == null)
+			return false;
+
+		removeTemplate(oldTemplate);
+		addTemplate(updatedTemplate);
+
+		saveStore(new File("Store.dat"));
+
+		return true;
 	}
 
 	public boolean removeTemplate(Template template) {
@@ -70,10 +91,18 @@ public class TemplateStore implements Serializable {
 			}
 		}
 		templates.add(template);
+
+		try {
+			saveStore(new File("Store.dat"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		return true;
 	}
 
-	public void loadStore(File file) throws IOException, ClassNotFoundException {
+	private void loadStore(File file) throws IOException,
+			ClassNotFoundException {
 		TemplateStore templateStore = null;
 		FileInputStream fis = null;
 		ObjectInputStream in = null;
@@ -84,7 +113,7 @@ public class TemplateStore implements Serializable {
 		this.templates = templateStore.templates;
 	}
 
-	public void saveStore(File file) throws IOException {
+	private void saveStore(File file) throws IOException {
 		FileOutputStream fos = null;
 		ObjectOutputStream out = null;
 		fos = new FileOutputStream(file);

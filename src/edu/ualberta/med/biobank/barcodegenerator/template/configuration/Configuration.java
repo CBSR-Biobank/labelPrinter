@@ -9,7 +9,7 @@ public class Configuration implements Serializable {
 
 	private static final long serialVersionUID = 2922691660660772442L;
 
-	protected LinkedHashMap<String, Rectangle> settings;
+	protected LinkedHashMap<String, Rectangle> settings = new LinkedHashMap<String, Rectangle>();
 
 	public void setSettings(LinkedHashMap<String, Rectangle> settings) {
 		this.settings = settings;
