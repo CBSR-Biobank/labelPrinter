@@ -3,6 +3,8 @@ package edu.ualberta.med.biobank.barcodegenerator.template.jasper;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -10,6 +12,14 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import javax.imageio.ImageIO;
+import javax.print.PrintService;
+import javax.print.PrintServiceLookup;
+import javax.print.attribute.HashPrintRequestAttributeSet;
+import javax.print.attribute.PrintRequestAttributeSet;
+import javax.print.attribute.standard.Copies;
+import javax.print.attribute.standard.MediaPrintableArea;
+import javax.print.attribute.standard.MediaSize;
+import javax.print.attribute.standard.MediaSizeName;
 
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.containers.BarcodeImage;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.Element;
@@ -19,12 +29,15 @@ import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.Jasp
 import net.sf.jasperreports.engine.JRElement;
 import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.export.JRPrintServiceExporter;
+import net.sf.jasperreports.engine.export.JRPrintServiceExporterParameter;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
 
 public class JasperFiller {
@@ -117,8 +130,83 @@ public class JasperFiller {
 
 	}
 
+	public void printJasperToPrinter(String printerName)
+			throws JasperFillException {
+
+		if (printerName == null) {
+			throw new JasperFillException("Error: No printer was selected!");
+		}
+
+		PrinterJob job = PrinterJob.getPrinterJob();
+		PrintService[] services = PrintServiceLookup.lookupPrintServices(null,
+				null);
+
+		int selectedService = -1;
+		for (int i = 0; i < services.length; i++) {
+			if (services[i].getName().equals(printerName)) {
+				selectedService = i;
+				break;
+			}
+		}
+		if (selectedService < 0) {
+			throw new JasperFillException("Failed to find selected printer.");
+		}
+
+		try {
+			job.setPrintService(services[selectedService]);
+		} catch (PrinterException e1) {
+			throw new JasperFillException("Failed to set print service: "
+					+ e1.getMessage());
+		}
+
+		JasperPrint print = generateJasperPint();
+
+		PrintRequestAttributeSet printRequestAttributeSet = new HashPrintRequestAttributeSet();
+		MediaSizeName mediaSizeName = MediaSize.findMedia(4, 4,
+				MediaPrintableArea.INCH);
+		printRequestAttributeSet.add(mediaSizeName);
+		printRequestAttributeSet.add(new Copies(1));
+		JRPrintServiceExporter exporter;
+		exporter = new JRPrintServiceExporter();
+		exporter.setParameter(JRExporterParameter.JASPER_PRINT, print);
+		/* We set the selected service and pass it as a paramenter */
+		exporter.setParameter(JRPrintServiceExporterParameter.PRINT_SERVICE,
+				services[selectedService]);
+		exporter.setParameter(
+				JRPrintServiceExporterParameter.PRINT_SERVICE_ATTRIBUTE_SET,
+				services[selectedService].getAttributes());
+		exporter.setParameter(
+				JRPrintServiceExporterParameter.PRINT_REQUEST_ATTRIBUTE_SET,
+				printRequestAttributeSet);
+		exporter.setParameter(
+				JRPrintServiceExporterParameter.DISPLAY_PAGE_DIALOG,
+				Boolean.FALSE);
+		exporter.setParameter(
+				JRPrintServiceExporterParameter.DISPLAY_PRINT_DIALOG,
+				Boolean.TRUE);
+		try {
+			exporter.exportReport();
+		} catch (JRException e) {
+			throw new JasperFillException("Failed to print: " + e.getMessage());
+		}
+	}
+
 	public byte[] generatePdfData() throws JasperFillException {
 
+		byte[] reportPdfBtyes = null;
+
+		JasperPrint jp = generateJasperPint();
+		try {
+			reportPdfBtyes = JasperExportManager.exportReportToPdf(jp);
+		} catch (JRException e) {
+
+			throw new JasperFillException(
+					"Jasper failed to create pdf. Reason : " + e.getMessage());
+		}
+		return reportPdfBtyes;
+	}
+
+	private JasperPrint generateJasperPint() throws JasperFillException {
 		ByteArrayInputStream patientInfoImg;
 		ArrayList<ByteArrayInputStream> barcodeIDBufferList = new ArrayList<ByteArrayInputStream>();
 
@@ -157,8 +245,6 @@ public class JasperFiller {
 		LinkedHashMap<String, Object> parameters = generateParameters(
 				patientInfoImg, barcodeIDBufferList);
 
-		byte[] reportPdfBtyes = null;
-
 		try {
 			// generate jasper report from template
 			templateData.getJasperTemplateStream().reset();
@@ -166,7 +252,7 @@ public class JasperFiller {
 					.compileReport(templateData.getJasperTemplateStream());
 			JasperPrint jasperPrint = JasperFillManager.fillReport(
 					jasperReport, parameters, new JREmptyDataSource());
-			reportPdfBtyes = JasperExportManager.exportReportToPdf(jasperPrint);
+			return jasperPrint;
 		} catch (JRException e) {
 			throw new JasperFillException(
 					"Jasper failed to create pdf. Reason : " + e.getMessage());
@@ -175,7 +261,6 @@ public class JasperFiller {
 					"Could not reset jasper file stream : " + e.getMessage());
 		}
 
-		return reportPdfBtyes;
 	}
 
 	private LinkedHashMap<String, Object> generateParameters(

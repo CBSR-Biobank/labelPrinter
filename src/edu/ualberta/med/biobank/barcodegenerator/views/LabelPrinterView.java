@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.UUID;
 import javax.imageio.ImageIO;
+import javax.print.PrintService;
+import javax.print.PrintServiceLookup;
 
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -99,11 +101,13 @@ public class LabelPrinterView extends ViewPart {
 	private Label intendedPrinter = null;
 	private Label label9 = null;
 	private Combo templateCombo = null;
+	private Combo printerCombo = null;
 	private Composite composite8 = null;
 	private Group group3 = null;
 	private Group group4 = null;
 	private Button exitButton = null;
 	private Button printButton = null;
+	private Button savePdfButton = null;
 	private Composite composite9 = null;
 	private CLabel cLabel = null;
 	private Shell shell;
@@ -280,6 +284,33 @@ public class LabelPrinterView extends ViewPart {
 		intendedPrinter.setForeground(new Color(shell.getDisplay(), 255, 0, 0));
 		intendedPrinter.setText("default");
 		loadSelectedTemplate();
+
+		filler = new Label(composite3, SWT.NONE);
+
+		label9 = new Label(composite3, SWT.NONE);
+		label9.setText("Printer:");
+		printerCombo = new Combo(composite3, SWT.DROP_DOWN | SWT.BORDER);
+		printerCombo.setLayoutData(gridData21);
+
+		PrintService[] services = PrintServiceLookup.lookupPrintServices(null,
+				null);
+
+		for (PrintService ps : services) {
+			printerCombo.add(ps.getName());
+		}
+		if (printerCombo.getItemCount() > 0)
+			printerCombo.select(0);
+
+		// TODO test PRINTER_NAME perference store
+		for (int i = 0; i < printerCombo.getItemCount(); i++) {
+			if (printerCombo.getItem(i)
+					.equals(perferenceStore
+							.getString(PreferenceConstants.PRINTER_NAME))) {
+				printerCombo.select(i);
+				break;
+			}
+		}
+
 	}
 
 	private void loadSelectedTemplate() {
@@ -584,9 +615,15 @@ public class LabelPrinterView extends ViewPart {
 		exitButton = new Button(group4, SWT.NONE);
 		exitButton.setText("Exit Label Maker");
 		exitButton.addSelectionListener(exitButtonListener);
+
+		savePdfButton = new Button(group4, SWT.NONE);
+		savePdfButton.setText("Print Label to PDF");
+		savePdfButton.addSelectionListener(savePdfListener);
+
 		printButton = new Button(group4, SWT.NONE);
 		printButton.setText("Print Label Sheet");
 		printButton.addSelectionListener(printButtonListener);
+
 	}
 
 	/**
@@ -605,12 +642,17 @@ public class LabelPrinterView extends ViewPart {
 		composite9.setLayout(new GridLayout());
 	}
 
+	// called after a successful print or save.
 	private void updateSavePreferences() {
 
 		perferenceStore.setValue(PreferenceConstants.LOGO_FILE_LOCATION,
 				logoText.getText());
 		perferenceStore.setValue(PreferenceConstants.PROJECT_TITLE,
 				projectTitleText.getText());
+
+		if (printerCombo.getSelectionIndex() >= 0)
+			perferenceStore.setValue(PreferenceConstants.PRINTER_NAME,
+					printerCombo.getItem(printerCombo.getSelectionIndex()));
 
 		perferenceStore.setValue(PreferenceConstants.LABEL_CHECKBOX_1,
 				label1Checkbox.getSelection());
@@ -724,6 +766,14 @@ public class LabelPrinterView extends ViewPart {
 			}
 			// ------------ patient info end-----------------
 
+			// only need if we are printing.
+			if (printerCombo.getSelectionIndex() >= 0)
+				printerNameStr = printerCombo.getItem(printerCombo
+						.getSelectionIndex());
+
+			else
+				printerNameStr = null;
+
 			sampleTypeStr = null;
 			if (sampleTypeCheckbox.getSelection()) {
 				sampleTypeStr = sampleTypeText.getText();
@@ -765,6 +815,36 @@ public class LabelPrinterView extends ViewPart {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			BarcodeViewGuiData guiData = null;
+			try {
+				guiData = new BarcodeViewGuiData();
+			} catch (CBSRGuiVerificationException e1) {
+				Error("Gui Validation", e1.getMessage());
+				return;
+			}
+
+			if (guiData != null) {
+				try {
+					guiData.CBSRTemplate.print(guiData, randStringArray(32));
+				} catch (CBSRPdfGenException e1) {
+					Error("Gui Validation", e1.getError());
+					return;
+				}
+			}
+			updateSavePreferences();
+			System.out.println("Print done.");
+		}
+
+		@Override
+		public void widgetDefaultSelected(SelectionEvent e) {
+			widgetSelected(e);
+
+		}
+	};
+
+	private SelectionListener savePdfListener = new SelectionListener() {
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			BarcodeViewGuiData guiData = null;
 			byte[] pdfdata = null;
 			try {
 				guiData = new BarcodeViewGuiData();
@@ -781,6 +861,7 @@ public class LabelPrinterView extends ViewPart {
 					Error("Gui Validation", e1.getError());
 					return;
 				}
+
 				if (pdfdata != null) {
 					FileOutputStream fos;
 					try {
@@ -799,7 +880,7 @@ public class LabelPrinterView extends ViewPart {
 
 			}
 			updateSavePreferences();
-			System.out.println("Print done.");
+			System.out.println("Saved to PDF"); // TODO remove this
 		}
 
 		@Override
@@ -808,6 +889,7 @@ public class LabelPrinterView extends ViewPart {
 
 		}
 	};
+
 	// TODO make save to PDF file prompt
 	// TODO add printer selection combobox.
 	// TODO full screen -- only allow one of the two views to exist.

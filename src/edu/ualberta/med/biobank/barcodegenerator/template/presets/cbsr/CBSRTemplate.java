@@ -28,6 +28,37 @@ public class CBSRTemplate extends Template {
 	public byte[] generatePdfCBSR(CBSRData cbsrData,
 			ArrayList<String> barcodeStrings) throws CBSRPdfGenException {
 
+		loadGuiDataToSelf(cbsrData, barcodeStrings);
+
+		byte[] pdfData = null;
+		try {
+			JasperFiller tm = new JasperFiller(this);
+			pdfData = tm.generatePdfData();
+		} catch (JasperFillException e) {
+			throw new CBSRPdfGenException(
+					"Failed to fill configuration data into jasper template.\n"
+							+ e.getError());
+		}
+		return pdfData;
+	}
+
+	public void print(CBSRData cbsrData, ArrayList<String> barcodeStrings)
+			throws CBSRPdfGenException {
+
+		loadGuiDataToSelf(cbsrData, barcodeStrings);
+
+		try {
+			JasperFiller tm = new JasperFiller(this);
+			tm.printJasperToPrinter(cbsrData.printerNameStr);
+		} catch (JasperFillException e) {
+			throw new CBSRPdfGenException(
+					"Failed to fill configuration data into jasper template for prining.\n"
+							+ e.getError());
+		}
+	}
+
+	private void loadGuiDataToSelf(CBSRData cbsrData,
+			ArrayList<String> barcodeStrings) throws CBSRPdfGenException {
 		if (cbsrData.projectTileStr == null) {
 			throw new CBSRPdfGenException("Cannot have a null project title");
 		}
@@ -171,16 +202,6 @@ public class CBSRTemplate extends Template {
 				jasperTemplateFileData);
 		this.setOutline(branding, patientInfo, pbi, inputStream);
 
-		byte[] pdfData = null;
-		try {
-			JasperFiller tm = new JasperFiller(this);
-			pdfData = tm.generatePdfData();
-		} catch (JasperFillException e) {
-			throw new CBSRPdfGenException(
-					"Failed to fill configuration data into jasper template.\n"
-							+ e.getError());
-		}
-		return pdfData;
 	}
 
 	private Rectangle getKey(String key) {
@@ -293,7 +314,5 @@ public class CBSRTemplate extends Template {
 	public boolean jasperFileDataExists() {
 		return (this.jasperTemplateFileData != null);
 	}
-
-
 
 }
