@@ -43,7 +43,6 @@ import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.widgets.Combo;
 
 import edu.ualberta.med.biobank.barcodegenerator.Activator;
-import edu.ualberta.med.biobank.barcodegenerator.dialogs.SaveDialog;
 import edu.ualberta.med.biobank.barcodegenerator.preferences.PreferenceConstants;
 import edu.ualberta.med.biobank.barcodegenerator.preferences.PreferenceInitializer;
 import edu.ualberta.med.biobank.barcodegenerator.template.Template;
@@ -699,6 +698,7 @@ public class LabelPrinterView extends ViewPart {
             sampleTypeCheckbox.getSelection());
         perferenceStore.setValue(PreferenceConstants.SAMPLETYPE_TEXT,
             sampleTypeText.getText());
+
     }
 
     public class BarcodeViewGuiData extends CBSRData {
@@ -792,14 +792,14 @@ public class LabelPrinterView extends ViewPart {
                 sampleTypeStr = sampleTypeText.getText();
             }
 
-            CBSRTemplate = (CBSRTemplate) selectedTemplate;
+            templateCBSR = (CBSRTemplate) selectedTemplate;
 
-            if (CBSRTemplate == null) {
+            if (templateCBSR == null) {
                 throw new CBSRGuiVerificationException("Verifcation Issue",
                     "Could not load template.");
             }
 
-            if (!(CBSRTemplate).jasperFileDataExists()) {
+            if (!(templateCBSR).jasperFileDataExists()) {
                 throw new CBSRGuiVerificationException("Verifcation Issue",
                     "Template is lacking a jasper file.");
             }
@@ -837,7 +837,7 @@ public class LabelPrinterView extends ViewPart {
 
             if (guiData != null) {
                 try {
-                    guiData.CBSRTemplate.print(guiData, randStringArray(32));
+                    guiData.templateCBSR.print(guiData, randStringArray(32));
                 } catch (CBSRPdfGenException e1) {
                     Error("Gui Validation", e1.getError());
                     return;
@@ -866,8 +866,12 @@ public class LabelPrinterView extends ViewPart {
                 return;
             }
 
-            SaveDialog sg = new SaveDialog(shell);
-            String pdfFilePath = sg.open();
+            FileDialog fileDialog = new FileDialog(shell, SWT.SAVE);
+
+            fileDialog.setFilterPath(perferenceStore
+                .getString(PreferenceConstants.PDF_DIRECTORY_PATH));
+            fileDialog.setOverwrite(true);
+            String pdfFilePath = fileDialog.open();
 
             if (pdfFilePath == null)
                 return;
@@ -877,7 +881,7 @@ public class LabelPrinterView extends ViewPart {
 
             if (guiData != null) {
                 try {
-                    pdfdata = guiData.CBSRTemplate.generatePdfCBSR(guiData,
+                    pdfdata = guiData.templateCBSR.generatePdfCBSR(guiData,
                         randStringArray(32));
                 } catch (CBSRPdfGenException e1) {
                     Error("Gui Validation", e1.getError());
@@ -890,6 +894,7 @@ public class LabelPrinterView extends ViewPart {
                         fos = new FileOutputStream(pdfFilePath);
                         fos.write(pdfdata);
                         fos.close();
+
                     } catch (FileNotFoundException e1) {
                         Error("Saving Pdf", "Could find file to save pdf to");
                         return;
@@ -901,8 +906,13 @@ public class LabelPrinterView extends ViewPart {
                 }
 
             }
+            String parentDir = new File(pdfFilePath).getParentFile().getPath();
+
+            if (parentDir != null)
+                perferenceStore.setValue(
+                    PreferenceConstants.PDF_DIRECTORY_PATH, parentDir);
+
             updateSavePreferences();
-            System.out.println("Saved to PDF"); // TODO remove this
         }
 
         @Override
@@ -911,9 +921,6 @@ public class LabelPrinterView extends ViewPart {
 
         }
     };
-
-    // TODO make save to PDF file prompt
-    // TODO add printer selection combobox.
     // TODO full screen -- only allow one of the two views to exist.
 
     private SelectionListener exitButtonListener = new SelectionListener() {

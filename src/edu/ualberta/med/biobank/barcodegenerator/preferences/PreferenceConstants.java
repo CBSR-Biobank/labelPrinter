@@ -25,5 +25,6 @@ public class PreferenceConstants {
     
     public static final String SAMPLETYPE_CHECKBOX = "barcodegen.other.sampletype.enabled";
     public static final String SAMPLETYPE_TEXT = "barcodegen.other.sampletype.text";
+    public static final String PDF_DIRECTORY_PATH = "barcodegen.pdf.directory";
     
 }

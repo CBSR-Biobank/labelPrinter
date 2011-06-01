@@ -24,5 +24,5 @@ public class CBSRData {
 	
 	public String printerNameStr;
 	
-	public CBSRTemplate CBSRTemplate;
+	public CBSRTemplate templateCBSR;
 }

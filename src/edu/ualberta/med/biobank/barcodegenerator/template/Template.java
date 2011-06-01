@@ -11,81 +11,83 @@ import edu.ualberta.med.biobank.barcodegenerator.template.jasper.JasperOutline;
 
 public abstract class Template extends JasperOutline implements Serializable {
 
-	private static final long serialVersionUID = -4213741888020425604L;
+    private static final long serialVersionUID = -4213741888020425604L;
 
-	// TODO implement clonable
-	public static void Clone(Template original, Template clone) {
-		
-		// clone template name
-		clone.name = original.name;
+    // TODO implement clonable
+    public static void Clone(Template original, Template clone) {
 
-		//clone intended printer name
-		clone.intendedPrinterName = original.intendedPrinterName;
+        // clone template name
+        clone.name = original.name;
 
-		// clone configuration
-		clone.config = new Configuration();
-		for (Entry<String, Rectangle> entry : original.config.getSettings()
-				.entrySet()) {
-			Rectangle newRect = new Rectangle(entry.getValue().x,
-					entry.getValue().y, entry.getValue().width,
-					entry.getValue().height);
-			clone.config.setSettingsEntry(entry.getKey(), newRect);
-		}
+        // clone intended printer name
+        clone.intendedPrinterName = original.intendedPrinterName;
 
-		// clone jasper file
-		if (original.jasperTemplateFileData != null) {
-			clone.jasperTemplateFileData = new byte[original.jasperTemplateFileData.length];
-			System.arraycopy(original.jasperTemplateFileData, 0,
-					clone.jasperTemplateFileData, 0,
-					original.jasperTemplateFileData.length);
-		} else {
-			clone.jasperTemplateFileData = null;
-		}
+        // clone configuration
+        clone.config = new Configuration();
+        for (Entry<String, Rectangle> entry : original.config.getSettings()
+            .entrySet()) {
+            Rectangle newRect = new Rectangle(entry.getValue().x,
+                entry.getValue().y, entry.getValue().width,
+                entry.getValue().height);
+            clone.config.setSettingsEntry(entry.getKey(), newRect);
+        }
 
-	}
+        // clone jasper file
+        if (original.jasperTemplateFileData != null) {
+            clone.jasperTemplateFileData = new byte[original.jasperTemplateFileData.length];
+            System.arraycopy(original.jasperTemplateFileData, 0,
+                clone.jasperTemplateFileData, 0,
+                original.jasperTemplateFileData.length);
+        } else {
+            clone.jasperTemplateFileData = null;
+        }
 
-	public void setName(String name) {
-		if (name == null)
-			name = "default";
+    }
 
-		this.name = name;
-	}
+    public void setName(String name) {
+        if (name == null)
+            name = "default";
 
-	public String getName() {
-		return this.name;
-	}
+        this.name = name;
+    }
 
-	public void setIntendedPrinter(String intendedPrinterName) {
-		if (intendedPrinterName == null)
-			intendedPrinterName = "default";
+    public String getName() {
+        return this.name;
+    }
 
-		this.intendedPrinterName = intendedPrinterName;
-	}
+    public void setIntendedPrinter(String intendedPrinterName) {
+        if (intendedPrinterName == null)
+            intendedPrinterName = "default";
 
-	public String getIntendedPrinter() {
-		if (this.intendedPrinterName == null)
-			this.intendedPrinterName = "default";
+        this.intendedPrinterName = intendedPrinterName;
+    }
 
-		return this.intendedPrinterName;
-	}
+    public String getIntendedPrinter() {
+        if (this.intendedPrinterName == null)
+            this.intendedPrinterName = "default";
 
-	private String intendedPrinterName = "default";
+        return this.intendedPrinterName;
+    }
 
-	private String name = "default";
+    private String intendedPrinterName = "default";
 
-	protected byte[] jasperTemplateFileData = null;
+    private String name = "default";
 
-	protected abstract void setJasperFileData(byte[] jasperData);
+    protected byte[] jasperTemplateFileData = null;
 
-	protected abstract boolean jasperFileDataExists();
+    protected Configuration config = null;
 
-	protected Configuration config = null;
+    public abstract void setJasperFileData(byte[] jasperData);
 
-	protected abstract Configuration getConfiguration();
+    public abstract boolean jasperFileDataExists();
 
-	public abstract void setConfiguration(Configuration configuration)
-			throws Exception;
+    public abstract Configuration getConfiguration();
 
-	public abstract ArrayList<String> getConfigurationKeyList();
+    public abstract void setConfiguration(Configuration configuration)
+        throws Exception;
+
+    public abstract ArrayList<String> getConfigurationKeyList();
+
+    public abstract void setDefaultConfiguration();
 
 }
