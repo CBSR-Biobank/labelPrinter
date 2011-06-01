@@ -17,7 +17,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	public static void setDefaults(IPreferenceStore store) {
 		store.setDefault(PreferenceConstants.PROJECT_TITLE, "BBPSP");
 		store.setDefault(PreferenceConstants.LOGO_FILE_LOCATION, "");
+		store.setDefault(PreferenceConstants.TEMPLATE_NAME, "");
 		store.setDefault(PreferenceConstants.PRINTER_NAME, "");
+		
 
 		store.setDefault(PreferenceConstants.LABEL_CHECKBOX_1, true);
 		store.setDefault(PreferenceConstants.LABEL_CHECKBOX_2, true);

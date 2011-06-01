@@ -14,12 +14,14 @@ import java.util.LinkedHashMap;
 import javax.imageio.ImageIO;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
+import javax.print.attribute.HashDocAttributeSet;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.standard.Copies;
 import javax.print.attribute.standard.MediaPrintableArea;
 import javax.print.attribute.standard.MediaSize;
 import javax.print.attribute.standard.MediaSizeName;
+import javax.print.attribute.standard.PrintQuality;
 
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.containers.BarcodeImage;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.Element;
@@ -162,10 +164,16 @@ public class JasperFiller {
 		JasperPrint print = generateJasperPint();
 
 		PrintRequestAttributeSet printRequestAttributeSet = new HashPrintRequestAttributeSet();
-		MediaSizeName mediaSizeName = MediaSize.findMedia(4, 4,
+		MediaSizeName mediaSizeName = MediaSize.findMedia((float) 8.5, 11,
 				MediaPrintableArea.INCH);
 		printRequestAttributeSet.add(mediaSizeName);
 		printRequestAttributeSet.add(new Copies(1));
+		printRequestAttributeSet.add(PrintQuality.HIGH);
+
+		printRequestAttributeSet.add(MediaSizeName.NA_LETTER);
+		printRequestAttributeSet.add(new MediaPrintableArea(0, 0, (float)print.getPageWidth() / 72f,
+				(float)print.getPageHeight() / 72f, MediaPrintableArea.INCH));
+
 		JRPrintServiceExporter exporter;
 		exporter = new JRPrintServiceExporter();
 		exporter.setParameter(JRExporterParameter.JASPER_PRINT, print);
@@ -179,8 +187,8 @@ public class JasperFiller {
 				JRPrintServiceExporterParameter.PRINT_REQUEST_ATTRIBUTE_SET,
 				printRequestAttributeSet);
 		exporter.setParameter(
-				JRPrintServiceExporterParameter.DISPLAY_PAGE_DIALOG,
-				Boolean.FALSE);
+
+		JRPrintServiceExporterParameter.DISPLAY_PAGE_DIALOG, Boolean.FALSE);
 		exporter.setParameter(
 				JRPrintServiceExporterParameter.DISPLAY_PRINT_DIALOG,
 				Boolean.TRUE);
@@ -252,6 +260,12 @@ public class JasperFiller {
 					.compileReport(templateData.getJasperTemplateStream());
 			JasperPrint jasperPrint = JasperFillManager.fillReport(
 					jasperReport, parameters, new JREmptyDataSource());
+
+			jasperPrint.setBottomMargin(0);
+			jasperPrint.setTopMargin(0);
+			jasperPrint.setLeftMargin(0);
+			jasperPrint.setRightMargin(0);
+
 			return jasperPrint;
 		} catch (JRException e) {
 			throw new JasperFillException(

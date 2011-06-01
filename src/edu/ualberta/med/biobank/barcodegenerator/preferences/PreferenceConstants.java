@@ -4,6 +4,7 @@ public class PreferenceConstants {
 
     public static final String PROJECT_TITLE = "barcodegen.branding.title";
     public static final String LOGO_FILE_LOCATION = "barcodegen.branding.logo";
+    public static final String TEMPLATE_NAME = "barcodegen.template";
     public static final String PRINTER_NAME = "barcodegen.printer";
     
     public static final String LABEL_CHECKBOX_1 = "barcodegen.patientinfo.label.1.enabled";

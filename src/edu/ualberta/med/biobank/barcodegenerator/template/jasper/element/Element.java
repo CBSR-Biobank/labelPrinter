@@ -20,7 +20,7 @@ public abstract  class Element{
 	
 	protected static int mmToPixel(int mm, int scale) {
 		
-		return (int) ((mm * 75 * scale) / 25.4); //dpi is 75 (jasper)
+		return (int) ((mm * 72 * scale) / 25.4); //dpi is 72 (jasper)
 	}
 
 	

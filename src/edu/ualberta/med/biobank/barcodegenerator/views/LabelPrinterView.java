@@ -260,8 +260,18 @@ public class LabelPrinterView extends ViewPart {
 		for (String s : this.templateStore.getTemplateNames()) {
 			templateCombo.add(s);
 		}
+
 		if (templateCombo.getItemCount() > 0)
 			templateCombo.select(0);
+
+		for (int i = 0; i < templateCombo.getItemCount(); i++) {
+			if (templateCombo.getItem(i).equals(
+					perferenceStore
+							.getString(PreferenceConstants.TEMPLATE_NAME))) {
+				templateCombo.select(i);
+				break;
+			}
+		}
 
 		templateCombo.addSelectionListener(new SelectionListener() {
 
@@ -649,6 +659,10 @@ public class LabelPrinterView extends ViewPart {
 				logoText.getText());
 		perferenceStore.setValue(PreferenceConstants.PROJECT_TITLE,
 				projectTitleText.getText());
+
+		if (templateCombo.getSelectionIndex() >= 0)
+			perferenceStore.setValue(PreferenceConstants.TEMPLATE_NAME,
+					templateCombo.getItem(templateCombo.getSelectionIndex()));
 
 		if (printerCombo.getSelectionIndex() >= 0)
 			perferenceStore.setValue(PreferenceConstants.PRINTER_NAME,
