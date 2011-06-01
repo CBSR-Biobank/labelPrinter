@@ -584,7 +584,7 @@ public class LabelPrinterView extends ViewPart {
 				| SWT.SINGLE);
 		sampleTypeText.setText(perferenceStore
 				.getString(PreferenceConstants.SAMPLETYPE_TEXT));
-		sampleTypeText.setTextLimit(15);
+		sampleTypeText.setTextLimit(25);
 		label8 = new Label(composite7, SWT.LEFT | SWT.HORIZONTAL);
 		label8.setText("");
 		@SuppressWarnings("unused")

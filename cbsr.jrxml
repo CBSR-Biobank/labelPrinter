@@ -3,7 +3,7 @@
 	<property name="com.jasperassistant.designer.Units" value="Millimeters"/>
 	<property name="ireport.zoom" value="0.8264462809917359"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="169"/>
+	<property name="ireport.y" value="0"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -63,18 +63,18 @@
 	<title>
 		<band height="280">
 			<textField>
-				<reportElement x="1" y="2" width="612" height="26"/>
+				<reportElement x="1" y="16" width="612" height="26"/>
 				<textElement textAlignment="Center" verticalAlignment="Top">
 					<font fontName="FreeSans" size="14" isBold="true" isItalic="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{PROJECT_TITLE}]]></textFieldExpression>
 			</textField>
 			<image>
-				<reportElement x="509" y="5" width="100" height="43"/>
+				<reportElement x="494" y="17" width="100" height="43"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{LOGO}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement key="PATIENT_INFO_IMG" x="6" y="80" width="238" height="182"/>
+				<reportElement key="PATIENT_INFO_IMG" x="17" y="80" width="238" height="182"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_INFO_IMG}]]></imageExpression>
 			</image>
 		</band>
