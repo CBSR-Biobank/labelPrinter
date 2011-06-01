@@ -12,36 +12,40 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class SaveDialog {
 
-	private FileDialog fileDialog;
+    private FileDialog fileDialog;
 
-	public SaveDialog(Shell shell) {
-		fileDialog = new FileDialog(shell, SWT.SAVE);
-	}
+    public SaveDialog(Shell shell) {
+        fileDialog = new FileDialog(shell, SWT.SAVE);
+        fileDialog.setFilterPath("*.pdf");
+        fileDialog.setOverwrite(true);
+    }
 
-	public String open() {
-		String fileName = null;
+    public String open() {
+        String fileName = null;
 
-		while (true) {
-			fileName = fileDialog.open();
+        while (true) {
 
-			if (fileName == null)
-				return null;
+            fileName = fileDialog.open();
 
-			if (!new File(fileName).exists()) {
-				MessageBox mb = new MessageBox(fileDialog.getParent(),
-						SWT.ICON_WARNING | SWT.YES | SWT.NO);
+            if (fileName == null)
+                return null;
 
-				mb.setMessage(fileName
-						+ " already exists. Do you want to replace it?");
+            //TODO check this
+            if (new File(fileName).exists()) {
+                MessageBox mb = new MessageBox(fileDialog.getParent(),
+                    SWT.ICON_WARNING | SWT.YES | SWT.NO);
 
-				if (mb.open() == SWT.YES)
-					return fileName;
+                mb.setMessage(fileName
+                    + " already exists. Do you want to replace it?");
 
-			} else {
-				return fileName;
-			}
+                if (mb.open() == SWT.YES)
+                    return fileName;
 
-		}
+            } else {
+                return fileName;
+            }
 
-	}
+        }
+
+    }
 }
