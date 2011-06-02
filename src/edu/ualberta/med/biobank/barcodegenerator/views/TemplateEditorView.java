@@ -589,8 +589,7 @@ public class TemplateEditorView extends ViewPart {
         @Override
         public void widgetSelected(SelectionEvent e) {
             try {
-
-                // TODO test url opening
+                //TODO make a valid documentation page for help.
                 PlatformUI.getWorkbench().getBrowserSupport()
                     .getExternalBrowser().openURL(new URL(HELP_URL));
             } catch (Exception e1) {
@@ -620,7 +619,7 @@ public class TemplateEditorView extends ViewPart {
                 dispose();
             } else if (response == SWT.NO) {
                 dispose();
-                // TODO make close work
+                // FIXME make close work
                 // TODO prompt user if they close the view via the X.
 
             } else {

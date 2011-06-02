@@ -13,7 +13,10 @@ public class TemplateStore implements Serializable {
 
     private static final long serialVersionUID = 5502373669875110097L;
 
-    ArrayList<Template> templates;
+    // internal -- this will be removed when templates are obtained
+    // form a database table
+    //FIXME remove templates array
+    private ArrayList<Template> templates;
 
     public TemplateStore() {
         try {
@@ -30,6 +33,7 @@ public class TemplateStore implements Serializable {
         }
     }
 
+    // get all of the names in the name columns
     public String[] getTemplateNames() {
         String[] templateNames = new String[templates.size()];
 
@@ -41,6 +45,7 @@ public class TemplateStore implements Serializable {
         return templateNames;
     }
 
+    // get a row with the given name and create a template from it
     public Template getTemplate(String name) {
         for (Template t : templates) {
             if (name.equals(t.getName()))
@@ -49,6 +54,7 @@ public class TemplateStore implements Serializable {
         return null;
     }
 
+    // remove a row with that name
     // false if the template you wish to remove does not exist in the store.
     public boolean removeTemplate(String name) {
         Template targetTemplate = null;
@@ -73,6 +79,7 @@ public class TemplateStore implements Serializable {
         return false;
     }
 
+    // update a row with the given template data
     public boolean updateTemplate(Template updatedTemplate) throws IOException {
 
         Template oldTemplate = getTemplate(updatedTemplate.getName());
@@ -111,6 +118,7 @@ public class TemplateStore implements Serializable {
         return true;
     }
 
+    // FIXME remove load store
     private void loadStore(File file) throws IOException,
         ClassNotFoundException {
         TemplateStore templateStore = null;
@@ -123,6 +131,7 @@ public class TemplateStore implements Serializable {
         this.templates = templateStore.templates;
     }
 
+    // FIXME remove save store
     private void saveStore(File file) throws IOException {
         FileOutputStream fos = null;
         ObjectOutputStream out = null;
