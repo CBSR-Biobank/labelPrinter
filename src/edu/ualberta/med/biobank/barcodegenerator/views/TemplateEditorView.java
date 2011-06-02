@@ -77,12 +77,7 @@ public class TemplateEditorView extends ViewPart {
     public void createPartControl(Composite parent) {
         shell = parent.getShell();
 
-        // TODO implement errors for templateStore
-        try {
-            templateStore = new TemplateStore();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        templateStore = new TemplateStore();
 
         top = new Composite(parent, SWT.NONE);
         top.setLayout(new GridLayout());
