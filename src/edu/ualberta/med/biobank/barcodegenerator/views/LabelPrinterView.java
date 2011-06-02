@@ -25,7 +25,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Label;
@@ -132,11 +131,11 @@ public class LabelPrinterView extends ViewPart {
         shell = parent.getShell();
         top = new Composite(parent, SWT.NONE);
         top.setBackground(new Color(Display.getCurrent(), 237, 236, 235));
+        top.setLayout(new GridLayout());
         brandingGroup();
         patientInfoGroup();
-        top.setLayout(new GridLayout());
         sampleTextGroup();
-        createGroup4();
+        actionButtonGroup();
     }
 
     private void loadPreferenceStore() {
@@ -382,13 +381,13 @@ public class LabelPrinterView extends ViewPart {
      * 
      */
     private void patientInfoGroup() {
-        
+
         GridData gridData = new GridData();
         gridData.horizontalAlignment = GridData.FILL;
         gridData.grabExcessHorizontalSpace = true;
-        gridData.grabExcessVerticalSpace = true;
+        gridData.grabExcessVerticalSpace = false;
         gridData.verticalAlignment = GridData.FILL;
-        
+
         group1 = new Group(top, SWT.NONE);
         group1.setText(" Info Fields");
         group1.setLayoutData(gridData);
@@ -538,13 +537,17 @@ public class LabelPrinterView extends ViewPart {
      * 
      */
     private void sampleTextGroup() {
-        
-        
-        RowLayout rowLayout2 = new RowLayout();
-        rowLayout2.type = org.eclipse.swt.SWT.VERTICAL;
-        rowLayout2.fill = true;
+
+        GridData gridData = new GridData();
+        gridData.horizontalAlignment = GridData.FILL;
+        gridData.grabExcessHorizontalSpace = true;
+        gridData.verticalAlignment = GridData.FILL;
+
+        GridLayout gridLayout5 = new GridLayout();
+        gridLayout5.numColumns = 4;
+
         group2 = new Group(top, SWT.NONE);
-        
+
         sampleTypeCheckbox = new Button(group2, SWT.CHECK | SWT.LEFT);
         sampleTypeCheckbox.setText("Enable");
         sampleTypeCheckbox.setSelection(perferenceStore
@@ -560,12 +563,12 @@ public class LabelPrinterView extends ViewPart {
         label8.setText("");
         @SuppressWarnings("unused")
         Label filler61 = new Label(group2, SWT.NONE);
-        
-        group2.setLayout(new FillLayout());
+
+        group2.setLayout(gridLayout5);
         group2.setText("Additonal Configuration");
+        group2.setLayoutData(gridData);
 
     }
-
 
     /**
      * This method initializes group3
@@ -576,9 +579,9 @@ public class LabelPrinterView extends ViewPart {
         GridData gridData = new GridData();
         gridData.horizontalAlignment = GridData.FILL;
         gridData.grabExcessHorizontalSpace = true;
-        gridData.grabExcessVerticalSpace = true;
+        gridData.grabExcessVerticalSpace = false;
         gridData.verticalAlignment = GridData.FILL;
-        
+
         group3 = new Group(top, SWT.NONE);
         group3.setLayoutData(gridData);
         group3.setText("Branding");
@@ -590,26 +593,49 @@ public class LabelPrinterView extends ViewPart {
      * This method initializes group4
      * 
      */
-    private void createGroup4() {
+    private void actionButtonGroup() {
         GridLayout gridLayout5 = new GridLayout();
-        gridLayout5.numColumns = 3;
+        gridLayout5.numColumns = 6;
+        gridLayout5.makeColumnsEqualWidth = true;
+
+        GridData gridData = new GridData();
+        gridData.horizontalAlignment = GridData.FILL;
+        gridData.grabExcessHorizontalSpace = true;
+        gridData.grabExcessVerticalSpace = false;
+        gridData.verticalAlignment = GridData.FILL;
+
+        GridData gridData7 = new GridData();
+        gridData7.grabExcessHorizontalSpace = true;
+        gridData7.horizontalAlignment = GridData.FILL;
+
+
         group4 = new Group(top, SWT.NONE);
         group4.setText("Actions");
-        group4.setLayout(gridLayout5);
+
         exitButton = new Button(group4, SWT.NONE);
         exitButton.setText("Exit Label Maker");
         exitButton.addSelectionListener(exitButtonListener);
+        exitButton.setLayoutData(gridData7);
+        
+        new Label(group4,SWT.NONE);
+        new Label(group4,SWT.NONE);
+        new Label(group4,SWT.NONE);
+
 
         savePdfButton = new Button(group4, SWT.NONE);
-        savePdfButton.setText("Print Label to PDF");
+        savePdfButton.setText("Print to PDF");
         savePdfButton.addSelectionListener(savePdfListener);
+        savePdfButton.setLayoutData(gridData7);
 
         printButton = new Button(group4, SWT.NONE);
         printButton.setText("Print Label Sheet");
         printButton.addSelectionListener(printButtonListener);
+        printButton.setLayoutData(gridData7);
+
+        group4.setLayout(gridLayout5);
+        group4.setLayoutData(gridData);
 
     }
-
 
     // called after a successful print or save.
     private void updateSavePreferences() {
