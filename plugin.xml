@@ -10,7 +10,6 @@
       </category>
       <view
             name="Label Printer"
-            icon=""
             category="barcodeGenerator"
             class="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView"
             id="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView">
@@ -44,20 +43,12 @@
                label="Label Editor">
             <command
                   commandId="edu.ualberta.med.barcodegenerator.commands.labelprinter"
-                  icon=""
                   id="edu.ualberta.med.barcodegenerator.menu.labelprinter"
                   label="Label Printer Label"
                   style="push">
-               <visibleWhen
-                     checkEnabled="false">
-                  <reference
-                        definitionId="biobank2.loggedIn">
-                  </reference>
-               </visibleWhen>
             </command>
             <command
                   commandId="edu.ualberta.med.barcodegenerator.commands.templateditor"
-                  icon=""
                   id="edu.ualberta.med.barcodegenerator.menu.templateditor"
                   label="Template Editor Label"
                   style="push">
@@ -66,14 +57,33 @@
       </menuContribution>
    </extension>
    <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="edu.ualberta.med.biobank.barcodegenerator.handlers.LabelPrinterHandler"
+            commandId="edu.ualberta.med.barcodegenerator.commands.labelprinter">
+         <enabledWhen>
+               <reference
+                     definitionId="biobank2.loggedIn">
+               </reference>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="edu.ualberta.med.biobank.barcodegenerator.handlers.TemplateEditorHandler"
+            commandId="edu.ualberta.med.barcodegenerator.commands.templateditor">
+         <enabledWhen>
+               <reference
+                     definitionId="biobank2.loggedIn">
+               </reference>
+         </enabledWhen>
+      </handler>
+   </extension>
+   <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="edu.ualberta.med.biobank.barcodegenerator.handlers.LabelPrinterHandler"
             id="edu.ualberta.med.barcodegenerator.commands.labelprinter"
             name="Label Printer Command">
       </command>
      <command
-            defaultHandler="edu.ualberta.med.biobank.barcodegenerator.handlers.TemplateEditorHandler"
             id="edu.ualberta.med.barcodegenerator.commands.templateditor"
             name="Template Editor Command">
       </command>
