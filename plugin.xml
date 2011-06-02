@@ -31,6 +31,9 @@
                standalone="false"
                visible="false">
          </view>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="barcodeGenerator.perspective.templateeditor">
          <view
                id="edu.ualberta.med.biobank.barcodegenerator.views.TemplateEditorView"
                minimized="false"
@@ -122,6 +125,11 @@
             class="edu.ualberta.med.biobank.barcodegenerator.perspective.LabelPrinterPerspective"
             id="barcodeGenerator.perspective.labeprinter"
             name="Label Printer View">
+      </perspective>
+      <perspective
+            class="edu.ualberta.med.biobank.barcodegenerator.perspective.TemplateEditorPerspective"
+            id="barcodeGenerator.perspective.templateeditor"
+            name="TemplateEditor">
       </perspective>
    </extension>
 
