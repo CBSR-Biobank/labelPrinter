@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.UUID;
 import javax.imageio.ImageIO;
@@ -37,6 +38,9 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.swt.custom.CLabel;
@@ -310,7 +314,6 @@ public class LabelPrinterView extends ViewPart {
         if (printerCombo.getItemCount() > 0)
             printerCombo.select(0);
 
-        
         for (int i = 0; i < printerCombo.getItemCount(); i++) {
             if (printerCombo.getItem(i).equals(
                 perferenceStore.getString(PreferenceConstants.PRINTER_NAME))) {
@@ -827,24 +830,18 @@ public class LabelPrinterView extends ViewPart {
     private SelectionListener printButtonListener = new SelectionListener() {
         @Override
         public void widgetSelected(SelectionEvent e) {
-            BarcodeViewGuiData guiData = null;
             try {
-                guiData = new BarcodeViewGuiData();
+                new ProgressMonitorDialog(shell).run(true, true,
+                    new PrintingOperation(new BarcodeViewGuiData()));
+                updateSavePreferences();
+            } catch (InvocationTargetException e1) {
+                Error("Printing Error", e1.getMessage());
+                return;
+            } catch (InterruptedException e2) {
             } catch (CBSRGuiVerificationException e1) {
                 Error("Gui Validation", e1.getMessage());
                 return;
             }
-
-            if (guiData != null) {
-                try {
-                    guiData.templateCBSR.print(guiData, randStringArray(32));
-                } catch (CBSRPdfGenException e1) {
-                    Error("Gui Validation", e1.getError());
-                    return;
-                }
-            }
-            updateSavePreferences();
-            System.out.println("Print done.");
         }
 
         @Override
@@ -854,11 +851,42 @@ public class LabelPrinterView extends ViewPart {
         }
     };
 
+    class PrintingOperation implements IRunnableWithProgress {
+
+        BarcodeViewGuiData guiData = null;
+
+        public PrintingOperation(BarcodeViewGuiData guiData) {
+            this.guiData = guiData;
+        }
+
+        public void run(IProgressMonitor monitor)
+            throws InvocationTargetException, InterruptedException {
+            monitor.beginTask("Printing Barcode Labels",
+                IProgressMonitor.UNKNOWN);
+
+            if (guiData != null) {
+                try {
+                    monitor.subTask("Sending Data to Printer");
+                    guiData.templateCBSR.print(guiData, randStringArray(32));
+
+                } catch (CBSRPdfGenException e1) {
+                    Error("Gui Validation", e1.getError());
+                    return;
+                }
+            }
+
+            monitor.done();
+            if (monitor.isCanceled())
+                throw new InterruptedException(
+                    "Printing Operation was cancelled");
+        }
+    }
+
     private SelectionListener savePdfListener = new SelectionListener() {
         @Override
         public void widgetSelected(SelectionEvent e) {
             BarcodeViewGuiData guiData = null;
-            byte[] pdfdata = null;
+
             try {
                 guiData = new BarcodeViewGuiData();
             } catch (CBSRGuiVerificationException e1) {
@@ -879,40 +907,23 @@ public class LabelPrinterView extends ViewPart {
             if (!pdfFilePath.contains(".pdf"))
                 pdfFilePath += ".pdf";
 
-            if (guiData != null) {
-                try {
-                    pdfdata = guiData.templateCBSR.generatePdfCBSR(guiData,
-                        randStringArray(32));
-                } catch (CBSRPdfGenException e1) {
-                    Error("Gui Validation", e1.getError());
-                    return;
-                }
+            try {
+                new ProgressMonitorDialog(shell).run(true, true,
+                    new SaveOperation(guiData, pdfFilePath));
 
-                if (pdfdata != null) {
-                    FileOutputStream fos;
-                    try {
-                        fos = new FileOutputStream(pdfFilePath);
-                        fos.write(pdfdata);
-                        fos.close();
+                String parentDir = new File(pdfFilePath).getParentFile()
+                    .getPath();
+                if (parentDir != null)
+                    perferenceStore.setValue(
+                        PreferenceConstants.PDF_DIRECTORY_PATH, parentDir);
 
-                    } catch (FileNotFoundException e1) {
-                        Error("Saving Pdf", "Could find file to save pdf to");
-                        return;
-                    } catch (IOException ee) {
-                        Error("Saving Pdf",
-                            "Problem saving file: " + ee.getMessage());
-                        return;
-                    }
-                }
+                updateSavePreferences();
 
+            } catch (InvocationTargetException e1) {
+                Error("Pdf Saving Error", e1.getMessage());
+                return;
+            } catch (InterruptedException e2) {
             }
-            String parentDir = new File(pdfFilePath).getParentFile().getPath();
-
-            if (parentDir != null)
-                perferenceStore.setValue(
-                    PreferenceConstants.PDF_DIRECTORY_PATH, parentDir);
-
-            updateSavePreferences();
         }
 
         @Override
@@ -921,6 +932,58 @@ public class LabelPrinterView extends ViewPart {
 
         }
     };
+
+    class SaveOperation implements IRunnableWithProgress {
+
+        BarcodeViewGuiData guiData = null;
+        String pdfFilePath = null;
+
+        public SaveOperation(BarcodeViewGuiData guiData, String pdfFilePath) {
+            this.guiData = guiData;
+            this.pdfFilePath = pdfFilePath;
+        }
+
+        public void run(IProgressMonitor monitor)
+            throws InvocationTargetException, InterruptedException {
+            monitor.beginTask("Saving Barcode Labels PDF",
+                IProgressMonitor.UNKNOWN);
+
+            byte[] pdfdata = null;
+
+            try {
+                monitor.subTask("Generating PDF");
+                pdfdata = guiData.templateCBSR.generatePdfCBSR(guiData,
+                    randStringArray(32));
+            } catch (CBSRPdfGenException e1) {
+                Error("Gui Validation", e1.getError());
+                return;
+            }
+
+            if (pdfdata != null) {
+                FileOutputStream fos;
+                try {
+                    monitor.subTask("Saving PDF");
+                    fos = new FileOutputStream(pdfFilePath);
+                    fos.write(pdfdata);
+                    fos.close();
+
+                } catch (FileNotFoundException e1) {
+                    Error("Saving Pdf", "Could find file to save pdf to");
+                    return;
+                } catch (IOException ee) {
+                    Error("Saving Pdf",
+                        "Problem saving file: " + ee.getMessage());
+                    return;
+                }
+            }
+
+            monitor.done();
+            if (monitor.isCanceled())
+                throw new InterruptedException(
+                    "Saving to PDF operation was cancelled");
+        }
+    }
+
     // TODO full screen -- only allow one of the two views to exist.
 
     private SelectionListener exitButtonListener = new SelectionListener() {
