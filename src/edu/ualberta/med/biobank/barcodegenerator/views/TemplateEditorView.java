@@ -151,9 +151,7 @@ public class TemplateEditorView extends ViewPart {
         Label filler21 = new Label(composite1, SWT.NONE);
         @SuppressWarnings("unused")
         Label filler2 = new Label(composite1, SWT.NONE);
-        cancelButton = new Button(composite1, SWT.NONE);
-        cancelButton.setText("Cancel");
-        cancelButton.addSelectionListener(cancelListener);
+         filler2 = new Label(composite1, SWT.NONE);
 
         saveButton = new Button(composite1, SWT.NONE);
         saveButton.setText("Save Template");
@@ -595,34 +593,6 @@ public class TemplateEditorView extends ViewPart {
             } catch (Exception e1) {
                 Error("Open URL Problem",
                     "Could not open help url.\n\n" + e1.getMessage());
-                return;
-            }
-        }
-
-        @Override
-        public void widgetDefaultSelected(SelectionEvent e) {
-            widgetSelected(e);
-        }
-    };
-
-    private SelectionListener cancelListener = new SelectionListener() {
-        @Override
-        public void widgetSelected(SelectionEvent e) {
-            MessageBox messageBox = new MessageBox(shell, SWT.ICON_QUESTION
-                | SWT.YES | SWT.NO | SWT.CANCEL);
-            messageBox
-                .setMessage("Closing Template Editor. Do you want to save your changes?");
-            messageBox.setText("Closing Template Editor");
-            int response = messageBox.open();
-            if (response == SWT.YES) {
-                saveCurrentTemplate();
-                dispose();
-            } else if (response == SWT.NO) {
-                dispose();
-                // FIXME make close work
-                // TODO prompt user if they close the view via the X.
-
-            } else {
                 return;
             }
         }

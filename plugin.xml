@@ -9,7 +9,7 @@
             id="barcodeGenerator">
       </category>
       <view
-            name="Label Printer"
+            name="Print Patient Barcodes"
             category="barcodeGenerator"
             class="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView"
             id="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView">
@@ -48,17 +48,17 @@
             locationURI="menu:org.eclipse.ui.main.menu?after=edu.ualberta.med.biobank.menu.additions">
          <menu
                id="edu.ualberta.med.barcodegenerator.menu.barcodegenerator"
-               label="Label Editor">
+               label="Barcode Printing">
             <command
                   commandId="edu.ualberta.med.barcodegenerator.commands.labelprinter"
                   id="edu.ualberta.med.barcodegenerator.menu.labelprinter"
-                  label="Label Printer Label"
+                  label="Print Patient Barcodes"
                   style="push">
             </command>
             <command
                   commandId="edu.ualberta.med.barcodegenerator.commands.templateditor"
                   id="edu.ualberta.med.barcodegenerator.menu.templateditor"
-                  label="Template Editor Label"
+                  label="Edit Printer Templates"
                   style="push">
             </command>
          </menu>
@@ -102,14 +102,14 @@
             allowMultiple="false"
             class="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView"
             id="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView"
-            name="Label Printer View"
+            name="Label Printer"
             restorable="true">
       </view>
       <view
             allowMultiple="false"
             class="edu.ualberta.med.biobank.barcodegenerator.views.TemplateEditorView"
             id="edu.ualberta.med.biobank.barcodegenerator.views.TemplateEditorView"
-            name="Template Editor View"
+            name="Printer Templates Editor"
             restorable="true">
       </view>
    </extension>

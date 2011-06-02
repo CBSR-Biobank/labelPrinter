@@ -12,6 +12,8 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+
+//FIXME make string input dialog look nice
 public class StringInputDialog extends Dialog {
 
 	private String value;

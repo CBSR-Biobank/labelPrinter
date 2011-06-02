@@ -106,7 +106,6 @@ public class LabelPrinterView extends ViewPart {
     private Combo printerCombo = null;
     private Group group3 = null;
     private Group group4 = null;
-    private Button exitButton = null;
     private Button printButton = null;
     private Button savePdfButton = null;
     private CLabel cLabel = null;
@@ -117,7 +116,7 @@ public class LabelPrinterView extends ViewPart {
 
     @Override
     public void createPartControl(Composite parent) {
-        
+
         templateStore = new TemplateStore();
 
         loadPreferenceStore();
@@ -383,7 +382,7 @@ public class LabelPrinterView extends ViewPart {
         gridData.verticalAlignment = GridData.FILL;
 
         group1 = new Group(top, SWT.NONE);
-        group1.setText(" Info Fields");
+        group1.setText("Patient Information");
         group1.setLayoutData(gridData);
         group1.setLayout(new GridLayout());
         createComposite6();
@@ -604,14 +603,7 @@ public class LabelPrinterView extends ViewPart {
 
         group4 = new Group(top, SWT.NONE);
         group4.setText("Actions");
-
-        exitButton = new Button(group4, SWT.NONE);
-        exitButton.setText("Exit Label Maker");
-        exitButton.addSelectionListener(exitButtonListener);
-        exitButton.setLayoutData(gridData7);
-
-        new Label(group4, SWT.NONE);
-        new Label(group4, SWT.NONE);
+        
         new Label(group4, SWT.NONE);
 
         savePdfButton = new Button(group4, SWT.NONE);
@@ -619,10 +611,15 @@ public class LabelPrinterView extends ViewPart {
         savePdfButton.addSelectionListener(savePdfListener);
         savePdfButton.setLayoutData(gridData7);
 
+
         printButton = new Button(group4, SWT.NONE);
         printButton.setText("Print Label Sheet");
         printButton.addSelectionListener(printButtonListener);
         printButton.setLayoutData(gridData7);
+
+        new Label(group4, SWT.NONE);
+        new Label(group4, SWT.NONE);
+        new Label(group4, SWT.NONE);
 
         group4.setLayout(gridLayout5);
         group4.setLayoutData(gridData);
@@ -966,28 +963,6 @@ public class LabelPrinterView extends ViewPart {
                     "Saving to PDF operation was cancelled");
         }
     }
-
-    // TODO full screen -- only allow one of the two views to exist.
-
-    private SelectionListener exitButtonListener = new SelectionListener() {
-        @Override
-        public void widgetSelected(SelectionEvent e) {
-            MessageBox messageBox = new MessageBox(shell, SWT.ICON_QUESTION
-                | SWT.YES | SWT.NO);
-            messageBox.setMessage("Do you want to close this window?");
-            messageBox.setText("Label Printer Closing");
-            int response = messageBox.open();
-            if (response == SWT.YES) {
-                // TODO close view
-            }
-        }
-
-        @Override
-        public void widgetDefaultSelected(SelectionEvent e) {
-            widgetSelected(e);
-
-        }
-    };
 
     private void Error(String title, String message) {
         MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);

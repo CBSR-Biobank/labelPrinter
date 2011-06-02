@@ -15,7 +15,7 @@ public class TemplateStore implements Serializable {
 
     // internal -- this will be removed when templates are obtained
     // form a database table
-    //FIXME remove templates array
+    // FIXME remove templates array
     private ArrayList<Template> templates;
 
     public TemplateStore() {
@@ -31,18 +31,6 @@ public class TemplateStore implements Serializable {
                 .println("WARNING: could not load template store from store.dat");
             templates = new ArrayList<Template>();
         }
-    }
-
-    // get all of the names in the name columns
-    public String[] getTemplateNames() {
-        String[] templateNames = new String[templates.size()];
-
-        int i = 0;
-        for (Template t : templates) {
-            templateNames[i] = t.getName();
-            i++;
-        }
-        return templateNames;
     }
 
     // get a row with the given name and create a template from it
@@ -141,4 +129,15 @@ public class TemplateStore implements Serializable {
         out.close();
     }
 
+    // get all of the names in the name columns
+    public String[] getTemplateNames() {
+        String[] templateNames = new String[templates.size()];
+
+        int i = 0;
+        for (Template t : templates) {
+            templateNames[i] = t.getName();
+            i++;
+        }
+        return templateNames;
+    }
 }
