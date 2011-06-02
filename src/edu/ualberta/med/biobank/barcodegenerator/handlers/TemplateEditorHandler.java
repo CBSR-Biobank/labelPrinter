@@ -6,26 +6,33 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.WorkbenchException;
 
 import edu.ualberta.med.biobank.barcodegenerator.Activator;
+import edu.ualberta.med.biobank.barcodegenerator.perspective.MainPerspective;
 import edu.ualberta.med.biobank.barcodegenerator.views.TemplateEditorView;
 
 public class TemplateEditorHandler extends AbstractHandler implements IHandler {
 
-	public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.handlers.TemplateEditorHandler";
+    public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.handlers.TemplateEditorHandler";
 
-	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IWorkbench workbench = Activator.getDefault().getWorkbench();
-		IWorkbenchPage page = workbench.getActiveWorkbenchWindow()
-				.getActivePage();
-		try {
-			page.showView(TemplateEditorView.ID);
-		} catch (PartInitException e) {
-			throw new ExecutionException("Could not open template editor: ", e);
-		}
-		return null;
-	}
+    @Override
+    public Object execute(ExecutionEvent event) throws ExecutionException {
+        IWorkbench workbench = Activator.getDefault().getWorkbench();
+        try {
+            if (workbench.getActiveWorkbenchWindow().getActivePage()
+                .closeAllEditors(true)) {
+                workbench.showPerspective(MainPerspective.ID,
+                    workbench.getActiveWorkbenchWindow());
+                IWorkbenchPage page = workbench.getActiveWorkbenchWindow()
+                    .getActivePage();
+                page.showView(TemplateEditorView.ID);
+            }
+        } catch (WorkbenchException e) {
+            throw new ExecutionException(
+                "Could not open label printer view : ", e);
+        }
+        return null;
+    }
 
 }

@@ -18,18 +18,23 @@
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
-            targetID="org.eclipse.jdt.ui.JavaPerspective">
+            targetID="barcodeGenerator.perspective.main">
          <view
-               closeable="false"
+               closeable="true"
                id="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView"
                minimized="false"
-               moveable="false"
+               moveable="true"
                ratio="1"
                relationship="top"
-               relative="org.eclipse.ui.views.TaskList"
+               relative="org.eclipse.ui.editorss"
                showTitle="true"
                standalone="false"
-               visible="true">
+               visible="false">
+         </view>
+         <view
+               id="edu.ualberta.med.biobank.barcodegenerator.views.TemplateEditorView"
+               minimized="false"
+               relationship="stack">
          </view>
       </perspectiveExtension>
    </extension>
@@ -110,6 +115,14 @@
       <initializer
             class="edu.ualberta.med.biobank.barcodegenerator.preferences.PreferenceInitializer">
       </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="edu.ualberta.med.biobank.barcodegenerator.perspective.MainPerspective"
+            id="barcodeGenerator.perspective.main"
+            name="Label Printer View">
+      </perspective>
    </extension>
 
 </plugin>
