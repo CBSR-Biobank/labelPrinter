@@ -61,8 +61,6 @@ public class LabelPrinterView extends ViewPart {
     public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView";
     private Composite top = null;
     private Composite composite = null;
-    private Composite composite1 = null;
-    private Composite composite2 = null;
     private Composite composite3 = null;
     private Composite composite4 = null;
     private Label label = null;
@@ -98,7 +96,7 @@ public class LabelPrinterView extends ViewPart {
     private Text value3Text = null;
     private Button printBarcode3Checkbox = null;
     private Group group2 = null;
-    private Composite composite7 = null;
+
     private Label label8 = null;
     private Button sampleTypeCheckbox = null;
     private Text sampleTypeText = null;
@@ -106,13 +104,11 @@ public class LabelPrinterView extends ViewPart {
     private Label label9 = null;
     private Combo templateCombo = null;
     private Combo printerCombo = null;
-    private Composite composite8 = null;
     private Group group3 = null;
     private Group group4 = null;
     private Button exitButton = null;
     private Button printButton = null;
     private Button savePdfButton = null;
-    private Composite composite9 = null;
     private CLabel cLabel = null;
     private Shell shell;
     private IPreferenceStore perferenceStore;
@@ -134,16 +130,13 @@ public class LabelPrinterView extends ViewPart {
         loadPreferenceStore();
 
         shell = parent.getShell();
-        RowLayout rowLayout = new RowLayout();
-        rowLayout.type = org.eclipse.swt.SWT.VERTICAL;
-        rowLayout.fill = true;
         top = new Composite(parent, SWT.NONE);
         top.setBackground(new Color(Display.getCurrent(), 237, 236, 235));
-        createGroup3();
-        createComposite1();
-        top.setLayout(rowLayout);
-        createComposite2();
-        createComposite8();
+        brandingGroup();
+        patientInfoGroup();
+        top.setLayout(new GridLayout());
+        sampleTextGroup();
+        createGroup4();
     }
 
     private void loadPreferenceStore() {
@@ -175,26 +168,6 @@ public class LabelPrinterView extends ViewPart {
         composite.setForeground(new Color(Display.getCurrent(), 0, 0, 0));
         createComposite3();
         createComposite4();
-    }
-
-    /**
-     * This method initializes composite1
-     * 
-     */
-    private void createComposite1() {
-        composite1 = new Composite(top, SWT.NONE);
-        composite1.setLayout(new FillLayout());
-        createGroup1();
-    }
-
-    /**
-     * This method initializes composite2
-     * 
-     */
-    private void createComposite2() {
-        composite2 = new Composite(top, SWT.NONE);
-        createGroup2();
-        composite2.setLayout(new FillLayout());
     }
 
     /**
@@ -408,9 +381,17 @@ public class LabelPrinterView extends ViewPart {
      * This method initializes group1
      * 
      */
-    private void createGroup1() {
-        group1 = new Group(composite1, SWT.NONE);
+    private void patientInfoGroup() {
+        
+        GridData gridData = new GridData();
+        gridData.horizontalAlignment = GridData.FILL;
+        gridData.grabExcessHorizontalSpace = true;
+        gridData.grabExcessVerticalSpace = true;
+        gridData.verticalAlignment = GridData.FILL;
+        
+        group1 = new Group(top, SWT.NONE);
         group1.setText(" Info Fields");
+        group1.setLayoutData(gridData);
         group1.setLayout(new GridLayout());
         createComposite6();
         createComposite5();
@@ -556,61 +537,53 @@ public class LabelPrinterView extends ViewPart {
      * This method initializes group2
      * 
      */
-    private void createGroup2() {
+    private void sampleTextGroup() {
+        
+        
         RowLayout rowLayout2 = new RowLayout();
         rowLayout2.type = org.eclipse.swt.SWT.VERTICAL;
         rowLayout2.fill = true;
-        group2 = new Group(composite2, SWT.NONE);
-        createComposite7();
-        createComposite9();
-        group2.setLayout(rowLayout2);
-        group2.setText("Additonal Configuration");
-
-    }
-
-    /**
-     * This method initializes composite7
-     * 
-     */
-    private void createComposite7() {
-        composite7 = new Composite(group2, SWT.NONE);
-        composite7.setLayout(new FillLayout());
-        sampleTypeCheckbox = new Button(composite7, SWT.CHECK | SWT.LEFT);
+        group2 = new Group(top, SWT.NONE);
+        
+        sampleTypeCheckbox = new Button(group2, SWT.CHECK | SWT.LEFT);
         sampleTypeCheckbox.setText("Enable");
         sampleTypeCheckbox.setSelection(perferenceStore
             .getBoolean(PreferenceConstants.SAMPLETYPE_CHECKBOX));
-        cLabel = new CLabel(composite7, SWT.NONE);
+        cLabel = new CLabel(group2, SWT.NONE);
         cLabel.setText("Sample Type (on labels):");
-        sampleTypeText = new Text(composite7, SWT.BORDER | SWT.V_SCROLL
+        sampleTypeText = new Text(group2, SWT.BORDER | SWT.V_SCROLL
             | SWT.SINGLE);
         sampleTypeText.setText(perferenceStore
             .getString(PreferenceConstants.SAMPLETYPE_TEXT));
         sampleTypeText.setTextLimit(25);
-        label8 = new Label(composite7, SWT.LEFT | SWT.HORIZONTAL);
+        label8 = new Label(group2, SWT.LEFT | SWT.HORIZONTAL);
         label8.setText("");
         @SuppressWarnings("unused")
-        Label filler61 = new Label(composite7, SWT.NONE);
+        Label filler61 = new Label(group2, SWT.NONE);
+        
+        group2.setLayout(new FillLayout());
+        group2.setText("Additonal Configuration");
+
     }
 
-    /**
-     * This method initializes composite8
-     * 
-     */
-    private void createComposite8() {
-        composite8 = new Composite(top, SWT.NONE);
-        composite8.setLayout(new FillLayout());
-        createGroup4();
-    }
 
     /**
      * This method initializes group3
      * 
      */
-    private void createGroup3() {
+    private void brandingGroup() {
+
+        GridData gridData = new GridData();
+        gridData.horizontalAlignment = GridData.FILL;
+        gridData.grabExcessHorizontalSpace = true;
+        gridData.grabExcessVerticalSpace = true;
+        gridData.verticalAlignment = GridData.FILL;
+        
         group3 = new Group(top, SWT.NONE);
-        group3.setLayout(new FillLayout());
+        group3.setLayoutData(gridData);
         group3.setText("Branding");
         createComposite();
+        group3.setLayout(new GridLayout());
     }
 
     /**
@@ -620,7 +593,7 @@ public class LabelPrinterView extends ViewPart {
     private void createGroup4() {
         GridLayout gridLayout5 = new GridLayout();
         gridLayout5.numColumns = 3;
-        group4 = new Group(composite8, SWT.NONE);
+        group4 = new Group(top, SWT.NONE);
         group4.setText("Actions");
         group4.setLayout(gridLayout5);
         exitButton = new Button(group4, SWT.NONE);
@@ -637,21 +610,6 @@ public class LabelPrinterView extends ViewPart {
 
     }
 
-    /**
-     * This method initializes composite9
-     * 
-     */
-    private void createComposite9() {
-
-        GridData gridData12 = new GridData();
-        gridData12.horizontalAlignment = GridData.FILL;
-        gridData12.grabExcessHorizontalSpace = true;
-        gridData12.grabExcessVerticalSpace = true;
-        gridData12.heightHint = 300;
-        gridData12.verticalAlignment = GridData.FILL;
-        composite9 = new Composite(group2, SWT.NONE);
-        composite9.setLayout(new GridLayout());
-    }
 
     // called after a successful print or save.
     private void updateSavePreferences() {
@@ -911,6 +869,7 @@ public class LabelPrinterView extends ViewPart {
                 new ProgressMonitorDialog(shell).run(true, true,
                     new SaveOperation(guiData, pdfFilePath));
 
+                // save our recently saved file path location
                 String parentDir = new File(pdfFilePath).getParentFile()
                     .getPath();
                 if (parentDir != null)
