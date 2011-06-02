@@ -117,8 +117,7 @@ public class LabelPrinterView extends ViewPart {
 
     @Override
     public void createPartControl(Composite parent) {
-
-        // TODO implement errors for templateStore
+        
         templateStore = new TemplateStore();
 
         loadPreferenceStore();
@@ -786,7 +785,7 @@ public class LabelPrinterView extends ViewPart {
         }
     };
 
-    public static String randString() {
+    private static String randString() {
         return UUID.randomUUID().toString().replaceAll("[^a-zA-Z0-9]", "")
             .substring(0, 6)
             + UUID.randomUUID().toString().replaceAll("[^a-zA-Z0-9]", "")
@@ -802,6 +801,11 @@ public class LabelPrinterView extends ViewPart {
             l.add(randString());
         }
         return l;
+    }
+
+    // FIXME obtain 2D barcodes for a patient from the database.
+    private ArrayList<String> getPatient2DBarcodes(String patientName) {
+        return randStringArray(32);
     }
 
     private SelectionListener printButtonListener = new SelectionListener() {
@@ -844,7 +848,8 @@ public class LabelPrinterView extends ViewPart {
             if (guiData != null) {
                 try {
                     monitor.subTask("Sending Data to Printer");
-                    guiData.templateCBSR.print(guiData, randStringArray(32));
+                    guiData.templateCBSR.print(guiData,
+                        getPatient2DBarcodes(guiData.patientIdStr));
 
                 } catch (CBSRPdfGenException e1) {
                     Error("Gui Validation", e1.getError());
@@ -931,7 +936,7 @@ public class LabelPrinterView extends ViewPart {
             try {
                 monitor.subTask("Generating PDF");
                 pdfdata = guiData.templateCBSR.generatePdfCBSR(guiData,
-                    randStringArray(32));
+                    getPatient2DBarcodes(guiData.patientIdStr));
             } catch (CBSRPdfGenException e1) {
                 Error("Gui Validation", e1.getError());
                 return;
