@@ -547,6 +547,9 @@ public class LabelPrinterView extends ViewPart {
         gridLayout5.numColumns = 4;
 
         group2 = new Group(top, SWT.NONE);
+        
+
+     
 
         sampleTypeCheckbox = new Button(group2, SWT.CHECK | SWT.LEFT);
         sampleTypeCheckbox.setText("Enable");
@@ -559,6 +562,8 @@ public class LabelPrinterView extends ViewPart {
         sampleTypeText.setText(perferenceStore
             .getString(PreferenceConstants.SAMPLETYPE_TEXT));
         sampleTypeText.setTextLimit(25);
+        sampleTypeText.setLayoutData(gridData7);
+
         label8 = new Label(group2, SWT.LEFT | SWT.HORIZONTAL);
         label8.setText("");
         @SuppressWarnings("unused")
