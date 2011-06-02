@@ -119,12 +119,7 @@ public class LabelPrinterView extends ViewPart {
     public void createPartControl(Composite parent) {
 
         // TODO implement errors for templateStore
-        try {
-            templateStore = new TemplateStore();
-        } catch (ClassNotFoundException e) {
-            // FIXME
-            e.printStackTrace();
-        }
+        templateStore = new TemplateStore();
 
         loadPreferenceStore();
 

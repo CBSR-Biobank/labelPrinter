@@ -15,12 +15,18 @@ public class TemplateStore implements Serializable {
 
     ArrayList<Template> templates;
 
-    public TemplateStore() throws ClassNotFoundException {
-        templates = new ArrayList<Template>();
+    public TemplateStore() {
         try {
             loadStore(new File("Store.dat"));
+
         } catch (IOException e) {
             System.err.println("WARNING: store.dat file does not exist!");
+            templates = new ArrayList<Template>();
+
+        } catch (ClassNotFoundException e) {
+            System.err
+                .println("WARNING: could not load template store from store.dat");
+            templates = new ArrayList<Template>();
         }
     }
 
