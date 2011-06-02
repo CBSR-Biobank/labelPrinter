@@ -71,7 +71,7 @@ public class TemplateEditorView extends ViewPart {
     boolean templateDirty = false;
 
     // constants
-    final private String HELP_URL = "http://www.example.com/";
+    final private String HELP_URL = "http://www.example.com";
 
     @Override
     public void createPartControl(Composite parent) {

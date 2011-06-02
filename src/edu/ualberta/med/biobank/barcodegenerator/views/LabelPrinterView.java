@@ -310,7 +310,7 @@ public class LabelPrinterView extends ViewPart {
         if (printerCombo.getItemCount() > 0)
             printerCombo.select(0);
 
-        // TODO test PRINTER_NAME perference store
+        
         for (int i = 0; i < printerCombo.getItemCount(); i++) {
             if (printerCombo.getItem(i).equals(
                 perferenceStore.getString(PreferenceConstants.PRINTER_NAME))) {

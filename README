@@ -1,1 +1,73 @@
-Barcode generating pluing for BioBank2.
+=============================================
+Basic Documentation for the Barcode Generator
+=============================================
+Definitions:
+
+Field: Is a rectangular area that contains elements. Fields that exist in the barcode generator include:
+barcode location fields, patient information fields and a logo field. Each field has elements inside it.
+
+Element: Is an object that is placed and drawin inside a field. Elements can be a 1D barcode, 2D barcode, an image or text.
+Each element has a horizontal, vertical, width, and height offset. These offsets are used to position and scale the
+element within a specified field. Offset units are in millimeters.
+
+Header: Is a virutal page seperator used in Jasper Reports. For our purposes there only exists a Title Header and
+a Body Header. The Title Header encompasses the logo field and the patient information field. The Body Header 
+encompasses all of the barcode fields.
+
+
+----Title Header----------------------------------------|
+					|Logo Field |	|
+							|
+							|
+|Patient Info Field|					|
+							|
+							|
+							|
+----Body Header-----------------------------------------|
+							|
+|Barcode 1||Barcode 2|..........			|
+							|
+							|
+							|
+							|
+							|
+							|
+							|
+							|
+							|
+							|
+							|
+				...........|Barcode 32|	|
+--------------------------------------------------------|
+
+Logo Field: contains an image.
+Patient Info Field: contains 6 text elements and 3 1D barcode elements.
+Barcode XX: contains a text element, a 1D barcode element and a 2D barocode element.
+
+
+Template Editor
+**********************************************
+
+Basics: The template editor window is used to create, copy and delete templates.
+Each template is composed of a "Intended Printer Name", "Jasper File"  and "Configuration Settings".
+Each component within template is customizable and user editable.
+
+"Intended Printer": This is simply a name label. It is used to help the user identify what printer 
+this template was designed for, it has no functional purpose.
+
+"Jasper File": This is a Jasper Reports based .jrxml file. By using iReports a user can customize the 
+layout of the barcode locations, patient information and the logo location. If you wish to modify a 
+Jasper File then you must copy a previously working copy and edit the copy through iReports. There are 
+limitations to what you can do with iReports. For instance, you cannot delete fields or move a field from
+the title header into the body header and vice versa. Fields can ONLY be moved within their own unique header.
+
+"Configuration Settings": This contains a tree of field names. Each field is user-editable. It's purpose is to
+allow the user to place "elements" such as 1D barcodes, 2D barcodes and text in the appropiate location within
+each field. If you do not wish to set each barcode offset individually, then you can edit the Barcodes---All
+elements. Barcodes----All offsets are applied to every barcode. Any additional changes to an individual barcode
+will have an additive effect. For instance, if you set Barcodes---All----Barcode 1D Horizontal to 5. Then every
+1D barcode in the body header will move 5mm to the right. If ontop of this change you set Barcodes---Individual
+---Barcode 01---Barcode 1D Horiztonal to 6 then Barcode 01 will be moved 11mm to right, while the other barcodes
+will like before be move 5mm to right.
+
+
