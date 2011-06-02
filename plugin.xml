@@ -48,6 +48,12 @@
                   id="edu.ualberta.med.barcodegenerator.menu.labelprinter"
                   label="Label Printer Label"
                   style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <reference
+                        definitionId="biobank2.loggedIn">
+                  </reference>
+               </visibleWhen>
             </command>
             <command
                   commandId="edu.ualberta.med.barcodegenerator.commands.templateditor"
