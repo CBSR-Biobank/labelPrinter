@@ -18,7 +18,7 @@
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
-            targetID="barcodeGenerator.perspective.main">
+            targetID="barcodeGenerator.perspective.labeprinter">
          <view
                closeable="true"
                id="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView"
@@ -119,8 +119,8 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            class="edu.ualberta.med.biobank.barcodegenerator.perspective.MainPerspective"
-            id="barcodeGenerator.perspective.main"
+            class="edu.ualberta.med.biobank.barcodegenerator.perspective.LabelPrinterPerspective"
+            id="barcodeGenerator.perspective.labeprinter"
             name="Label Printer View">
       </perspective>
    </extension>
