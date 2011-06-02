@@ -121,9 +121,6 @@ public class LabelPrinterView extends ViewPart {
         // TODO implement errors for templateStore
         try {
             templateStore = new TemplateStore();
-        } catch (IOException e) {
-            // FIXME
-            e.printStackTrace();
         } catch (ClassNotFoundException e) {
             // FIXME
             e.printStackTrace();
@@ -236,22 +233,18 @@ public class LabelPrinterView extends ViewPart {
         templateCombo = new Combo(composite3, SWT.DROP_DOWN | SWT.BORDER);
         templateCombo.setLayoutData(gridData21);
 
-        if (this.templateStore != null) {
+        for (String s : templateStore.getTemplateNames()) {
+            templateCombo.add(s);
+        }
 
-            for (String s : this.templateStore.getTemplateNames()) {
-                templateCombo.add(s);
-            }
+        if (templateCombo.getItemCount() > 0)
+            templateCombo.select(0);
 
-            if (templateCombo.getItemCount() > 0)
-                templateCombo.select(0);
-
-            for (int i = 0; i < templateCombo.getItemCount(); i++) {
-                if (templateCombo.getItem(i).equals(
-                    perferenceStore
-                        .getString(PreferenceConstants.TEMPLATE_NAME))) {
-                    templateCombo.select(i);
-                    break;
-                }
+        for (int i = 0; i < templateCombo.getItemCount(); i++) {
+            if (templateCombo.getItem(i).equals(
+                perferenceStore.getString(PreferenceConstants.TEMPLATE_NAME))) {
+                templateCombo.select(i);
+                break;
             }
         }
 
@@ -554,9 +547,6 @@ public class LabelPrinterView extends ViewPart {
         gridLayout5.numColumns = 4;
 
         group2 = new Group(top, SWT.NONE);
-        
-
-     
 
         sampleTypeCheckbox = new Button(group2, SWT.CHECK | SWT.LEFT);
         sampleTypeCheckbox.setText("Enable");
@@ -569,8 +559,6 @@ public class LabelPrinterView extends ViewPart {
         sampleTypeText.setText(perferenceStore
             .getString(PreferenceConstants.SAMPLETYPE_TEXT));
         sampleTypeText.setTextLimit(25);
-        sampleTypeText.setLayoutData(gridData7);
-
         label8 = new Label(group2, SWT.LEFT | SWT.HORIZONTAL);
         label8.setText("");
         @SuppressWarnings("unused")

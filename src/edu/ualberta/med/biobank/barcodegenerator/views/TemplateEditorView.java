@@ -80,8 +80,6 @@ public class TemplateEditorView extends ViewPart {
         // TODO implement errors for templateStore
         try {
             templateStore = new TemplateStore();
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
