@@ -10,40 +10,41 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.UUID;
+
 import javax.imageio.ImageIO;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceStore;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.part.ViewPart;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceStore;
-import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.part.ViewPart;
 
 import edu.ualberta.med.biobank.barcodegenerator.Activator;
 import edu.ualberta.med.biobank.barcodegenerator.preferences.PreferenceConstants;
@@ -121,8 +122,10 @@ public class LabelPrinterView extends ViewPart {
         try {
             templateStore = new TemplateStore();
         } catch (IOException e) {
+            // FIXME
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
+            // FIXME
             e.printStackTrace();
         }
 
@@ -233,18 +236,22 @@ public class LabelPrinterView extends ViewPart {
         templateCombo = new Combo(composite3, SWT.DROP_DOWN | SWT.BORDER);
         templateCombo.setLayoutData(gridData21);
 
-        for (String s : this.templateStore.getTemplateNames()) {
-            templateCombo.add(s);
-        }
+        if (this.templateStore != null) {
 
-        if (templateCombo.getItemCount() > 0)
-            templateCombo.select(0);
+            for (String s : this.templateStore.getTemplateNames()) {
+                templateCombo.add(s);
+            }
 
-        for (int i = 0; i < templateCombo.getItemCount(); i++) {
-            if (templateCombo.getItem(i).equals(
-                perferenceStore.getString(PreferenceConstants.TEMPLATE_NAME))) {
-                templateCombo.select(i);
-                break;
+            if (templateCombo.getItemCount() > 0)
+                templateCombo.select(0);
+
+            for (int i = 0; i < templateCombo.getItemCount(); i++) {
+                if (templateCombo.getItem(i).equals(
+                    perferenceStore
+                        .getString(PreferenceConstants.TEMPLATE_NAME))) {
+                    templateCombo.select(i);
+                    break;
+                }
             }
         }
 
@@ -613,7 +620,6 @@ public class LabelPrinterView extends ViewPart {
         gridData7.grabExcessHorizontalSpace = true;
         gridData7.horizontalAlignment = GridData.FILL;
 
-
         group4 = new Group(top, SWT.NONE);
         group4.setText("Actions");
 
@@ -621,11 +627,10 @@ public class LabelPrinterView extends ViewPart {
         exitButton.setText("Exit Label Maker");
         exitButton.addSelectionListener(exitButtonListener);
         exitButton.setLayoutData(gridData7);
-        
-        new Label(group4,SWT.NONE);
-        new Label(group4,SWT.NONE);
-        new Label(group4,SWT.NONE);
 
+        new Label(group4, SWT.NONE);
+        new Label(group4, SWT.NONE);
+        new Label(group4, SWT.NONE);
 
         savePdfButton = new Button(group4, SWT.NONE);
         savePdfButton.setText("Print to PDF");
