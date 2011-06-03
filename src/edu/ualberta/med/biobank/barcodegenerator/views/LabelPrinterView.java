@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -13,9 +12,7 @@ import javax.imageio.ImageIO;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.swt.SWT;
@@ -48,12 +45,11 @@ import edu.ualberta.med.biobank.barcodegenerator.Activator;
 import edu.ualberta.med.biobank.barcodegenerator.UniquePatientID;
 import edu.ualberta.med.biobank.barcodegenerator.preferences.PreferenceConstants;
 import edu.ualberta.med.biobank.barcodegenerator.preferences.PreferenceInitializer;
+import edu.ualberta.med.biobank.barcodegenerator.progress.*;
 import edu.ualberta.med.biobank.barcodegenerator.template.Template;
 import edu.ualberta.med.biobank.barcodegenerator.template.TemplateStore;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSRData;
-import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSROutlineMaker;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.exceptions.CBSRGuiVerificationException;
-import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.exceptions.CBSRPdfGenException;
 
 public class LabelPrinterView extends ViewPart {
 
@@ -796,7 +792,7 @@ public class LabelPrinterView extends ViewPart {
                 .generatePatient2DBarcodes(guiData.patientIdStr);
 
             // print operation
-            PrintingOperation printOperation = new PrintingOperation(guiData,
+            PrintOperation printOperation = new PrintOperation(guiData,
                 patientIDs);
 
             try {
@@ -897,147 +893,6 @@ public class LabelPrinterView extends ViewPart {
 
         }
     };
-
-    // TODO move BarcodeGenerationOperation based classes to package
-    abstract class BarcodeGenerationOperation implements IRunnableWithProgress {
-        protected BarcodeViewGuiData guiData = null;
-        protected ArrayList<String> patientIDs = null;
-        protected boolean successfulSave = false;
-        protected String errorTitle = null;
-        protected String errorMessage = null;
-
-        public BarcodeGenerationOperation(BarcodeViewGuiData guiData,
-            ArrayList<String> patientIDs) {
-            this.guiData = guiData;
-            this.patientIDs = patientIDs;
-            successfulSave = false;
-        }
-
-        public void saveFailed() {
-            successfulSave = false;
-        }
-
-        public boolean isSuccessfulSave() {
-            return successfulSave;
-        }
-
-        public ArrayList<String> getPatientIDsUsed() {
-            return patientIDs;
-        }
-
-        public void setError(String title, String msg) {
-            errorTitle = title;
-            errorMessage = msg;
-        }
-
-        public boolean errorExists() {
-            return getError()[0] != null || getError()[1] != null;
-        }
-
-        public String[] getError() {
-            return new String[] { errorTitle, errorMessage };
-        }
-
-        public abstract void run(IProgressMonitor monitor)
-            throws InvocationTargetException, InterruptedException;
-
-    };
-
-    class PrintingOperation extends BarcodeGenerationOperation {
-
-        public PrintingOperation(BarcodeViewGuiData guiData,
-            ArrayList<String> patientIDs) {
-            super(guiData, patientIDs);
-        }
-
-        public void run(IProgressMonitor monitor)
-            throws InvocationTargetException, InterruptedException {
-
-            successfulSave = false;
-
-            monitor.beginTask("Printing Barcode Labels",
-                IProgressMonitor.UNKNOWN);
-
-            try {
-                monitor.subTask("Sending Data to Printer");
-                CBSROutlineMaker.printLabelsCBSR(guiData, patientIDs);
-                successfulSave = true;
-
-            } catch (CBSRPdfGenException e1) {
-                monitor.done();
-                successfulSave = false;
-                setError("Gui Validation", e1.getError());
-                return;
-            }
-
-            monitor.done();
-
-            // since the cancle operation does nothing, warn the user that
-            // they should destroy any recent pags that were printed with
-            // by this method.
-            if (monitor.isCanceled()) {
-                setError("Printing Operation Cancle",
-                    "The current set of prints are invalid, please shred any "
-                        + "sheets that were printed from this operation.");
-            }
-        }
-    }
-
-    class SaveOperation extends BarcodeGenerationOperation {
-
-        private String pdfFilePath = "";
-
-        public SaveOperation(BarcodeViewGuiData guiData,
-            ArrayList<String> patientIDs, String pdfFilePath) {
-            super(guiData, patientIDs);
-            this.pdfFilePath = pdfFilePath;
-        }
-
-        public void run(IProgressMonitor monitor) throws InterruptedException {
-
-            byte[] pdfdata = null;
-
-            successfulSave = false;
-            monitor.beginTask("Saving Barcode Labels PDF",
-                IProgressMonitor.UNKNOWN);
-
-            try {
-                monitor.subTask("Generating PDF");
-                pdfdata = CBSROutlineMaker.generatePdfCBSR(guiData, patientIDs);
-
-            } catch (CBSRPdfGenException e1) {
-                monitor.done();
-                successfulSave = false;
-                setError("Gui Validation", e1.getError());
-                return;
-            }
-
-            if (pdfdata != null) {
-                FileOutputStream fos;
-                try {
-                    monitor.subTask("Saving PDF");
-                    fos = new FileOutputStream(pdfFilePath);
-                    fos.write(pdfdata);
-                    fos.close();
-                    successfulSave = true;
-
-                } catch (Exception e1) {
-                    monitor.done();
-                    successfulSave = false;
-                    setError("Saving Pdf",
-                        "Problem saving file: " + e1.getMessage());
-                    return;
-
-                }
-            }
-            monitor.done();
-
-            if (monitor.isCanceled()) {
-                successfulSave = false;
-                new File(pdfFilePath).delete();
-            }
-        }
-    }
 
     private void Error(String title, String message) {
         MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);

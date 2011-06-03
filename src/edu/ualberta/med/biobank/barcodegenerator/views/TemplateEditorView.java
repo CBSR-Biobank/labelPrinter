@@ -639,7 +639,6 @@ public class TemplateEditorView extends ViewPart {
             messageBox.setMessage("Template has been successfully saved.");
             messageBox.setText("Template Saved");
             messageBox.open();
-
         }
 
         @Override
@@ -649,4 +648,4 @@ public class TemplateEditorView extends ViewPart {
         }
     };
 
-} 
+}

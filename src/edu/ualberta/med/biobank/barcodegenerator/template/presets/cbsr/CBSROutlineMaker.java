@@ -295,7 +295,6 @@ public class CBSROutlineMaker {
             if (!found) {
                 System.out.println(k);
                 return false;
-
             }
         }
         return true;

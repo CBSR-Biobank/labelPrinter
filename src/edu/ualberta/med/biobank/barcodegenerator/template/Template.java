@@ -11,6 +11,14 @@ public class Template implements Serializable {
 
     private static final long serialVersionUID = -4213741888020425604L;
 
+    private String intendedPrinterName = "default";
+
+    private String name = "default";
+
+    private byte[] jasperTemplateFileData = null;
+
+    private Configuration config = null;
+
     // TODO implement clonable
     public static void Clone(Template original, Template clone) {
 
@@ -42,22 +50,15 @@ public class Template implements Serializable {
 
     }
 
+    public String getName() {
+        return this.name;
+    }
+
     public void setName(String name) {
         if (name == null)
             name = "default";
 
         this.name = name;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public void setIntendedPrinter(String intendedPrinterName) {
-        if (intendedPrinterName == null)
-            intendedPrinterName = "default";
-
-        this.intendedPrinterName = intendedPrinterName;
     }
 
     public String getIntendedPrinter() {
@@ -67,24 +68,23 @@ public class Template implements Serializable {
         return this.intendedPrinterName;
     }
 
-    private String intendedPrinterName = "default";
+    public void setIntendedPrinter(String intendedPrinterName) {
+        if (intendedPrinterName == null)
+            intendedPrinterName = "default";
 
-    private String name = "default";
-
-    protected byte[] jasperTemplateFileData = null;
-
-    protected Configuration config = null;
-
-    public void setJasperFileData(byte[] jasperData) {
-        this.jasperTemplateFileData = jasperData;
+        this.intendedPrinterName = intendedPrinterName;
     }
 
     public boolean jasperFileDataExists() {
         return (this.jasperTemplateFileData != null);
     }
- 
+
     public byte[] getJasperFileData() {
         return this.jasperTemplateFileData;
+    }
+
+    public void setJasperFileData(byte[] jasperData) {
+        this.jasperTemplateFileData = jasperData;
     }
 
     public Configuration getConfiguration() {

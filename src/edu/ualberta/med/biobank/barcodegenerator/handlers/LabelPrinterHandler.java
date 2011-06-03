@@ -15,7 +15,10 @@ import edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView;
 public class LabelPrinterHandler extends AbstractHandler implements IHandler {
 
     public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.handlers.LabelPrinterHandler";
-
+    
+    //FIXME switching a between label editor and label printer using the menu bar
+    // does not close the previous view, it simply hides it in the background.
+    
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
         IWorkbench workbench = Activator.getDefault().getWorkbench();
