@@ -4,12 +4,10 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.UUID;
 
 import javax.imageio.ImageIO;
 import javax.print.PrintService;
@@ -53,7 +51,7 @@ import edu.ualberta.med.biobank.barcodegenerator.preferences.PreferenceInitializ
 import edu.ualberta.med.biobank.barcodegenerator.template.Template;
 import edu.ualberta.med.biobank.barcodegenerator.template.TemplateStore;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSRData;
-import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSRTemplate;
+import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSROutlineMaker;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.exceptions.CBSRGuiVerificationException;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.exceptions.CBSRPdfGenException;
 
@@ -768,14 +766,14 @@ public class LabelPrinterView extends ViewPart {
                 sampleTypeStr = sampleTypeText.getText();
             }
 
-            templateCBSR = (CBSRTemplate) selectedTemplate;
+            template = selectedTemplate;
 
-            if (templateCBSR == null) {
+            if (template == null) {
                 throw new CBSRGuiVerificationException("Verifcation Issue",
                     "Could not load template.");
             }
 
-            if (!(templateCBSR).jasperFileDataExists()) {
+            if (!(template).jasperFileDataExists()) {
                 throw new CBSRGuiVerificationException("Verifcation Issue",
                     "Template is lacking a jasper file.");
             }
@@ -962,7 +960,7 @@ public class LabelPrinterView extends ViewPart {
 
             try {
                 monitor.subTask("Sending Data to Printer");
-                guiData.templateCBSR.print(guiData, patientIDs);
+                CBSROutlineMaker.printLabelsCBSR(guiData, patientIDs);
                 successfulSave = true;
 
             } catch (CBSRPdfGenException e1) {
@@ -1005,8 +1003,7 @@ public class LabelPrinterView extends ViewPart {
 
             try {
                 monitor.subTask("Generating PDF");
-                pdfdata = guiData.templateCBSR.generatePdfCBSR(guiData,
-                    patientIDs);
+                pdfdata = CBSROutlineMaker.generatePdfCBSR(guiData, patientIDs);
 
             } catch (CBSRPdfGenException e1) {
                 monitor.done();
@@ -1033,7 +1030,6 @@ public class LabelPrinterView extends ViewPart {
 
                 }
             }
-
             monitor.done();
 
             if (monitor.isCanceled()) {

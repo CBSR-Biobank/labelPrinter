@@ -31,7 +31,7 @@ import org.eclipse.swt.layout.RowLayout;
 import edu.ualberta.med.biobank.barcodegenerator.dialogs.StringInputDialog;
 import edu.ualberta.med.biobank.barcodegenerator.template.Template;
 import edu.ualberta.med.biobank.barcodegenerator.template.TemplateStore;
-import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSRTemplate;
+import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSROutlineMaker;
 import edu.ualberta.med.biobank.barcodegenerator.trees.ConfigurationTree;
 import edu.ualberta.med.biobank.barcodegenerator.trees.TreeException;
 
@@ -50,7 +50,6 @@ public class TemplateEditorView extends ViewPart {
     private Button copyButton = null;
     private Button newButton = null;
     private Button helpButton = null;
-    private Button cancelButton = null;
     private Button saveButton = null;
     private Composite composite5 = null;
     private Label label = null;
@@ -151,7 +150,7 @@ public class TemplateEditorView extends ViewPart {
         Label filler21 = new Label(composite1, SWT.NONE);
         @SuppressWarnings("unused")
         Label filler2 = new Label(composite1, SWT.NONE);
-         filler2 = new Label(composite1, SWT.NONE);
+        filler2 = new Label(composite1, SWT.NONE);
 
         saveButton = new Button(composite1, SWT.NONE);
         saveButton.setText("Save Template");
@@ -283,7 +282,7 @@ public class TemplateEditorView extends ViewPart {
     private void setSelectedTemplate(Template t) {
 
         if (t != null) {
-            templateSelected = new CBSRTemplate();
+            templateSelected = new Template();
             Template.Clone(t, templateSelected);
 
             templateNameText.setText(t.getName());
@@ -388,7 +387,7 @@ public class TemplateEditorView extends ViewPart {
 
                     if (cloneName != null) {
 
-                        Template clone = new CBSRTemplate();
+                        Template clone = new Template();
                         Template.Clone(templateSelected, clone);
                         clone.setName(cloneName);
 
@@ -422,9 +421,10 @@ public class TemplateEditorView extends ViewPart {
                 String newTemplateName = dialog.open(null);
 
                 if (newTemplateName != null) {
-                    Template ct = new CBSRTemplate();
+                    Template ct = new Template();
                     ct.setJasperFileData(null);
-                    ct.setDefaultConfiguration();
+                    ct.setConfiguration(CBSROutlineMaker
+                        .getDefaultConfiguration());
                     ct.setName(newTemplateName);
 
                     if (templateStore.addTemplate(ct)) {
@@ -587,7 +587,7 @@ public class TemplateEditorView extends ViewPart {
         @Override
         public void widgetSelected(SelectionEvent e) {
             try {
-                //TODO make a valid documentation page for help.
+                // TODO make a valid documentation page for help.
                 PlatformUI.getWorkbench().getBrowserSupport()
                     .getExternalBrowser().openURL(new URL(HELP_URL));
             } catch (Exception e1) {
@@ -630,10 +630,6 @@ public class TemplateEditorView extends ViewPart {
         templateDirty = false;
     }
 
-    /**
-     * Saves the entire preference store and all the changed template
-     * information as a serialized object.
-     */
     private SelectionListener saveAllListener = new SelectionListener() {
         @Override
         public void widgetSelected(SelectionEvent e) {
@@ -653,4 +649,4 @@ public class TemplateEditorView extends ViewPart {
         }
     };
 
-} // @jve:decl-index=0:visual-constraint="10,10,559,504"
+} 

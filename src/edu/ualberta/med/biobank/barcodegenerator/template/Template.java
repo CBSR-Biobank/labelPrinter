@@ -1,15 +1,13 @@
 package edu.ualberta.med.biobank.barcodegenerator.template;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Map.Entry;
 
 import org.eclipse.swt.graphics.Rectangle;
 
 import edu.ualberta.med.biobank.barcodegenerator.template.configuration.Configuration;
-import edu.ualberta.med.biobank.barcodegenerator.template.jasper.JasperOutline;
 
-public abstract class Template extends JasperOutline implements Serializable {
+public class Template implements Serializable {
 
     private static final long serialVersionUID = -4213741888020425604L;
 
@@ -77,17 +75,27 @@ public abstract class Template extends JasperOutline implements Serializable {
 
     protected Configuration config = null;
 
-    public abstract void setJasperFileData(byte[] jasperData);
+    public void setJasperFileData(byte[] jasperData) {
+        this.jasperTemplateFileData = jasperData;
+    }
 
-    public abstract boolean jasperFileDataExists();
+    public boolean jasperFileDataExists() {
+        return (this.jasperTemplateFileData != null);
+    }
+ 
+    public byte[] getJasperFileData() {
+        return this.jasperTemplateFileData;
+    }
 
-    public abstract Configuration getConfiguration();
+    public Configuration getConfiguration() {
+        return this.config;
+    }
 
-    public abstract void setConfiguration(Configuration configuration)
-        throws Exception;
+    public void setConfiguration(Configuration configuration) {
+        this.config = configuration;
+    }
 
-    public abstract ArrayList<String> getConfigurationKeyList();
-
-    public abstract void setDefaultConfiguration();
-
+    public Rectangle getKey(String key) {
+        return config.getSettingsKey(key);
+    }
 }

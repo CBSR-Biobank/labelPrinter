@@ -20,20 +20,25 @@ import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.text.Te
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.*;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.exceptions.CBSRPdfGenException;
 
-public class CBSRTemplate extends Template {
+public class CBSROutlineMaker {
 
     private static final int BARCODE_COUNT = 32;
 
     private static final long serialVersionUID = -6346822010546940605L;
 
-    public byte[] generatePdfCBSR(CBSRData cbsrData,
+    public static byte[] generatePdfCBSR(CBSRData cbsrData,
         ArrayList<String> barcodeStrings) throws CBSRPdfGenException {
 
-        loadGuiDataToSelf(cbsrData, barcodeStrings);
+        if (!verifyConfiguration(cbsrData.template.getConfiguration())) {
+            throw new CBSRPdfGenException(
+                "Configuration data is invalid. Template is corrupt.");
+        }
+
+        JasperOutline jo = generateJasperOutline(cbsrData, barcodeStrings);
 
         byte[] pdfData = null;
         try {
-            JasperFiller tm = new JasperFiller(this);
+            JasperFiller tm = new JasperFiller(jo);
             pdfData = tm.generatePdfData();
         } catch (JasperFillException e) {
             throw new CBSRPdfGenException(
@@ -43,25 +48,27 @@ public class CBSRTemplate extends Template {
         return pdfData;
     }
 
-    public void print(CBSRData cbsrData, ArrayList<String> barcodeStrings)
-        throws CBSRPdfGenException {
-        
+    public static void printLabelsCBSR(CBSRData cbsrData,
+        ArrayList<String> barcodeStrings) throws CBSRPdfGenException {
 
-        loadGuiDataToSelf(cbsrData, barcodeStrings);
+        JasperOutline jo = generateJasperOutline(cbsrData, barcodeStrings);
 
         try {
-            JasperFiller tm = new JasperFiller(this);
+            JasperFiller tm = new JasperFiller(jo);
             tm.printJasperToPrinter(cbsrData.printerNameStr);
         } catch (JasperFillException e) {
-           
+
             throw new CBSRPdfGenException(
                 "Failed to fill configuration data into jasper template for prining.\n"
                     + e.getError());
         }
     }
 
-    private void loadGuiDataToSelf(CBSRData cbsrData,
+    private static JasperOutline generateJasperOutline(CBSRData cbsrData,
         ArrayList<String> barcodeStrings) throws CBSRPdfGenException {
+
+        Template temp = cbsrData.template;
+
         if (cbsrData.projectTileStr == null) {
             throw new CBSRPdfGenException("Cannot have a null project title");
         }
@@ -82,32 +89,32 @@ public class CBSRTemplate extends Template {
 
         try {
             patientInfo.getElements().addAll(
-                FieldGenerator.generateElements(this
+                FieldGenerator.generateElements(temp
                     .getKey("Patient Info.Top Field.Field Text"),
                     cbsrData.label1Str, cbsrData.value1Str, new Font(
-                        "Times New Roman", Font.PLAIN, 23), this
+                        "Times New Roman", Font.PLAIN, 23), temp
                         .getKey("Patient Info.Top Field.1D Barcode"),
                     cbsrData.barcode1Print));
 
             patientInfo.getElements().addAll(
-                FieldGenerator.generateElements(this
+                FieldGenerator.generateElements(temp
                     .getKey("Patient Info.Middle Field.Field Text"),
                     cbsrData.label2Str, cbsrData.value2Str, new Font(
-                        "Times New Roman", Font.PLAIN, 23), this
+                        "Times New Roman", Font.PLAIN, 23), temp
                         .getKey("Patient Info.Middle Field.1D Barcode"),
                     cbsrData.barcode2Print));
 
             patientInfo.getElements().addAll(
-                FieldGenerator.generateElements(this
+                FieldGenerator.generateElements(temp
                     .getKey("Patient Info.Bottom Field.Field Text"),
                     cbsrData.label3Str, cbsrData.value3Str, new Font(
-                        "Times New Roman", Font.PLAIN, 23), this
+                        "Times New Roman", Font.PLAIN, 23), temp
                         .getKey("Patient Info.Bottom Field.1D Barcode"),
                     cbsrData.barcode3Print));
 
             patientInfo.getElements().add(
                 new Barcode1D(
-                    this.getKey("Patient Info.Patient ID.1D Barcode"),
+                    temp.getKey("Patient Info.Patient ID.1D Barcode"),
                     cbsrData.patientIdStr, new Font("Times New Roman",
                         Font.PLAIN, 22)));
 
@@ -130,8 +137,8 @@ public class CBSRTemplate extends Template {
                 if (cbsrData.patientIdStr != null
                     && cbsrData.patientIdStr.length() > 0) {
 
-                    Rectangle master = this.getKey("Barcodes.All.Barcode 1D");
-                    Rectangle barcode = this
+                    Rectangle master = temp.getKey("Barcodes.All.Barcode 1D");
+                    Rectangle barcode = temp
                         .getKey("Barcodes.Individual.Barcode "
                             + addPaddingZeros(i) + ".Barcode 1D");
 
@@ -151,8 +158,8 @@ public class CBSRTemplate extends Template {
                 if (rStrArray != null && rStrArray.length() > 0
                     && rStrArray.replaceAll("[^a-zA-Z0-9 ]", "").length() == 12) {
 
-                    Rectangle master = this.getKey("Barcodes.All.Barcode 2D");
-                    Rectangle barcode = this
+                    Rectangle master = temp.getKey("Barcodes.All.Barcode 2D");
+                    Rectangle barcode = temp
                         .getKey("Barcodes.Individual.Barcode "
                             + addPaddingZeros(i) + ".Barcode 2D");
 
@@ -170,9 +177,9 @@ public class CBSRTemplate extends Template {
                 if (cbsrData.sampleTypeStr != null
                     && cbsrData.sampleTypeStr.length() > 0) {
 
-                    Rectangle master = this.getKey("Barcodes.All.Sample Text");
+                    Rectangle master = temp.getKey("Barcodes.All.Sample Text");
 
-                    Rectangle barcode = this
+                    Rectangle barcode = temp
                         .getKey("Barcodes.Individual.Barcode "
                             + addPaddingZeros(i) + ".Sample Text");
 
@@ -192,21 +199,20 @@ public class CBSRTemplate extends Template {
                     + e.getError());
         }
 
-        if (jasperTemplateFileData == null) {
+        if (!temp.jasperFileDataExists()) {
             throw new CBSRPdfGenException("A valid jasper file is required.");
         }
 
         ByteArrayInputStream inputStream = new ByteArrayInputStream(
-            jasperTemplateFileData);
-        this.setOutline(branding, patientInfo, pbi, inputStream);
+            temp.getJasperFileData());
+
+        JasperOutline jo = new JasperOutline();
+        jo.setOutline(branding, patientInfo, pbi, inputStream);
+        return jo;
 
     }
 
-    private Rectangle getKey(String key) {
-        return config.getSettingsKey(key);
-    }
-
-    private String addPaddingZeros(int i) {
+    private static String addPaddingZeros(int i) {
         String out = String.valueOf(i);
         if (out.length() <= 0) {
             out = "00";
@@ -216,7 +222,7 @@ public class CBSRTemplate extends Template {
         return out;
     }
 
-    public void setDefaultConfiguration() {
+    public static Configuration getDefaultConfiguration() {
         LinkedHashMap<String, Rectangle> data = new LinkedHashMap<String, Rectangle>();
 
         data.put("Patient Info.Top Field.Field Text", new Rectangle(1, 4, 0, 0));
@@ -244,12 +250,12 @@ public class CBSRTemplate extends Template {
             data.put("Barcodes.Individual.Barcode " + addPaddingZeros(i)
                 + ".Sample Text", new Rectangle(0, 0, 0, 0));
         }
-        this.config = new Configuration();
-        this.config.setSettings(data);
+        Configuration config = new Configuration();
+        config.setSettings(data);
+        return config;
     }
 
-    @Override
-    public ArrayList<String> getConfigurationKeyList() {
+    private static ArrayList<String> getConfigurationKeyList() {
         String[] configKeyList = new String[] {
             "Patient Info.Top Field.Field Text",
             "Patient Info.Top Field.1D Barcode",
@@ -277,7 +283,7 @@ public class CBSRTemplate extends Template {
 
     }
 
-    public void setConfiguration(Configuration c) throws Exception {
+    private static boolean verifyConfiguration(Configuration c) {
         for (String k : c.getSettings().keySet()) {
             boolean found = false;
 
@@ -288,28 +294,11 @@ public class CBSRTemplate extends Template {
                 }
             }
             if (!found) {
-                throw new Exception(
-                    "Key configuration contained an invalid key");
+                return false;
 
             }
         }
-        this.config = c;
-    }
-
-    @Override
-    public void setJasperFileData(byte[] jasperData) {
-        this.jasperTemplateFileData = jasperData;
-    }
-
-    @Override
-    public Configuration getConfiguration() {
-        return this.config;
-
-    }
-
-    @Override
-    public boolean jasperFileDataExists() {
-        return (this.jasperTemplateFileData != null);
+        return true;
     }
 
 }
