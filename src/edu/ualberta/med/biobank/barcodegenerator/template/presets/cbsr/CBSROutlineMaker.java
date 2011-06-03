@@ -266,18 +266,17 @@ public class CBSROutlineMaker {
             "Patient Info.Patient ID.1D Barcode", "Barcodes.All.Barcode 1D",
             "Barcodes.All.Barcode 2D", "Barcodes.All.Sample Text" };
 
-        String[] iteratedConfigKeyList = new String[] {
-            "Barcodes.Individual.Barcode ", "Barcodes.Individual.Barcode ",
-            "Barcodes.Individual.Barcode " };
-
         ArrayList<String> output = new ArrayList<String>();
         for (String ckl : configKeyList) {
             output.add(ckl);
         }
-        for (String ickl : iteratedConfigKeyList) {
-            for (int i = 1; i <= BARCODE_COUNT; i++) {
-                output.add(ickl + addPaddingZeros(i));
-            }
+        for (int i = 1; i <= BARCODE_COUNT; i++) {
+            output.add("Barcodes.Individual.Barcode " + addPaddingZeros(i)
+                + ".Barcode 1D");
+            output.add("Barcodes.Individual.Barcode " + addPaddingZeros(i)
+                + ".Barcode 2D");
+            output.add("Barcodes.Individual.Barcode " + addPaddingZeros(i)
+                + ".Sample Text");
         }
         return output;
 
@@ -294,6 +293,7 @@ public class CBSROutlineMaker {
                 }
             }
             if (!found) {
+                System.out.println(k);
                 return false;
 
             }
