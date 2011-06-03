@@ -45,6 +45,7 @@ public class CBSRTemplate extends Template {
 
     public void print(CBSRData cbsrData, ArrayList<String> barcodeStrings)
         throws CBSRPdfGenException {
+        
 
         loadGuiDataToSelf(cbsrData, barcodeStrings);
 
@@ -52,6 +53,7 @@ public class CBSRTemplate extends Template {
             JasperFiller tm = new JasperFiller(this);
             tm.printJasperToPrinter(cbsrData.printerNameStr);
         } catch (JasperFillException e) {
+           
             throw new CBSRPdfGenException(
                 "Failed to fill configuration data into jasper template for prining.\n"
                     + e.getError());
