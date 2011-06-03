@@ -47,6 +47,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 
 import edu.ualberta.med.biobank.barcodegenerator.Activator;
+import edu.ualberta.med.biobank.barcodegenerator.UniquePatientID;
 import edu.ualberta.med.biobank.barcodegenerator.preferences.PreferenceConstants;
 import edu.ualberta.med.biobank.barcodegenerator.preferences.PreferenceInitializer;
 import edu.ualberta.med.biobank.barcodegenerator.template.Template;
@@ -603,14 +604,13 @@ public class LabelPrinterView extends ViewPart {
 
         group4 = new Group(top, SWT.NONE);
         group4.setText("Actions");
-        
+
         new Label(group4, SWT.NONE);
 
         savePdfButton = new Button(group4, SWT.NONE);
         savePdfButton.setText("Print to PDF");
         savePdfButton.addSelectionListener(savePdfListener);
         savePdfButton.setLayoutData(gridData7);
-
 
         printButton = new Button(group4, SWT.NONE);
         printButton.setText("Print Label Sheet");
@@ -782,44 +782,44 @@ public class LabelPrinterView extends ViewPart {
         }
     };
 
-    private static String randString() {
-        return UUID.randomUUID().toString().replaceAll("[^a-zA-Z0-9]", "")
-            .substring(0, 6)
-            + UUID.randomUUID().toString().replaceAll("[^a-zA-Z0-9]", "")
-                .toUpperCase().substring(0, 6);
-    }
-
-    private static ArrayList<String> randStringArray(int c) {
-
-        ArrayList<String> l = new ArrayList<String>();
-
-        for (int i = 0; i < c; i++) {
-
-            l.add(randString());
-        }
-        return l;
-    }
-
-    // FIXME obtain 2D barcodes for a patient from the database.
-    private ArrayList<String> getPatient2DBarcodes(String patientName) {
-        return randStringArray(32);
-    }
-
     private SelectionListener printButtonListener = new SelectionListener() {
         @Override
         public void widgetSelected(SelectionEvent e) {
+
+            BarcodeViewGuiData guiData = null;
             try {
-                new ProgressMonitorDialog(shell).run(true, true,
-                    new PrintingOperation(new BarcodeViewGuiData()));
-                updateSavePreferences();
-            } catch (InvocationTargetException e1) {
-                Error("Printing Error", e1.getMessage());
-                return;
-            } catch (InterruptedException e2) {
+                guiData = new BarcodeViewGuiData();
             } catch (CBSRGuiVerificationException e1) {
                 Error("Gui Validation", e1.getMessage());
                 return;
             }
+
+            ArrayList<String> patientIDs = UniquePatientID
+                .generatePatient2DBarcodes(guiData.patientIdStr);
+
+            PrintingOperation printOperation = new PrintingOperation(guiData,
+                patientIDs);
+
+            try {
+                new ProgressMonitorDialog(shell)
+                    .run(true, true, printOperation);
+            } catch (InvocationTargetException e1) {
+                printOperation.saveFailed();
+                Error("Printing Error", e1.getMessage());
+
+            } catch (InterruptedException e2) {
+                printOperation.saveFailed();
+            }
+
+            if (printOperation.isSuccessfulSave()) {
+                updateSavePreferences();
+
+            } else {
+                UniquePatientID.removePatient2DBarcodes(printOperation
+                    .getPatientIDsUsed());
+                Error("Failed to print barcodes", "An error occured.");
+            }
+
         }
 
         @Override
@@ -831,33 +831,56 @@ public class LabelPrinterView extends ViewPart {
 
     class PrintingOperation implements IRunnableWithProgress {
 
-        BarcodeViewGuiData guiData = null;
+        private BarcodeViewGuiData guiData = null;
+        private ArrayList<String> patientIDs = null;
+        private boolean successfulSave = false;
 
-        public PrintingOperation(BarcodeViewGuiData guiData) {
+        public PrintingOperation(BarcodeViewGuiData guiData,
+            ArrayList<String> patientIDs) {
             this.guiData = guiData;
+            this.patientIDs = patientIDs;
+            successfulSave = false;
+        }
+
+        public void saveFailed() {
+            successfulSave = false;
+        }
+
+        public boolean isSuccessfulSave() {
+            return successfulSave;
+        }
+
+        public ArrayList<String> getPatientIDsUsed() {
+            return patientIDs;
         }
 
         public void run(IProgressMonitor monitor)
             throws InvocationTargetException, InterruptedException {
+
+            successfulSave = false;
+
             monitor.beginTask("Printing Barcode Labels",
                 IProgressMonitor.UNKNOWN);
 
-            if (guiData != null) {
-                try {
-                    monitor.subTask("Sending Data to Printer");
-                    guiData.templateCBSR.print(guiData,
-                        getPatient2DBarcodes(guiData.patientIdStr));
+            try {
+                monitor.subTask("Sending Data to Printer");
 
-                } catch (CBSRPdfGenException e1) {
-                    Error("Gui Validation", e1.getError());
-                    return;
-                }
+                guiData.templateCBSR.print(guiData, patientIDs);
+                successfulSave = true;
+
+            } catch (CBSRPdfGenException e1) {
+                monitor.done();
+                Error("Gui Validation", e1.getError());
+                return;
             }
 
             monitor.done();
-            if (monitor.isCanceled())
-                throw new InterruptedException(
-                    "Printing Operation was cancelled");
+
+            if (monitor.isCanceled()) {
+                Error("Printing Operation Cancle",
+                    "The current set of prints are invalid, please shred any "
+                        + "sheets that were printed from this operation.");
+            }
         }
     }
 
@@ -873,8 +896,8 @@ public class LabelPrinterView extends ViewPart {
                 return;
             }
 
+            // save dialog for pdf file.
             FileDialog fileDialog = new FileDialog(shell, SWT.SAVE);
-
             fileDialog.setFilterPath(perferenceStore
                 .getString(PreferenceConstants.PDF_DIRECTORY_PATH));
             fileDialog.setOverwrite(true);
@@ -886,11 +909,24 @@ public class LabelPrinterView extends ViewPart {
             if (!pdfFilePath.contains(".pdf"))
                 pdfFilePath += ".pdf";
 
-            try {
-                new ProgressMonitorDialog(shell).run(true, true,
-                    new SaveOperation(guiData, pdfFilePath));
+            ArrayList<String> patientIDs = UniquePatientID
+                .generatePatient2DBarcodes(guiData.patientIdStr);
 
-                // save our recently saved file path location
+            SaveOperation saveOperation = new SaveOperation(guiData,
+                pdfFilePath, patientIDs);
+            try {
+                new ProgressMonitorDialog(shell).run(true, true, saveOperation);
+
+            } catch (InvocationTargetException e1) {
+                saveOperation.saveFailed();
+                Error("Pdf Saving InvocationTargetException Error",
+                    e1.getMessage());
+
+            } catch (InterruptedException e2) {
+                saveOperation.saveFailed();
+            }
+
+            if (saveOperation.isSuccessfulSave()) {
                 String parentDir = new File(pdfFilePath).getParentFile()
                     .getPath();
                 if (parentDir != null)
@@ -899,10 +935,10 @@ public class LabelPrinterView extends ViewPart {
 
                 updateSavePreferences();
 
-            } catch (InvocationTargetException e1) {
-                Error("Pdf Saving Error", e1.getMessage());
-                return;
-            } catch (InterruptedException e2) {
+            } else {
+                UniquePatientID.removePatient2DBarcodes(saveOperation
+                    .getPatientIDsUsed());
+                Error("Failed to save PDF", "An error occured.");
             }
         }
 
@@ -915,26 +951,47 @@ public class LabelPrinterView extends ViewPart {
 
     class SaveOperation implements IRunnableWithProgress {
 
-        BarcodeViewGuiData guiData = null;
-        String pdfFilePath = null;
+        private BarcodeViewGuiData guiData = null;
+        private String pdfFilePath = null;
+        private boolean successfulSave = false;
+        private ArrayList<String> patientIDs = null;
 
-        public SaveOperation(BarcodeViewGuiData guiData, String pdfFilePath) {
+        public SaveOperation(BarcodeViewGuiData guiData, String pdfFilePath,
+            ArrayList<String> patientIDs) {
             this.guiData = guiData;
             this.pdfFilePath = pdfFilePath;
+            this.patientIDs = patientIDs;
+            successfulSave = false;
+
         }
 
-        public void run(IProgressMonitor monitor)
-            throws InvocationTargetException, InterruptedException {
-            monitor.beginTask("Saving Barcode Labels PDF",
-                IProgressMonitor.UNKNOWN);
+        public void saveFailed() {
+            successfulSave = false;
+        }
+
+        public boolean isSuccessfulSave() {
+            return successfulSave;
+        }
+
+        public ArrayList<String> getPatientIDsUsed() {
+            return patientIDs;
+        }
+
+        public void run(IProgressMonitor monitor) throws InterruptedException {
 
             byte[] pdfdata = null;
+
+            successfulSave = false;
+            monitor.beginTask("Saving Barcode Labels PDF",
+                IProgressMonitor.UNKNOWN);
 
             try {
                 monitor.subTask("Generating PDF");
                 pdfdata = guiData.templateCBSR.generatePdfCBSR(guiData,
-                    getPatient2DBarcodes(guiData.patientIdStr));
+                    patientIDs);
+
             } catch (CBSRPdfGenException e1) {
+                monitor.done();
                 Error("Gui Validation", e1.getError());
                 return;
             }
@@ -946,11 +1003,15 @@ public class LabelPrinterView extends ViewPart {
                     fos = new FileOutputStream(pdfFilePath);
                     fos.write(pdfdata);
                     fos.close();
+                    successfulSave = true;
 
                 } catch (FileNotFoundException e1) {
+                    monitor.done();
                     Error("Saving Pdf", "Could find file to save pdf to");
                     return;
+
                 } catch (IOException ee) {
+                    monitor.done();
                     Error("Saving Pdf",
                         "Problem saving file: " + ee.getMessage());
                     return;
@@ -958,9 +1019,11 @@ public class LabelPrinterView extends ViewPart {
             }
 
             monitor.done();
-            if (monitor.isCanceled())
-                throw new InterruptedException(
-                    "Saving to PDF operation was cancelled");
+
+            if (monitor.isCanceled()) {
+                successfulSave = false;
+                new File(pdfFilePath).delete();
+            }
         }
     }
 
