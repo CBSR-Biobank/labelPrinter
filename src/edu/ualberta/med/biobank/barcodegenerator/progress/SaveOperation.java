@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSROutlineMaker;
+import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSRLabelMaker;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.exceptions.CBSRPdfGenException;
 import edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView.BarcodeViewGuiData;
 
@@ -30,7 +30,7 @@ public class SaveOperation extends BarcodeGenerationOperation {
 
         try {
             monitor.subTask("Generating PDF");
-            pdfdata = CBSROutlineMaker.generatePdfCBSR(guiData, patientIDs);
+            pdfdata = CBSRLabelMaker.generatePdfCBSR(guiData, patientIDs);
 
         } catch (CBSRPdfGenException e1) {
             monitor.done();

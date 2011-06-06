@@ -31,7 +31,7 @@ import org.eclipse.swt.layout.RowLayout;
 import edu.ualberta.med.biobank.barcodegenerator.dialogs.StringInputDialog;
 import edu.ualberta.med.biobank.barcodegenerator.template.Template;
 import edu.ualberta.med.biobank.barcodegenerator.template.TemplateStore;
-import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSROutlineMaker;
+import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSRLabelMaker;
 import edu.ualberta.med.biobank.barcodegenerator.trees.ConfigurationTree;
 import edu.ualberta.med.biobank.barcodegenerator.trees.TreeException;
 
@@ -423,7 +423,7 @@ public class TemplateEditorView extends ViewPart {
                 if (newTemplateName != null) {
                     Template ct = new Template();
                     ct.setJasperFileData(null);
-                    ct.setConfiguration(CBSROutlineMaker
+                    ct.setConfiguration(CBSRLabelMaker
                         .getDefaultConfiguration());
                     ct.setName(newTemplateName);
 
