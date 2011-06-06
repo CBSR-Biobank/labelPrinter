@@ -9,7 +9,7 @@ Require-Bundle: org.eclipse.ui,
  org.junit,
  biobank.gui.common;bundle-version="1.0.0",
  biobank.common;bundle-version="1.0.0",
- biobank2;bundle-version="1.0.0"
+ biobank;bundle-version="3.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: edu.ualberta.med.biobank.barcodegenerator,
