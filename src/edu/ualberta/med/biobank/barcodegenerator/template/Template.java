@@ -1,11 +1,15 @@
 package edu.ualberta.med.biobank.barcodegenerator.template;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.eclipse.swt.graphics.Rectangle;
 
+import edu.ualberta.med.biobank.SessionManager;
 import edu.ualberta.med.biobank.barcodegenerator.template.configuration.Configuration;
+import edu.ualberta.med.biobank.common.wrappers.PrinterLabelTemplateWrapper;
+import gov.nih.nci.system.applicationservice.ApplicationException;
 
 public class Template implements Serializable {
 
@@ -15,22 +19,24 @@ public class Template implements Serializable {
 
     private String name = "default";
 
+    PrinterLabelTemplateWrapper plt;
+
     private byte[] jasperTemplateFileData = null;
 
     private Configuration config = null;
 
-    // TODO implement clonable
-    public static void Clone(Template original, Template clone) {
+    public Template clone() {
+        Template clone = new Template();
 
         // clone template name
-        clone.name = original.name;
+        clone.name = this.name;
 
         // clone intended printer name
-        clone.intendedPrinterName = original.intendedPrinterName;
+        clone.intendedPrinterName = this.intendedPrinterName;
 
         // clone configuration
         clone.config = new Configuration();
-        for (Entry<String, Rectangle> entry : original.config.getSettings()
+        for (Entry<String, Rectangle> entry : this.config.getSettings()
             .entrySet()) {
             Rectangle newRect = new Rectangle(entry.getValue().x,
                 entry.getValue().y, entry.getValue().width,
@@ -39,63 +45,78 @@ public class Template implements Serializable {
         }
 
         // clone jasper file
-        if (original.jasperTemplateFileData != null) {
-            clone.jasperTemplateFileData = new byte[original.jasperTemplateFileData.length];
-            System.arraycopy(original.jasperTemplateFileData, 0,
+        if (this.jasperTemplateFileData != null) {
+            clone.jasperTemplateFileData = new byte[this.jasperTemplateFileData.length];
+            System.arraycopy(this.jasperTemplateFileData, 0,
                 clone.jasperTemplateFileData, 0,
-                original.jasperTemplateFileData.length);
+                this.jasperTemplateFileData.length);
         } else {
             clone.jasperTemplateFileData = null;
         }
-
+        return clone;
     }
 
     public String getName() {
-        return this.name;
+        return plt.getName();
     }
 
     public void setName(String name) {
-        if (name == null)
-            name = "default";
-
-        this.name = name;
+        plt.setName(name);
     }
 
-    public String getIntendedPrinter() {
-        if (this.intendedPrinterName == null)
-            this.intendedPrinterName = "default";
-
-        return this.intendedPrinterName;
+    public String getPrinterName() {
+        return plt.getPrinterName();
     }
 
-    public void setIntendedPrinter(String intendedPrinterName) {
-        if (intendedPrinterName == null)
-            intendedPrinterName = "default";
-
-        this.intendedPrinterName = intendedPrinterName;
+    public void setPrinterName(String printerName) {
+        plt.setPrinterName(printerName);
     }
 
     public boolean jasperFileDataExists() {
-        return (this.jasperTemplateFileData != null);
+        return !plt.getJasperFile().isEmpty();
     }
 
     public byte[] getJasperFileData() {
-        return this.jasperTemplateFileData;
+        // TODO; unserialize jasper file
+        return null;
     }
 
     public void setJasperFileData(byte[] jasperData) {
-        this.jasperTemplateFileData = jasperData;
+        // TODO: serialize jasper file
     }
 
     public Configuration getConfiguration() {
-        return this.config;
+        // TODO; unserialize configuration settings
+        return null;
     }
 
     public void setConfiguration(Configuration configuration) {
-        this.config = configuration;
+        // TODO; serialize configuration settings
     }
 
     public Rectangle getKey(String key) {
         return config.getSettingsKey(key);
+    }
+
+    public void persist() throws Exception {
+        plt.persist();
+    }
+
+    public void delete() throws Exception {
+        plt.delete();
+        plt = null;
+    }
+
+    public static Template getTemplateByName(String name)
+        throws ApplicationException {
+        Template tplt = new Template();
+        tplt.plt = PrinterLabelTemplateWrapper.getTemplateByName(
+            SessionManager.getAppService(), name);
+        return tplt;
+    }
+
+    public static List<String> getTemplateNames() throws ApplicationException {
+        return PrinterLabelTemplateWrapper.getTemplateNames(SessionManager
+            .getAppService());
     }
 }

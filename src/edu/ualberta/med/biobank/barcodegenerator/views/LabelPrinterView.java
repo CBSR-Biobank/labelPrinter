@@ -45,11 +45,12 @@ import edu.ualberta.med.biobank.barcodegenerator.Activator;
 import edu.ualberta.med.biobank.barcodegenerator.UniquePatientID;
 import edu.ualberta.med.biobank.barcodegenerator.preferences.PreferenceConstants;
 import edu.ualberta.med.biobank.barcodegenerator.preferences.PreferenceInitializer;
-import edu.ualberta.med.biobank.barcodegenerator.progress.*;
+import edu.ualberta.med.biobank.barcodegenerator.progress.PrintOperation;
+import edu.ualberta.med.biobank.barcodegenerator.progress.SaveOperation;
 import edu.ualberta.med.biobank.barcodegenerator.template.Template;
-import edu.ualberta.med.biobank.barcodegenerator.template.TemplateStore;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSRData;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.exceptions.CBSRGuiVerificationException;
+import gov.nih.nci.system.applicationservice.ApplicationException;
 
 public class LabelPrinterView extends ViewPart {
 
@@ -106,24 +107,25 @@ public class LabelPrinterView extends ViewPart {
     private CLabel cLabel = null;
     private Shell shell;
     private IPreferenceStore perferenceStore;
-    private TemplateStore templateStore;
     private Template selectedTemplate;
 
     @Override
     public void createPartControl(Composite parent) {
-
-        templateStore = new TemplateStore();
-
         loadPreferenceStore();
 
-        shell = parent.getShell();
-        top = new Composite(parent, SWT.NONE);
-        top.setBackground(new Color(Display.getCurrent(), 237, 236, 235));
-        top.setLayout(new GridLayout());
-        brandingGroup();
-        patientInfoGroup();
-        sampleTextGroup();
-        actionButtonGroup();
+        try {
+            shell = parent.getShell();
+            top = new Composite(parent, SWT.NONE);
+            top.setBackground(new Color(Display.getCurrent(), 237, 236, 235));
+            top.setLayout(new GridLayout());
+            brandingGroup();
+            patientInfoGroup();
+            sampleTextGroup();
+            actionButtonGroup();
+        } catch (ApplicationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     private void loadPreferenceStore() {
@@ -147,8 +149,10 @@ public class LabelPrinterView extends ViewPart {
     /**
      * This method initializes composite
      * 
+     * @throws ApplicationException
+     * 
      */
-    private void createComposite() {
+    private void createComposite() throws ApplicationException {
         composite = new Composite(group3, SWT.NONE);
         composite.setBackground(new Color(Display.getCurrent(), 237, 56, 235));
         composite.setLayout(new FillLayout());
@@ -160,8 +164,10 @@ public class LabelPrinterView extends ViewPart {
     /**
      * This method initializes composite3
      * 
+     * @throws ApplicationException
+     * 
      */
-    private void createComposite3() {
+    private void createComposite3() throws ApplicationException {
         GridData gridData21 = new GridData();
         gridData21.grabExcessHorizontalSpace = true;
         gridData21.verticalAlignment = GridData.CENTER;
@@ -221,7 +227,8 @@ public class LabelPrinterView extends ViewPart {
         templateCombo = new Combo(composite3, SWT.DROP_DOWN | SWT.BORDER);
         templateCombo.setLayoutData(gridData21);
 
-        for (String s : templateStore.getTemplateNames()) {
+        // TODO: have application service returned by biobank.gui.common plugin
+        for (String s : Template.getTemplateNames()) {
             templateCombo.add(s);
         }
 
@@ -288,12 +295,13 @@ public class LabelPrinterView extends ViewPart {
 
         if (templateCombo.getSelectionIndex() >= 0) {
 
-            selectedTemplate = templateStore.getTemplate(templateCombo
-                .getItem(templateCombo.getSelectionIndex()));
+            // FIXME
+            // selectedTemplate = templateStore.getTemplate(templateCombo
+            // .getItem(templateCombo.getSelectionIndex()));
 
             // load gui elements that use template data
             if (selectedTemplate != null)
-                intendedPrinter.setText(selectedTemplate.getIntendedPrinter());
+                intendedPrinter.setText(selectedTemplate.getPrinterName());
 
         } else
             selectedTemplate = null;
@@ -561,8 +569,10 @@ public class LabelPrinterView extends ViewPart {
     /**
      * This method initializes group3
      * 
+     * @throws ApplicationException
+     * 
      */
-    private void brandingGroup() {
+    private void brandingGroup() throws ApplicationException {
 
         GridData gridData = new GridData();
         gridData.horizontalAlignment = GridData.FILL;
