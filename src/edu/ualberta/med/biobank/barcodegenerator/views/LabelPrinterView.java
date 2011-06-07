@@ -36,12 +36,11 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 
-import edu.ualberta.med.biobank.barcodegenerator.Activator;
+import edu.ualberta.med.biobank.barcodegenerator.BarcodeGenPlugin;
 import edu.ualberta.med.biobank.barcodegenerator.UniquePatientID;
 import edu.ualberta.med.biobank.barcodegenerator.preferences.PreferenceConstants;
 import edu.ualberta.med.biobank.barcodegenerator.preferences.PreferenceInitializer;
@@ -50,6 +49,7 @@ import edu.ualberta.med.biobank.barcodegenerator.progress.SaveOperation;
 import edu.ualberta.med.biobank.barcodegenerator.template.Template;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSRData;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.exceptions.CBSRGuiVerificationException;
+import edu.ualberta.med.biobank.gui.common.BiobankGuiCommonPlugin;
 import gov.nih.nci.system.applicationservice.ApplicationException;
 
 public class LabelPrinterView extends ViewPart {
@@ -131,8 +131,9 @@ public class LabelPrinterView extends ViewPart {
     private void loadPreferenceStore() {
         perferenceStore = null;
 
-        if (Activator.getDefault() != null)
-            perferenceStore = Activator.getDefault().getPreferenceStore();
+        if (BarcodeGenPlugin.getDefault() != null)
+            perferenceStore = BarcodeGenPlugin.getDefault()
+                .getPreferenceStore();
 
         if (perferenceStore == null) {
             System.err.println("WARNING: preference store was NULL!");
@@ -794,7 +795,8 @@ public class LabelPrinterView extends ViewPart {
             try {
                 guiData = new BarcodeViewGuiData();
             } catch (CBSRGuiVerificationException e1) {
-                Error("Gui Validation", e1.getMessage());
+                BiobankGuiCommonPlugin.openAsyncError("Gui Validation",
+                    e1.getMessage());
                 return;
             }
 
@@ -825,8 +827,8 @@ public class LabelPrinterView extends ViewPart {
             }
 
             if (printOperation.errorExists()) {
-                Error(printOperation.getError()[0],
-                    printOperation.getError()[1]);
+                BiobankGuiCommonPlugin.openAsyncError(
+                    printOperation.getError()[0], printOperation.getError()[1]);
             }
 
         }
@@ -845,7 +847,8 @@ public class LabelPrinterView extends ViewPart {
             try {
                 guiData = new BarcodeViewGuiData();
             } catch (CBSRGuiVerificationException e1) {
-                Error("Gui Validation", e1.getMessage());
+                BiobankGuiCommonPlugin.openAsyncError("Gui Validation",
+                    e1.getMessage());
                 return;
             }
 
@@ -892,7 +895,8 @@ public class LabelPrinterView extends ViewPart {
             }
 
             if (saveOperation.errorExists()) {
-                Error(saveOperation.getError()[0], saveOperation.getError()[1]);
+                BiobankGuiCommonPlugin.openAsyncError(
+                    saveOperation.getError()[0], saveOperation.getError()[1]);
             }
 
         }
@@ -903,20 +907,4 @@ public class LabelPrinterView extends ViewPart {
 
         }
     };
-
-    private void Error(String title, String message) {
-        MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
-        if (message == null) {
-            message = "";
-            System.err.println("Null message supplied to error dialog.");
-        }
-        if (title == null) {
-            title = "";
-            System.err.println("Null title supplied to error dialog.");
-        }
-
-        messageBox.setMessage(message);
-        messageBox.setText(title);
-        messageBox.open();
-    }
 }

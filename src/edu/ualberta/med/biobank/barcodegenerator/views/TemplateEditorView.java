@@ -8,7 +8,6 @@ import java.net.URL;
 
 import javax.xml.bind.JAXBException;
 
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -36,6 +35,7 @@ import edu.ualberta.med.biobank.barcodegenerator.template.Template;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSRLabelMaker;
 import edu.ualberta.med.biobank.barcodegenerator.trees.ConfigurationTree;
 import edu.ualberta.med.biobank.barcodegenerator.trees.TreeException;
+import edu.ualberta.med.biobank.gui.common.BiobankGuiCommonPlugin;
 import gov.nih.nci.system.applicationservice.ApplicationException;
 
 public class TemplateEditorView extends ViewPart {
@@ -247,10 +247,9 @@ public class TemplateEditorView extends ViewPart {
                             try {
                                 templateSelected.persist();
                             } catch (Exception e2) {
-                                Error(
+                                BiobankGuiCommonPlugin.openAsyncError(
                                     "Template Save Error",
-                                    "Error occured saving template: "
-                                        + e2.getMessage());
+                                    "Error occured saving template", e2);
                             }
                         }
                     }
@@ -260,8 +259,9 @@ public class TemplateEditorView extends ViewPart {
                     setSelectedTemplate(Template
                         .getTemplateByName(selectedItems[0]));
                 } catch (ApplicationException e1) {
-                    Error("Template Retrieval Error",
-                        "Error occured retrieving template: " + e1.getMessage());
+                    BiobankGuiCommonPlugin.openAsyncError(
+                        "Template Retrieval Error",
+                        "Error occured retrieving template: ", e1);
                 }
             } else {
                 setSelectedTemplate(null);
@@ -307,9 +307,11 @@ public class TemplateEditorView extends ViewPart {
             try {
                 configTree.populateTree(templateSelected.getConfiguration());
             } catch (TreeException e) {
-                Error("Set Templat Error", e.getError());
+                BiobankGuiCommonPlugin.openAsyncError("Set Templat Error",
+                    e.getError());
             } catch (JAXBException e2) {
-                Error("Set Templat Error", e2.getMessage());
+                BiobankGuiCommonPlugin.openAsyncError("Set Templat Error",
+                    e2.getMessage());
             }
             templateDirty = false;
 
@@ -323,7 +325,8 @@ public class TemplateEditorView extends ViewPart {
             try {
                 configTree.populateTree(null);
             } catch (TreeException e) {
-                Error("Set Templat Error", e.getError());
+                BiobankGuiCommonPlugin.openAsyncError("Set Templat Error",
+                    e.getError());
                 return;
             }
         }
@@ -338,6 +341,92 @@ public class TemplateEditorView extends ViewPart {
 
         composite4 = new Composite(composite2, SWT.NONE);
         composite4.setLayout(new RowLayout());
+        newButton = new Button(composite4, SWT.NONE);
+        newButton.setText("New");
+        newButton.addSelectionListener(new SelectionListener() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                try {
+
+                    StringInputDialog dialog = new StringInputDialog(
+                        "New Template Name",
+                        "What is the name of this new template?", shell,
+                        SWT.NONE);
+                    String newTemplateName = dialog.open(null);
+
+                    if (newTemplateName != null) {
+
+                        if (Template.getTemplateNames().contains(
+                            newTemplateName)) {
+                            BiobankGuiCommonPlugin.openAsyncError(
+                                "Template Exists",
+                                "Your new template must have a unique name.");
+                            return;
+                        }
+
+                        Template ct = new Template();
+                        ct.setJasperFileData(null);
+                        ct.setConfiguration(CBSRLabelMaker
+                            .getDefaultConfiguration());
+                        ct.setName(newTemplateName);
+                        list.add(ct.getName());
+                        list.redraw();
+                    }
+                } catch (Exception e1) {
+                    BiobankGuiCommonPlugin.openAsyncError(
+                        "Template Create Error", "Could not create template:",
+                        e1);
+                }
+            }
+
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
+                widgetSelected(e);
+            }
+        });
+
+        copyButton = new Button(composite4, SWT.NONE);
+        copyButton.setText("Copy ");
+        copyButton.addSelectionListener(new SelectionListener() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                try {
+                    if (templateSelected != null) {
+
+                        StringInputDialog dialog = new StringInputDialog(
+                            "Cloned Template Name",
+                            "What is the name of the cloned template?", shell,
+                            SWT.NONE);
+                        String cloneName = dialog.open(templateSelected
+                            .getName() + " copy");
+
+                        if (cloneName != null) {
+
+                            if (Template.getTemplateNames().contains(cloneName)) {
+                                BiobankGuiCommonPlugin
+                                    .openAsyncError("Template Exists",
+                                        "Your new template must have a unique name.");
+                                return;
+                            }
+
+                            Template clone = templateSelected.clone();
+                            clone.setName(cloneName);
+                            list.add(clone.getName());
+                            list.redraw();
+                        }
+                    }
+                } catch (Exception e1) {
+                    BiobankGuiCommonPlugin.openAsyncError(
+                        "Template Copy Error", "Could not copy template", e1);
+                }
+            }
+
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
+                widgetSelected(e);
+            }
+        });
+
         deleteButton = new Button(composite4, SWT.NONE);
         deleteButton.setText("Delete ");
         deleteButton.addSelectionListener(new SelectionListener() {
@@ -372,98 +461,18 @@ public class TemplateEditorView extends ViewPart {
                                 setSelectedTemplate(null);
 
                             } else {
-                                Error("Template not in Template Store.",
-                                    "Template does not exist, already deleted.");
+                                BiobankGuiCommonPlugin
+                                    .openAsyncError(
+                                        "Template not in Template Store.",
+                                        "Template does not exist, already deleted.");
                                 return;
                             }
                         }
                     }
                 } catch (Exception e1) {
-                    Error("Template Delete Error",
-                        "Could not delete template: " + e1);
-                }
-            }
-
-            @Override
-            public void widgetDefaultSelected(SelectionEvent e) {
-                widgetSelected(e);
-            }
-        });
-
-        copyButton = new Button(composite4, SWT.NONE);
-        copyButton.setText("Copy ");
-        copyButton.addSelectionListener(new SelectionListener() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                try {
-                    if (templateSelected != null) {
-
-                        StringInputDialog dialog = new StringInputDialog(
-                            "Cloned Template Name",
-                            "What is the name of the cloned template?", shell,
-                            SWT.NONE);
-                        String cloneName = dialog.open(templateSelected
-                            .getName() + " copy");
-
-                        if (cloneName != null) {
-
-                            if (Template.getTemplateNames().contains(cloneName)) {
-                                Error("Template Exists",
-                                    "Your new template must have a unique name.");
-                                return;
-                            }
-
-                            Template clone = templateSelected.clone();
-                            clone.setName(cloneName);
-                            list.add(clone.getName());
-                            list.redraw();
-                        }
-                    }
-                } catch (Exception e1) {
-                    Error("Template Copy Error", "Could not copy template: "
-                        + e1);
-                }
-            }
-
-            @Override
-            public void widgetDefaultSelected(SelectionEvent e) {
-                widgetSelected(e);
-            }
-        });
-
-        newButton = new Button(composite4, SWT.NONE);
-        newButton.setText("New");
-        newButton.addSelectionListener(new SelectionListener() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                try {
-
-                    StringInputDialog dialog = new StringInputDialog(
-                        "New Template Name",
-                        "What is the name of this new template?", shell,
-                        SWT.NONE);
-                    String newTemplateName = dialog.open(null);
-
-                    if (newTemplateName != null) {
-
-                        if (Template.getTemplateNames().contains(
-                            newTemplateName)) {
-                            Error("Template Exists",
-                                "Your new template must have a unique name.");
-                            return;
-                        }
-
-                        Template ct = new Template();
-                        ct.setJasperFileData(null);
-                        ct.setConfiguration(CBSRLabelMaker
-                            .getDefaultConfiguration());
-                        ct.setName(newTemplateName);
-                        list.add(ct.getName());
-                        list.redraw();
-                    }
-                } catch (Exception e1) {
-                    Error("Template Create Error",
-                        "Could not create template: " + e1);
+                    BiobankGuiCommonPlugin.openAsyncError(
+                        "Template Delete Error", "Could not delete template",
+                        e1);
                 }
             }
 
@@ -541,7 +550,8 @@ public class TemplateEditorView extends ViewPart {
 
                     File selectedFile = new File(selected);
                     if (!selectedFile.exists()) {
-                        Error("Jasper File Non-existant",
+                        BiobankGuiCommonPlugin.openAsyncError(
+                            "Jasper File Non-existant",
                             "Could not find the selected Jasper file.");
                         return;
                     }
@@ -549,10 +559,9 @@ public class TemplateEditorView extends ViewPart {
                     try {
                         jasperFileData = fileToBytes(selectedFile);
                     } catch (IOException e) {
-                        Error(
+                        BiobankGuiCommonPlugin.openAsyncError(
                             "Loading Jasper File",
-                            "Could not read the specified jasper file.\n\n"
-                                + e.getMessage());
+                            "Could not read the specified jasper file", e);
                         return;
                     }
                     (templateSelected).setJasperFileData(jasperFileData);
@@ -606,11 +615,6 @@ public class TemplateEditorView extends ViewPart {
         configTree = new ConfigurationTree(composite6, SWT.NONE);
     }
 
-    private void Error(String title, String msg) {
-        MessageDialog.openError(PlatformUI.getWorkbench()
-            .getActiveWorkbenchWindow().getShell(), title, msg);
-    }
-
     private SelectionListener helpListener = new SelectionListener() {
         @Override
         public void widgetSelected(SelectionEvent e) {
@@ -619,7 +623,7 @@ public class TemplateEditorView extends ViewPart {
                 PlatformUI.getWorkbench().getBrowserSupport()
                     .getExternalBrowser().openURL(new URL(HELP_URL));
             } catch (Exception e1) {
-                Error("Open URL Problem",
+                BiobankGuiCommonPlugin.openAsyncError("Open URL Problem",
                     "Could not open help url.\n\n" + e1.getMessage());
                 return;
             }
@@ -636,7 +640,8 @@ public class TemplateEditorView extends ViewPart {
         try {
             configTree.resetEditor();
         } catch (TreeException e2) {
-            Error("Editor Error", "Could not reset editor: " + e2.getError());
+            BiobankGuiCommonPlugin.openAsyncError("Editor Error",
+                "Could not reset editor: " + e2.getError());
             return;
         }
         if (!templateDirty && !configTree.isDirty()) {
@@ -644,7 +649,7 @@ public class TemplateEditorView extends ViewPart {
         }
 
         if (templateSelected == null) {
-            Error("No Template Selected",
+            BiobankGuiCommonPlugin.openAsyncError("No Template Selected",
                 "Cannot save template. Please select a template first.");
             return;
         }
@@ -652,7 +657,8 @@ public class TemplateEditorView extends ViewPart {
         try {
             templateSelected.persist();
         } catch (IOException e1) {
-            Error("Save Template Error", "Could not save template: " + e1);
+            BiobankGuiCommonPlugin.openAsyncError("Save Template Error",
+                "Could not save template: " + e1);
             return;
         }
         templateDirty = false;
@@ -669,7 +675,8 @@ public class TemplateEditorView extends ViewPart {
                 messageBox.setText("Template Saved");
                 messageBox.open();
             } catch (Exception e1) {
-                Error("Save Template Error", "Could not save template: " + e1);
+                BiobankGuiCommonPlugin.openAsyncError("Save Template Error",
+                    "Could not save template: " + e1);
             }
         }
 

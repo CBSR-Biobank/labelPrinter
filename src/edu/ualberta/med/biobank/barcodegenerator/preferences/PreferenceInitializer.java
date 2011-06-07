@@ -3,13 +3,13 @@ package edu.ualberta.med.biobank.barcodegenerator.preferences;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import edu.ualberta.med.biobank.barcodegenerator.Activator;
+import edu.ualberta.med.biobank.barcodegenerator.BarcodeGenPlugin;
 
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
     @Override
     public void initializeDefaultPreferences() {
-        IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+        IPreferenceStore store = BarcodeGenPlugin.getDefault().getPreferenceStore();
 
         setDefaults(store);
     }
