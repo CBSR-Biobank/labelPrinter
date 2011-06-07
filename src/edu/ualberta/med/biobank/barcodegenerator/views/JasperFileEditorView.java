@@ -515,8 +515,7 @@ public class JasperFileEditorView extends ViewPart {
 
             @Override
             public void widgetDefaultSelected(SelectionEvent e) {
-                // TODO Auto-generated method stub
-
+                widgetSelected(e);
             }
         });
         templateTypeCombo.setEnabled(false);
