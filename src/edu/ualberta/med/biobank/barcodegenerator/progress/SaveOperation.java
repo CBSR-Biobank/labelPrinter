@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 
+import javax.xml.bind.JAXBException;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSRLabelMaker;
@@ -36,7 +38,10 @@ public class SaveOperation extends BarcodeGenerationOperation {
             monitor.done();
             successfulSave = false;
             setError("Gui Validation", e1.getError());
-            return;
+        } catch (JAXBException e2) {
+            monitor.done();
+            successfulSave = false;
+            setError("Gui Validation", e2.getMessage());
         }
 
         if (pdfdata != null) {

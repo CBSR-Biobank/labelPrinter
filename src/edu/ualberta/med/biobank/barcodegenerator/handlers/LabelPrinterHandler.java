@@ -8,7 +8,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.WorkbenchException;
 
-import edu.ualberta.med.biobank.barcodegenerator.Activator;
+import edu.ualberta.med.biobank.barcodegenerator.BarcodeGenPlugin;
 import edu.ualberta.med.biobank.barcodegenerator.perspective.LabelPrinterPerspective;
 import edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView;
 
@@ -21,7 +21,7 @@ public class LabelPrinterHandler extends AbstractHandler implements IHandler {
     
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
-        IWorkbench workbench = Activator.getDefault().getWorkbench();
+        IWorkbench workbench = BarcodeGenPlugin.getDefault().getWorkbench();
         try {
             if (workbench.getActiveWorkbenchWindow().getActivePage()
                 .closeAllEditors(true)) {

@@ -1,30 +1,28 @@
 package edu.ualberta.med.biobank.barcodegenerator.template.configuration;
 
-import java.io.Serializable;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.eclipse.swt.graphics.Rectangle;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 
-public class Configuration implements Serializable {
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement
+public class Configuration {
 
-	private static final long serialVersionUID = 2922691660660772442L;
+    private Map<String, Rectangle> settings = new HashMap<String, Rectangle>();
 
-	protected LinkedHashMap<String, Rectangle> settings = new LinkedHashMap<String, Rectangle>();
+    public Map<String, Rectangle> getSettings() {
+        return this.settings;
+    }
 
-	public void setSettings(LinkedHashMap<String, Rectangle> settings) {
-		this.settings = settings;
-	}
+    public Rectangle getSetting(String key) {
+        return this.settings.get(key);
+    }
 
-	public LinkedHashMap<String, Rectangle> getSettings() {
-		return this.settings;
-	}
-
-	public Rectangle getSettingsKey(String key) {
-		return this.settings.get(key);
-	}
-
-	public void setSettingsEntry(String key, Rectangle value) {
-		this.settings.put(key, value);
-	}
+    public void setSetting(String key, Rectangle value) {
+        this.settings.put(key, value);
+    }
 
 }
