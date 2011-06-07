@@ -16,6 +16,7 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -23,7 +24,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -57,9 +57,7 @@ public class LabelPrinterView extends ViewPart {
 
     public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView";
     private Composite top = null;
-    private Composite composite = null;
     private Composite composite3 = null;
-    private Composite composite4 = null;
     private Label label = null;
     private Text projectTitleText = null;
     private Label label1 = null;
@@ -93,6 +91,7 @@ public class LabelPrinterView extends ViewPart {
     private Text value3Text = null;
     private Button printBarcode3Checkbox = null;
     private Group group2 = null;
+    private Image logoImage = null;
 
     private Label label8 = null;
     private Button sampleTypeCheckbox = null;
@@ -149,44 +148,26 @@ public class LabelPrinterView extends ViewPart {
     }
 
     /**
-     * This method initializes composite
-     * 
-     * @throws ApplicationException
-     * 
-     */
-    private void createComposite() throws ApplicationException {
-        composite = new Composite(group3, SWT.NONE);
-        composite.setBackground(new Color(Display.getCurrent(), 237, 56, 235));
-        composite.setLayout(new FillLayout());
-        composite.setForeground(new Color(Display.getCurrent(), 0, 0, 0));
-        createComposite3();
-        createComposite4();
-    }
 
-    /**
      * This method initializes composite3
      * 
      * @throws ApplicationException
      * 
      */
     private void createComposite3() throws ApplicationException {
-        GridData gridData21 = new GridData();
-        gridData21.grabExcessHorizontalSpace = true;
-        gridData21.verticalAlignment = GridData.CENTER;
-        gridData21.horizontalAlignment = GridData.FILL;
         GridData gridData1 = new GridData();
         gridData1.horizontalAlignment = GridData.FILL;
         gridData1.grabExcessHorizontalSpace = true;
         gridData1.verticalAlignment = GridData.CENTER;
         GridData gridData = new GridData();
         gridData.horizontalAlignment = GridData.FILL;
-        gridData.verticalAlignment = GridData.CENTER;
         gridData.grabExcessHorizontalSpace = true;
         GridLayout gridLayout = new GridLayout();
         gridLayout.numColumns = 3;
         gridLayout.makeColumnsEqualWidth = false;
-        composite3 = new Composite(composite, SWT.NONE);
+        composite3 = new Composite(group3, SWT.NONE);
         composite3.setLayout(gridLayout);
+        composite3.setLayoutData(gridData);
         label = new Label(composite3, SWT.NONE);
         label.setText("Project Title:");
         projectTitleText = new Text(composite3, SWT.BORDER);
@@ -214,6 +195,7 @@ public class LabelPrinterView extends ViewPart {
                 String selected = fd.open();
                 if (selected != null) {
                     logoText.setText(selected);
+                    logoImage = null;
                     logoCanvas.redraw();
                 }
 
@@ -223,6 +205,11 @@ public class LabelPrinterView extends ViewPart {
                 widgetSelected(event);
             }
         });
+
+        GridData gridData21 = new GridData();
+        gridData21.grabExcessHorizontalSpace = true;
+        gridData21.verticalAlignment = GridData.CENTER;
+        gridData21.horizontalAlignment = GridData.FILL;
 
         label9 = new Label(composite3, SWT.NONE);
         label9.setText("Template:");
@@ -311,17 +298,6 @@ public class LabelPrinterView extends ViewPart {
     }
 
     /**
-     * This method initializes composite4
-     * 
-     */
-    private void createComposite4() {
-        GridLayout gridLayout1 = new GridLayout();
-        composite4 = new Composite(composite, SWT.NONE);
-        composite4.setLayout(gridLayout1);
-        createGroup();
-    }
-
-    /**
      * This method initializes group
      * 
      */
@@ -331,7 +307,7 @@ public class LabelPrinterView extends ViewPart {
         gridData2.grabExcessHorizontalSpace = true;
         gridData2.grabExcessVerticalSpace = true;
         gridData2.verticalAlignment = GridData.FILL;
-        group = new Group(composite4, SWT.NONE);
+        group = new Group(group3, SWT.NONE);
         group.setLayout(new GridLayout());
         group.setText("Logo");
         createLogoCanvas();
@@ -348,27 +324,51 @@ public class LabelPrinterView extends ViewPart {
         gridData3.horizontalAlignment = GridData.FILL;
         gridData3.verticalAlignment = GridData.FILL;
         gridData3.grabExcessVerticalSpace = true;
+
         logoCanvas = new Canvas(group, SWT.NONE);
         logoCanvas
             .setBackground(new Color(Display.getCurrent(), 255, 255, 255));
-        logoCanvas.setLayoutData(gridData3);
         logoCanvas.addPaintListener(new PaintListener() {
 
             @Override
             public void paintControl(PaintEvent e) {
                 if (new File(logoText.getText()).exists()) {
-                    Image image = new Image(shell.getDisplay(), logoText
-                        .getText());
-                    if (image != null) {
-                        e.gc.drawImage(image, 0, 0, image.getBounds().width,
-                            image.getBounds().height, 0, 0,
-                            logoCanvas.getBounds().width,
-                            logoCanvas.getBounds().height);
-                        return;
+
+                    if (logoImage == null) {
+                        try {
+                            logoImage = new Image(shell.getDisplay(), logoText
+                                .getText());
+                        } catch (SWTException swte) {
+                            logoImage = null;
+                        }
                     }
 
+                    if (logoImage != null) {
+
+                        double aspectRatio = logoImage.getBounds().width
+                            / logoImage.getBounds().height;
+
+                        int maxHeight = logoCanvas.getParent().getBounds().height - 25;
+
+                        int maxWidth = logoCanvas.getParent().getBounds().width - 10;
+                        int newWidth = (int) (aspectRatio * maxHeight);
+                        newWidth = (newWidth > maxWidth) ? maxWidth : newWidth;
+
+                        logoCanvas.setBounds(5, 15, newWidth, maxHeight);
+
+                        e.gc.drawImage(logoImage, 0, 0,
+                            logoImage.getBounds().width,
+                            logoImage.getBounds().height, 0, 0,
+                            logoCanvas.getBounds().width,
+                            logoCanvas.getBounds().height);
+
+                    } else {
+                        e.gc.drawString("Bad image", 0, 0);
+                    }
+
+                } else {
+                    e.gc.drawString("No logo", 0, 0);
                 }
-                e.gc.drawString("No logo", 0, 0);
             }
 
         });
@@ -429,6 +429,7 @@ public class LabelPrinterView extends ViewPart {
         gridLayout2.makeColumnsEqualWidth = false;
         composite5 = new Composite(group1, SWT.NONE);
         composite5.setLayout(gridLayout2);
+        composite5.setLayoutData(gridData6);
         label2 = new Label(composite5, SWT.NONE);
         label2.setText("Enable:");
         label3 = new Label(composite5, SWT.NONE);
@@ -453,7 +454,7 @@ public class LabelPrinterView extends ViewPart {
         value1Checkbox.setSelection(perferenceStore
             .getBoolean(PreferenceConstants.VALUE_CHECKBOX_1));
         value1Text = new Text(composite5, SWT.BORDER);
-        value1Text.setLayoutData(gridData7);
+        value1Text.setLayoutData(gridData6);
         value1Text.setTextLimit(24);
 
         printBarcode1Checkbox = new Button(composite5, SWT.CHECK);
@@ -474,7 +475,7 @@ public class LabelPrinterView extends ViewPart {
         value2Checkbox.setSelection(perferenceStore
             .getBoolean(PreferenceConstants.VALUE_CHECKBOX_2));
         value2Text = new Text(composite5, SWT.BORDER);
-        value2Text.setLayoutData(gridData5);
+        value2Text.setLayoutData(gridData6);
         value2Text.setTextLimit(24);
         printBarcode2Checkbox = new Button(composite5, SWT.CHECK);
         printBarcode2Checkbox.setSelection(perferenceStore
@@ -492,7 +493,7 @@ public class LabelPrinterView extends ViewPart {
         value3Checkbox.setSelection(perferenceStore
             .getBoolean(PreferenceConstants.VALUE_CHECKBOX_3));
         value3Text = new Text(composite5, SWT.BORDER);
-        value3Text.setLayoutData(gridData9);
+        value3Text.setLayoutData(gridData6);
         value3Text.setTextLimit(24);
         printBarcode3Checkbox = new Button(composite5, SWT.CHECK);
         printBarcode3Checkbox.setSelection(perferenceStore
@@ -542,6 +543,9 @@ public class LabelPrinterView extends ViewPart {
         gridData.grabExcessHorizontalSpace = true;
         gridData.verticalAlignment = GridData.FILL;
 
+        GridData gridData2 = new GridData();
+        gridData2.widthHint = 150;
+
         GridLayout gridLayout5 = new GridLayout();
         gridLayout5.numColumns = 4;
 
@@ -553,11 +557,13 @@ public class LabelPrinterView extends ViewPart {
             .getBoolean(PreferenceConstants.SAMPLETYPE_CHECKBOX));
         cLabel = new CLabel(group2, SWT.NONE);
         cLabel.setText("Sample Type (on labels):");
+
         sampleTypeText = new Text(group2, SWT.BORDER | SWT.V_SCROLL
             | SWT.SINGLE);
         sampleTypeText.setText(perferenceStore
             .getString(PreferenceConstants.SAMPLETYPE_TEXT));
         sampleTypeText.setTextLimit(25);
+        sampleTypeText.setLayoutData(gridData2);
         label8 = new Label(group2, SWT.LEFT | SWT.HORIZONTAL);
         label8.setText("");
         @SuppressWarnings("unused")
@@ -583,11 +589,18 @@ public class LabelPrinterView extends ViewPart {
         gridData.grabExcessVerticalSpace = false;
         gridData.verticalAlignment = GridData.FILL;
 
+        GridLayout gridLayout3 = new GridLayout();
+        gridLayout3.verticalSpacing = 2;
+        gridLayout3.numColumns = 2;
+        gridLayout3.makeColumnsEqualWidth = true;
+
         group3 = new Group(top, SWT.NONE);
         group3.setLayoutData(gridData);
         group3.setText("Branding");
-        createComposite();
-        group3.setLayout(new GridLayout());
+        group3.setLayout(gridLayout3);
+
+        createComposite3();
+        createGroup();
     }
 
     /**
@@ -612,8 +625,6 @@ public class LabelPrinterView extends ViewPart {
         group4 = new Group(top, SWT.NONE);
         group4.setText("Actions");
 
-        new Label(group4, SWT.NONE);
-
         savePdfButton = new Button(group4, SWT.NONE);
         savePdfButton.setText("Print to PDF");
         savePdfButton.addSelectionListener(savePdfListener);
@@ -624,6 +635,7 @@ public class LabelPrinterView extends ViewPart {
         printButton.addSelectionListener(printButtonListener);
         printButton.setLayoutData(gridData7);
 
+        new Label(group4, SWT.NONE);
         new Label(group4, SWT.NONE);
         new Label(group4, SWT.NONE);
         new Label(group4, SWT.NONE);
