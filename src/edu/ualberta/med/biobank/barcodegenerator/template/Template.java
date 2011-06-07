@@ -37,6 +37,7 @@ public class Template implements Serializable {
     }
 
     public Template clone() {
+        System.out.println("cloning template " + name);
         Template clone = new Template();
 
         // clone template name
@@ -161,5 +162,9 @@ public class Template implements Serializable {
         tplt.plt = PrinterLabelTemplateWrapper.getTemplateByName(
             SessionManager.getAppService(), name);
         return tplt;
+    }
+
+    public String toString() {
+        return new StringBuilder(name).toString();
     }
 }

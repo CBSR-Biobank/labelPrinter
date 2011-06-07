@@ -71,7 +71,7 @@
             commandId="edu.ualberta.med.barcodegenerator.commands.labelprinter">
          <enabledWhen>
                <reference
-                     definitionId="biobank.loggedIn">
+                     definitionId="edu.ualberta.med.biobank.gui.common.loggedIn">
                </reference>
          </enabledWhen>
       </handler>
@@ -80,7 +80,7 @@
             commandId="edu.ualberta.med.barcodegenerator.commands.templateditor">
          <enabledWhen>
                <reference
-                     definitionId="biobank.loggedIn">
+                     definitionId="edu.ualberta.med.biobank.gui.common.loggedIn">
                </reference>
          </enabledWhen>
       </handler>

@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Map;
 
 import javax.xml.bind.JAXBException;
 
@@ -27,6 +28,7 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.ISourceProviderListener;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
@@ -37,6 +39,7 @@ import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSRLabel
 import edu.ualberta.med.biobank.barcodegenerator.trees.ConfigurationTree;
 import edu.ualberta.med.biobank.barcodegenerator.trees.TreeException;
 import edu.ualberta.med.biobank.gui.common.BiobankGuiCommonPlugin;
+import edu.ualberta.med.biobank.gui.common.GuiCommonSessionState;
 import gov.nih.nci.system.applicationservice.ApplicationException;
 
 public class TemplateEditorView extends ViewPart {
@@ -74,21 +77,53 @@ public class TemplateEditorView extends ViewPart {
 
     private TemplateStore templateStore;
 
+    private boolean loggedIn;
+
     // constants
     final private String HELP_URL = "http://www.example.com";
 
     @Override
     public void createPartControl(Composite parent) {
         try {
-            templateStore = new TemplateStore();
+            GuiCommonSessionState sessionSourceProvider = BiobankGuiCommonPlugin
+                .getSessionStateSourceProvider();
+
+            loggedIn = sessionSourceProvider.getCurrentState()
+                .get(GuiCommonSessionState.SESSION_STATE_SOURCE_NAME)
+                .equals(GuiCommonSessionState.LOGGED_IN);
+
+            if (loggedIn) {
+                templateStore = new TemplateStore();
+            }
+
             shell = parent.getShell();
             top = new Composite(parent, SWT.NONE);
             top.setLayout(new GridLayout());
 
             createGroup();
+
+            sessionSourceProvider
+                .addSourceProviderListener(new ISourceProviderListener() {
+                    @Override
+                    public void sourceChanged(int sourcePriority,
+                        String sourceName, Object sourceValue) {
+                        if (sourceValue != null) {
+                            loggedIn = sourceValue
+                                .equals(GuiCommonSessionState.LOGGED_IN);
+                            updateForm();
+                        }
+                    }
+
+                    @Override
+                    public void sourceChanged(int sourcePriority,
+                        @SuppressWarnings("rawtypes") Map sourceValuesByName) {
+                    }
+                });
+
+            updateForm();
         } catch (ApplicationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            BiobankGuiCommonPlugin.openAsyncError("Form Creation Error",
+                "Error while creating form", e);
         }
     }
 
@@ -225,9 +260,6 @@ public class TemplateEditorView extends ViewPart {
         group1.setLayout(fillLayout1);
         list = new List(group1, SWT.BORDER | SWT.V_SCROLL);
         list.addSelectionListener(listListener);
-        for (String s : templateStore.getTemplateNames())
-            list.add(s);
-        list.redraw();
 
     }
 
@@ -307,30 +339,8 @@ public class TemplateEditorView extends ViewPart {
     }
 
     private void setSelectedTemplate(Template t) {
-
-        if (t != null) {
-            if (templateSelected != t) {
-                templateSelected = t.clone();
-                templateNameText.setText(t.getName());
-                String printerName = t.getPrinterName();
-                printerNameText.setText(printerName != null ? printerName : "");
-
-                updateJasperFileText(null);
-
-                try {
-                    configTree
-                        .populateTree(templateSelected.getConfiguration());
-                } catch (TreeException e) {
-                    BiobankGuiCommonPlugin.openAsyncError("Set Templat Error",
-                        e.getError());
-                } catch (JAXBException e2) {
-                    BiobankGuiCommonPlugin.openAsyncError("Set Templat Error",
-                        e2.getMessage());
-                }
-                templateDirty = false;
-            }
-
-        } else {
+        templateDirty = false;
+        if (t == null) {
             templateSelected = null;
             templateNameText.setText("Select a template.");
             printerNameText.setText("");
@@ -342,10 +352,28 @@ public class TemplateEditorView extends ViewPart {
             } catch (TreeException e) {
                 BiobankGuiCommonPlugin.openAsyncError("Set Templat Error",
                     e.getError());
-                return;
+            }
+            return;
+        }
+
+        if (templateSelected != t) {
+            templateSelected = t;
+            templateNameText.setText(t.getName());
+            String printerName = t.getPrinterName();
+            printerNameText.setText(printerName != null ? printerName : "");
+
+            updateJasperFileText(null);
+
+            try {
+                configTree.populateTree(templateSelected.getConfiguration());
+            } catch (TreeException e) {
+                BiobankGuiCommonPlugin.openAsyncError("Set Template Error",
+                    e.getError());
+            } catch (JAXBException e2) {
+                BiobankGuiCommonPlugin.openAsyncError("Set Template Error",
+                    e2.getMessage());
             }
         }
-        templateDirty = false;
     }
 
     /**
@@ -584,7 +612,7 @@ public class TemplateEditorView extends ViewPart {
                             "Could not read the specified jasper file", e);
                         return;
                     }
-                    (templateSelected).setJasperFileData(jasperFileData);
+                    templateSelected.setJasperFileData(jasperFileData);
                     updateJasperFileText(selected);
                     templateDirty = true;
                 }
@@ -707,4 +735,18 @@ public class TemplateEditorView extends ViewPart {
         }
     };
 
+    private void updateForm() {
+        try {
+            if (loggedIn) {
+                templateStore = new TemplateStore();
+
+                for (String s : templateStore.getTemplateNames())
+                    list.add(s);
+                list.redraw();
+            }
+        } catch (ApplicationException e) {
+            BiobankGuiCommonPlugin.openAsyncError("Database Error",
+                "Error while updating form", e);
+        }
+    }
 }
