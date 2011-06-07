@@ -4,10 +4,9 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.eclipse.swt.graphics.Rectangle;
-
 import edu.ualberta.med.biobank.SessionManager;
 import edu.ualberta.med.biobank.barcodegenerator.template.configuration.Configuration;
+import edu.ualberta.med.biobank.barcodegenerator.template.configuration.Rectangle;
 import edu.ualberta.med.biobank.common.wrappers.PrinterLabelTemplateWrapper;
 import gov.nih.nci.system.applicationservice.ApplicationException;
 
@@ -38,9 +37,9 @@ public class Template implements Serializable {
         clone.config = new Configuration();
         for (Entry<String, Rectangle> entry : this.config.getSettings()
             .entrySet()) {
-            Rectangle newRect = new Rectangle(entry.getValue().x,
-                entry.getValue().y, entry.getValue().width,
-                entry.getValue().height);
+            Rectangle newRect = new Rectangle(entry.getValue().getX(), entry
+                .getValue().getY(), entry.getValue().getWidth(), entry
+                .getValue().getHeight());
             clone.config.setSettingsEntry(entry.getKey(), newRect);
         }
 

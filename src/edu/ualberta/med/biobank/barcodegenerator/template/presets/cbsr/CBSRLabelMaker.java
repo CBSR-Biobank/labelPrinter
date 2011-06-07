@@ -4,11 +4,11 @@ import java.awt.Font;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-
-import org.eclipse.swt.graphics.Rectangle;
+import java.util.Map;
 
 import edu.ualberta.med.biobank.barcodegenerator.template.Template;
 import edu.ualberta.med.biobank.barcodegenerator.template.configuration.Configuration;
+import edu.ualberta.med.biobank.barcodegenerator.template.configuration.Rectangle;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.JasperFiller;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.JasperOutline;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.containers.BarcodeImage;
@@ -226,7 +226,7 @@ public class CBSRLabelMaker {
     }
 
     public static Configuration getDefaultConfiguration() {
-        LinkedHashMap<String, Rectangle> data = new LinkedHashMap<String, Rectangle>();
+        Map<String, Rectangle> data = new LinkedHashMap<String, Rectangle>();
 
         data.put("Patient Info.Top Field.Field Text", new Rectangle(1, 4, 0, 0));
         data.put("Patient Info.Top Field.1D Barcode", new Rectangle(38, 1, 29,
