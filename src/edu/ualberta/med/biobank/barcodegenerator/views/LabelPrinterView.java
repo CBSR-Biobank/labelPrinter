@@ -534,6 +534,9 @@ public class LabelPrinterView extends ViewPart {
         gridData.grabExcessHorizontalSpace = true;
         gridData.verticalAlignment = GridData.FILL;
 
+        GridData gridData2 = new GridData();
+        gridData2.widthHint = 150;
+
         GridLayout gridLayout5 = new GridLayout();
         gridLayout5.numColumns = 4;
 
@@ -545,11 +548,13 @@ public class LabelPrinterView extends ViewPart {
             .getBoolean(PreferenceConstants.SAMPLETYPE_CHECKBOX));
         cLabel = new CLabel(group2, SWT.NONE);
         cLabel.setText("Sample Type (on labels):");
+
         sampleTypeText = new Text(group2, SWT.BORDER | SWT.V_SCROLL
             | SWT.SINGLE);
         sampleTypeText.setText(perferenceStore
             .getString(PreferenceConstants.SAMPLETYPE_TEXT));
         sampleTypeText.setTextLimit(25);
+        sampleTypeText.setLayoutData(gridData2);
         label8 = new Label(group2, SWT.LEFT | SWT.HORIZONTAL);
         label8.setText("");
         @SuppressWarnings("unused")
