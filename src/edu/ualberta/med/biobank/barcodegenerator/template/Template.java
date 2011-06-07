@@ -72,7 +72,7 @@ public class Template implements Serializable {
     }
 
     public boolean jasperFileDataExists() {
-        return !plt.getJasperFile().isEmpty();
+        return !plt.getJasperTemplate().getXml().isEmpty();
     }
 
     public byte[] getJasperFileData() {
