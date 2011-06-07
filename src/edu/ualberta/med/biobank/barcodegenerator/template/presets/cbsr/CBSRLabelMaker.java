@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import javax.xml.bind.JAXBException;
+
 import edu.ualberta.med.biobank.barcodegenerator.template.Template;
 import edu.ualberta.med.biobank.barcodegenerator.template.configuration.Configuration;
 import edu.ualberta.med.biobank.barcodegenerator.template.configuration.Rectangle;
@@ -28,7 +30,8 @@ public class CBSRLabelMaker {
     private static final long serialVersionUID = -6346822010546940605L;
 
     public static byte[] generatePdfCBSR(CBSRData cbsrData,
-        ArrayList<String> barcodeStrings) throws CBSRPdfGenException {
+        ArrayList<String> barcodeStrings) throws CBSRPdfGenException,
+        JAXBException {
 
         Configuration configDataStr = cbsrData.template.getConfiguration();
 

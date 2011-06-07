@@ -1,8 +1,15 @@
 package edu.ualberta.med.biobank.barcodegenerator.template;
 
+import java.io.ByteArrayInputStream;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Map.Entry;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 
 import edu.ualberta.med.biobank.SessionManager;
 import edu.ualberta.med.biobank.barcodegenerator.template.configuration.Configuration;
@@ -84,13 +91,40 @@ public class Template implements Serializable {
         // TODO: serialize jasper file
     }
 
-    public Configuration getConfiguration() {
-        // TODO; unserialize configuration settings
-        return null;
+    /**
+     * Configuration objects are stored in XML in the database. This method
+     * unmarshals the object.
+     * 
+     * @return
+     * @throws JAXBException
+     */
+    public Configuration getConfiguration() throws JAXBException {
+        Configuration config = new Configuration();
+        JAXBContext context = JAXBContext.newInstance(Configuration.class,
+            Rectangle.class);
+        Unmarshaller u = context.createUnmarshaller();
+        ByteArrayInputStream in = new ByteArrayInputStream(plt.getConfigData()
+            .getBytes());
+        config = (Configuration) u.unmarshal(in);
+        return config;
     }
 
-    public void setConfiguration(Configuration configuration) {
-        // TODO; serialize configuration settings
+    /**
+     * Configuration objects are stored in XML in the database. This method
+     * marshals the object.
+     * 
+     * @param configuration
+     * @throws JAXBException
+     */
+    public void setConfiguration(Configuration configuration)
+        throws JAXBException {
+        JAXBContext context = JAXBContext.newInstance(Configuration.class,
+            Rectangle.class);
+        Marshaller marshaller;
+        marshaller = context.createMarshaller();
+        StringWriter sw = new StringWriter();
+        marshaller.marshal(config, sw);
+        plt.setConfigData(sw.toString());
     }
 
     public Rectangle getKey(String key) {

@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+import javax.xml.bind.JAXBException;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -305,7 +307,8 @@ public class TemplateEditorView extends ViewPart {
                 configTree.populateTree(templateSelected.getConfiguration());
             } catch (TreeException e) {
                 Error("Set Templat Error", e.getError());
-                return;
+            } catch (JAXBException e2) {
+                Error("Set Templat Error", e2.getMessage());
             }
             templateDirty = false;
 
