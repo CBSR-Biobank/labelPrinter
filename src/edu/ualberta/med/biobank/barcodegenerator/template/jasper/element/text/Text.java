@@ -4,46 +4,44 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 
-import org.eclipse.swt.graphics.Rectangle;
-
+import edu.ualberta.med.biobank.barcodegenerator.template.configuration.Rectangle;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.Element;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.ElementCreationException;
 
 public class Text extends Element {
 
-	// TODO allow user to set font size
-	Font font;
+    // TODO allow user to set font size
+    Font font;
 
-	public Text(Rectangle rect, String message, Font font)
-			throws ElementCreationException {
+    public Text(Rectangle rect, String message, Font font)
+        throws ElementCreationException {
 
-		if (message == null || message.length() == 0)
-			throw new ElementCreationException(
-					"empty or null message specified to text element.");
+        if (message == null || message.length() == 0)
+            throw new ElementCreationException(
+                "empty or null message specified to text element.");
 
-		if (rect == null)
-			throw new ElementCreationException(
-					"null dimensions specified to text element.");
+        if (rect == null)
+            throw new ElementCreationException(
+                "null dimensions specified to text element.");
 
-		if (font == null)
-			throw new ElementCreationException(
-					"null font specified to text element.");
+        if (font == null)
+            throw new ElementCreationException(
+                "null font specified to text element.");
 
-		this.rect = rect;
-		this.type = Element.TYPE.Text;
-		this.message = message;
-		this.font = font;
-	}
-	
+        this.rect = rect;
+        this.type = Element.TYPE.Text;
+        this.message = message;
+        this.font = font;
+    }
 
+    public void render(Graphics2D g, int scale) {
+        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+            RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g.setFont(font);
 
-	public void render(Graphics2D g, int scale) {
-		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		g.setFont(font);
-		
-		g.drawString(message, mmToPixel(rect.x,scale), mmToPixel(rect.y,scale) );
+        g.drawString(message, mmToPixel(rect.getX(), scale),
+            mmToPixel(rect.getY(), scale));
 
-	}
+    }
 
 }

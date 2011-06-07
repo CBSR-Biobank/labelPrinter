@@ -145,9 +145,10 @@ public class CBSRLabelMaker {
                         .getKey("Barcodes.Individual.Barcode "
                             + addPaddingZeros(i) + ".Barcode 1D");
 
-                    Rectangle r = new Rectangle(master.x + barcode.x, master.y
-                        + barcode.y, master.width + barcode.width,
-                        master.height + barcode.height);
+                    Rectangle r = new Rectangle(master.getX() + barcode.getX(),
+                        master.getY() + barcode.getY(), master.getWidth()
+                            + barcode.getWidth(), master.getHeight()
+                            + barcode.getHeight());
 
                     Barcode1D item1D = new Barcode1D(r, cbsrData.patientIdStr,
                         new Font("Times New Roman", Font.PLAIN, 22));
@@ -166,9 +167,10 @@ public class CBSRLabelMaker {
                         .getKey("Barcodes.Individual.Barcode "
                             + addPaddingZeros(i) + ".Barcode 2D");
 
-                    Rectangle r = new Rectangle(master.x + barcode.x, master.y
-                        + barcode.y, master.width + barcode.width,
-                        master.height + barcode.height);
+                    Rectangle r = new Rectangle(master.getX() + barcode.getX(),
+                        master.getY() + barcode.getY(), master.getWidth()
+                            + barcode.getWidth(), master.getHeight()
+                            + barcode.getHeight());
 
                     Barcode2D item2D = new Barcode2D(r, rStrArray);
                     bi.getElements().add(item2D);
@@ -186,9 +188,10 @@ public class CBSRLabelMaker {
                         .getKey("Barcodes.Individual.Barcode "
                             + addPaddingZeros(i) + ".Sample Text");
 
-                    Rectangle rectdim = new Rectangle(master.x + barcode.x,
-                        master.y + barcode.y, master.width + barcode.width,
-                        master.height + barcode.height);
+                    Rectangle rectdim = new Rectangle(master.getX()
+                        + barcode.getX(), master.getY() + barcode.getY(),
+                        master.getWidth() + barcode.getWidth(),
+                        master.getHeight() + barcode.getHeight());
 
                     Text itemText = new Text(rectdim, cbsrData.sampleTypeStr,
                         new Font("Times New Roman", Font.PLAIN, 22));

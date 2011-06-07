@@ -23,6 +23,13 @@ public class Rectangle {
         this.height = 0;
     }
 
+    public Rectangle(Rectangle r) {
+        this.x = r.x;
+        this.y = r.y;
+        this.width = r.width;
+        this.height = r.height;
+    }
+
     public Rectangle(int x, int y, int width, int height) {
         this.x = x;
         this.y = y;
@@ -61,5 +68,4 @@ public class Rectangle {
     public void setHeight(Integer height) {
         this.height = height;
     }
-
 }
