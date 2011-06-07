@@ -8,6 +8,7 @@ import java.net.URL;
 
 import javax.xml.bind.JAXBException;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -419,7 +420,7 @@ public class TemplateEditorView extends ViewPart {
                         }
                     }
                 } catch (Exception e1) {
-                    Error("Template Copy Error", "Could not create template: "
+                    Error("Template Copy Error", "Could not copy template: "
                         + e1);
                 }
             }
@@ -605,11 +606,9 @@ public class TemplateEditorView extends ViewPart {
         configTree = new ConfigurationTree(composite6, SWT.NONE);
     }
 
-    private void Error(String title, String message) {
-        MessageBox messageBox = new MessageBox(shell, SWT.ICON_ERROR);
-        messageBox.setMessage(message);
-        messageBox.setText(title);
-        messageBox.open();
+    private void Error(String title, String msg) {
+        MessageDialog.openError(PlatformUI.getWorkbench()
+            .getActiveWorkbenchWindow().getShell(), title, msg);
     }
 
     private SelectionListener helpListener = new SelectionListener() {
