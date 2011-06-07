@@ -11,8 +11,26 @@
       <view
             name="Print Patient Barcodes"
             category="barcodeGenerator"
+            allowMultiple="false"
             class="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView"
-            id="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView">
+            id="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="false"
+            class="edu.ualberta.med.biobank.barcodegenerator.views.TemplateEditorView"
+            id="edu.ualberta.med.biobank.barcodegenerator.views.TemplateEditorView"
+            name="Printer Templates Editor"
+            category="barcodeGenerator"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="false"
+            class="edu.ualberta.med.biobank.barcodegenerator.views.JasperFileEditorView"
+            id="edu.ualberta.med.biobank.barcodegenerator.views.JasperFileEditorView"
+            name="Jasper Templates Editor"
+            category="barcodeGenerator"
+            restorable="true">
       </view>
    </extension>
    <extension
@@ -37,7 +55,15 @@
          <view
                id="edu.ualberta.med.biobank.barcodegenerator.views.TemplateEditorView"
                minimized="false"
-               relationship="stack">
+               relationship="top">
+         </view>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="barcodeGenerator.perspective.jaspereditor">
+         <view
+               id="edu.ualberta.med.biobank.barcodegenerator.views.JasperFileEditorView"
+               minimized="false"
+               relationship="top">
          </view>
       </perspectiveExtension>
    </extension>
@@ -56,9 +82,15 @@
                   style="push">
             </command>
             <command
-                  commandId="edu.ualberta.med.barcodegenerator.commands.templateditor"
-                  id="edu.ualberta.med.barcodegenerator.menu.templateditor"
+                  commandId="edu.ualberta.med.barcodegenerator.commands.templateeditor"
+                  id="edu.ualberta.med.barcodegenerator.menu.templateeditor"
                   label="Edit Printer Templates"
+                  style="push">
+            </command>
+            <command
+                  commandId="edu.ualberta.med.barcodegenerator.commands.jaspereditor"
+                  id="edu.ualberta.med.barcodegenerator.menu.jaspereditor"
+                  label="Jasper Templates"
                   style="push">
             </command>
          </menu>
@@ -77,7 +109,16 @@
       </handler>
       <handler
             class="edu.ualberta.med.biobank.barcodegenerator.handlers.TemplateEditorHandler"
-            commandId="edu.ualberta.med.barcodegenerator.commands.templateditor">
+            commandId="edu.ualberta.med.barcodegenerator.commands.templateeditor">
+         <enabledWhen>
+               <reference
+                     definitionId="edu.ualberta.med.biobank.gui.common.loggedIn">
+               </reference>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="edu.ualberta.med.biobank.barcodegenerator.handlers.JasperEditorHandler"
+            commandId="edu.ualberta.med.barcodegenerator.commands.jaspereditor">
          <enabledWhen>
                <reference
                      definitionId="edu.ualberta.med.biobank.gui.common.loggedIn">
@@ -92,26 +133,13 @@
             name="Label Printer Command">
       </command>
      <command
-            id="edu.ualberta.med.barcodegenerator.commands.templateditor"
+            id="edu.ualberta.med.barcodegenerator.commands.templateeditor"
             name="Template Editor Command">
       </command>
-   </extension>
-   <extension
-         point="org.eclipse.ui.views">
-      <view
-            allowMultiple="false"
-            class="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView"
-            id="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView"
-            name="Label Printer"
-            restorable="true">
-      </view>
-      <view
-            allowMultiple="false"
-            class="edu.ualberta.med.biobank.barcodegenerator.views.TemplateEditorView"
-            id="edu.ualberta.med.biobank.barcodegenerator.views.TemplateEditorView"
-            name="Printer Templates Editor"
-            restorable="true">
-      </view>
+     <command
+            id="edu.ualberta.med.barcodegenerator.commands.jaspereditor"
+            name="Jasper Editor Command">
+      </command>
    </extension>
    <extension
          point="org.eclipse.core.runtime.preferences">
@@ -129,6 +157,11 @@
       <perspective
             class="edu.ualberta.med.biobank.barcodegenerator.perspective.TemplateEditorPerspective"
             id="barcodeGenerator.perspective.templateeditor"
+            name="TemplateEditor">
+      </perspective>
+      <perspective
+            class="edu.ualberta.med.biobank.barcodegenerator.perspective.JasperEditorPerspective"
+            id="barcodeGenerator.perspective.jaspereditor"
             name="TemplateEditor">
       </perspective>
    </extension>
