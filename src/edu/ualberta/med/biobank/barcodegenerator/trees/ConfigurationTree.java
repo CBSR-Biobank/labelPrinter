@@ -265,7 +265,7 @@ public class ConfigurationTree {
                                             .containsKey(location)) {
 
                                             configuration
-                                                .setSettingsEntry(
+                                                .setSetting(
                                                     location,
                                                     TreeItemToRectangle(currentTableItem));
                                             isDirty = true;

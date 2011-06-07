@@ -9,7 +9,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.print.PrintService;
@@ -20,11 +21,6 @@ import javax.print.attribute.standard.Copies;
 import javax.print.attribute.standard.MediaPrintableArea;
 import javax.print.attribute.standard.MediaSizeName;
 import javax.print.attribute.standard.PrintQuality;
-
-import edu.ualberta.med.biobank.barcodegenerator.template.jasper.containers.BarcodeImage;
-import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.Element;
-import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.BarcodeCreationException;
-import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.JasperFillException;
 
 import net.sf.jasperreports.engine.JRElement;
 import net.sf.jasperreports.engine.JREmptyDataSource;
@@ -39,6 +35,10 @@ import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.export.JRPrintServiceExporter;
 import net.sf.jasperreports.engine.export.JRPrintServiceExporterParameter;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import edu.ualberta.med.biobank.barcodegenerator.template.jasper.containers.BarcodeImage;
+import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.Element;
+import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.BarcodeCreationException;
+import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.JasperFillException;
 
 public class JasperFiller {
 
@@ -239,8 +239,8 @@ public class JasperFiller {
         }
 
         // generate parameters for jasper
-        LinkedHashMap<String, Object> parameters = generateParameters(
-            patientInfoImg, barcodeIDBufferList);
+        Map<String, Object> parameters = generateParameters(patientInfoImg,
+            barcodeIDBufferList);
 
         try {
             // generate jasper report from template
@@ -266,11 +266,11 @@ public class JasperFiller {
 
     }
 
-    private LinkedHashMap<String, Object> generateParameters(
+    private Map<String, Object> generateParameters(
         ByteArrayInputStream patientInfoImg,
         ArrayList<ByteArrayInputStream> barcodeIDImageList) {
 
-        LinkedHashMap<String, Object> parameters = new LinkedHashMap<String, Object>();
+        Map<String, Object> parameters = new HashMap<String, Object>();
 
         parameters.put(JasperConstants.titleField,
             templateData.getBranding().projectTitle);

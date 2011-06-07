@@ -3,8 +3,6 @@ package edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr;
 import java.awt.Font;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import javax.xml.bind.JAXBException;
 
@@ -144,9 +142,8 @@ public class CBSRLabelMaker {
                     && cbsrData.patientIdStr.length() > 0) {
 
                     Rectangle master = tplt.getKey("Barcodes.All.Barcode 1D");
-                    Rectangle barcode = tplt
-                        .getKey("Barcodes.Individual.Barcode "
-                            + addPaddingZeros(i) + ".Barcode 1D");
+                    Rectangle barcode = tplt.getKey(String.format(
+                        "Barcodes.Individual.Barcode %03d.Barcode 1D", i));
 
                     Rectangle r = new Rectangle(master.getX() + barcode.getX(),
                         master.getY() + barcode.getY(), master.getWidth()
@@ -166,9 +163,8 @@ public class CBSRLabelMaker {
                     && rStrArray.replaceAll("[^a-zA-Z0-9 ]", "").length() == 12) {
 
                     Rectangle master = tplt.getKey("Barcodes.All.Barcode 2D");
-                    Rectangle barcode = tplt
-                        .getKey("Barcodes.Individual.Barcode "
-                            + addPaddingZeros(i) + ".Barcode 2D");
+                    Rectangle barcode = tplt.getKey(String.format(
+                        "Barcodes.Individual.Barcode %03d.Barcode 2D", i));
 
                     Rectangle r = new Rectangle(master.getX() + barcode.getX(),
                         master.getY() + barcode.getY(), master.getWidth()
@@ -187,9 +183,8 @@ public class CBSRLabelMaker {
 
                     Rectangle master = tplt.getKey("Barcodes.All.Sample Text");
 
-                    Rectangle barcode = tplt
-                        .getKey("Barcodes.Individual.Barcode "
-                            + addPaddingZeros(i) + ".Sample Text");
+                    Rectangle barcode = tplt.getKey(String.format(
+                        "Barcodes.Individual.Barcode %03d.Sample Text", i));
 
                     Rectangle rectdim = new Rectangle(master.getX()
                         + barcode.getX(), master.getY() + barcode.getY(),
@@ -221,46 +216,43 @@ public class CBSRLabelMaker {
 
     }
 
-    private static String addPaddingZeros(int i) {
-        String out = String.valueOf(i);
-        if (out.length() <= 0) {
-            out = "00";
-        } else if (out.length() <= 1) {
-            out = "0" + out;
-        }
-        return out;
-    }
-
     public static Configuration getDefaultConfiguration() {
-        Map<String, Rectangle> data = new LinkedHashMap<String, Rectangle>();
+        Configuration config = new Configuration();
 
-        data.put("Patient Info.Top Field.Field Text", new Rectangle(1, 4, 0, 0));
-        data.put("Patient Info.Top Field.1D Barcode", new Rectangle(38, 1, 29,
-            8));
-        data.put("Patient Info.Middle Field.Field Text", new Rectangle(1, 13,
-            0, 0));
-        data.put("Patient Info.Middle Field.1D Barcode", new Rectangle(38, 13,
-            29, 8));
-        data.put("Patient Info.Bottom Field.Field Text", new Rectangle(1, 25,
-            0, 0));
-        data.put("Patient Info.Bottom Field.1D Barcode", new Rectangle(38, 25,
-            29, 8));
-        data.put("Patient Info.Patient ID.1D Barcode", new Rectangle(1, 33, 29,
-            8));
-        data.put("Barcodes.All.Barcode 1D", new Rectangle(8, 7, 29, 8));
-        data.put("Barcodes.All.Barcode 2D", new Rectangle(40, 7, 6, 6));
-        data.put("Barcodes.All.Sample Text", new Rectangle(8, 2, 0, 0));
+        config.setSetting("Patient Info.Top Field.Field Text", new Rectangle(1,
+            4, 0, 0));
+        config.setSetting("Patient Info.Top Field.1D Barcode", new Rectangle(
+            38, 1, 29, 8));
+        config.setSetting("Patient Info.Middle Field.Field Text",
+            new Rectangle(1, 13, 0, 0));
+        config.setSetting("Patient Info.Middle Field.1D Barcode",
+            new Rectangle(38, 13, 29, 8));
+        config.setSetting("Patient Info.Bottom Field.Field Text",
+            new Rectangle(1, 25, 0, 0));
+        config.setSetting("Patient Info.Bottom Field.1D Barcode",
+            new Rectangle(38, 25, 29, 8));
+        config.setSetting("Patient Info.Patient ID.1D Barcode", new Rectangle(
+            1, 33, 29, 8));
+        config
+            .setSetting("Barcodes.All.Barcode 1D", new Rectangle(8, 7, 29, 8));
+        config
+            .setSetting("Barcodes.All.Barcode 2D", new Rectangle(40, 7, 6, 6));
+        config
+            .setSetting("Barcodes.All.Sample Text", new Rectangle(8, 2, 0, 0));
 
         for (int i = 1; i <= BARCODE_COUNT; i++) {
-            data.put("Barcodes.Individual.Barcode " + addPaddingZeros(i)
-                + ".Barcode 1D", new Rectangle(0, 0, 0, 0));
-            data.put("Barcodes.Individual.Barcode " + addPaddingZeros(i)
-                + ".Barcode 2D", new Rectangle(0, 0, 0, 0));
-            data.put("Barcodes.Individual.Barcode " + addPaddingZeros(i)
-                + ".Sample Text", new Rectangle(0, 0, 0, 0));
+            config
+                .setSetting(String.format(
+                    "Barcodes.Individual.Barcode %03d.Barcode 1D", i),
+                    new Rectangle(0, 0, 0, 0));
+            config
+                .setSetting(String.format(
+                    "Barcodes.Individual.Barcode %03d.Barcode 2D", i),
+                    new Rectangle(0, 0, 0, 0));
+            config.setSetting(String.format(
+                "Barcodes.Individual.Barcode %03d.Sample Text", i),
+                new Rectangle(0, 0, 0, 0));
         }
-        Configuration config = new Configuration();
-        config.setSettings(data);
         return config;
     }
 
@@ -280,12 +272,12 @@ public class CBSRLabelMaker {
             output.add(ckl);
         }
         for (int i = 1; i <= BARCODE_COUNT; i++) {
-            output.add("Barcodes.Individual.Barcode " + addPaddingZeros(i)
-                + ".Barcode 1D");
-            output.add("Barcodes.Individual.Barcode " + addPaddingZeros(i)
-                + ".Barcode 2D");
-            output.add("Barcodes.Individual.Barcode " + addPaddingZeros(i)
-                + ".Sample Text");
+            output.add(String.format(
+                "Barcodes.Individual.Barcode %03d.Barcode 1D", i));
+            output.add(String.format(
+                "Barcodes.Individual.Barcode %03d.Barcode 2D", i));
+            output.add(String.format(
+                "Barcodes.Individual.Barcode %03d.Sample Text", i));
         }
         return output;
 

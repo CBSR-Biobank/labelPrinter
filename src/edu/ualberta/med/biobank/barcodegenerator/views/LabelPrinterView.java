@@ -47,6 +47,7 @@ import edu.ualberta.med.biobank.barcodegenerator.preferences.PreferenceInitializ
 import edu.ualberta.med.biobank.barcodegenerator.progress.PrintOperation;
 import edu.ualberta.med.biobank.barcodegenerator.progress.SaveOperation;
 import edu.ualberta.med.biobank.barcodegenerator.template.Template;
+import edu.ualberta.med.biobank.barcodegenerator.template.TemplateStore;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSRData;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.exceptions.CBSRGuiVerificationException;
 import edu.ualberta.med.biobank.gui.common.BiobankGuiCommonPlugin;
@@ -229,7 +230,8 @@ public class LabelPrinterView extends ViewPart {
         templateCombo.setLayoutData(gridData21);
 
         // TODO: have application service returned by biobank.gui.common plugin
-        for (String s : Template.getTemplateNames()) {
+        TemplateStore store = new TemplateStore();
+        for (String s : store.getTemplateNames()) {
             templateCombo.add(s);
         }
 

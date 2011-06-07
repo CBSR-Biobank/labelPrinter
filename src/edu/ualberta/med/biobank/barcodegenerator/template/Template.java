@@ -3,7 +3,7 @@ package edu.ualberta.med.biobank.barcodegenerator.template;
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 import java.io.StringWriter;
-import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.xml.bind.JAXBContext;
@@ -14,6 +14,7 @@ import javax.xml.bind.Unmarshaller;
 import edu.ualberta.med.biobank.SessionManager;
 import edu.ualberta.med.biobank.barcodegenerator.template.configuration.Configuration;
 import edu.ualberta.med.biobank.barcodegenerator.template.configuration.Rectangle;
+import edu.ualberta.med.biobank.common.wrappers.JasperTemplateWrapper;
 import edu.ualberta.med.biobank.common.wrappers.PrinterLabelTemplateWrapper;
 import gov.nih.nci.system.applicationservice.ApplicationException;
 
@@ -31,6 +32,10 @@ public class Template implements Serializable {
 
     private Configuration config = null;
 
+    public Template() {
+        plt = new PrinterLabelTemplateWrapper(SessionManager.getAppService());
+    }
+
     public Template clone() {
         Template clone = new Template();
 
@@ -41,13 +46,17 @@ public class Template implements Serializable {
         clone.intendedPrinterName = this.intendedPrinterName;
 
         // clone configuration
-        clone.config = new Configuration();
-        for (Entry<String, Rectangle> entry : this.config.getSettings()
-            .entrySet()) {
-            Rectangle newRect = new Rectangle(entry.getValue().getX(), entry
-                .getValue().getY(), entry.getValue().getWidth(), entry
-                .getValue().getHeight());
-            clone.config.setSettingsEntry(entry.getKey(), newRect);
+        if (this.config != null) {
+            clone.config = new Configuration();
+            Map<String, Rectangle> settings = config.getSettings();
+            if (settings != null) {
+                for (Entry<String, Rectangle> entry : settings.entrySet()) {
+                    Rectangle newRect = new Rectangle(entry.getValue().getX(),
+                        entry.getValue().getY(), entry.getValue().getWidth(),
+                        entry.getValue().getHeight());
+                    clone.config.setSetting(entry.getKey(), newRect);
+                }
+            }
         }
 
         // clone jasper file
@@ -79,7 +88,10 @@ public class Template implements Serializable {
     }
 
     public boolean jasperFileDataExists() {
-        return !plt.getJasperTemplate().getXml().isEmpty();
+        JasperTemplateWrapper jasp = plt.getJasperTemplate();
+        if (jasp == null)
+            return false;
+        return !jasp.getXml().isEmpty();
     }
 
     public byte[] getJasperFileData() {
@@ -99,6 +111,10 @@ public class Template implements Serializable {
      * @throws JAXBException
      */
     public Configuration getConfiguration() throws JAXBException {
+        String configData = plt.getConfigData();
+        if (configData == null)
+            return null;
+
         Configuration config = new Configuration();
         JAXBContext context = JAXBContext.newInstance(Configuration.class,
             Rectangle.class);
@@ -120,15 +136,14 @@ public class Template implements Serializable {
         throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(Configuration.class,
             Rectangle.class);
-        Marshaller marshaller;
-        marshaller = context.createMarshaller();
+        Marshaller marshaller = context.createMarshaller();
         StringWriter sw = new StringWriter();
-        marshaller.marshal(config, sw);
+        marshaller.marshal(configuration, sw);
         plt.setConfigData(sw.toString());
     }
 
     public Rectangle getKey(String key) {
-        return config.getSettingsKey(key);
+        return config.getSetting(key);
     }
 
     public void persist() throws Exception {
@@ -146,10 +161,5 @@ public class Template implements Serializable {
         tplt.plt = PrinterLabelTemplateWrapper.getTemplateByName(
             SessionManager.getAppService(), name);
         return tplt;
-    }
-
-    public static List<String> getTemplateNames() throws ApplicationException {
-        return PrinterLabelTemplateWrapper.getTemplateNames(SessionManager
-            .getAppService());
     }
 }
