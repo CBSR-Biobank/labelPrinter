@@ -64,12 +64,13 @@ public class JasperFileEditorView extends ViewPart {
 
     @Override
     public void createPartControl(Composite parent) {
-        shell = parent.getShell();
 
+        shell = parent.getShell();
         top = new Composite(parent, SWT.NONE);
         top.setLayout(new GridLayout());
 
         createGroup();
+
     }
 
     @Override

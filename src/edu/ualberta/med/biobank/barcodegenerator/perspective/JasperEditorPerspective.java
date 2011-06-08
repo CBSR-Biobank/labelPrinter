@@ -11,4 +11,5 @@ public class JasperEditorPerspective implements IPerspectiveFactory {
     public void createInitialLayout(IPageLayout layout) {
         layout.setEditorAreaVisible(false);
     }
+    
 }
