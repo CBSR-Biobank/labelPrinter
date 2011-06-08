@@ -9,6 +9,12 @@ import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.Element
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.BarcodeCreationException;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.ElementCreationException;
 
+/**
+ * Used for generating and rendering a datamatrix based barcode.
+ * 
+ * @author Thomas Polasek 2011
+ * 
+ */
 public class Barcode2D extends Element {
 
     public Barcode2D(Rectangle rect, String message)

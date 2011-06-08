@@ -7,6 +7,16 @@ import java.util.ArrayList;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.containers.BarcodeImage;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.containers.PatientInfo;
 
+/**
+ * After gui data is obtained the jasper maker class with generate a jasper
+ * outline. The jasper outline contains a list of elements for each field in the
+ * jasper template.
+ * 
+ * Jasper filler uses information from this class to create the label sheet.
+ * 
+ * @author Thomas Polasek 2011
+ * 
+ */
 public class JasperOutline {
 
     private Branding branding;

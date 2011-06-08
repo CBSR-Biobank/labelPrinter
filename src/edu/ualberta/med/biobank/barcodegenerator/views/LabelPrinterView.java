@@ -53,6 +53,15 @@ import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.exception
 import edu.ualberta.med.biobank.gui.common.BiobankGuiCommonPlugin;
 import gov.nih.nci.system.applicationservice.ApplicationException;
 
+/**
+ * 
+ * View for entering patient information, selecting a logo and picking a
+ * template file. The user prints and saves the barcode label prints from this
+ * interface.
+ * 
+ * @author Thomas Polasek 2011
+ * 
+ */
 public class LabelPrinterView extends ViewPart {
 
     public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView";
@@ -148,7 +157,7 @@ public class LabelPrinterView extends ViewPart {
     }
 
     /**
-
+     * 
      * This method initializes composite3
      * 
      * @throws ApplicationException
@@ -832,7 +841,7 @@ public class LabelPrinterView extends ViewPart {
             } catch (InterruptedException e2) {
             }
 
-            if (printOperation.isSuccessfulSave()) {
+            if (printOperation.isSuccessful()) {
                 updateSavePreferences();
 
             } else {
@@ -894,7 +903,7 @@ public class LabelPrinterView extends ViewPart {
             } catch (InterruptedException e2) {
             }
 
-            if (saveOperation.isSuccessfulSave()) {
+            if (saveOperation.isSuccessful()) {
                 String parentDir = new File(pdfFilePath).getParentFile()
                     .getPath();
                 if (parentDir != null)

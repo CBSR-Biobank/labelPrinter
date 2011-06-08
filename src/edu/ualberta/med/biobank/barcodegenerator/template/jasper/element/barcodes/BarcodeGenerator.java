@@ -11,60 +11,85 @@ import org.krysalis.barcode4j.output.bitmap.BitmapCanvasProvider;
 
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.BarcodeCreationException;
 
+/**
+ * Wrapper for the barcode4j library.
+ * 
+ * @author Thomas Polasek 2011
+ * 
+ */
 public class BarcodeGenerator {
 
-	public static BufferedImage generate2DBarcode(String barcodeMsg, int dpi)
-			throws IOException, BarcodeCreationException {
+    /**
+     * Creates a 2D datamatrix barcode buffered image.
+     * 
+     * @param barcodeMsg
+     * @param dpi
+     * @return
+     * @throws IOException
+     * @throws BarcodeCreationException
+     */
+    public static BufferedImage generate2DBarcode(String barcodeMsg, int dpi)
+        throws IOException, BarcodeCreationException {
 
-		if (barcodeMsg == null || barcodeMsg.length() == 0)
-			throw new BarcodeCreationException(
-					"null or empty msg specified to 2D barcode generator");
+        if (barcodeMsg == null || barcodeMsg.length() == 0)
+            throw new BarcodeCreationException(
+                "null or empty msg specified to 2D barcode generator");
 
-		if (dpi < 1 || dpi > 1000)
-			throw new BarcodeCreationException("dpi range is 1-1000");
+        if (dpi < 1 || dpi > 1000)
+            throw new BarcodeCreationException("dpi range is 1-1000");
 
-		DataMatrixBean barcodeGenDataMatrix = new DataMatrixBean();
-		barcodeGenDataMatrix.setMaxSize(new Dimension(18, 18));
-		barcodeGenDataMatrix.setMinSize(new Dimension(18, 18));
-		barcodeGenDataMatrix.setModuleWidth(1);
-		barcodeGenDataMatrix.setQuietZone(0);
-		barcodeGenDataMatrix.setVerticalQuietZone(0);
+        DataMatrixBean barcodeGenDataMatrix = new DataMatrixBean();
+        barcodeGenDataMatrix.setMaxSize(new Dimension(18, 18));
+        barcodeGenDataMatrix.setMinSize(new Dimension(18, 18));
+        barcodeGenDataMatrix.setModuleWidth(1);
+        barcodeGenDataMatrix.setQuietZone(0);
+        barcodeGenDataMatrix.setVerticalQuietZone(0);
 
-		BitmapCanvasProvider provider = new BitmapCanvasProvider(dpi,
-				BufferedImage.TYPE_BYTE_GRAY, true, 0);
-		barcodeGenDataMatrix.generateBarcode(provider, barcodeMsg);
+        BitmapCanvasProvider provider = new BitmapCanvasProvider(dpi,
+            BufferedImage.TYPE_BYTE_GRAY, true, 0);
+        barcodeGenDataMatrix.generateBarcode(provider, barcodeMsg);
 
-		provider.finish();
-		return provider.getBufferedImage();
-	}
+        provider.finish();
+        return provider.getBufferedImage();
+    }
 
-	public static BufferedImage generate1DBarcode(String barcodeMsg, Font font,
-			int dpi) throws BarcodeCreationException, IOException {
+    /**
+     * Creates a 128 code 1D barcode buffered image.
+     * 
+     * @param barcodeMsg
+     * @param font
+     * @param dpi
+     * @return
+     * @throws BarcodeCreationException
+     * @throws IOException
+     */
+    public static BufferedImage generate1DBarcode(String barcodeMsg, Font font,
+        int dpi) throws BarcodeCreationException, IOException {
 
-		if (font == null)
-			throw new BarcodeCreationException(
-					"null font specified to 1D barcode generator");
+        if (font == null)
+            throw new BarcodeCreationException(
+                "null font specified to 1D barcode generator");
 
-		if (barcodeMsg == null || barcodeMsg.length() == 0)
-			throw new BarcodeCreationException(
-					"null or empty msg specified to 1D barcode generator");
+        if (barcodeMsg == null || barcodeMsg.length() == 0)
+            throw new BarcodeCreationException(
+                "null or empty msg specified to 1D barcode generator");
 
-		if (dpi < 1 || dpi > 1000)
-			throw new BarcodeCreationException("dpi range is 1-1000");
+        if (dpi < 1 || dpi > 1000)
+            throw new BarcodeCreationException("dpi range is 1-1000");
 
-		Code128Bean barcodeGenCode128 = new Code128Bean();
-		barcodeGenCode128.setBarHeight(5);// 6
-		barcodeGenCode128.setModuleWidth(0.2);// 0.2
-		barcodeGenCode128.setFontName(font.getName());
-		barcodeGenCode128.setQuietZone(0);
-		barcodeGenCode128.setVerticalQuietZone(0);
+        Code128Bean barcodeGenCode128 = new Code128Bean();
+        barcodeGenCode128.setBarHeight(5);// 6
+        barcodeGenCode128.setModuleWidth(0.2);// 0.2
+        barcodeGenCode128.setFontName(font.getName());
+        barcodeGenCode128.setQuietZone(0);
+        barcodeGenCode128.setVerticalQuietZone(0);
 
-		BitmapCanvasProvider provider = new BitmapCanvasProvider(dpi,
-				BufferedImage.TYPE_BYTE_GRAY, true, 0);
-		barcodeGenCode128.generateBarcode(provider, barcodeMsg);
+        BitmapCanvasProvider provider = new BitmapCanvasProvider(dpi,
+            BufferedImage.TYPE_BYTE_GRAY, true, 0);
+        barcodeGenCode128.generateBarcode(provider, barcodeMsg);
 
-		provider.finish();
-		return provider.getBufferedImage();
-	}
+        provider.finish();
+        return provider.getBufferedImage();
+    }
 
 }

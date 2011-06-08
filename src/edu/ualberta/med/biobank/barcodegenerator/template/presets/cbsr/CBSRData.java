@@ -4,6 +4,13 @@ import java.io.ByteArrayInputStream;
 
 import edu.ualberta.med.biobank.barcodegenerator.template.Template;
 
+/**
+ * Class passed to a CBSR jasper label maker class. Contains the user input from
+ * the GUI.
+ * 
+ * @author Thomas Polasek 2011
+ * 
+ */
 public class CBSRData {
     public String projectTileStr;
     public ByteArrayInputStream logoStream;

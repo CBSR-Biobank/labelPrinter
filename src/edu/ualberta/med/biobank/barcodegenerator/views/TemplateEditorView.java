@@ -42,6 +42,14 @@ import edu.ualberta.med.biobank.gui.common.BiobankGuiCommonPlugin;
 import edu.ualberta.med.biobank.gui.common.GuiCommonSessionState;
 import gov.nih.nci.system.applicationservice.ApplicationException;
 
+/**
+ * 
+ * View for making templates. Consists of a configuration tree editor to edit
+ * jasper maker specific configuration settings.
+ * 
+ * @author Thomas Polasek 2011
+ * 
+ */
 public class TemplateEditorView extends ViewPart {
 
     public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.views.TemplateEditorView";

@@ -5,6 +5,13 @@ import java.awt.Graphics2D;
 import edu.ualberta.med.biobank.barcodegenerator.template.configuration.Rectangle;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.BarcodeCreationException;
 
+/**
+ * Elements are objects that rendered onto a given jasper template. The jasper
+ * filler is responcible for loading and plotting elements.
+ * 
+ * @author Thomas Polasek 2011
+ * 
+ */
 public abstract class Element {
     public static enum TYPE {
         GenCode128, DataMatrix, Text, None,
