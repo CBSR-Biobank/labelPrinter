@@ -26,7 +26,7 @@ public class Template implements Serializable {
 
     private String name = "default";
 
-    PrinterLabelTemplateWrapper plt;
+    private PrinterLabelTemplateWrapper plt;
 
     private byte[] jasperTemplateFileData = null;
 

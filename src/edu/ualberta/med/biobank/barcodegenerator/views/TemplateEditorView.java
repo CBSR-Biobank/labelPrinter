@@ -20,8 +20,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
@@ -38,6 +38,7 @@ import edu.ualberta.med.biobank.barcodegenerator.template.TemplateStore;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSRLabelMaker;
 import edu.ualberta.med.biobank.barcodegenerator.trees.ConfigurationTree;
 import edu.ualberta.med.biobank.barcodegenerator.trees.TreeException;
+import edu.ualberta.med.biobank.barcodegenerator.views.JasperFileEditorView.JasperFileStore;
 import edu.ualberta.med.biobank.gui.common.BiobankGuiCommonPlugin;
 import edu.ualberta.med.biobank.gui.common.GuiCommonSessionState;
 import gov.nih.nci.system.applicationservice.ApplicationException;
@@ -63,8 +64,7 @@ public class TemplateEditorView extends ViewPart {
     private Text templateNameText = null;
     private Label label1 = null;
     private Text printerNameText = null;
-    private Text jasperFileText = null;
-    private Button browseButton = null;
+    private Combo jasperFileCombo = null;
     private List list = null;
     private Group composite6 = null;
     private ConfigurationTree configTree = null;
@@ -91,10 +91,6 @@ public class TemplateEditorView extends ViewPart {
             loggedIn = sessionSourceProvider.getCurrentState()
                 .get(GuiCommonSessionState.SESSION_STATE_SOURCE_NAME)
                 .equals(GuiCommonSessionState.LOGGED_IN);
-
-            if (loggedIn) {
-                templateStore = new TemplateStore();
-            }
 
             shell = parent.getShell();
             top = new Composite(parent, SWT.NONE);
@@ -318,24 +314,22 @@ public class TemplateEditorView extends ViewPart {
         }
     };
 
-    private void updateJasperFileText(String selectedName) {
+    private void updatejasperFileCombo() {
 
-        if (templateSelected == null)
+        if (templateSelected == null) {
+            jasperFileCombo.deselectAll();
             return;
+        }
 
+        // FIXME make jasper file combo box select the correct name
+        // from the template selected.
         if (!templateSelected.jasperFileDataExists()) {
-            jasperFileText.setText("Select a Jasper file.");
-            jasperFileText.setBackground(new Color(shell.getDisplay(), 255, 0,
-                0));
+            jasperFileCombo.deselectAll();
         } else {
-            if (selectedName == null) {
-                selectedName = "Jasper file loaded";
-            }
-            jasperFileText.setText(selectedName);
-            jasperFileText.setBackground(new Color(shell.getDisplay(), 255,
+            jasperFileCombo.setBackground(new Color(shell.getDisplay(), 255,
                 255, 255));
         }
-        jasperFileText.redraw();
+        jasperFileCombo.redraw();
     }
 
     private void setSelectedTemplate(Template t) {
@@ -344,8 +338,8 @@ public class TemplateEditorView extends ViewPart {
             templateSelected = null;
             templateNameText.setText("Select a template.");
             printerNameText.setText("");
-            jasperFileText.setText("");
-            jasperFileText.setBackground(new Color(shell.getDisplay(), 255,
+            jasperFileCombo.setText("");
+            jasperFileCombo.setBackground(new Color(shell.getDisplay(), 255,
                 255, 255));
             try {
                 configTree.populateTree(null);
@@ -361,8 +355,7 @@ public class TemplateEditorView extends ViewPart {
             templateNameText.setText(t.getName());
             String printerName = t.getPrinterName();
             printerNameText.setText(printerName != null ? printerName : "");
-
-            updateJasperFileText(null);
+            updatejasperFileCombo();
 
             try {
                 configTree.populateTree(templateSelected.getConfiguration());
@@ -556,8 +549,9 @@ public class TemplateEditorView extends ViewPart {
         label = new Label(composite5, SWT.NONE);
         label.setText("Template Name:");
         templateNameText = new Text(composite5, SWT.BORDER);
-        templateNameText.setEditable(false);
         templateNameText.setLayoutData(gridData7);
+        templateNameText.setEditable(false);
+
         @SuppressWarnings("unused")
         Label filler7 = new Label(composite5, SWT.NONE);
         label = new Label(composite5, SWT.NONE);
@@ -578,50 +572,17 @@ public class TemplateEditorView extends ViewPart {
 
         filler7 = new Label(composite5, SWT.NONE);
         label1 = new Label(composite5, SWT.NONE);
-        label1.setText("Jasper File:");
-        jasperFileText = new Text(composite5, SWT.BORDER);
-        jasperFileText.setEditable(false);
-        jasperFileText.setLayoutData(gridData8);
-        browseButton = new Button(composite5, SWT.NONE);
-        browseButton.setText("Browse...");
-        browseButton.addSelectionListener(new SelectionListener() {
-            public void widgetSelected(SelectionEvent event) {
-                if (templateSelected == null)
-                    return;
+        label1.setText("Jasper Configuration:");
+        jasperFileCombo = new Combo(composite5, SWT.BORDER);
+        jasperFileCombo.setLayoutData(gridData8);
 
-                FileDialog fd = new FileDialog(shell, SWT.OPEN);
-                fd.setText("Select Jasper File");
-                String[] filterExt = { "*.jrxml" };
-                fd.setFilterExtensions(filterExt);
-                String selected = fd.open();
-                if (selected != null) {
+        for (String s : JasperFileStore.getNames()) {
+            jasperFileCombo.add(s);
+        }
 
-                    File selectedFile = new File(selected);
-                    if (!selectedFile.exists()) {
-                        BiobankGuiCommonPlugin.openAsyncError(
-                            "Jasper File Non-existant",
-                            "Could not find the selected Jasper file.");
-                        return;
-                    }
-                    byte[] jasperFileData;
-                    try {
-                        jasperFileData = fileToBytes(selectedFile);
-                    } catch (IOException e) {
-                        BiobankGuiCommonPlugin.openAsyncError(
-                            "Loading Jasper File",
-                            "Could not read the specified jasper file", e);
-                        return;
-                    }
-                    templateSelected.setJasperFileData(jasperFileData);
-                    updateJasperFileText(selected);
-                    templateDirty = true;
-                }
-            }
+        if (jasperFileCombo.getItemCount() > 0)
+            jasperFileCombo.select(0);
 
-            public void widgetDefaultSelected(SelectionEvent event) {
-                widgetSelected(event);
-            }
-        });
     }
 
     public static byte[] fileToBytes(File file) throws IOException {
@@ -738,11 +699,15 @@ public class TemplateEditorView extends ViewPart {
     private void updateForm() {
         try {
             if (loggedIn) {
-                templateStore = new TemplateStore();
+                if (templateStore == null) {
+                    templateStore = new TemplateStore();
+                }
 
                 for (String s : templateStore.getTemplateNames())
                     list.add(s);
                 list.redraw();
+            } else {
+                // TODO: unpopulate list, blannk out all widgets
             }
         } catch (ApplicationException e) {
             BiobankGuiCommonPlugin.openAsyncError("Database Error",
