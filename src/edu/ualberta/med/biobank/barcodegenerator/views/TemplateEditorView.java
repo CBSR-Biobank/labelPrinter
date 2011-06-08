@@ -39,8 +39,8 @@ import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSRLabel
 import edu.ualberta.med.biobank.barcodegenerator.trees.ConfigurationTree;
 import edu.ualberta.med.biobank.barcodegenerator.trees.TreeException;
 import edu.ualberta.med.biobank.barcodegenerator.views.JasperFileEditorView.JasperFileStore;
-import edu.ualberta.med.biobank.gui.common.BiobankGuiCommonPlugin;
-import edu.ualberta.med.biobank.gui.common.GuiCommonSessionState;
+import edu.ualberta.med.biobank.gui.common.BgcPlugin;
+import edu.ualberta.med.biobank.gui.common.BgcSessionState;
 import gov.nih.nci.system.applicationservice.ApplicationException;
 
 public class TemplateEditorView extends ViewPart {
@@ -85,12 +85,12 @@ public class TemplateEditorView extends ViewPart {
     @Override
     public void createPartControl(Composite parent) {
         try {
-            GuiCommonSessionState sessionSourceProvider = BiobankGuiCommonPlugin
+            BgcSessionState sessionSourceProvider = BgcPlugin
                 .getSessionStateSourceProvider();
 
             loggedIn = sessionSourceProvider.getCurrentState()
-                .get(GuiCommonSessionState.SESSION_STATE_SOURCE_NAME)
-                .equals(GuiCommonSessionState.LOGGED_IN);
+                .get(BgcSessionState.SESSION_STATE_SOURCE_NAME)
+                .equals(BgcSessionState.LOGGED_IN);
 
             shell = parent.getShell();
             top = new Composite(parent, SWT.NONE);
@@ -105,7 +105,7 @@ public class TemplateEditorView extends ViewPart {
                         String sourceName, Object sourceValue) {
                         if (sourceValue != null) {
                             loggedIn = sourceValue
-                                .equals(GuiCommonSessionState.LOGGED_IN);
+                                .equals(BgcSessionState.LOGGED_IN);
                             updateForm();
                         }
                     }
@@ -118,7 +118,7 @@ public class TemplateEditorView extends ViewPart {
 
             updateForm();
         } catch (ApplicationException e) {
-            BiobankGuiCommonPlugin.openAsyncError("Form Creation Error",
+            BgcPlugin.openAsyncError("Form Creation Error",
                 "Error while creating form", e);
         }
     }
@@ -277,7 +277,7 @@ public class TemplateEditorView extends ViewPart {
                         int response = messageBox.open();
                         if (response == SWT.YES) {
                             if (templateSelected.getJasperFileData() == null) {
-                                BiobankGuiCommonPlugin
+                                BgcPlugin
                                     .openError("Cannot Save Template",
                                         "A Jasper Template file has not been selected");
                                 return;
@@ -286,7 +286,7 @@ public class TemplateEditorView extends ViewPart {
                             try {
                                 templateSelected.persist();
                             } catch (Exception e2) {
-                                BiobankGuiCommonPlugin.openAsyncError(
+                                BgcPlugin.openAsyncError(
                                     "Template Save Error",
                                     "Error occured saving template", e2);
                             }
@@ -298,7 +298,7 @@ public class TemplateEditorView extends ViewPart {
                     setSelectedTemplate(templateStore
                         .getTemplate(selectedItems[0]));
                 } catch (Exception e1) {
-                    BiobankGuiCommonPlugin.openAsyncError(
+                    BgcPlugin.openAsyncError(
                         "Template Retrieval Error",
                         "Error occured retrieving template: ", e1);
                 }
@@ -344,7 +344,7 @@ public class TemplateEditorView extends ViewPart {
             try {
                 configTree.populateTree(null);
             } catch (TreeException e) {
-                BiobankGuiCommonPlugin.openAsyncError("Set Templat Error",
+                BgcPlugin.openAsyncError("Set Templat Error",
                     e.getError());
             }
             return;
@@ -360,10 +360,10 @@ public class TemplateEditorView extends ViewPart {
             try {
                 configTree.populateTree(templateSelected.getConfiguration());
             } catch (TreeException e) {
-                BiobankGuiCommonPlugin.openAsyncError("Set Template Error",
+                BgcPlugin.openAsyncError("Set Template Error",
                     e.getError());
             } catch (JAXBException e2) {
-                BiobankGuiCommonPlugin.openAsyncError("Set Template Error",
+                BgcPlugin.openAsyncError("Set Template Error",
                     e2.getMessage());
             }
         }
@@ -394,7 +394,7 @@ public class TemplateEditorView extends ViewPart {
 
                         if (templateStore.getTemplateNames().contains(
                             newTemplateName)) {
-                            BiobankGuiCommonPlugin.openAsyncError(
+                            BgcPlugin.openAsyncError(
                                 "Template Exists",
                                 "Your new template must have a unique name.");
                             return;
@@ -410,7 +410,7 @@ public class TemplateEditorView extends ViewPart {
                         list.redraw();
                     }
                 } catch (Exception e1) {
-                    BiobankGuiCommonPlugin.openAsyncError(
+                    BgcPlugin.openAsyncError(
                         "Template Create Error", "Could not create template",
                         e1);
                 }
@@ -441,7 +441,7 @@ public class TemplateEditorView extends ViewPart {
 
                             if (templateStore.getTemplateNames().contains(
                                 cloneName)) {
-                                BiobankGuiCommonPlugin
+                                BgcPlugin
                                     .openAsyncError("Template Exists",
                                         "Your new template must have a unique name.");
                                 return;
@@ -455,7 +455,7 @@ public class TemplateEditorView extends ViewPart {
                         }
                     }
                 } catch (Exception e1) {
-                    BiobankGuiCommonPlugin.openAsyncError(
+                    BgcPlugin.openAsyncError(
                         "Template Copy Error", "Could not copy template", e1);
                 }
             }
@@ -502,7 +502,7 @@ public class TemplateEditorView extends ViewPart {
                                     .getTemplate(list.getItem(lastItemIndex)));
 
                             } else {
-                                BiobankGuiCommonPlugin
+                                BgcPlugin
                                     .openAsyncError(
                                         "Template not in Template Store.",
                                         "Template does not exist, already deleted.");
@@ -511,7 +511,7 @@ public class TemplateEditorView extends ViewPart {
                         }
                     }
                 } catch (Exception e1) {
-                    BiobankGuiCommonPlugin.openAsyncError(
+                    BgcPlugin.openAsyncError(
                         "Template Delete Error", "Could not delete template",
                         e1);
                 }
@@ -632,7 +632,7 @@ public class TemplateEditorView extends ViewPart {
                 PlatformUI.getWorkbench().getBrowserSupport()
                     .getExternalBrowser().openURL(new URL(HELP_URL));
             } catch (Exception e1) {
-                BiobankGuiCommonPlugin.openAsyncError("Open URL Problem",
+                BgcPlugin.openAsyncError("Open URL Problem",
                     "Could not open help url.\n\n" + e1.getMessage());
                 return;
             }
@@ -649,7 +649,7 @@ public class TemplateEditorView extends ViewPart {
         try {
             configTree.resetEditor();
         } catch (TreeException e2) {
-            BiobankGuiCommonPlugin.openAsyncError("Editor Error",
+            BgcPlugin.openAsyncError("Editor Error",
                 "Could not reset editor: " + e2.getError());
             return;
         }
@@ -658,7 +658,7 @@ public class TemplateEditorView extends ViewPart {
         }
 
         if (templateSelected == null) {
-            BiobankGuiCommonPlugin.openAsyncError("No Template Selected",
+            BgcPlugin.openAsyncError("No Template Selected",
                 "Cannot save template. Please select a template first.");
             return;
         }
@@ -666,7 +666,7 @@ public class TemplateEditorView extends ViewPart {
         try {
             templateSelected.persist();
         } catch (IOException e1) {
-            BiobankGuiCommonPlugin.openAsyncError("Save Template Error",
+            BgcPlugin.openAsyncError("Save Template Error",
                 "Could not save template: " + e1);
             return;
         }
@@ -684,7 +684,7 @@ public class TemplateEditorView extends ViewPart {
                 messageBox.setText("Template Saved");
                 messageBox.open();
             } catch (Exception e1) {
-                BiobankGuiCommonPlugin.openAsyncError("Save Template Error",
+                BgcPlugin.openAsyncError("Save Template Error",
                     "Could not save template: " + e1);
             }
         }
@@ -710,7 +710,7 @@ public class TemplateEditorView extends ViewPart {
                 // TODO: unpopulate list, blannk out all widgets
             }
         } catch (ApplicationException e) {
-            BiobankGuiCommonPlugin.openAsyncError("Database Error",
+            BgcPlugin.openAsyncError("Database Error",
                 "Error while updating form", e);
         }
     }

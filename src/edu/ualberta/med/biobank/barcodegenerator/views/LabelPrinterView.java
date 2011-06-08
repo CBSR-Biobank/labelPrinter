@@ -50,7 +50,7 @@ import edu.ualberta.med.biobank.barcodegenerator.template.Template;
 import edu.ualberta.med.biobank.barcodegenerator.template.TemplateStore;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSRData;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.exceptions.CBSRGuiVerificationException;
-import edu.ualberta.med.biobank.gui.common.BiobankGuiCommonPlugin;
+import edu.ualberta.med.biobank.gui.common.BgcPlugin;
 import gov.nih.nci.system.applicationservice.ApplicationException;
 
 public class LabelPrinterView extends ViewPart {
@@ -809,7 +809,7 @@ public class LabelPrinterView extends ViewPart {
             try {
                 guiData = new BarcodeViewGuiData();
             } catch (CBSRGuiVerificationException e1) {
-                BiobankGuiCommonPlugin.openAsyncError("Gui Validation",
+                BgcPlugin.openAsyncError("Gui Validation",
                     e1.getMessage());
                 return;
             }
@@ -841,7 +841,7 @@ public class LabelPrinterView extends ViewPart {
             }
 
             if (printOperation.errorExists()) {
-                BiobankGuiCommonPlugin.openAsyncError(
+                BgcPlugin.openAsyncError(
                     printOperation.getError()[0], printOperation.getError()[1]);
             }
 
@@ -861,7 +861,7 @@ public class LabelPrinterView extends ViewPart {
             try {
                 guiData = new BarcodeViewGuiData();
             } catch (CBSRGuiVerificationException e1) {
-                BiobankGuiCommonPlugin.openAsyncError("Gui Validation",
+                BgcPlugin.openAsyncError("Gui Validation",
                     e1.getMessage());
                 return;
             }
@@ -909,7 +909,7 @@ public class LabelPrinterView extends ViewPart {
             }
 
             if (saveOperation.errorExists()) {
-                BiobankGuiCommonPlugin.openAsyncError(
+                BgcPlugin.openAsyncError(
                     saveOperation.getError()[0], saveOperation.getError()[1]);
             }
 
