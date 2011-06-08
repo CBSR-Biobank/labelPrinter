@@ -12,6 +12,14 @@ import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSRLabel
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.exceptions.CBSRPdfGenException;
 import edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView.BarcodeViewGuiData;
 
+/**
+ * 
+ * Loads the guiData and template data into the appropiate jasper maker class.
+ * After the jasper operation is completed, a pdf is created and saved.
+ * 
+ * @author Thomas Polasek 2011
+ * 
+ */
 public class SaveOperation extends BarcodeGenerationOperation {
 
     private String pdfFilePath = "";
@@ -26,7 +34,7 @@ public class SaveOperation extends BarcodeGenerationOperation {
 
         byte[] pdfdata = null;
 
-        successfulSave = false;
+        successful = false;
         monitor
             .beginTask("Saving Barcode Labels PDF", IProgressMonitor.UNKNOWN);
 
@@ -36,11 +44,11 @@ public class SaveOperation extends BarcodeGenerationOperation {
 
         } catch (CBSRPdfGenException e1) {
             monitor.done();
-            successfulSave = false;
+            successful = false;
             setError("Gui Validation", e1.getError());
         } catch (JAXBException e2) {
             monitor.done();
-            successfulSave = false;
+            successful = false;
             setError("Gui Validation", e2.getMessage());
         }
 
@@ -51,11 +59,11 @@ public class SaveOperation extends BarcodeGenerationOperation {
                 fos = new FileOutputStream(pdfFilePath);
                 fos.write(pdfdata);
                 fos.close();
-                successfulSave = true;
+                successful = true;
 
             } catch (Exception e1) {
                 monitor.done();
-                successfulSave = false;
+                successful = false;
                 setError("Saving Pdf",
                     "Problem saving file: " + e1.getMessage());
                 return;
@@ -65,7 +73,7 @@ public class SaveOperation extends BarcodeGenerationOperation {
         monitor.done();
 
         if (monitor.isCanceled()) {
-            successfulSave = false;
+            successful = false;
             new File(pdfFilePath).delete();
         }
     }

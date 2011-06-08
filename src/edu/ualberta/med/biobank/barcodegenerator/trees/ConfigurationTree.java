@@ -22,6 +22,11 @@ import org.eclipse.swt.widgets.TreeItem;
 import edu.ualberta.med.biobank.barcodegenerator.template.configuration.Configuration;
 import edu.ualberta.med.biobank.barcodegenerator.template.configuration.Rectangle;
 
+/**
+ * 
+ * @author Thomas Polasek 2011
+ * 
+ */
 public class ConfigurationTree {
 
     // tree cannot be subclassed
@@ -34,6 +39,9 @@ public class ConfigurationTree {
     private Configuration configuration;
 
     /**
+     * Used for modifying configuration data. Creates a tree structure from the
+     * key name.
+     * 
      * createTreeItem("animal.dog.nose.hair", new Rectangle(1,2,3,4)) will
      * create the root node "animal", then the child node "dog", then the
      * child-child node "nose", the last (leaf) node "hair" will have its column

@@ -28,6 +28,12 @@ import org.eclipse.swt.layout.RowLayout;
 
 import edu.ualberta.med.biobank.barcodegenerator.dialogs.StringInputDialog;
 
+/**
+ * View for adding new jasper files that are mapped to a user chosen name.
+ * 
+ * @author Thomas Polasek 2011
+ * 
+ */
 public class JasperFileEditorView extends ViewPart {
 
     public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.views.JasperFileEditorView";
