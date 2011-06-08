@@ -229,10 +229,6 @@ public class JasperFileEditorView extends ViewPart {
                 i++;
             }
 
-            if (i == 0) {
-                jasperConfigNames = new String[] { "Apple", "Seed" };
-            }
-
             return jasperConfigNames;
         }
 
