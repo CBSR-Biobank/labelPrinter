@@ -21,12 +21,32 @@ import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.Elem
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.JasperFillException;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.exceptions.CBSRPdfGenException;
 
+/**
+ * 
+ * Used for setting up the default configuration key-value settings. Creating a
+ * jasper outline from a specific jasper-file layout. This class also has
+ * supporting functions to create a pdf and print to printer. Essientially it
+ * provides the relationship between the gui and the jasper filler.
+ * 
+ * 
+ * @author Thomas Polasek 2011
+ * 
+ */
 public class CBSRLabelMaker {
 
     private static final int BARCODE_COUNT = 32;
 
     private static final long serialVersionUID = -6346822010546940605L;
 
+    /**
+     * Generates a jasper outline and creates a pdf file byte array.
+     * 
+     * @param cbsrData
+     * @param barcodeStrings
+     * @return
+     * @throws CBSRPdfGenException
+     * @throws JAXBException
+     */
     public static byte[] generatePdfCBSR(CBSRData cbsrData,
         ArrayList<String> barcodeStrings) throws CBSRPdfGenException,
         JAXBException {
@@ -52,6 +72,13 @@ public class CBSRLabelMaker {
         return pdfData;
     }
 
+    /**
+     * Generates a jasper outline and prints to a specified printer.
+     * 
+     * @param cbsrData
+     * @param barcodeStrings
+     * @throws CBSRPdfGenException
+     */
     public static void printLabelsCBSR(CBSRData cbsrData,
         ArrayList<String> barcodeStrings) throws CBSRPdfGenException {
 
@@ -216,6 +243,16 @@ public class CBSRLabelMaker {
 
     }
 
+    /**
+     * 
+     * Set of default configurations. This class is required to be called upon
+     * the creation of a new jasper template. This configuration class uses
+     * these key values to plot the appropiate tree for editing configuration
+     * settings. Please be cautious when changing any key value names. Ensure
+     * that all references to these key values are updated.
+     * 
+     * @return
+     */
     public static Configuration getDefaultConfiguration() {
         Configuration config = new Configuration();
 

@@ -18,6 +18,14 @@ import edu.ualberta.med.biobank.common.wrappers.JasperTemplateWrapper;
 import edu.ualberta.med.biobank.common.wrappers.PrinterLabelTemplateWrapper;
 import gov.nih.nci.system.applicationservice.ApplicationException;
 
+/**
+ * Contains a name, intented printer name, jasper file reference and a
+ * configuration reference. This class is used to store specific configuration
+ * data for a chosen jasper file. 
+ * 
+ * @author Thomas Polasek 2011
+ * 
+ */
 public class Template implements Serializable {
 
     private static final long serialVersionUID = -4213741888020425604L;

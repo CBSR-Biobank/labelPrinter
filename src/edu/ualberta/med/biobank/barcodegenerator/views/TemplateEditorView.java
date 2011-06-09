@@ -14,7 +14,6 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -43,6 +42,14 @@ import edu.ualberta.med.biobank.gui.common.BgcPlugin;
 import edu.ualberta.med.biobank.gui.common.BgcSessionState;
 import gov.nih.nci.system.applicationservice.ApplicationException;
 
+/**
+ * 
+ * View for making templates. Consists of a configuration tree editor to edit
+ * jasper maker specific configuration settings.
+ * 
+ * @author Thomas Polasek 2011
+ * 
+ */
 public class TemplateEditorView extends ViewPart {
 
     public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.views.TemplateEditorView";
@@ -276,10 +283,13 @@ public class TemplateEditorView extends ViewPart {
                         messageBox.setText("Template Editor Saving");
                         int response = messageBox.open();
                         if (response == SWT.YES) {
+                            // FIXME check if user selected a valid jasper
+                            // config
+                            // from the jaspercombo
                             if (templateSelected.getJasperFileData() == null) {
                                 BgcPlugin
                                     .openError("Cannot Save Template",
-                                        "A Jasper Template file has not been selected");
+                                        "A Jasper Configuration has not been selected.");
                                 return;
                             }
 
@@ -316,20 +326,23 @@ public class TemplateEditorView extends ViewPart {
 
     private void updatejasperFileCombo() {
 
-        if (templateSelected == null) {
-            jasperFileCombo.deselectAll();
+        jasperFileCombo.setEnabled(false);
+        jasperFileCombo.deselectAll();
+
+        if (templateSelected == null)
             return;
-        }
 
         // FIXME make jasper file combo box select the correct name
         // from the template selected.
-        if (!templateSelected.jasperFileDataExists()) {
-            jasperFileCombo.deselectAll();
-        } else {
-            jasperFileCombo.setBackground(new Color(shell.getDisplay(), 255,
-                255, 255));
-        }
-        jasperFileCombo.redraw();
+
+        jasperFileCombo.setEnabled(true);
+
+        /*
+         * if (!templateSelected.jasperFileDataExists()) {
+         * jasperFileCombo.deselectAll(); } else {
+         * jasperFileCombo.setBackground(new Color(shell.getDisplay(), 255, 255,
+         * 255)); }
+         */
     }
 
     private void setSelectedTemplate(Template t) {
@@ -338,9 +351,9 @@ public class TemplateEditorView extends ViewPart {
             templateSelected = null;
             templateNameText.setText("Select a template.");
             printerNameText.setText("");
-            jasperFileCombo.setText("");
-            jasperFileCombo.setBackground(new Color(shell.getDisplay(), 255,
-                255, 255));
+            jasperFileCombo.setEnabled(false);
+            jasperFileCombo.deselectAll();
+
             try {
                 configTree.populateTree(null);
             } catch (TreeException e) {
@@ -579,9 +592,8 @@ public class TemplateEditorView extends ViewPart {
         for (String s : JasperFileStore.getNames()) {
             jasperFileCombo.add(s);
         }
-
-        if (jasperFileCombo.getItemCount() > 0)
-            jasperFileCombo.select(0);
+        jasperFileCombo.deselectAll();
+        jasperFileCombo.setEnabled(false);
 
     }
 
@@ -644,23 +656,29 @@ public class TemplateEditorView extends ViewPart {
         }
     };
 
-    private void saveCurrentTemplate() throws Exception {
+    private boolean saveCurrentTemplate() throws Exception {
 
         try {
             configTree.resetEditor();
         } catch (TreeException e2) {
             BgcPlugin.openAsyncError("Editor Error",
                 "Could not reset editor: " + e2.getError());
-            return;
+            return false;
         }
         if (!templateDirty && !configTree.isDirty()) {
-            return;
+            return true;
         }
 
         if (templateSelected == null) {
             BgcPlugin.openAsyncError("No Template Selected",
                 "Cannot save template. Please select a template first.");
-            return;
+            return false;
+        }
+        // FIXME
+        if (templateSelected.getJasperFileData() == null) {
+            BiobankGuiCommonPlugin.openError("Cannot Save Template",
+                "A Jasper Configuration has not been selected.");
+            return false;
         }
 
         try {
@@ -668,21 +686,24 @@ public class TemplateEditorView extends ViewPart {
         } catch (IOException e1) {
             BgcPlugin.openAsyncError("Save Template Error",
                 "Could not save template: " + e1);
-            return;
+            return false;
         }
         templateDirty = false;
+        return true;
     }
 
     private SelectionListener saveAllListener = new SelectionListener() {
         @Override
         public void widgetSelected(SelectionEvent e) {
             try {
-                saveCurrentTemplate();
-                MessageBox messageBox = new MessageBox(shell,
-                    SWT.ICON_INFORMATION | SWT.OK);
-                messageBox.setMessage("Template has been successfully saved.");
-                messageBox.setText("Template Saved");
-                messageBox.open();
+                if (saveCurrentTemplate()) {
+                    MessageBox messageBox = new MessageBox(shell,
+                        SWT.ICON_INFORMATION | SWT.OK);
+                    messageBox
+                        .setMessage("Template has been successfully saved.");
+                    messageBox.setText("Template Saved");
+                    messageBox.open();
+                }
             } catch (Exception e1) {
                 BgcPlugin.openAsyncError("Save Template Error",
                     "Could not save template: " + e1);

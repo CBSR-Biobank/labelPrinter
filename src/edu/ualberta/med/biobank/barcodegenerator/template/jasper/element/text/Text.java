@@ -8,6 +8,12 @@ import edu.ualberta.med.biobank.barcodegenerator.template.configuration.Rectangl
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.Element;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.ElementCreationException;
 
+/**
+ * Used for generating and rendering a text fields.
+ * 
+ * @author Thomas Polasek 2011
+ * 
+ */
 public class Text extends Element {
 
     // TODO allow user to set font size

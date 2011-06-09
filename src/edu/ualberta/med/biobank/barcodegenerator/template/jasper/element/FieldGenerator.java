@@ -8,6 +8,13 @@ import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.barcode
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.text.Text;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.ElementCreationException;
 
+/**
+ * Generates text element (2x) ,1D barcode elements in a single batch. Useful
+ * for patient information fields.
+ * 
+ * @author Thomas Polasek 2011
+ * 
+ */
 public class FieldGenerator {
 
     public static ArrayList<Element> generateElements(Rectangle textRect,

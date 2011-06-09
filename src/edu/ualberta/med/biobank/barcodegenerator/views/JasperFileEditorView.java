@@ -28,6 +28,12 @@ import org.eclipse.swt.layout.RowLayout;
 
 import edu.ualberta.med.biobank.barcodegenerator.dialogs.StringInputDialog;
 
+/**
+ * View for adding new jasper files that are mapped to a user chosen name.
+ * 
+ * @author Thomas Polasek 2011
+ * 
+ */
 public class JasperFileEditorView extends ViewPart {
 
     public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.views.JasperFileEditorView";
@@ -221,6 +227,11 @@ public class JasperFileEditorView extends ViewPart {
                 jasperConfigNames[i] = t.name;
                 i++;
             }
+
+            if (i == 0) {
+                jasperConfigNames = new String[] { "Apple", "Seed" };
+            }
+
             return jasperConfigNames;
         }
 
@@ -355,8 +366,6 @@ public class JasperFileEditorView extends ViewPart {
 
             updateJasperFileText(null);
             templateTypeCombo.setEnabled(true);
-
-            jasperConfigDirty = false;
 
         } else {
             templateTypeCombo.deselectAll();
@@ -506,7 +515,7 @@ public class JasperFileEditorView extends ViewPart {
                 jasperConfigDirty = true;
                 if (jasperConfigSelected != null) {
 
-                    // TODO make sure this stays in sync.
+                    // FIXME make sure this stays in sync.
                     jasperConfigSelected.typeIndex = templateTypeCombo
                         .getSelectionIndex();
                 }
@@ -609,27 +618,29 @@ public class JasperFileEditorView extends ViewPart {
         messageBox.open();
     }
 
-    private void saveCurrentJasperConfig() {
+    private boolean saveCurrentJasperConfig() {
 
         if (jasperConfigSelected == null) {
             Error("No Jasper Configuration Selected",
                 "Cannot save jasper configuration. Please select one first.");
-            return;
+            return false;
         }
         JasperFileStore.update(jasperConfigSelected);
         jasperConfigDirty = false;
+        return true;
     }
 
     private SelectionListener saveAllListener = new SelectionListener() {
         @Override
         public void widgetSelected(SelectionEvent e) {
-            saveCurrentJasperConfig();
-            MessageBox messageBox = new MessageBox(shell, SWT.ICON_INFORMATION
-                | SWT.OK);
-            messageBox
-                .setMessage("Jasper Configuration has been successfully saved.");
-            messageBox.setText("Jasper Configuration Saved");
-            messageBox.open();
+            if (saveCurrentJasperConfig()) {
+                MessageBox messageBox = new MessageBox(shell,
+                    SWT.ICON_INFORMATION | SWT.OK);
+                messageBox
+                    .setMessage("Jasper Configuration has been successfully saved.");
+                messageBox.setText("Jasper Configuration Saved");
+                messageBox.open();
+            }
         }
 
         @Override

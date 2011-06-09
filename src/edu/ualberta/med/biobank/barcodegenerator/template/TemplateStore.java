@@ -8,6 +8,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * For add/editing/listing/removing templates. Contains several helper functions
+ * to access template information.
+ * 
+ * @author Thomas Polasek 2011
+ * 
+ */
 public class TemplateStore {
 
     private static final long serialVersionUID = 5502373669875110097L;

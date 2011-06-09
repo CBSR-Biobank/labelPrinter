@@ -40,12 +40,31 @@ import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.Element
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.BarcodeCreationException;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.JasperFillException;
 
+/**
+ * 
+ * Generates a jasper print file that is used to make pdfs and print to
+ * printers. It parses the jasper xml file and loads constants such as image
+ * sizes into the JasperConstants class. These are referenced and checked
+ * against the jasper outline that is provided to the jasper filler. Any
+ * inconsistencies such as missing barcodes will result in exceptions being
+ * thrown.
+ * 
+ * @author Thomas Polasek 2011
+ * 
+ */
 public class JasperFiller {
 
     private JasperOutline templateData;
 
     JasperConstants jasperConstants = new JasperConstants();
 
+    /**
+     * Holds jasper file specific constants. These are checked against the
+     * supplied jasper outline class.
+     * 
+     * @author Thomas Polasek 2011
+     * 
+     */
     private class JasperConstants {
         public static final String titleField = "PROJECT_TITLE";
         public static final String logoField = "LOGO";
@@ -60,6 +79,13 @@ public class JasperFiller {
         public int patientImageHeight = 0;
     }
 
+    /**
+     * 
+     * Jasper file is parsed in the constructor of the jasper filler class.
+     * 
+     * @param req
+     * @throws JasperFillException
+     */
     public JasperFiller(JasperOutline req) throws JasperFillException {
 
         if (req == null)
@@ -71,6 +97,11 @@ public class JasperFiller {
 
     }
 
+    /**
+     * Constants are loaded from the jasper file.
+     * 
+     * @throws JasperFillException
+     */
     private void loadTemplateConstants() throws JasperFillException {
 
         try {
@@ -130,6 +161,12 @@ public class JasperFiller {
 
     }
 
+    /**
+     * This prints a JasperPrint class to the sepecified printer name.
+     * 
+     * @param printerName is a lookupPrintServices printer name.
+     * @throws JasperFillException
+     */
     public void printJasperToPrinter(String printerName)
         throws JasperFillException {
 
@@ -189,6 +226,12 @@ public class JasperFiller {
         }
     }
 
+    /**
+     * Converts a jasper print into a pdf file.
+     * 
+     * @return
+     * @throws JasperFillException
+     */
     public byte[] generatePdfData() throws JasperFillException {
 
         byte[] reportPdfBtyes = null;
@@ -204,6 +247,14 @@ public class JasperFiller {
         return reportPdfBtyes;
     }
 
+    /**
+     * Creates a jasperprint from a jasper outline and the specified jasper
+     * file. Elements are rendered here. All images generated are passed to
+     * jasper as a png image input stream.
+     * 
+     * @return
+     * @throws JasperFillException
+     */
     private JasperPrint generateJasperPint() throws JasperFillException {
         ByteArrayInputStream patientInfoImg;
         ArrayList<ByteArrayInputStream> barcodeIDBufferList = new ArrayList<ByteArrayInputStream>();

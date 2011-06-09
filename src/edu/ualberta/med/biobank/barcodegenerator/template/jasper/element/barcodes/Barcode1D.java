@@ -10,6 +10,12 @@ import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.Element
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.BarcodeCreationException;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.ElementCreationException;
 
+/**
+ * Used for generating and rendering a 128 Code based 1D barcode.
+ * 
+ * @author Thomas Polasek 2011
+ * 
+ */
 public class Barcode1D extends Element {
 
     Font font;

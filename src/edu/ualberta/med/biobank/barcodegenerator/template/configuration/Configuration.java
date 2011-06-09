@@ -7,6 +7,17 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * 
+ * Holds jasper maker and jasper file specific configuration data.
+ * Configurations are loaded and edited in the configuration tree class.
+ * 
+ * Format of the key is string is alphanumeric text with a period seperator. For
+ * instance, "Patient Info.Bottom Field.Field Text".
+ * 
+ * @author Thomas Polasek 2011
+ * 
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement
 public class Configuration {

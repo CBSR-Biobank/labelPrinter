@@ -13,6 +13,14 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 
+/**
+ * 
+ * Creates a message dialog for obtaining alphanumeric text. Null is returned if
+ * the user does not enter any text or presses the cancel button.
+ * 
+ * @author Thomas Polasek 2011
+ * 
+ */
 public class StringInputDialog extends Dialog {
 
     private String value;
@@ -39,6 +47,12 @@ public class StringInputDialog extends Dialog {
         this.message = message;
     }
 
+    /**
+     * 
+     * @param defaultMessage this is sets the label on the message dialog box.
+     * @return User's text input. Returns null if no text is entered or the
+     *         cancel button is pressed.
+     */
     public String open(String defaultMessage) {
         Shell parent = getParent();
         final Shell shell = new Shell(parent, SWT.TITLE | SWT.BORDER
