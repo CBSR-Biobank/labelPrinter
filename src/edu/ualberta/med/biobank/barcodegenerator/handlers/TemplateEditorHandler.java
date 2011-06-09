@@ -9,7 +9,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.WorkbenchException;
 
 import edu.ualberta.med.biobank.barcodegenerator.BarcodeGenPlugin;
-import edu.ualberta.med.biobank.barcodegenerator.perspective.TemplateEditorPerspective;
 import edu.ualberta.med.biobank.barcodegenerator.views.TemplateEditorView;
 
 public class TemplateEditorHandler extends AbstractHandler implements IHandler {
@@ -22,8 +21,13 @@ public class TemplateEditorHandler extends AbstractHandler implements IHandler {
         try {
             if (workbench.getActiveWorkbenchWindow().getActivePage()
                 .closeAllEditors(true)) {
-                workbench.showPerspective(TemplateEditorPerspective.ID,
+                // workbench.showPerspective(TemplateEditorPerspective.ID,
+                // workbench.getActiveWorkbenchWindow());
+
+                workbench.showPerspective(
+                    "barcodeGenerator.perspective.templateeditor",
                     workbench.getActiveWorkbenchWindow());
+
                 IWorkbenchPage page = workbench.getActiveWorkbenchWindow()
                     .getActivePage();
                 page.showView(TemplateEditorView.ID);

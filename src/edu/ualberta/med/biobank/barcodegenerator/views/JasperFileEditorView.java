@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -26,7 +28,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISourceProviderListener;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
-import org.apache.commons.io.FileUtils;
 
 import edu.ualberta.med.biobank.SessionManager;
 import edu.ualberta.med.biobank.barcodegenerator.dialogs.StringInputDialog;
@@ -263,16 +264,10 @@ public class JasperFileEditorView extends ViewPart {
                 if (selectedItems.length == 1) {
                     if (selectedTemplate != null) {
                         if (jasperConfigDirty) {
-                            MessageBox messageBox = new MessageBox(PlatformUI
-                                .getWorkbench().getActiveWorkbenchWindow()
-                                .getShell(), SWT.ICON_QUESTION | SWT.YES
-                                | SWT.NO);
-                            messageBox
-                                .setMessage("Jasper Configuration has been modified, do you want to save your changes?");
-                            messageBox
-                                .setText("Jasper Configuration Editor Saving");
-                            int response = messageBox.open();
-                            if (response == SWT.YES) {
+                            if (BgcPlugin
+                                .openConfirm(
+                                    "Jasper Configuration Editor Saving",
+                                    "Jasper Configuration has been modified, do you want to save your changes?")) {
                                 selectedTemplate.persist();
                             } else {
                                 selectedTemplate.reload();
@@ -408,32 +403,34 @@ public class JasperFileEditorView extends ViewPart {
                 StringInputDialog dialog = new StringInputDialog(
                     "New Jasper Configuration Name",
                     "What is the name of this new Jasper Configuration?",
-                    PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                        .getShell(), SWT.NONE);
-                String jasperConfigName = dialog.open(null);
+                    "Name", PlatformUI.getWorkbench()
+                        .getActiveWorkbenchWindow().getShell());
+                if (dialog.open() == Dialog.OK) {
+                    String jasperConfigName = dialog.getValue();
 
-                if (!templateMap.containsKey(jasperConfigName)) {
+                    if (!templateMap.containsKey(jasperConfigName)) {
 
-                    JasperTemplateWrapper newTemplate = new JasperTemplateWrapper(
-                        SessionManager.getAppService());
+                        JasperTemplateWrapper newTemplate = new JasperTemplateWrapper(
+                            SessionManager.getAppService());
 
-                    try {
-                        newTemplate.setName(jasperConfigName);
-                        newTemplate.persist();
+                        try {
+                            newTemplate.setName(jasperConfigName);
+                            newTemplate.persist();
 
-                        templateMap.put(jasperConfigName, newTemplate);
-                        list.add(jasperConfigName);
-                        list.redraw();
-                    } catch (Exception e1) {
-                        Error(
-                            "Failed to Save",
-                            "Faile to save newly created template: "
-                                + e1.getMessage());
+                            templateMap.put(jasperConfigName, newTemplate);
+                            list.add(jasperConfigName);
+                            list.redraw();
+                        } catch (Exception e1) {
+                            Error(
+                                "Failed to Save",
+                                "Faile to save newly created template: "
+                                    + e1.getMessage());
+                        }
+
+                    } else {
+                        Error("Jasper Configuration Exists",
+                            "Your new Jasper Configuration must have a unique name.");
                     }
-
-                } else {
-                    Error("Jasper Configuration Exists",
-                        "Your new Jasper Configuration must have a unique name.");
                 }
             }
 

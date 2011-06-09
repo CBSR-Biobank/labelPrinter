@@ -41,13 +41,8 @@
                closeable="true"
                id="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView"
                minimized="false"
-               moveable="true"
-               ratio="1"
-               relationship="top"
                relative="org.eclipse.ui.editorss"
-               showTitle="true"
-               standalone="false"
-               visible="false">
+               relationship="top">
          </view>
       </perspectiveExtension>
       <perspectiveExtension
@@ -55,6 +50,7 @@
          <view
                id="edu.ualberta.med.biobank.barcodegenerator.views.TemplateEditorView"
                minimized="false"
+               relative="org.eclipse.ui.editorss"
                relationship="top">
          </view>
       </perspectiveExtension>
@@ -63,6 +59,7 @@
          <view
                id="edu.ualberta.med.biobank.barcodegenerator.views.JasperFileEditorView"
                minimized="false"
+               relative="org.eclipse.ui.editorss"
                relationship="top">
          </view>
       </perspectiveExtension>
