@@ -1,17 +1,14 @@
 package edu.ualberta.med.biobank.barcodegenerator.dialogs;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Dialog;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
+
+import edu.ualberta.med.biobank.gui.common.dialogs.BgcBaseDialog;
+import edu.ualberta.med.biobank.gui.common.validators.NonEmptyStringValidator;
+import edu.ualberta.med.biobank.gui.common.widgets.BgcBaseText;
 
 /**
  * 
@@ -21,136 +18,76 @@ import org.eclipse.swt.events.KeyListener;
  * @author Thomas Polasek 2011
  * 
  */
-public class StringInputDialog extends Dialog {
+public class StringInputDialog extends BgcBaseDialog {
 
-    private String value;
+    private static final String MSG_NO_ST_NAME = "A value is required";
 
-    private String title;
-    private String message;
+    private class ValuePojo {
+        public String name;
 
-    public StringInputDialog(Shell parent) {
-        super(parent);
-        title = "NumberInputDialog";
-        message = "Please enter a valid number:";
-    }
+        public ValuePojo() {
 
-    public StringInputDialog(Shell parent, int style) {
-        super(parent, style);
-        title = "NumberInputDialog";
-        message = "Please enter a valid number:";
-    }
-
-    public StringInputDialog(String title, String message, Shell parent,
-        int style) {
-        super(parent, style);
-        this.title = title;
-        this.message = message;
-    }
-
-    /**
-     * 
-     * @param defaultMessage this is sets the label on the message dialog box.
-     * @return User's text input. Returns null if no text is entered or the
-     *         cancel button is pressed.
-     */
-    public String open(String defaultMessage) {
-        Shell parent = getParent();
-        final Shell shell = new Shell(parent, SWT.TITLE | SWT.BORDER
-            | SWT.APPLICATION_MODAL);
-        shell.setText(title);
-
-        shell.setLayout(new RowLayout());
-
-        Label label = new Label(shell, SWT.NONE);
-        label.setText(message);
-
-        final Text text = new Text(shell, SWT.SINGLE | SWT.BORDER);
-
-        text.setFocus();
-
-        Button buttonCancel = new Button(shell, SWT.PUSH);
-        buttonCancel.setText("Cancel");
-
-        final Button buttonOK = new Button(shell, SWT.PUSH);
-        buttonOK.setText("Okay");
-
-        text.addListener(SWT.Modify, new Listener() {
-            public void handleEvent(Event event) {
-                try {
-                    value = text.getText();
-                    buttonOK.setEnabled(value.length() > 0);
-                } catch (Exception e) {
-                    buttonOK.setEnabled(false);
-                }
-            }
-        });
-
-        text.addListener(SWT.Verify, new Listener() {
-            public void handleEvent(Event e) {
-
-                if (!e.text.matches("[{0-9, A-Za-z}]*")) {
-                    e.doit = false;
-                    return;
-                }
-            }
-        });
-        text.addKeyListener(new KeyListener() {
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.character == SWT.CR) {
-                    if (buttonOK.isEnabled()) {
-                        shell.dispose();
-                    }
-                }
-            }
-        });
-
-        buttonOK.addListener(SWT.Selection, new Listener() {
-            public void handleEvent(Event event) {
-                shell.dispose();
-            }
-        });
-
-        buttonCancel.addListener(SWT.Selection, new Listener() {
-            public void handleEvent(Event event) {
-                value = null;
-                shell.dispose();
-            }
-        });
-        buttonOK.setEnabled(false);
-
-        value = null;
-
-        if (defaultMessage == null)
-            defaultMessage = "";
-        text.setText(defaultMessage);
-
-        shell.pack();
-        shell.open();
-
-        Display display = parent.getDisplay();
-        while (!shell.isDisposed()) {
-            if (!display.readAndDispatch())
-                display.sleep();
         }
 
-        if (value != null && value.length() == 0)
-            value = null;
+        public void setName(String name) {
+            this.name = name;
+        }
 
-        return value;
+        public String getName() {
+            return name;
+        }
+    };
+
+    private ValuePojo value;
+
+    private String title;
+
+    private String message;
+
+    private String labelText;
+
+    public StringInputDialog(String title, String message, String labelText,
+        Shell parent) {
+        super(parent);
+        this.title = title;
+        this.message = message;
+        this.labelText = labelText;
+        value = new ValuePojo();
     }
 
-    public static void main(String[] args) {
-        Shell shell = new Shell();
-        StringInputDialog dialog = new StringInputDialog("Bacon", "Fries",
-            shell, SWT.NONE);
-        System.out.println(dialog.open(null));
+    @Override
+    protected String getDialogShellTitle() {
+        return title;
     }
 
+    @Override
+    protected String getTitleAreaMessage() {
+        return message;
+    }
+
+    @Override
+    protected String getTitleAreaTitle() {
+        return title;
+    }
+
+    @Override
+    protected void createDialogAreaInternal(Composite parent) throws Exception {
+        Composite content = new Composite(parent, SWT.NONE);
+        content.setLayout(new GridLayout(2, false));
+        content.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+        createBoundWidgetWithLabel(content, BgcBaseText.class, SWT.BORDER,
+            labelText, null, value, "name", new NonEmptyStringValidator(
+                MSG_NO_ST_NAME));
+
+        setOkButtonEnabled(false);
+    }
+
+    public String getValue() {
+        return value.getName();
+    }
+
+    public void setValue(String value) {
+        this.value.setName(value);
+    }
 }

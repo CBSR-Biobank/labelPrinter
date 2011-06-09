@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.xml.bind.JAXBException;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -394,27 +395,31 @@ public class TemplateEditorView extends ViewPart {
                 try {
 
                     StringInputDialog dialog = new StringInputDialog(
-                        "New Template Name",
-                        "What is the name of this new template?", shell,
-                        SWT.NONE);
-                    String newTemplateName = dialog.open(null);
+                        "New Template",
+                        "Please enter the name for the new template", "Name",
+                        shell);
+                    if (dialog.open() == Dialog.OK) {
 
-                    if (newTemplateName != null) {
+                        String newTemplateName = dialog.getValue();
 
-                        if (templateStore.getTemplateNames().contains(
-                            newTemplateName)) {
-                            BgcPlugin.openAsyncError("Template Exists",
-                                "Your new template must have a unique name.");
-                            return;
+                        if (newTemplateName != null) {
+
+                            if (templateStore.getTemplateNames().contains(
+                                newTemplateName)) {
+                                BgcPlugin
+                                    .openAsyncError("Template Exists",
+                                        "Your new template must have a unique name.");
+                                return;
+                            }
+
+                            Template ct = new Template();
+                            ct.setConfiguration(CBSRLabelMaker
+                                .getDefaultConfiguration());
+                            ct.setName(newTemplateName);
+                            templateStore.addTemplate(ct);
+                            list.add(ct.getName());
+                            list.redraw();
                         }
-
-                        Template ct = new Template();
-                        ct.setConfiguration(CBSRLabelMaker
-                            .getDefaultConfiguration());
-                        ct.setName(newTemplateName);
-                        templateStore.addTemplate(ct);
-                        list.add(ct.getName());
-                        list.redraw();
                     }
                 } catch (Exception e1) {
                     BgcPlugin.openAsyncError("Template Create Error",
@@ -438,26 +443,28 @@ public class TemplateEditorView extends ViewPart {
 
                         StringInputDialog dialog = new StringInputDialog(
                             "Cloned Template Name",
-                            "What is the name of the cloned template?", shell,
-                            SWT.NONE);
-                        String cloneName = dialog.open(templateSelected
-                            .getName() + " copy");
+                            "What is the name of the cloned template?", "Name",
+                            shell);
+                        dialog.setValue(templateSelected.getName() + " copy");
+                        if (dialog.open() == Dialog.OK) {
+                            String cloneName = dialog.getValue();
 
-                        if (cloneName != null) {
+                            if (cloneName != null) {
 
-                            if (templateStore.getTemplateNames().contains(
-                                cloneName)) {
-                                BgcPlugin
-                                    .openAsyncError("Template Exists",
-                                        "Your new template must have a unique name.");
-                                return;
+                                if (templateStore.getTemplateNames().contains(
+                                    cloneName)) {
+                                    BgcPlugin
+                                        .openAsyncError("Template Exists",
+                                            "Your new template must have a unique name.");
+                                    return;
+                                }
+
+                                Template clone = templateSelected.clone();
+                                clone.setName(cloneName);
+                                templateStore.addTemplate(clone);
+                                list.add(clone.getName());
+                                list.redraw();
                             }
-
-                            Template clone = templateSelected.clone();
-                            clone.setName(cloneName);
-                            templateStore.addTemplate(clone);
-                            list.add(clone.getName());
-                            list.redraw();
                         }
                     }
                 } catch (Exception e1) {

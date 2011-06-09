@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -263,16 +264,10 @@ public class JasperFileEditorView extends ViewPart {
                 if (selectedItems.length == 1) {
                     if (selectedTemplate != null) {
                         if (jasperConfigDirty) {
-                            MessageBox messageBox = new MessageBox(PlatformUI
-                                .getWorkbench().getActiveWorkbenchWindow()
-                                .getShell(), SWT.ICON_QUESTION | SWT.YES
-                                | SWT.NO);
-                            messageBox
-                                .setMessage("Jasper Configuration has been modified, do you want to save your changes?");
-                            messageBox
-                                .setText("Jasper Configuration Editor Saving");
-                            int response = messageBox.open();
-                            if (response == SWT.YES) {
+                            if (BgcPlugin
+                                .openConfirm(
+                                    "Jasper Configuration Editor Saving",
+                                    "Jasper Configuration has been modified, do you want to save your changes?")) {
                                 selectedTemplate.persist();
                             }
                         }
@@ -410,19 +405,21 @@ public class JasperFileEditorView extends ViewPart {
                 StringInputDialog dialog = new StringInputDialog(
                     "New Jasper Configuration Name",
                     "What is the name of this new Jasper Configuration?",
-                    PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                        .getShell(), SWT.NONE);
-                String jasperConfigName = dialog.open(null);
+                    "Name", PlatformUI.getWorkbench()
+                        .getActiveWorkbenchWindow().getShell());
+                if (dialog.open() == Dialog.OK) {
+                    String jasperConfigName = dialog.getValue();
 
-                if (!templateMap.containsKey(jasperConfigName)) {
-                    selectedTemplate = new JasperTemplateWrapper(SessionManager
-                        .getAppService());
-                    selectedTemplate.setName(jasperConfigName);
-                    list.add(jasperConfigName);
-                    list.redraw();
-                } else {
-                    Error("Jasper Configuration Exists",
-                        "Your new Jasper Configuration must have a unique name.");
+                    if (!templateMap.containsKey(jasperConfigName)) {
+                        selectedTemplate = new JasperTemplateWrapper(
+                            SessionManager.getAppService());
+                        selectedTemplate.setName(jasperConfigName);
+                        list.add(jasperConfigName);
+                        list.redraw();
+                    } else {
+                        Error("Jasper Configuration Exists",
+                            "Your new Jasper Configuration must have a unique name.");
+                    }
                 }
             }
 
