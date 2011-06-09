@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -27,6 +26,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISourceProviderListener;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
+import org.apache.commons.io.FileUtils;
 
 import edu.ualberta.med.biobank.SessionManager;
 import edu.ualberta.med.biobank.barcodegenerator.dialogs.StringInputDialog;
@@ -274,11 +274,13 @@ public class JasperFileEditorView extends ViewPart {
                             int response = messageBox.open();
                             if (response == SWT.YES) {
                                 selectedTemplate.persist();
+                            } else {
+                                selectedTemplate.reload();
                             }
                         }
                     }
 
-                    setSelectedJasperConifg(templateMap.get(selectedItems[0]));
+                    setSelectedJasperConfig(templateMap.get(selectedItems[0]));
                 } else {
                     BgcPlugin.openAsyncError("Selection Listener Error",
                         "invalid selected items length: "
@@ -322,22 +324,22 @@ public class JasperFileEditorView extends ViewPart {
         jasperFileText.redraw();
     }
 
-    private void setSelectedJasperConifg(JasperTemplateWrapper t) {
-        if ((t != null) && (t == selectedTemplate))
-            return;
-
+    private void setSelectedJasperConfig(JasperTemplateWrapper t) {
         if (t != null) {
+
+            if (t == selectedTemplate)
+                return;
+
             selectedTemplate = t;
             jasperNameTexty.setText(t.getName());
+            jasperFileText.setEnabled(true);
             updateJasperFileText(null);
 
         } else {
             selectedTemplate = null;
             jasperNameTexty.setText("Select a Jasper Configuration.");
             jasperFileText.setText("");
-            jasperFileText.setBackground(new Color(PlatformUI.getWorkbench()
-                .getActiveWorkbenchWindow().getShell().getDisplay(), 255, 255,
-                255));
+            jasperFileText.setEnabled(false);
         }
 
         jasperConfigDirty = false;
@@ -370,24 +372,20 @@ public class JasperFileEditorView extends ViewPart {
                         int response = messageBox.open();
                         if (response == SWT.YES) {
                             selectedTemplate.delete();
+                            templateMap.remove(selectedTemplate.getName());
                             list.remove(selectedTemplate.getName());
 
-                            if (list.getItemCount() > 0) {
+                            int lastItemIndex = list.getItemCount() - 1;
+
+                            if (lastItemIndex >= 0) {
                                 list.deselectAll();
-
-                                int lastItemIndex = list.getItemCount() - 1;
-
-                                if (lastItemIndex >= 0) {
-                                    list.select(lastItemIndex);
-                                    setSelectedJasperConifg(templateMap
-                                        .get(list.getItem(lastItemIndex)));
-                                }
-
+                                list.select(lastItemIndex);
+                                setSelectedJasperConfig(templateMap.get(list
+                                    .getItem(lastItemIndex)));
                             } else {
-                                Error("Jasper Configuration not found.",
-                                    "Jasper Configuration does not exist, already deleted.");
-                                return;
+                                setSelectedJasperConfig(null);
                             }
+                            list.redraw();
                         }
                     }
                 } catch (Exception e1) {
@@ -415,11 +413,24 @@ public class JasperFileEditorView extends ViewPart {
                 String jasperConfigName = dialog.open(null);
 
                 if (!templateMap.containsKey(jasperConfigName)) {
-                    selectedTemplate = new JasperTemplateWrapper(SessionManager
-                        .getAppService());
-                    selectedTemplate.setName(jasperConfigName);
-                    list.add(jasperConfigName);
-                    list.redraw();
+
+                    JasperTemplateWrapper newTemplate = new JasperTemplateWrapper(
+                        SessionManager.getAppService());
+
+                    try {
+                        newTemplate.setName(jasperConfigName);
+                        newTemplate.persist();
+
+                        templateMap.put(jasperConfigName, newTemplate);
+                        list.add(jasperConfigName);
+                        list.redraw();
+                    } catch (Exception e1) {
+                        Error(
+                            "Failed to Save",
+                            "Faile to save newly created template: "
+                                + e1.getMessage());
+                    }
+
                 } else {
                     Error("Jasper Configuration Exists",
                         "Your new Jasper Configuration must have a unique name.");

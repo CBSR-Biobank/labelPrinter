@@ -17,3 +17,4 @@ Export-Package: edu.ualberta.med.biobank.barcodegenerator,
  edu.ualberta.med.biobank.barcodegenerator.views
 Bundle-ClassPath: lib/barcode4j-light.jar,
  .
+

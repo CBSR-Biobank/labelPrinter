@@ -162,6 +162,10 @@ public class Template implements Serializable {
         plt.persist();
     }
 
+    public void reload() throws Exception {
+        plt.reload();
+    }
+
     public void delete() throws Exception {
         plt.delete();
         plt = null;
