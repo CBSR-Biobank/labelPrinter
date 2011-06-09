@@ -230,17 +230,22 @@ public class CBSRLabelMaker {
                     + e.getError());
         }
 
-        if (!tplt.jasperFileDataExists()) {
+        if (!tplt.jasperTemplateExists()) {
             throw new CBSRPdfGenException("A valid jasper file is required.");
         }
 
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(
-            tplt.getJasperFileData());
+        try {
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(tplt
+                .getJasperTemplate().getBytes());
 
-        JasperOutline jo = new JasperOutline();
-        jo.setOutline(branding, patientInfo, pbi, inputStream);
-        return jo;
-
+            JasperOutline jo = new JasperOutline();
+            jo.setOutline(branding, patientInfo, pbi, inputStream);
+            return jo;
+        } catch (Exception e) {
+            throw new CBSRPdfGenException(
+                "Failed to create element in patient info box : "
+                    + e.getMessage());
+        }
     }
 
     /**

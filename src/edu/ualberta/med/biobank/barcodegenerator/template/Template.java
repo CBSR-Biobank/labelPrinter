@@ -21,7 +21,7 @@ import gov.nih.nci.system.applicationservice.ApplicationException;
 /**
  * Contains a name, intented printer name, jasper file reference and a
  * configuration reference. This class is used to store specific configuration
- * data for a chosen jasper file. 
+ * data for a chosen jasper file.
  * 
  * @author Thomas Polasek 2011
  * 
@@ -96,20 +96,23 @@ public class Template implements Serializable {
         plt.setPrinterName(printerName);
     }
 
-    public boolean jasperFileDataExists() {
+    public boolean jasperTemplateExists() {
         JasperTemplateWrapper jasp = plt.getJasperTemplate();
         if (jasp == null)
             return false;
         return !jasp.getXml().isEmpty();
     }
 
-    public byte[] getJasperFileData() {
-        // TODO; unserialize jasper file
-        return null;
+    public void setJasperTemplate(JasperTemplateWrapper jt) {
+        plt.setJasperTemplate(jt);
     }
 
-    public void setJasperFileData(byte[] jasperData) {
-        // TODO: serialize jasper file
+    public String getJasperTemplate() throws Exception {
+        JasperTemplateWrapper jasp = plt.getJasperTemplate();
+        if (jasp == null) {
+            throw new Exception("jasper template has not been set");
+        }
+        return jasp.getXml();
     }
 
     /**

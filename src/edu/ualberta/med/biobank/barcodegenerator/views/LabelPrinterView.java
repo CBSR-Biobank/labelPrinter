@@ -803,7 +803,7 @@ public class LabelPrinterView extends ViewPart {
                     "Could not load template.");
             }
 
-            if (!(template).jasperFileDataExists()) {
+            if (!(template).jasperTemplateExists()) {
                 throw new CBSRGuiVerificationException("Verifcation Issue",
                     "Template is lacking a jasper file.");
             }
