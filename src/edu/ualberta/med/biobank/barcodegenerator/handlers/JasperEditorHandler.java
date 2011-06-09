@@ -9,7 +9,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.WorkbenchException;
 
 import edu.ualberta.med.biobank.barcodegenerator.BarcodeGenPlugin;
-import edu.ualberta.med.biobank.barcodegenerator.perspective.LabelPrinterPerspective;
+import edu.ualberta.med.biobank.barcodegenerator.perspective.JasperEditorPerspective;
 import edu.ualberta.med.biobank.barcodegenerator.views.JasperFileEditorView;
 
 public class JasperEditorHandler extends AbstractHandler implements IHandler {
@@ -22,7 +22,7 @@ public class JasperEditorHandler extends AbstractHandler implements IHandler {
         try {
             if (workbench.getActiveWorkbenchWindow().getActivePage()
                 .closeAllEditors(true)) {
-                workbench.showPerspective(LabelPrinterPerspective.ID,
+                workbench.showPerspective(JasperEditorPerspective.ID,
                     workbench.getActiveWorkbenchWindow());
                 IWorkbenchPage page = workbench.getActiveWorkbenchWindow()
                     .getActivePage();
