@@ -114,6 +114,14 @@ public class Template implements Serializable {
         }
         return jasp.getXml();
     }
+    
+    public String getJasperTemplateName() throws Exception {
+        JasperTemplateWrapper jasp = plt.getJasperTemplate();
+        if (jasp == null) {
+            throw new Exception("jasper template has not been set");
+        }
+        return jasp.getName();
+    }
 
     /**
      * Configuration objects are stored in XML in the database. This method
