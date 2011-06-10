@@ -46,7 +46,6 @@ import edu.ualberta.med.biobank.barcodegenerator.preferences.PreferenceConstants
 import edu.ualberta.med.biobank.barcodegenerator.preferences.PreferenceInitializer;
 import edu.ualberta.med.biobank.barcodegenerator.progress.PrintOperation;
 import edu.ualberta.med.biobank.barcodegenerator.progress.SaveOperation;
-import edu.ualberta.med.biobank.barcodegenerator.template.Template;
 import edu.ualberta.med.biobank.barcodegenerator.template.TemplateStore;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSRData;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.exceptions.CBSRGuiVerificationException;
@@ -116,7 +115,8 @@ public class LabelPrinterView extends ViewPart {
     private CLabel cLabel = null;
     private Shell shell;
     private IPreferenceStore perferenceStore;
-    private Template selectedTemplate;
+
+    private TemplateStore templateStore;
 
     @Override
     public void createPartControl(Composite parent) {
@@ -225,9 +225,10 @@ public class LabelPrinterView extends ViewPart {
         templateCombo = new Combo(composite3, SWT.DROP_DOWN | SWT.BORDER);
         templateCombo.setLayoutData(gridData21);
 
+        // FIXME
         // TODO: have application service returned by biobank.gui.common plugin
-        TemplateStore store = new TemplateStore();
-        for (String s : store.getTemplateNames()) {
+        templateStore = new TemplateStore();
+        for (String s : templateStore.getTemplateNames()) {
             templateCombo.add(s);
         }
 
@@ -242,19 +243,6 @@ public class LabelPrinterView extends ViewPart {
             }
         }
 
-        templateCombo.addSelectionListener(new SelectionListener() {
-
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                loadSelectedTemplate();
-            }
-
-            @Override
-            public void widgetDefaultSelected(SelectionEvent e) {
-                widgetSelected(e);
-            }
-        });
-
         filler = new Label(composite3, SWT.NONE);
 
         label9 = new Label(composite3, SWT.NONE);
@@ -262,7 +250,6 @@ public class LabelPrinterView extends ViewPart {
         intendedPrinter = new Label(composite3, SWT.NONE);
         intendedPrinter.setForeground(new Color(shell.getDisplay(), 255, 0, 0));
         intendedPrinter.setText("default");
-        loadSelectedTemplate();
 
         filler = new Label(composite3, SWT.NONE);
 
@@ -288,22 +275,6 @@ public class LabelPrinterView extends ViewPart {
             }
         }
 
-    }
-
-    private void loadSelectedTemplate() {
-
-        if (templateCombo.getSelectionIndex() >= 0) {
-
-            // FIXME
-            // selectedTemplate = templateStore.getTemplate(templateCombo
-            // .getItem(templateCombo.getSelectionIndex()));
-
-            // load gui elements that use template data
-            if (selectedTemplate != null)
-                intendedPrinter.setText(selectedTemplate.getPrinterName());
-
-        } else
-            selectedTemplate = null;
     }
 
     /**
@@ -796,7 +767,16 @@ public class LabelPrinterView extends ViewPart {
                 sampleTypeStr = sampleTypeText.getText();
             }
 
-            template = selectedTemplate;
+            // FIXME load templatestore when you updateform
+            if (templateCombo.getSelectionIndex() >= 0) {
+                try {
+                    template = templateStore.getTemplate(templateCombo
+                        .getItem(templateCombo.getSelectionIndex()));
+                } catch (Exception e) {
+                    throw new CBSRGuiVerificationException("Verifcation Issue",
+                        "Could not load template: " + e.getMessage());
+                }
+            }
 
             if (template == null) {
                 throw new CBSRGuiVerificationException("Verifcation Issue",
@@ -818,8 +798,7 @@ public class LabelPrinterView extends ViewPart {
             try {
                 guiData = new BarcodeViewGuiData();
             } catch (CBSRGuiVerificationException e1) {
-                BgcPlugin.openAsyncError("Gui Validation",
-                    e1.getMessage());
+                BgcPlugin.openAsyncError("Gui Validation", e1.getMessage());
                 return;
             }
 
@@ -850,8 +829,8 @@ public class LabelPrinterView extends ViewPart {
             }
 
             if (printOperation.errorExists()) {
-                BgcPlugin.openAsyncError(
-                    printOperation.getError()[0], printOperation.getError()[1]);
+                BgcPlugin.openAsyncError(printOperation.getError()[0],
+                    printOperation.getError()[1]);
             }
 
         }
@@ -870,8 +849,7 @@ public class LabelPrinterView extends ViewPart {
             try {
                 guiData = new BarcodeViewGuiData();
             } catch (CBSRGuiVerificationException e1) {
-                BgcPlugin.openAsyncError("Gui Validation",
-                    e1.getMessage());
+                BgcPlugin.openAsyncError("Gui Validation", e1.getMessage());
                 return;
             }
 
@@ -918,8 +896,8 @@ public class LabelPrinterView extends ViewPart {
             }
 
             if (saveOperation.errorExists()) {
-                BgcPlugin.openAsyncError(
-                    saveOperation.getError()[0], saveOperation.getError()[1]);
+                BgcPlugin.openAsyncError(saveOperation.getError()[0],
+                    saveOperation.getError()[1]);
             }
 
         }

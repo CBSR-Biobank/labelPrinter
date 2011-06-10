@@ -1,9 +1,6 @@
 package edu.ualberta.med.biobank.barcodegenerator.views;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
 
@@ -74,13 +71,13 @@ public class TemplateEditorView extends ViewPart {
     private Label label1 = null;
     private Text printerNameText = null;
     private Combo jasperFileCombo = null;
-    private List list = null;
+    private List templateNamesList = null;
     private Group composite6 = null;
     private ConfigurationTree configTree = null;
 
     private Shell shell;
 
-    private Template templateSelected = null;
+    private Template selectedTemplate = null;
 
     boolean templateDirty = false;
 
@@ -129,6 +126,46 @@ public class TemplateEditorView extends ViewPart {
         } catch (ApplicationException e) {
             BgcPlugin.openAsyncError("Form Creation Error",
                 "Error while creating form", e);
+        }
+    }
+
+    /**
+     * 
+     * Updates the template name list and jasper file combo.
+     * 
+     */
+    private void updateForm() {
+        try {
+            if (loggedIn) {
+                if (templateStore == null) {
+                    templateStore = new TemplateStore();
+                }
+
+                for (String s : templateStore.getTemplateNames())
+                    templateNamesList.add(s);
+                templateNamesList.setEnabled(true);
+                templateNamesList.redraw();
+
+                for (String s : JasperTemplateWrapper
+                    .getTemplateNames(SessionManager.getAppService())) {
+                    jasperFileCombo.add(s);
+                }
+                jasperFileCombo.setEnabled(true);
+                jasperFileCombo.redraw();
+
+            } else {
+                templateNamesList.removeAll();
+                templateNamesList.setEnabled(false);
+                templateNamesList.redraw();
+
+                jasperFileCombo.removeAll();
+                jasperFileCombo.setEnabled(false);
+                jasperFileCombo.redraw();
+
+            }
+        } catch (ApplicationException e) {
+            BgcPlugin.openAsyncError("Database Error",
+                "Error while updating form", e);
         }
     }
 
@@ -263,43 +300,50 @@ public class TemplateEditorView extends ViewPart {
         group1.setText("Templates");
         group1.setLayoutData(gridData6);
         group1.setLayout(fillLayout1);
-        list = new List(group1, SWT.BORDER | SWT.V_SCROLL);
-        list.addSelectionListener(listListener);
+        templateNamesList = new List(group1, SWT.BORDER | SWT.V_SCROLL);
+        templateNamesList.addSelectionListener(listListener);
 
     }
 
     private SelectionListener listListener = new SelectionListener() {
         @Override
         public void widgetSelected(SelectionEvent e) {
-            String[] selectedItems = list.getSelection();
+            String[] selectedItems = templateNamesList.getSelection();
             if (selectedItems.length == 1) {
 
-                if (templateSelected != null) {
+                if (selectedTemplate != null) {
 
                     if (templateDirty || configTree.isDirty()) {
 
-                        MessageBox messageBox = new MessageBox(shell,
-                            SWT.ICON_QUESTION | SWT.YES | SWT.NO);
-                        messageBox
-                            .setMessage("Template has been modified, do you want to save your changes?");
-                        messageBox.setText("Template Editor Saving");
-                        int response = messageBox.open();
-                        if (response == SWT.YES) {
+                        if (BgcPlugin
+                            .openConfirm("Template Editor Saving",
+                                "Template has been modified, do you want to save your changes?")) {
+
+                            if (!selectedTemplate.jasperTemplateExists()) {
+                                BgcPlugin
+                                    .openInformation(
+                                        "Template does not have a configuration",
+                                        "It is essiential that you select a jasper configuration for this template.");
+                            }
                             // FIXME check if user selected a valid jasper
                             // config
                             // from the jaspercombo
-                            if (!templateSelected.jasperTemplateExists()) {
-                                BgcPlugin
-                                    .openError("Cannot Save Template",
-                                        "A Jasper Configuration has not been selected.");
-                                return;
-                            }
 
                             try {
-                                templateSelected.persist();
+                                selectedTemplate.persist();
                             } catch (Exception e2) {
                                 BgcPlugin.openAsyncError("Template Save Error",
                                     "Error occured saving template", e2);
+                            }
+                        } else {
+                            try {
+                                selectedTemplate.reload();
+                            } catch (Exception e2) {
+                                BgcPlugin
+                                    .openAsyncError(
+                                        "Template Reload Error",
+                                        "Could not restore original template version",
+                                        e2);
                             }
                         }
                     }
@@ -329,26 +373,56 @@ public class TemplateEditorView extends ViewPart {
         jasperFileCombo.setEnabled(false);
         jasperFileCombo.deselectAll();
 
-        if (templateSelected == null)
+        if (selectedTemplate == null)
             return;
-
-        // FIXME make jasper file combo box select the correct name
-        // from the template selected.
 
         jasperFileCombo.setEnabled(true);
 
-        /*
-         * if (!templateSelected.jasperFileDataExists()) {
-         * jasperFileCombo.deselectAll(); } else {
-         * jasperFileCombo.setBackground(new Color(shell.getDisplay(), 255, 255,
-         * 255)); }
-         */
+        String selectedJasperName;
+        try {
+            selectedJasperName = selectedTemplate.getJasperTemplate();
+        } catch (Exception e) {
+            selectedJasperName = null;
+        }
+
+        if (selectedJasperName == null)
+            return;
+
+        int i = 0;
+        for (String s : jasperFileCombo.getItems()) {
+            if (s.equals(selectedJasperName)) {
+                jasperFileCombo.select(i);
+                break;
+            }
+            i++;
+        }
+
     }
 
     private void setSelectedTemplate(Template t) {
-        templateDirty = false;
-        if (t == null) {
-            templateSelected = null;
+
+        if (t != null) {
+
+            if (t == selectedTemplate)
+                return;
+
+            selectedTemplate = t;
+
+            templateNameText.setText(t.getName());
+            printerNameText.setText(t.getPrinterName() != null ? t
+                .getPrinterName() : "");
+
+            updatejasperFileCombo();
+
+            try {
+                configTree.populateTree(selectedTemplate.getConfiguration());
+            } catch (TreeException e) {
+                BgcPlugin.openAsyncError("Set Template Error", e.getError());
+            } catch (JAXBException e2) {
+                BgcPlugin.openAsyncError("Set Template Error", e2.getMessage());
+            }
+        } else {
+            selectedTemplate = null;
             templateNameText.setText("Select a template.");
             printerNameText.setText("");
             jasperFileCombo.setEnabled(false);
@@ -357,24 +431,8 @@ public class TemplateEditorView extends ViewPart {
             try {
                 configTree.populateTree(null);
             } catch (TreeException e) {
-                BgcPlugin.openAsyncError("Set Templat Error", e.getError());
-            }
-            return;
-        }
-
-        if (templateSelected != t) {
-            templateSelected = t;
-            templateNameText.setText(t.getName());
-            String printerName = t.getPrinterName();
-            printerNameText.setText(printerName != null ? printerName : "");
-            updatejasperFileCombo();
-
-            try {
-                configTree.populateTree(templateSelected.getConfiguration());
-            } catch (TreeException e) {
-                BgcPlugin.openAsyncError("Set Template Error", e.getError());
-            } catch (JAXBException e2) {
-                BgcPlugin.openAsyncError("Set Template Error", e2.getMessage());
+                BgcPlugin.openAsyncError("Set Template Tree Error",
+                    e.getError());
             }
         }
     }
@@ -413,12 +471,17 @@ public class TemplateEditorView extends ViewPart {
                             }
 
                             Template ct = new Template();
+
+                            // FIXME implement a switch statement that is based
+                            // on jasper config names.
                             ct.setConfiguration(CBSRLabelMaker
                                 .getDefaultConfiguration());
+
                             ct.setName(newTemplateName);
+
                             templateStore.addTemplate(ct);
-                            list.add(ct.getName());
-                            list.redraw();
+                            templateNamesList.add(ct.getName());
+                            templateNamesList.redraw();
                         }
                     }
                 } catch (Exception e1) {
@@ -439,13 +502,13 @@ public class TemplateEditorView extends ViewPart {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 try {
-                    if (templateSelected != null) {
+                    if (selectedTemplate != null) {
 
                         StringInputDialog dialog = new StringInputDialog(
                             "Cloned Template Name",
                             "What is the name of the cloned template?", "Name",
                             shell);
-                        dialog.setValue(templateSelected.getName() + " copy");
+                        dialog.setValue(selectedTemplate.getName() + " copy");
                         if (dialog.open() == Dialog.OK) {
                             String cloneName = dialog.getValue();
 
@@ -459,11 +522,11 @@ public class TemplateEditorView extends ViewPart {
                                     return;
                                 }
 
-                                Template clone = templateSelected.clone();
+                                Template clone = selectedTemplate.clone();
                                 clone.setName(cloneName);
                                 templateStore.addTemplate(clone);
-                                list.add(clone.getName());
-                                list.redraw();
+                                templateNamesList.add(clone.getName());
+                                templateNamesList.redraw();
                             }
                         }
                     }
@@ -485,34 +548,34 @@ public class TemplateEditorView extends ViewPart {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 try {
-                    if (templateSelected != null) {
+                    if (selectedTemplate != null) {
                         MessageBox messageBox = new MessageBox(shell,
                             SWT.ICON_QUESTION | SWT.YES | SWT.NO);
                         messageBox
                             .setMessage("Are you sure you want to delete "
-                                + templateSelected.getName() + "?");
+                                + selectedTemplate.getName() + "?");
                         messageBox.setText("Deleting Template");
 
                         int response = messageBox.open();
                         if (response == SWT.YES) {
-                            templateSelected.delete();
-                            templateStore.deleteTemplate(templateSelected);
-                            list.remove(templateSelected.getName());
+                            selectedTemplate.delete();
+                            templateStore.deleteTemplate(selectedTemplate);
+                            templateNamesList.remove(selectedTemplate.getName());
 
-                            if (list.getItemCount() > 0) {
-                                list.deselectAll();
+                            if (templateNamesList.getItemCount() > 0) {
+                                templateNamesList.deselectAll();
 
-                                int lastItemIndex = list.getItemCount() - 1;
+                                int lastItemIndex = templateNamesList
+                                    .getItemCount() - 1;
 
                                 if (lastItemIndex >= 0) {
-                                    list.select(lastItemIndex);
+                                    templateNamesList.select(lastItemIndex);
                                     setSelectedTemplate(Template
-                                        .getTemplateByName(list
+                                        .getTemplateByName(templateNamesList
                                             .getItem(lastItemIndex)));
+                                } else {
+                                    setSelectedTemplate(null);
                                 }
-
-                                setSelectedTemplate(templateStore
-                                    .getTemplate(list.getItem(lastItemIndex)));
 
                             } else {
                                 BgcPlugin
@@ -575,9 +638,9 @@ public class TemplateEditorView extends ViewPart {
 
             @Override
             public void modifyText(ModifyEvent e) {
-                if (templateSelected == null || e.widget == null)
+                if (selectedTemplate == null || e.widget == null)
                     return;
-                templateSelected.setPrinterName(((Text) e.widget).getText());
+                selectedTemplate.setPrinterName(((Text) e.widget).getText());
                 templateDirty = true;
             }
         });
@@ -589,28 +652,36 @@ public class TemplateEditorView extends ViewPart {
         jasperFileCombo.setLayoutData(gridData8);
         jasperFileCombo.deselectAll();
         jasperFileCombo.setEnabled(false);
+        jasperFileCombo.addSelectionListener(new SelectionListener() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                if (selectedTemplate != null) {
+                    // templateSelected.setJasperTemplate();
 
-    }
+                    // FIXME wasteful... do not set again if it is the same
+                    // jasper file.
+                    if (jasperFileCombo.getSelectionIndex() >= 0) {
+                        String selectedName = jasperFileCombo
+                            .getItem(jasperFileCombo.getSelectionIndex());
 
-    public static byte[] fileToBytes(File file) throws IOException {
-        InputStream is = new FileInputStream(file);
+                        try {
+                            selectedTemplate
+                                .setJasperTemplate(getJasperTemplateWrapper(selectedName));
+                        } catch (ApplicationException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
 
-        byte[] bytes = new byte[(int) file.length()];
+                }
+            }
 
-        int offset = 0;
-        int readCount = 0;
-        while (offset < bytes.length
-            && (readCount = is.read(bytes, offset, bytes.length - offset)) >= 0) {
-            offset += readCount;
-        }
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
+                widgetSelected(e);
+            }
 
-        if (offset < bytes.length) {
-            throw new IOException("Could not completely read file "
-                + file.getName());
-        }
+        });
 
-        is.close();
-        return bytes;
     }
 
     private void createComposite62() {
@@ -651,39 +722,55 @@ public class TemplateEditorView extends ViewPart {
         }
     };
 
+    // FIXME get the selected jaspertemplatewrapper correctly.
+    private JasperTemplateWrapper getJasperTemplateWrapper(String name)
+        throws ApplicationException {
+
+        if (jasperFileCombo.getSelectionIndex() >= 0) {
+
+            for (JasperTemplateWrapper t : JasperTemplateWrapper
+                .getAllTemplates(SessionManager.getAppService())) {
+                if (t.getName().equals(name)) {
+                    return t;
+                }
+            }
+        }
+        return null;
+    }
+
     private boolean saveCurrentTemplate() throws Exception {
 
         try {
             configTree.resetEditor();
         } catch (TreeException e2) {
-            BgcPlugin.openAsyncError("Editor Error", "Could not reset editor: "
-                + e2.getError());
-            return false;
+            BgcPlugin.openAsyncError("Editor Error",
+                "Could not reset editor: ", e2);
         }
         if (!templateDirty && !configTree.isDirty()) {
             return true;
         }
 
-        if (templateSelected == null) {
+        if (selectedTemplate == null) {
             BgcPlugin.openAsyncError("No Template Selected",
                 "Cannot save template. Please select a template first.");
             return false;
         }
-        // FIXME
-        if (templateSelected.jasperTemplateExists()) {
-            BgcPlugin.openError("Cannot Save Template",
-                "A Jasper Configuration has not been selected.");
-            return false;
+
+        if (!selectedTemplate.jasperTemplateExists()) {
+            BgcPlugin
+                .openInformation("Template Configuration Missing",
+                    "It is essiential that you select a jasper configuration for this template.");
         }
 
         try {
-            templateSelected.persist();
+            selectedTemplate.persist();
         } catch (IOException e1) {
             BgcPlugin.openAsyncError("Save Template Error",
-                "Could not save template: " + e1);
+                "Could not save template: ", e1);
             return false;
         }
         templateDirty = false;
+
         return true;
     }
 
@@ -692,16 +779,12 @@ public class TemplateEditorView extends ViewPart {
         public void widgetSelected(SelectionEvent e) {
             try {
                 if (saveCurrentTemplate()) {
-                    MessageBox messageBox = new MessageBox(shell,
-                        SWT.ICON_INFORMATION | SWT.OK);
-                    messageBox
-                        .setMessage("Template has been successfully saved.");
-                    messageBox.setText("Template Saved");
-                    messageBox.open();
+                    BgcPlugin.openInformation("Template Saved",
+                        "Template has been successfully saved.");
                 }
             } catch (Exception e1) {
                 BgcPlugin.openAsyncError("Save Template Error",
-                    "Could not save template: " + e1);
+                    "Could not save template: ", e1);
             }
         }
 
@@ -712,27 +795,4 @@ public class TemplateEditorView extends ViewPart {
         }
     };
 
-    private void updateForm() {
-        try {
-            if (loggedIn) {
-                if (templateStore == null) {
-                    templateStore = new TemplateStore();
-                }
-
-                for (String s : templateStore.getTemplateNames())
-                    list.add(s);
-                list.redraw();
-
-                for (String s : JasperTemplateWrapper
-                    .getTemplateNames(SessionManager.getAppService())) {
-                    jasperFileCombo.add(s);
-                }
-            } else {
-                // TODO: unpopulate list, blannk out all widgets
-            }
-        } catch (ApplicationException e) {
-            BgcPlugin.openAsyncError("Database Error",
-                "Error while updating form", e);
-        }
-    }
 }

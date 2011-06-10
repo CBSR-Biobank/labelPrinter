@@ -69,7 +69,9 @@ public class JasperFileEditorView extends ViewPart {
 
     boolean jasperConfigDirty = false;
 
-    private boolean loggedIn;
+    private boolean loggedIn = false;
+
+    private GridData gridFill = null;
 
     @Override
     public void createPartControl(Composite parent) {
@@ -82,6 +84,12 @@ public class JasperFileEditorView extends ViewPart {
 
         top = new Composite(parent, SWT.NONE);
         top.setLayout(new GridLayout());
+
+        gridFill = new GridData();
+        gridFill.horizontalAlignment = GridData.FILL;
+        gridFill.grabExcessHorizontalSpace = true;
+        gridFill.grabExcessVerticalSpace = true;
+        gridFill.verticalAlignment = GridData.FILL;
 
         createGroup();
 
@@ -112,15 +120,22 @@ public class JasperFileEditorView extends ViewPart {
         }
 
         try {
+
             if (loggedIn) {
+                list.setEnabled(true);
                 for (JasperTemplateWrapper t : JasperTemplateWrapper
                     .getAllTemplates(SessionManager.getAppService())) {
                     String name = t.getName();
                     templateMap.put(name, t);
                     list.add(name);
                 }
+                list.redraw();
             } else {
-                // TODO: unpopulate list, blannk out all widgets
+                templateMap.clear();
+
+                list.removeAll();
+                list.setEnabled(false);
+                list.redraw();
             }
         } catch (ApplicationException e) {
             BgcPlugin.openAsyncError("Database Error",
@@ -132,49 +147,29 @@ public class JasperFileEditorView extends ViewPart {
     public void setFocus() {
     }
 
-    /**
-     * This method initializes group
-     * 
-     */
     private void createGroup() {
-        GridData gridData = new GridData();
-        gridData.horizontalAlignment = GridData.FILL;
-        gridData.grabExcessHorizontalSpace = true;
-        gridData.grabExcessVerticalSpace = true;
-        gridData.verticalAlignment = GridData.FILL;
+
         group = new Group(top, SWT.NONE);
-        group.setText("Jasper Configuration Editor");
-        group.setLayoutData(gridData);
-        createComposite();
         group.setLayout(new GridLayout());
+        group.setLayoutData(gridFill);
+        group.setText("Jasper Configuration Editor");
+       
+        createComposite();
         createComposite1();
     }
-
-    /**
-     * This method initializes composite
-     * 
-     */
+    
     private void createComposite() {
         GridLayout gridLayout = new GridLayout();
         gridLayout.numColumns = 3;
-        GridData gridData1 = new GridData();
-        gridData1.horizontalAlignment = GridData.FILL;
-        gridData1.grabExcessHorizontalSpace = true;
-        gridData1.grabExcessVerticalSpace = true;
-        gridData1.verticalAlignment = GridData.FILL;
         composite = new Composite(group, SWT.NONE);
         createComposite2();
-        composite.setLayoutData(gridData1);
+        composite.setLayoutData(gridFill);
         composite.setLayout(gridLayout);
         @SuppressWarnings("unused")
         Label filler = new Label(composite, SWT.NONE);
         createComposite3();
     }
 
-    /**
-     * This method initializes composite1
-     * 
-     */
     private void createComposite1() {
         GridData gridData2 = new GridData();
         gridData2.horizontalAlignment = GridData.FILL;

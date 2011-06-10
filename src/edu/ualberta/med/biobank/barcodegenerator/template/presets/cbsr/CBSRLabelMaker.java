@@ -153,6 +153,9 @@ public class CBSRLabelMaker {
             throw new CBSRPdfGenException(
                 "Failed to create element in patient info box : "
                     + e.getError());
+        } catch (JAXBException e) {
+            throw new CBSRPdfGenException(
+                "Failed to load configuration setting " + e.getMessage());
         }
         // -------barcode info------------
         JasperOutline.PatientBarcodeInformation pbi = new JasperOutline.PatientBarcodeInformation();
@@ -228,6 +231,9 @@ public class CBSRLabelMaker {
             throw new CBSRPdfGenException(
                 "Failed to create element in PatientBarcodeInformation box : "
                     + e.getError());
+        } catch (JAXBException e) {
+            throw new CBSRPdfGenException(
+                "Failed to load configuration setting " + e.getMessage());
         }
 
         if (!tplt.jasperTemplateExists()) {

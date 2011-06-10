@@ -123,18 +123,22 @@ public class Template implements Serializable {
      * @throws JAXBException
      */
     public Configuration getConfiguration() throws JAXBException {
-        String configData = plt.getConfigData();
-        if (configData == null)
-            return null;
 
-        Configuration config = new Configuration();
-        JAXBContext context = JAXBContext.newInstance(Configuration.class,
-            Rectangle.class);
-        Unmarshaller u = context.createUnmarshaller();
-        ByteArrayInputStream in = new ByteArrayInputStream(plt.getConfigData()
-            .getBytes());
-        config = (Configuration) u.unmarshal(in);
+        if (config == null) {
+            String configData = plt.getConfigData();
+            if (configData == null)
+                return null;
+
+            config = new Configuration();
+            JAXBContext context = JAXBContext.newInstance(Configuration.class,
+                Rectangle.class);
+            Unmarshaller u = context.createUnmarshaller();
+            ByteArrayInputStream in = new ByteArrayInputStream(plt
+                .getConfigData().getBytes());
+            config = (Configuration) u.unmarshal(in);
+        }
         return config;
+
     }
 
     /**
@@ -152,10 +156,12 @@ public class Template implements Serializable {
         StringWriter sw = new StringWriter();
         marshaller.marshal(configuration, sw);
         plt.setConfigData(sw.toString());
+
+        config = configuration;
     }
 
-    public Rectangle getKey(String key) {
-        return config.getSetting(key);
+    public Rectangle getKey(String key) throws JAXBException {
+        return getConfiguration().getSetting(key);
     }
 
     public void persist() throws Exception {
