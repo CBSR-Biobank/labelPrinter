@@ -179,6 +179,10 @@ public class Template implements Serializable {
     public void reload() throws Exception {
         plt.reload();
     }
+    public boolean isNew() {
+        return (plt.getId() == null);
+    }
+    
 
     public void delete() throws Exception {
         plt.delete();

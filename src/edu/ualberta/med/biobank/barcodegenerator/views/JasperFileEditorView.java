@@ -234,6 +234,10 @@ public class JasperFileEditorView extends ViewPart {
         }
     }
 
+    /**
+     * Sets the name of the selected jasper template list to prevJasperName.
+     * 
+     */
     private SelectionListener listListener = new SelectionListener() {
         @Override
         public void widgetSelected(SelectionEvent e) {
@@ -254,7 +258,8 @@ public class JasperFileEditorView extends ViewPart {
                             jasperFileText.setText("Jasper file loaded");
 
                         prevJasperName = selectedItems[0];
-
+                        jasperConfigDirty = false;
+                        
                     } else {
                         jasperNameTexty.setText("Please select a template");
                         jasperFileText.setText("");
