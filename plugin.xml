@@ -3,14 +3,57 @@
 <plugin>
 
    <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="barcodeGenerator.perspective.labeprinter">
+         <view
+               closeable="false"
+               id="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView"
+               minimized="false"
+               moveable="false"
+               ratio="1"
+               relationship="top"
+               relative="org.eclipse.ui.editorss"
+               showTitle="true"
+               standalone="true"
+               visible="true">
+         </view>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="barcodeGenerator.perspective.templateeditor">
+         <view
+               closeable="false"
+               id="edu.ualberta.med.biobank.barcodegenerator.views.TemplateEditorView"
+               moveable="true"
+               ratio="1"
+               minimized="false"
+               relationship="top"
+               relative="org.eclipse.ui.editorss"
+               showTitle="true"
+               standalone="true"
+               visible="true">
+         </view>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="barcodeGenerator.perspective.jaspereditor">
+         <view
+               closeable="false"
+               id="edu.ualberta.med.biobank.barcodegenerator.views.JasperFileEditorView"
+               minimized="false"
+               moveable="true"
+               ratio="1"
+               relationship="top"
+               relative="org.eclipse.ui.editorss"
+               showTitle="true"
+               standalone="true"
+               visible="true">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
          point="org.eclipse.ui.views">
-      <category
-            name="Barcode Category"
-            id="barcodeGenerator">
-      </category>
       <view
             name="Print Patient Barcodes"
-            category="barcodeGenerator"
             allowMultiple="false"
             class="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView"
             id="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView"
@@ -21,7 +64,6 @@
             class="edu.ualberta.med.biobank.barcodegenerator.views.TemplateEditorView"
             id="edu.ualberta.med.biobank.barcodegenerator.views.TemplateEditorView"
             name="Printer Templates Editor"
-            category="barcodeGenerator"
             restorable="true">
       </view>
       <view
@@ -29,45 +71,9 @@
             class="edu.ualberta.med.biobank.barcodegenerator.views.JasperFileEditorView"
             id="edu.ualberta.med.biobank.barcodegenerator.views.JasperFileEditorView"
             name="Jasper Templates Editor"
-            category="barcodeGenerator"
             restorable="true">
       </view>
    </extension>
-   <extension
-         point="org.eclipse.ui.perspectiveExtensions">
-      <perspectiveExtension
-            targetID="barcodeGenerator.perspective.labeprinter">
-         <view
-               closeable="true"
-               id="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView"
-               minimized="false"
-               moveable="true"
-               ratio="1"
-               relationship="top"
-               relative="org.eclipse.ui.editorss"
-               showTitle="true"
-               standalone="false"
-               visible="false">
-         </view>
-      </perspectiveExtension>
-      <perspectiveExtension
-            targetID="barcodeGenerator.perspective.templateeditor">
-         <view
-               id="edu.ualberta.med.biobank.barcodegenerator.views.TemplateEditorView"
-               minimized="false"
-               relationship="top">
-         </view>
-      </perspectiveExtension>
-      <perspectiveExtension
-            targetID="barcodeGenerator.perspective.jaspereditor">
-         <view
-               id="edu.ualberta.med.biobank.barcodegenerator.views.JasperFileEditorView"
-               minimized="false"
-               relationship="top">
-         </view>
-      </perspectiveExtension>
-   </extension>
-
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
@@ -157,12 +163,12 @@
       <perspective
             class="edu.ualberta.med.biobank.barcodegenerator.perspective.TemplateEditorPerspective"
             id="barcodeGenerator.perspective.templateeditor"
-            name="TemplateEditor">
+            name="Template Editor">
       </perspective>
       <perspective
             class="edu.ualberta.med.biobank.barcodegenerator.perspective.JasperEditorPerspective"
             id="barcodeGenerator.perspective.jaspereditor"
-            name="TemplateEditor">
+            name="Jasper Configuration">
       </perspective>
    </extension>
 

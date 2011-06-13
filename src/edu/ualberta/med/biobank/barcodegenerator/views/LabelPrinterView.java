@@ -818,8 +818,7 @@ public class LabelPrinterView extends ViewPart {
             try {
                 guiData = new BarcodeViewGuiData();
             } catch (CBSRGuiVerificationException e1) {
-                BgcPlugin.openAsyncError("Gui Validation",
-                    e1.getMessage());
+                BgcPlugin.openAsyncError("Gui Validation", e1.getMessage());
                 return;
             }
 
@@ -850,8 +849,8 @@ public class LabelPrinterView extends ViewPart {
             }
 
             if (printOperation.errorExists()) {
-                BgcPlugin.openAsyncError(
-                    printOperation.getError()[0], printOperation.getError()[1]);
+                BgcPlugin.openAsyncError(printOperation.getError()[0],
+                    printOperation.getError()[1]);
             }
 
         }
@@ -870,8 +869,7 @@ public class LabelPrinterView extends ViewPart {
             try {
                 guiData = new BarcodeViewGuiData();
             } catch (CBSRGuiVerificationException e1) {
-                BgcPlugin.openAsyncError("Gui Validation",
-                    e1.getMessage());
+                BgcPlugin.openAsyncError("Gui Validation", e1.getMessage());
                 return;
             }
 
@@ -918,8 +916,8 @@ public class LabelPrinterView extends ViewPart {
             }
 
             if (saveOperation.errorExists()) {
-                BgcPlugin.openAsyncError(
-                    saveOperation.getError()[0], saveOperation.getError()[1]);
+                BgcPlugin.openAsyncError(saveOperation.getError()[0],
+                    saveOperation.getError()[1]);
             }
 
         }

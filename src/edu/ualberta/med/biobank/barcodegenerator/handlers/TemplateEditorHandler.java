@@ -5,12 +5,10 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.WorkbenchException;
 
 import edu.ualberta.med.biobank.barcodegenerator.BarcodeGenPlugin;
 import edu.ualberta.med.biobank.barcodegenerator.perspective.TemplateEditorPerspective;
-import edu.ualberta.med.biobank.barcodegenerator.views.TemplateEditorView;
 
 public class TemplateEditorHandler extends AbstractHandler implements IHandler {
 
@@ -24,9 +22,6 @@ public class TemplateEditorHandler extends AbstractHandler implements IHandler {
                 .closeAllEditors(true)) {
                 workbench.showPerspective(TemplateEditorPerspective.ID,
                     workbench.getActiveWorkbenchWindow());
-                IWorkbenchPage page = workbench.getActiveWorkbenchWindow()
-                    .getActivePage();
-                page.showView(TemplateEditorView.ID);
             }
         } catch (WorkbenchException e) {
             throw new ExecutionException(
