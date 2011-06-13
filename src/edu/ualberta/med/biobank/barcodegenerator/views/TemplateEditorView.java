@@ -313,7 +313,6 @@ public class TemplateEditorView extends ViewPart {
                         @SuppressWarnings("rawtypes") Map sourceValuesByName) {
                     }
                 });
-
             updateForm();
         } catch (ApplicationException e) {
             BgcPlugin.openAsyncError("Form Creation Error",
@@ -592,14 +591,20 @@ public class TemplateEditorView extends ViewPart {
                         newTemplateName)) {
 
                         Template cloned = selectedTemplate.clone();
-                        cloned.setName(newTemplateName);
 
-                        cloned.persist();
+                        if (cloned != null) {
 
-                        templateStore.addTemplate(cloned);
+                            cloned.setName(newTemplateName);
+                            cloned.persist();
 
-                        templateNamesList.add(newTemplateName);
-                        templateNamesList.redraw();
+                            templateStore.addTemplate(cloned);
+                            templateNamesList.add(newTemplateName);
+                            templateNamesList.redraw();
+                        } else {
+                            BgcPlugin.openAsyncError("Copy Template Error",
+                                "Could not copy template. An error occured.");
+                            return;
+                        }
                     } else {
                         BgcPlugin.openAsyncError("Template Exists",
                             "Your new template must have a unique name.");

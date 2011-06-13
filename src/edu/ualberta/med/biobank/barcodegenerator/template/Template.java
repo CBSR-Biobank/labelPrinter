@@ -36,8 +36,6 @@ public class Template implements Serializable {
 
     private PrinterLabelTemplateWrapper plt;
 
-    private byte[] jasperTemplateFileData = null;
-
     private Configuration config = null;
 
     public Template() {
@@ -47,38 +45,42 @@ public class Template implements Serializable {
     public Template clone() {
         Template clone = new Template();
 
+        clone.plt = new PrinterLabelTemplateWrapper(
+            SessionManager.getAppService());
+
+        try {
+            clone.setJasperTemplate(this.getJasperTemplate());
+        } catch (Exception e1) {
+            System.err.println("Error: Failed to clone jasper template.");
+            return null;
+        }
+
         // clone template name
-        clone.name = this.name;
+        clone.setName(this.name);
 
         // clone intended printer name
-        clone.intendedPrinterName = this.intendedPrinterName;
-
-        // clone jasper template name
-        clone.plt = this.plt;
+        clone.setPrinterName(this.intendedPrinterName);
 
         // clone configuration
-        if (this.config != null) {
-            clone.config = new Configuration();
+        if (config != null) {
+            Configuration newConfig = new Configuration();
             Map<String, Rectangle> settings = config.getSettings();
             if (settings != null) {
                 for (Entry<String, Rectangle> entry : settings.entrySet()) {
                     Rectangle newRect = new Rectangle(entry.getValue().getX(),
                         entry.getValue().getY(), entry.getValue().getWidth(),
                         entry.getValue().getHeight());
-                    clone.config.setSetting(entry.getKey(), newRect);
+                    newConfig.setSetting(entry.getKey(), newRect);
                 }
+            }
+            try {
+                clone.setConfiguration(newConfig);
+            } catch (JAXBException e) {
+                System.err.println("Error: Failed to clone configuration.");
+                return null;
             }
         }
 
-        // clone jasper file
-        if (this.jasperTemplateFileData != null) {
-            clone.jasperTemplateFileData = new byte[this.jasperTemplateFileData.length];
-            System.arraycopy(this.jasperTemplateFileData, 0,
-                clone.jasperTemplateFileData, 0,
-                this.jasperTemplateFileData.length);
-        } else {
-            clone.jasperTemplateFileData = null;
-        }
         return clone;
     }
 
@@ -109,12 +111,16 @@ public class Template implements Serializable {
         plt.setJasperTemplate(jt);
     }
 
-    public String getJasperTemplate() throws Exception {
+    public String getJasperTemplateXML() throws Exception {
+        return getJasperTemplate().getXml();
+    }
+
+    public JasperTemplateWrapper getJasperTemplate() throws Exception {
         JasperTemplateWrapper jasp = plt.getJasperTemplate();
         if (jasp == null) {
             throw new Exception("jasper template has not been set");
         }
-        return jasp.getXml();
+        return jasp;
     }
 
     public String getJasperTemplateName() throws Exception {

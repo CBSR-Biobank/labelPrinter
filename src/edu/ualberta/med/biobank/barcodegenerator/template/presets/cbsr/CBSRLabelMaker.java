@@ -242,7 +242,7 @@ public class CBSRLabelMaker {
 
         try {
             ByteArrayInputStream inputStream = new ByteArrayInputStream(tplt
-                .getJasperTemplate().getBytes());
+                .getJasperTemplateXML().getBytes());
 
             JasperOutline jo = new JasperOutline();
             jo.setOutline(branding, patientInfo, pbi, inputStream);
