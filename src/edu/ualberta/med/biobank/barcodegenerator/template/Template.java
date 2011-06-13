@@ -45,7 +45,6 @@ public class Template implements Serializable {
     }
 
     public Template clone() {
-        System.out.println("cloning template " + name);
         Template clone = new Template();
 
         // clone template name
@@ -53,6 +52,9 @@ public class Template implements Serializable {
 
         // clone intended printer name
         clone.intendedPrinterName = this.intendedPrinterName;
+
+        // clone jasper template name
+        clone.plt = this.plt;
 
         // clone configuration
         if (this.config != null) {
@@ -114,7 +116,7 @@ public class Template implements Serializable {
         }
         return jasp.getXml();
     }
-    
+
     public String getJasperTemplateName() throws Exception {
         JasperTemplateWrapper jasp = plt.getJasperTemplate();
         if (jasp == null) {
@@ -179,10 +181,10 @@ public class Template implements Serializable {
     public void reload() throws Exception {
         plt.reload();
     }
+
     public boolean isNew() {
         return (plt.getId() == null);
     }
-    
 
     public void delete() throws Exception {
         plt.delete();

@@ -205,6 +205,14 @@ public class JasperFileEditorView extends ViewPart {
         updateForm();
     }
 
+    private void setEnable(boolean enable) {
+
+        deleteButton.setEnabled(enable);
+        browseButton.setEnabled(enable);
+        newButton.setEnabled(enable);
+        saveButton.setEnabled(enable);
+    }
+
     private void updateForm() {
         if (templateMap == null) {
             templateMap = new HashMap<String, JasperTemplateWrapper>();
@@ -213,7 +221,10 @@ public class JasperFileEditorView extends ViewPart {
         try {
 
             if (loggedIn) {
+                setEnable(true);
+
                 list.setEnabled(true);
+
                 for (JasperTemplateWrapper t : JasperTemplateWrapper
                     .getAllTemplates(SessionManager.getAppService())) {
                     String name = t.getName();
@@ -222,6 +233,9 @@ public class JasperFileEditorView extends ViewPart {
                 }
                 list.redraw();
             } else {
+
+                setEnable(false);
+
                 templateMap.clear();
 
                 list.removeAll();
@@ -259,7 +273,7 @@ public class JasperFileEditorView extends ViewPart {
 
                         prevJasperName = selectedItems[0];
                         jasperConfigDirty = false;
-                        
+
                     } else {
                         jasperNameTexty.setText("Please select a template");
                         jasperFileText.setText("");

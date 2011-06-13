@@ -2,8 +2,7 @@ package edu.ualberta.med.biobank.barcodegenerator.trees;
 
 import java.util.Map.Entry;
 
-import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.jface.util.SafeRunnable;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
 import org.eclipse.swt.events.ModifyEvent;
@@ -37,7 +36,7 @@ public class ConfigurationTree {
     private Text textEdit;
 
     private boolean isDirty;
-   
+
     private Configuration configuration;
 
     /**
@@ -132,8 +131,13 @@ public class ConfigurationTree {
         }
 
     }
-    
-    public Configuration getConfiguration(){
+
+    public void setEnabled(boolean enable) {
+        tree.setEnabled(enable);
+        
+    }
+
+    public Configuration getConfiguration() {
         return configuration;
     }
 
@@ -322,11 +326,10 @@ public class ConfigurationTree {
         });
     }
 
-    
     public void unDirty() {
-         isDirty = false;
+        isDirty = false;
     }
-    
+
     public boolean isDirty() {
         return isDirty;
     }

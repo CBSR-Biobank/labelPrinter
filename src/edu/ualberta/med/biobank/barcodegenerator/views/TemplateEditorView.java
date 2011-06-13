@@ -1,10 +1,7 @@
 package edu.ualberta.med.biobank.barcodegenerator.views;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.Map;
-
-import javax.xml.bind.JAXBException;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
@@ -12,13 +9,11 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -31,6 +26,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import edu.ualberta.med.biobank.SessionManager;
+import edu.ualberta.med.biobank.barcodegenerator.dialogs.ComboInputDialog;
 import edu.ualberta.med.biobank.barcodegenerator.dialogs.StringInputDialog;
 import edu.ualberta.med.biobank.barcodegenerator.template.Template;
 import edu.ualberta.med.biobank.barcodegenerator.template.TemplateStore;
@@ -52,9 +48,6 @@ import gov.nih.nci.system.applicationservice.ApplicationException;
  */
 
 // FIXME add form close listener
-
-// FIXME fix could not save template bug
-// FIXME save configuration changes.
 public class TemplateEditorView extends ViewPart {
 
     public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.views.TemplateEditorView";
@@ -103,9 +96,10 @@ public class TemplateEditorView extends ViewPart {
         gridData.verticalAlignment = GridData.FILL;
         group = new Group(top, SWT.NONE);
         group.setText("Templates Editor");
-        group.setLayoutData(gridData);
-        createComposite();
         group.setLayout(new GridLayout());
+        group.setLayoutData(gridData);
+
+        createComposite();
         createComposite1();
     }
 
@@ -117,12 +111,13 @@ public class TemplateEditorView extends ViewPart {
         gridData1.grabExcessHorizontalSpace = true;
         gridData1.grabExcessVerticalSpace = true;
         gridData1.verticalAlignment = GridData.FILL;
+
         composite = new Composite(group, SWT.NONE);
-        createComposite2();
         composite.setLayoutData(gridData1);
         composite.setLayout(gridLayout);
-        @SuppressWarnings("unused")
-        Label filler = new Label(composite, SWT.NONE);
+
+        createComposite2();
+        new Label(composite, SWT.NONE);
         createComposite3();
     }
 
@@ -132,20 +127,19 @@ public class TemplateEditorView extends ViewPart {
         gridData2.grabExcessHorizontalSpace = true;
         gridData2.grabExcessVerticalSpace = false;
         gridData2.verticalAlignment = GridData.CENTER;
+
         composite1 = new Composite(group, SWT.NONE);
         composite1.setLayoutData(gridData2);
         composite1.setLayout(new FillLayout());
+
         helpButton = new Button(composite1, SWT.NONE);
         helpButton.setText("Help");
         helpButton.addSelectionListener(helpListener);
 
-        @SuppressWarnings("unused")
-        Label filler22 = new Label(composite1, SWT.NONE);
-        @SuppressWarnings("unused")
-        Label filler21 = new Label(composite1, SWT.NONE);
-        @SuppressWarnings("unused")
-        Label filler2 = new Label(composite1, SWT.NONE);
-        filler2 = new Label(composite1, SWT.NONE);
+        new Label(composite1, SWT.NONE);
+        new Label(composite1, SWT.NONE);
+        new Label(composite1, SWT.NONE);
+        new Label(composite1, SWT.NONE);
 
         saveButton = new Button(composite1, SWT.NONE);
         saveButton.setText("Save Template");
@@ -158,10 +152,12 @@ public class TemplateEditorView extends ViewPart {
         gridData3.grabExcessVerticalSpace = true;
         gridData3.grabExcessHorizontalSpace = false;
         gridData3.verticalAlignment = GridData.FILL;
+
         composite2 = new Composite(composite, SWT.NONE);
-        createGroup1();
         composite2.setLayout(new GridLayout());
         composite2.setLayoutData(gridData3);
+
+        createGroup1();
         createComposite4();
     }
 
@@ -172,10 +168,12 @@ public class TemplateEditorView extends ViewPart {
         gridData4.grabExcessVerticalSpace = true;
         gridData4.verticalAlignment = GridData.FILL;
         composite3 = new Composite(composite, SWT.NONE);
-        createComposite5();
-        composite3.setLayoutData(gridData4);
-        createComposite62();
         composite3.setLayout(new GridLayout());
+        composite3.setLayoutData(gridData4);
+
+        createComposite5();
+        createComposite62();
+
     }
 
     private void createGroup1() throws ApplicationException {
@@ -187,9 +185,9 @@ public class TemplateEditorView extends ViewPart {
         FillLayout fillLayout1 = new FillLayout();
         fillLayout1.type = org.eclipse.swt.SWT.VERTICAL;
         group1 = new Group(composite2, SWT.NONE);
-        group1.setText("Templates");
         group1.setLayoutData(gridData6);
         group1.setLayout(fillLayout1);
+        group1.setText("Templates");
         templateNamesList = new List(group1, SWT.BORDER | SWT.V_SCROLL);
         templateNamesList.addSelectionListener(listListener);
 
@@ -206,10 +204,12 @@ public class TemplateEditorView extends ViewPart {
         gridData9.grabExcessVerticalSpace = true;
         gridData9.widthHint = -1;
         gridData9.horizontalAlignment = GridData.FILL;
+
         composite6 = new Group(composite3, SWT.NONE);
         composite6.setLayout(new GridLayout());
-        composite6.setText("Configuration");
         composite6.setLayoutData(gridData10);
+        composite6.setText("Configuration");
+
         configTree = new ConfigurationTree(composite6, SWT.NONE);
     }
 
@@ -250,9 +250,8 @@ public class TemplateEditorView extends ViewPart {
         templateNameText.setLayoutData(gridData11);
         templateNameText.setEditable(false);
         templateNameText.setEnabled(true);
-        //TODO color
+        // TODO color
 
-        
         new Label(composite5, SWT.NONE);
         new Label(composite5, SWT.NONE).setText("Jasper Configuration:");
 
@@ -269,6 +268,16 @@ public class TemplateEditorView extends ViewPart {
         printerNameText.setLayoutData(gridData11);
         printerNameText.addModifyListener(printerNameModifyListener);
 
+    }
+
+    private void setEnable(boolean enable) {
+        configTree.setEnabled(enable);
+        deleteButton.setEnabled(enable);
+        copyButton.setEnabled(enable);
+        newButton.setEnabled(enable);
+        helpButton.setEnabled(enable);
+        saveButton.setEnabled(enable);
+        printerNameText.setEnabled(enable);
     }
 
     @Override
@@ -324,15 +333,16 @@ public class TemplateEditorView extends ViewPart {
                     templateStore = new TemplateStore();
                 }
 
+                setEnable(true);
+
                 for (String s : templateStore.getTemplateNames())
                     templateNamesList.add(s);
-                templateNamesList.setEnabled(true);
+
                 templateNamesList.redraw();
 
             } else {
-
+                setEnable(false);
                 templateNamesList.removeAll();
-                templateNamesList.setEnabled(false);
                 templateNamesList.redraw();
 
             }
@@ -505,28 +515,37 @@ public class TemplateEditorView extends ViewPart {
                     if (!templateStore.getTemplateNames().contains(
                         newTemplateName)) {
 
+                        // jasper config combo selection
+                        ComboInputDialog jasperComboDialog = new ComboInputDialog(
+                            "Jasper Configuration Selection",
+                            "Please select a Jasper Configuration that you would like to base this template on.",
+                            JasperTemplateWrapper
+                                .getTemplateNames(SessionManager
+                                    .getAppService()), null, shell);
+                        jasperComboDialog.open();
+
+                        String selectedJasperConfig = jasperComboDialog
+                            .getValue();
+
+                        if (selectedJasperConfig == null
+                            || selectedJasperConfig.length() == 0)
+                            return;
+
                         Template ct = new Template();
-
-                        // FIXME implement a switch statement that is based
-                        // on jasper config names.
-
-                        // for (String s : JasperTemplateWrapper
-                        // .getTemplateNames(SessionManager.getAppService())) {
-                        // jasperFileCombo.add(s);
-                        // }
-                        // jasperFileCombo.setEnabled(true);
-                        // jasperFileCombo.redraw();
 
                         ct.setName(newTemplateName);
                         ct.setPrinterName("default");
 
-                        // FIXME
-                        ct.setJasperTemplate(getJasperTemplateWrapper("herp"));
+                        ct.setJasperTemplate(getJasperTemplateWrapper(selectedJasperConfig));
 
-                        // ask the user which jasper Configuration they would
-                        // like to base this on.
-                        ct.setConfiguration(CBSRLabelMaker
-                            .getDefaultConfiguration());
+                        if (selectedJasperConfig.equals("CBSR")) {
+                            ct.setConfiguration(CBSRLabelMaker
+                                .getDefaultConfiguration());
+
+                        } else {
+                            ct.setConfiguration(CBSRLabelMaker
+                                .getDefaultConfiguration());
+                        }
 
                         templateStore.addTemplate(ct);
                         templateNamesList.add(ct.getName());
@@ -549,43 +568,48 @@ public class TemplateEditorView extends ViewPart {
         }
     };
 
+    // FIXME make cloning work.
     private SelectionListener copyListener = new SelectionListener() {
         @Override
         public void widgetSelected(SelectionEvent e) {
-            // try {
-            // if (selectedTemplate != null) {
-            //
-            // StringInputDialog dialog = new StringInputDialog(
-            // "Cloned Template Name",
-            // "What is the name of the cloned template?", "Name",
-            // shell);
-            // dialog.setValue(selectedTemplate.getName() + " copy");
-            // if (dialog.open() == Dialog.OK) {
-            // String cloneName = dialog.getValue();
-            //
-            // if (cloneName != null) {
-            //
-            // if (templateStore.getTemplateNames().contains(
-            // cloneName)) {
-            // BgcPlugin
-            // .openAsyncError("Template Exists",
-            // "Your new template must have a unique name.");
-            // return;
-            // }
-            //
-            // Template clone = selectedTemplate.clone();
-            // clone.setName(cloneName);
-            // // FIXME clone.persist()
-            // templateStore.addTemplate(clone);
-            // templateNamesList.add(clone.getName());
-            // templateNamesList.redraw();
-            // }
-            // }
-            // }
-            // } catch (Exception e1) {
-            // BgcPlugin.openAsyncError("Template Copy Error",
-            // "Could not copy template", e1);
-            // }
+            try {
+                if (prevTemplateName == null)
+                    return;
+
+                StringInputDialog dialog = new StringInputDialog(
+                    "Cloned Template Name",
+                    "What is the name of the cloned template?", "Name", shell);
+                dialog.setValue(prevTemplateName + " copy");
+
+                if (dialog.open() == Dialog.OK) {
+
+                    Template selectedTemplate = templateStore
+                        .getTemplate(prevTemplateName);
+
+                    String newTemplateName = dialog.getValue();
+
+                    if (!templateStore.getTemplateNames().contains(
+                        newTemplateName)) {
+
+                        Template cloned = selectedTemplate.clone();
+                        cloned.setName(newTemplateName);
+
+                        cloned.persist();
+
+                        templateStore.addTemplate(cloned);
+
+                        templateNamesList.add(newTemplateName);
+                        templateNamesList.redraw();
+                    } else {
+                        BgcPlugin.openAsyncError("Template Exists",
+                            "Your new template must have a unique name.");
+                        return;
+                    }
+                }
+            } catch (Exception e1) {
+                BgcPlugin.openAsyncError("Template Create Error",
+                    "Could not create template", e1);
+            }
         }
 
         @Override

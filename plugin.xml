@@ -41,26 +41,34 @@
                closeable="true"
                id="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView"
                minimized="false"
+               ratio="1"
+               relationship="right"
                relative="org.eclipse.ui.editorss"
-               relationship="top">
+               visible="true">
          </view>
       </perspectiveExtension>
       <perspectiveExtension
             targetID="barcodeGenerator.perspective.templateeditor">
          <view
+               closeable="true"
                id="edu.ualberta.med.biobank.barcodegenerator.views.TemplateEditorView"
                minimized="false"
+               ratio="1"
+               relationship="right"
                relative="org.eclipse.ui.editorss"
-               relationship="top">
+               visible="true">
          </view>
       </perspectiveExtension>
       <perspectiveExtension
             targetID="barcodeGenerator.perspective.jaspereditor">
          <view
+               closeable="true"
                id="edu.ualberta.med.biobank.barcodegenerator.views.JasperFileEditorView"
                minimized="false"
+               ratio="1"
+               relationship="right"
                relative="org.eclipse.ui.editorss"
-               relationship="top">
+               visible="true">
          </view>
       </perspectiveExtension>
    </extension>
