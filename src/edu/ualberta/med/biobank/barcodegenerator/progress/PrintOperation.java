@@ -5,9 +5,9 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import edu.ualberta.med.biobank.barcodegenerator.forms.LabelPrinterEntryForm.BarcodeViewGuiData;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSRLabelMaker;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.exceptions.CBSRPdfGenException;
-import edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView.BarcodeViewGuiData;
 
 /**
  * 

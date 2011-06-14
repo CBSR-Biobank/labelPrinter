@@ -32,8 +32,8 @@ public class JasperEditorHandler extends AbstractHandler implements IHandler {
                     .getActivePage()
                     .openEditor(
                         new BgcFormInput(JasperConfigEntryForm.ID,
-                            JasperConfigEntryForm.ID), JasperConfigEntryForm.ID,
-                        true);
+                            JasperConfigEntryForm.ID),
+                        JasperConfigEntryForm.ID, true);
             }
         } catch (WorkbenchException e) {
             throw new ExecutionException(

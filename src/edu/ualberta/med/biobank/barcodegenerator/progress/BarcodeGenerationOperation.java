@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
-import edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView.BarcodeViewGuiData;
+import edu.ualberta.med.biobank.barcodegenerator.forms.LabelPrinterEntryForm.BarcodeViewGuiData;
 
 /**
  * Base class for generating label prints.
