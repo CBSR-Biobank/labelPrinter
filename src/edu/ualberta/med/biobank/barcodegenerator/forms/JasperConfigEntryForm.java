@@ -90,6 +90,9 @@ public class JasperConfigEntryForm extends BgcFormBase {
 
         Composite top = toolkit.createComposite(page, SWT.NONE);
         top.setLayout(new GridLayout());
+        top.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
+            true, true));
+
 
         createGroup(top);
 

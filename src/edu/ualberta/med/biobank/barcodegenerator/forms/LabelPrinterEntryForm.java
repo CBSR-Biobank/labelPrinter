@@ -143,8 +143,10 @@ public class LabelPrinterEntryForm extends BgcFormBase {
         shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 
         Composite top = toolkit.createComposite(page, SWT.NONE);
-        top.setBackground(new Color(Display.getCurrent(), 237, 236, 235));
         top.setLayout(new GridLayout());
+        top.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
+            true, true));
+
 
         brandingGroup(top);
         patientInfoGroup(top);
