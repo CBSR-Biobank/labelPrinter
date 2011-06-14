@@ -5,10 +5,13 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 
 import edu.ualberta.med.biobank.barcodegenerator.BarcodeGenPlugin;
+import edu.ualberta.med.biobank.barcodegenerator.forms.LabelPrinterEntryForm;
 import edu.ualberta.med.biobank.barcodegenerator.perspective.LabelPrinterPerspective;
+import edu.ualberta.med.biobank.gui.common.forms.BgcFormInput;
 
 public class LabelPrinterHandler extends AbstractHandler implements IHandler {
 
@@ -22,6 +25,15 @@ public class LabelPrinterHandler extends AbstractHandler implements IHandler {
                 .closeAllEditors(true)) {
                 workbench.showPerspective(LabelPrinterPerspective.ID,
                     workbench.getActiveWorkbenchWindow());
+
+                PlatformUI
+                    .getWorkbench()
+                    .getActiveWorkbenchWindow()
+                    .getActivePage()
+                    .openEditor(
+                        new BgcFormInput(LabelPrinterEntryForm.ID,
+                            LabelPrinterEntryForm.ID), LabelPrinterEntryForm.ID, true);
+
             }
         } catch (WorkbenchException e) {
             throw new ExecutionException(

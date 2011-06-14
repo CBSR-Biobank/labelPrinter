@@ -46,23 +46,21 @@
             default="false"
             name="Printer Templates Editor">
       </editor>
+      <editor
+            class="edu.ualberta.med.biobank.barcodegenerator.forms.JasperConfigEntryForm"
+            id="edu.ualberta.med.biobank.barcodegenerator.views.JasperFileEditorView"
+            default="false"
+            name="Jasper Templates Editor">
+      </editor>
+            <editor
+            class="edu.ualberta.med.biobank.barcodegenerator.forms.LabelPrinterEntryForm"
+            id="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView"
+            default="false"
+           name="Print Patient Barcodes">
+      </editor>
       </extension>
    <extension
          point="org.eclipse.ui.views">
-      <view
-            name="Print Patient Barcodes"
-            allowMultiple="false"
-            class="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView"
-            id="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView"
-            restorable="true">
-      </view>
-      <view
-            allowMultiple="false"
-            class="edu.ualberta.med.biobank.barcodegenerator.views.JasperFileEditorView"
-            id="edu.ualberta.med.biobank.barcodegenerator.views.JasperFileEditorView"
-            name="Jasper Templates Editor"
-            restorable="true">
-      </view>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
