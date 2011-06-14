@@ -12,10 +12,8 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
@@ -54,26 +52,17 @@ import gov.nih.nci.system.applicationservice.ApplicationException;
 public class TemplateEntryForm extends BgcFormBase {
 
     public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.forms.TemplateEntryForm";
-    private Composite top = null;
-    private Group group = null;
-    private Composite composite = null;
-    private Composite composite1 = null;
-    private Composite composite2 = null;
-    private Composite composite3 = null;
-    private Group group1 = null;
     private Composite composite4 = null;
     private Button deleteButton = null;
     private Button copyButton = null;
     private Button newButton = null;
     private Button helpButton = null;
     private Button saveButton = null;
-    private Composite composite5 = null;
     private Text templateNameText = null;
     private Text printerNameText = null;
     private Text jasperConfigText = null;
 
     private List templateNamesList = null;
-    private Group composite6 = null;
     private ConfigurationTree configTree = null;
     private String prevTemplateName = null;
 
@@ -89,7 +78,7 @@ public class TemplateEntryForm extends BgcFormBase {
 
     @Override
     protected void init() throws Exception {
-        setPartName("replace with this form's tab name");
+        setPartName("Label Templates");
     }
 
     @Override
@@ -105,7 +94,7 @@ public class TemplateEntryForm extends BgcFormBase {
 
     @Override
     protected void createFormContent() throws Exception {
-        form.setText("replace with this form's text");
+        form.setText("Label Templates");
         form.setMessage(getOkMessage(), IMessageProvider.NONE);
         page.setLayout(new GridLayout(1, false));
 
@@ -117,10 +106,14 @@ public class TemplateEntryForm extends BgcFormBase {
             .equals(BgcSessionState.LOGGED_IN);
 
         shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-        top = new Composite(page, SWT.NONE);
-        top.setLayout(new GridLayout());
 
-        createGroup();
+        Composite composite = toolkit.createComposite(page);
+        composite.setLayout(new GridLayout(2, false));
+        composite.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
+            true, true));
+
+        createComposite2(composite);
+        createFormButtons();
 
         sessionSourceProvider
             .addSourceProviderListener(new ISourceProviderListener() {
@@ -143,119 +136,69 @@ public class TemplateEntryForm extends BgcFormBase {
     }
 
     protected String getOkMessage() {
-        return "fix this OK message";
+        return "Used to create a new template for a printer label";
     }
 
     @Override
     public void setFocus() {
     }
 
-    private void createGroup() throws ApplicationException {
-        GridData gridData = new GridData();
-        gridData.horizontalAlignment = GridData.FILL;
-        gridData.grabExcessHorizontalSpace = true;
-        gridData.grabExcessVerticalSpace = true;
-        gridData.verticalAlignment = GridData.FILL;
-        group = new Group(top, SWT.NONE);
-        group.setText("Templates Editor");
-        group.setLayout(new GridLayout());
-        group.setLayoutData(gridData);
+    private void createComposite2(Composite parent) throws ApplicationException {
+        Composite composite2 = toolkit.createComposite(parent);
+        composite2.setLayout(new GridLayout(1, false));
+        composite2.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
+            true, true));
 
-        createComposite();
-        createComposite1();
+        createGroup1(composite2);
+        createComposite3(parent);
+        toolkit.paintBordersFor(composite2);
     }
 
-    private void createComposite() throws ApplicationException {
-        GridLayout gridLayout = new GridLayout();
-        gridLayout.numColumns = 3;
-        GridData gridData1 = new GridData();
-        gridData1.horizontalAlignment = GridData.FILL;
-        gridData1.grabExcessHorizontalSpace = true;
-        gridData1.grabExcessVerticalSpace = true;
-        gridData1.verticalAlignment = GridData.FILL;
+    private void createGroup1(Composite composite) throws ApplicationException {
+        Composite client = createSectionWithClient("Label Templates");
+        client.setLayout(new GridLayout());
+        client.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
+            true));
+        templateNamesList = new List(client, SWT.BORDER | SWT.V_SCROLL);
+        templateNamesList.addSelectionListener(listListener);
+        templateNamesList.setLayoutData(new GridData(GridData.FILL,
+            GridData.FILL, true, true));
 
-        composite = new Composite(group, SWT.NONE);
-        composite.setLayoutData(gridData1);
-        composite.setLayout(gridLayout);
+        composite4 = new Composite(client, SWT.NONE);
+        composite4.setLayout(new GridLayout(3, true));
 
-        createComposite2();
-        new Label(composite, SWT.NONE);
-        createComposite3();
+        newButton = toolkit.createButton(composite4, "New", SWT.PUSH);
+        newButton.addSelectionListener(newListener);
+        newButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
+            true, true));
+
+        copyButton = toolkit.createButton(composite4, "Copy", SWT.PUSH);
+        copyButton.addSelectionListener(copyListener);
+        copyButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
+            true, true));
+
+        deleteButton = toolkit.createButton(composite4, "Delete", SWT.PUSH);
+        deleteButton.addSelectionListener(deleteListener);
+        deleteButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
+            true, true));
     }
 
-    private void createComposite1() {
-        GridData gridData2 = new GridData();
-        gridData2.horizontalAlignment = GridData.FILL;
-        gridData2.grabExcessHorizontalSpace = true;
-        gridData2.grabExcessVerticalSpace = false;
-        gridData2.verticalAlignment = GridData.CENTER;
-
-        composite1 = new Composite(group, SWT.NONE);
-        composite1.setLayoutData(gridData2);
-        composite1.setLayout(new FillLayout());
-
-        helpButton = new Button(composite1, SWT.NONE);
-        helpButton.setText("Help");
-        helpButton.addSelectionListener(helpListener);
-
-        new Label(composite1, SWT.NONE);
-        new Label(composite1, SWT.NONE);
-        new Label(composite1, SWT.NONE);
-        new Label(composite1, SWT.NONE);
-
-        saveButton = new Button(composite1, SWT.NONE);
-        saveButton.setText("Save Template");
-        saveButton.addSelectionListener(saveAllListener);
-    }
-
-    private void createComposite2() throws ApplicationException {
-        GridData gridData3 = new GridData();
-        gridData3.horizontalAlignment = GridData.BEGINNING;
-        gridData3.grabExcessVerticalSpace = true;
-        gridData3.grabExcessHorizontalSpace = false;
-        gridData3.verticalAlignment = GridData.FILL;
-
-        composite2 = new Composite(composite, SWT.NONE);
-        composite2.setLayout(new GridLayout());
-        composite2.setLayoutData(gridData3);
-
-        createGroup1();
-        createComposite4();
-    }
-
-    private void createComposite3() {
+    private void createComposite3(Composite parent) {
         GridData gridData4 = new GridData();
         gridData4.horizontalAlignment = GridData.FILL;
         gridData4.grabExcessHorizontalSpace = true;
         gridData4.grabExcessVerticalSpace = true;
         gridData4.verticalAlignment = GridData.FILL;
-        composite3 = new Composite(composite, SWT.NONE);
+        Composite composite3 = new Composite(parent, SWT.NONE);
         composite3.setLayout(new GridLayout());
         composite3.setLayoutData(gridData4);
 
-        createComposite5();
-        createComposite62();
+        createComposite5(composite3);
+        createComposite62(composite3);
 
     }
 
-    private void createGroup1() throws ApplicationException {
-        GridData gridData6 = new GridData();
-        gridData6.grabExcessVerticalSpace = true;
-        gridData6.verticalAlignment = GridData.FILL;
-        gridData6.grabExcessHorizontalSpace = true;
-        gridData6.horizontalAlignment = GridData.FILL;
-        FillLayout fillLayout1 = new FillLayout();
-        fillLayout1.type = org.eclipse.swt.SWT.VERTICAL;
-        group1 = new Group(composite2, SWT.NONE);
-        group1.setLayoutData(gridData6);
-        group1.setLayout(fillLayout1);
-        group1.setText("Templates");
-        templateNamesList = new List(group1, SWT.BORDER | SWT.V_SCROLL);
-        templateNamesList.addSelectionListener(listListener);
-
-    }
-
-    private void createComposite62() {
+    private void createComposite62(Composite composite) {
         GridData gridData10 = new GridData();
         gridData10.horizontalAlignment = GridData.FILL;
         gridData10.grabExcessVerticalSpace = true;
@@ -267,33 +210,15 @@ public class TemplateEntryForm extends BgcFormBase {
         gridData9.widthHint = -1;
         gridData9.horizontalAlignment = GridData.FILL;
 
-        composite6 = new Group(composite3, SWT.NONE);
-        composite6.setLayout(new GridLayout());
-        composite6.setLayoutData(gridData10);
-        composite6.setText("Configuration");
+        Group g6 = new Group(composite, SWT.NONE);
+        g6.setLayout(new GridLayout());
+        g6.setLayoutData(gridData10);
+        g6.setText("Configuration");
 
-        configTree = new ConfigurationTree(composite6, SWT.NONE);
+        configTree = new ConfigurationTree(g6, SWT.NONE);
     }
 
-    private void createComposite4() {
-
-        composite4 = new Composite(composite2, SWT.NONE);
-        composite4.setLayout(new RowLayout());
-
-        newButton = new Button(composite4, SWT.NONE);
-        newButton.setText("New");
-        newButton.addSelectionListener(newListener);
-
-        copyButton = new Button(composite4, SWT.NONE);
-        copyButton.setText("Copy ");
-        copyButton.addSelectionListener(copyListener);
-
-        deleteButton = new Button(composite4, SWT.NONE);
-        deleteButton.setText("Delete ");
-        deleteButton.addSelectionListener(deleteListener);
-    }
-
-    private void createComposite5() {
+    private void createComposite5(Composite composite) {
         GridData gridData11 = new GridData();
         gridData11.horizontalAlignment = GridData.FILL;
         gridData11.grabExcessHorizontalSpace = true;
@@ -302,7 +227,7 @@ public class TemplateEntryForm extends BgcFormBase {
         GridLayout gridLayout2 = new GridLayout();
         gridLayout2.numColumns = 3;
 
-        composite5 = new Composite(composite3, SWT.NONE);
+        Composite composite5 = new Composite(composite, SWT.NONE);
         composite5.setLayout(gridLayout2);
         composite5.setLayoutData(gridData11);
 
@@ -330,6 +255,31 @@ public class TemplateEntryForm extends BgcFormBase {
         printerNameText.setLayoutData(gridData11);
         printerNameText.addModifyListener(printerNameModifyListener);
 
+    }
+
+    private void createFormButtons() {
+        Composite composite = new Composite(page, SWT.NONE);
+        composite.setLayout(new GridLayout(5, true));
+        composite.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
+            true, true));
+
+        helpButton = new Button(composite, SWT.NONE);
+        helpButton.setText("Help");
+        helpButton.addSelectionListener(helpListener);
+        helpButton.setLayoutData(new GridData(GridData.FILL,
+            GridData.BEGINNING, true, true));
+
+        Composite spacer = new Composite(composite, SWT.NONE);
+        GridData gd = new GridData(GridData.FILL, GridData.BEGINNING, true,
+            true);
+        gd.horizontalSpan = 3;
+        spacer.setLayoutData(gd);
+
+        saveButton = new Button(composite, SWT.NONE);
+        saveButton.setText("Save Template");
+        saveButton.addSelectionListener(saveAllListener);
+        saveButton.setLayoutData(new GridData(GridData.FILL,
+            GridData.BEGINNING, true, true));
     }
 
     private void setEnable(boolean enable) {
