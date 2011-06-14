@@ -96,17 +96,16 @@ public class LabelPrinterEntryForm extends BgcFormBase {
 
     private Combo templateCombo = null;
     private Combo printerCombo = null;
-    
+
     private Label intendedPrinter = null;
-    
+
     private Image logoImage = null;
     private Canvas logoCanvas = null;
 
-    
     private Shell shell;
-    
+
     private IPreferenceStore perferenceStore;
-    
+
     private Template loadedTemplate;
     private TemplateStore templateStore;
 
@@ -147,10 +146,10 @@ public class LabelPrinterEntryForm extends BgcFormBase {
         top.setBackground(new Color(Display.getCurrent(), 237, 236, 235));
         top.setLayout(new GridLayout());
 
-        brandingGroup();
-        patientInfoGroup();
-        sampleTextGroup();
-        actionButtonGroup();
+        brandingGroup(top);
+        patientInfoGroup(top);
+        sampleTextGroup(top);
+        actionButtonGroup(top);
 
         sessionSourceProvider
             .addSourceProviderListener(new ISourceProviderListener() {
@@ -392,13 +391,13 @@ public class LabelPrinterEntryForm extends BgcFormBase {
      * This method initializes group
      * 
      */
-    private void createGroup() {
+    private void createGroup(Composite group3) {
         GridData gridData2 = new GridData();
         gridData2.horizontalAlignment = GridData.FILL;
         gridData2.grabExcessHorizontalSpace = true;
         gridData2.grabExcessVerticalSpace = true;
         gridData2.verticalAlignment = GridData.FILL;
-        Composite group = createSectionWithClient("Logo");
+        Composite group = createSectionWithClient("Logo",group3);
         group.setLayout(new GridLayout());
         createLogoCanvas(group);
         group.setLayoutData(gridData2);
@@ -469,7 +468,7 @@ public class LabelPrinterEntryForm extends BgcFormBase {
      * This method initializes group1
      * 
      */
-    private void patientInfoGroup() {
+    private void patientInfoGroup(Composite top) {
 
         GridData gridData = new GridData();
         gridData.horizontalAlignment = GridData.FILL;
@@ -477,7 +476,7 @@ public class LabelPrinterEntryForm extends BgcFormBase {
         gridData.grabExcessVerticalSpace = false;
         gridData.verticalAlignment = GridData.FILL;
 
-        Composite group1 = createSectionWithClient("Patient Information");
+        Composite group1 = createSectionWithClient("Patient Information",top);
         group1.setLayoutData(gridData);
         group1.setLayout(new GridLayout());
         createComposite6(group1);
@@ -620,7 +619,7 @@ public class LabelPrinterEntryForm extends BgcFormBase {
      * This method initializes group2
      * 
      */
-    private void sampleTextGroup() {
+    private void sampleTextGroup(Composite top) {
 
         GridData gridData = new GridData();
         gridData.horizontalAlignment = GridData.FILL;
@@ -633,7 +632,7 @@ public class LabelPrinterEntryForm extends BgcFormBase {
         GridLayout gridLayout5 = new GridLayout();
         gridLayout5.numColumns = 4;
 
-        Composite group2 = createSectionWithClient("Additonal Configuration");
+        Composite group2 = createSectionWithClient("Additonal Configuration",top);
         group2.setLayout(gridLayout5);
         group2.setLayoutData(gridData);
 
@@ -641,9 +640,9 @@ public class LabelPrinterEntryForm extends BgcFormBase {
         sampleTypeCheckbox.setText("Enable");
         sampleTypeCheckbox.setSelection(perferenceStore
             .getBoolean(PreferenceConstants.SAMPLETYPE_CHECKBOX));
-        
+
         new Label(group2, SWT.NONE).setText("Sample Type (on labels):");
-        
+
         sampleTypeText = new Text(group2, SWT.BORDER | SWT.V_SCROLL
             | SWT.SINGLE);
         sampleTypeText.setText(perferenceStore
@@ -661,7 +660,7 @@ public class LabelPrinterEntryForm extends BgcFormBase {
      * @throws ApplicationException
      * 
      */
-    private void brandingGroup() {
+    private void brandingGroup(Composite top) {
 
         GridData gridData = new GridData();
         gridData.horizontalAlignment = GridData.FILL;
@@ -674,19 +673,19 @@ public class LabelPrinterEntryForm extends BgcFormBase {
         gridLayout3.numColumns = 2;
         gridLayout3.makeColumnsEqualWidth = true;
 
-        Composite group3 = createSectionWithClient("Branding");
+        Composite group3 = createSectionWithClient("Branding",top);
         group3.setLayoutData(gridData);
         group3.setLayout(gridLayout3);
 
         createComposite3(group3);
-        createGroup();
+        createGroup(group3);
     }
 
     /**
      * This method initializes group4
      * 
      */
-    private void actionButtonGroup() {
+    private void actionButtonGroup(Composite top) {
         GridLayout gridLayout5 = new GridLayout();
         gridLayout5.numColumns = 6;
         gridLayout5.makeColumnsEqualWidth = true;
@@ -701,7 +700,7 @@ public class LabelPrinterEntryForm extends BgcFormBase {
         gridData7.grabExcessHorizontalSpace = true;
         gridData7.horizontalAlignment = GridData.FILL;
 
-        Composite group4 = createSectionWithClient("Actions");
+        Composite group4 = createSectionWithClient("Actions",top);
 
         savePdfButton = new Button(group4, SWT.NONE);
         savePdfButton.setText("Print to PDF");

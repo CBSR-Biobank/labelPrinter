@@ -91,7 +91,7 @@ public class JasperConfigEntryForm extends BgcFormBase {
         Composite top = toolkit.createComposite(page, SWT.NONE);
         top.setLayout(new GridLayout());
 
-        createGroup();
+        createGroup(top);
 
         sessionSourceProvider
             .addSourceProviderListener(new ISourceProviderListener() {
@@ -118,14 +118,14 @@ public class JasperConfigEntryForm extends BgcFormBase {
     public void setFocus() {
     }
 
-    private void createGroup() {
+    private void createGroup(Composite top) {
         GridData gridFill = new GridData();
         gridFill.horizontalAlignment = GridData.FILL;
         gridFill.grabExcessHorizontalSpace = true;
         gridFill.grabExcessVerticalSpace = true;
         gridFill.verticalAlignment = GridData.FILL;
 
-        Composite group = createSectionWithClient("Jasper Configuration Editor");
+        Composite group = createSectionWithClient("Jasper Configuration Editor",top);
         group.setLayout(new GridLayout());
         group.setLayoutData(gridFill);
 
@@ -181,7 +181,7 @@ public class JasperConfigEntryForm extends BgcFormBase {
         Composite composite2 = toolkit.createComposite(composite, SWT.NONE);
         composite2.setLayout(new GridLayout());
         composite2.setLayoutData(gridData3);
-        createGroup1();
+        createGroup1(composite2);
         createComposite4(composite2);
     }
 
@@ -197,7 +197,7 @@ public class JasperConfigEntryForm extends BgcFormBase {
         createComposite5(composite3);
     }
 
-    private void createGroup1() {
+    private void createGroup1(Composite composite2) {
         GridData gridData6 = new GridData();
         gridData6.grabExcessVerticalSpace = true;
         gridData6.verticalAlignment = GridData.FILL;
@@ -208,7 +208,7 @@ public class JasperConfigEntryForm extends BgcFormBase {
         FillLayout fillLayout1 = new FillLayout();
         fillLayout1.type = org.eclipse.swt.SWT.VERTICAL;
 
-        Composite group1 = createSectionWithClient("Jasper Configurations");
+        Composite group1 = createSectionWithClient("Jasper Configurations",composite2);
         group1.setLayoutData(gridData6);
         group1.setLayout(fillLayout1);
         list = new List(group1, SWT.BORDER | SWT.V_SCROLL);
