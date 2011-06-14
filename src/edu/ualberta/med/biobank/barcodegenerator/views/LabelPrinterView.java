@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.print.PrintService;
@@ -38,6 +39,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.ISourceProviderListener;
 import org.eclipse.ui.part.ViewPart;
 
 import edu.ualberta.med.biobank.barcodegenerator.BarcodeGenPlugin;
@@ -51,6 +53,7 @@ import edu.ualberta.med.biobank.barcodegenerator.template.TemplateStore;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSRData;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.exceptions.CBSRGuiVerificationException;
 import edu.ualberta.med.biobank.gui.common.BgcPlugin;
+import edu.ualberta.med.biobank.gui.common.BgcSessionState;
 import gov.nih.nci.system.applicationservice.ApplicationException;
 
 /**
@@ -67,29 +70,22 @@ public class LabelPrinterView extends ViewPart {
     public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView";
     private Composite top = null;
     private Composite composite3 = null;
-    private Label label = null;
     private Text projectTitleText = null;
-    private Label label1 = null;
     private Text logoText = null;
     private Button logoButton = null;
     private Group group = null;
     private Canvas logoCanvas = null;
     private Group group1 = null;
     private Composite composite5 = null;
-    private Label label2 = null;
-    private Label label3 = null;
-    private Label label4 = null;
-    private Label label5 = null;
-    private Label label6 = null;
     private Text label1Text = null;
     private Button value1Checkbox = null;
     private Button label1Checkbox = null;
     private Button printBarcode1Checkbox = null;
     private Text value1Text = null;
     private Composite composite6 = null;
-    private Label label7 = null;
     private Text patientIDText = null;
     private Button label2Checkbox = null;
+
     private Text label2Text = null;
     private Button value2Checkbox = null;
     private Text value2Text = null;
@@ -101,12 +97,9 @@ public class LabelPrinterView extends ViewPart {
     private Button printBarcode3Checkbox = null;
     private Group group2 = null;
     private Image logoImage = null;
-
-    private Label label8 = null;
+    private Label intendedPrinter = null;
     private Button sampleTypeCheckbox = null;
     private Text sampleTypeText = null;
-    private Label intendedPrinter = null;
-    private Label label9 = null;
     private Combo templateCombo = null;
     private Combo printerCombo = null;
     private Group group3 = null;
@@ -116,25 +109,123 @@ public class LabelPrinterView extends ViewPart {
     private CLabel cLabel = null;
     private Shell shell;
     private IPreferenceStore perferenceStore;
-    private Template selectedTemplate;
+    private Template loadedTemplate;
+    private TemplateStore templateStore;
+
+    private boolean loggedIn = false;
 
     @Override
     public void createPartControl(Composite parent) {
+
+        BgcSessionState sessionSourceProvider = BgcPlugin
+            .getSessionStateSourceProvider();
+
+        loggedIn = sessionSourceProvider.getCurrentState()
+            .get(BgcSessionState.SESSION_STATE_SOURCE_NAME)
+            .equals(BgcSessionState.LOGGED_IN);
+        
         loadPreferenceStore();
 
+        shell = parent.getShell();
+        top = new Composite(parent, SWT.NONE);
+        top.setBackground(new Color(Display.getCurrent(), 237, 236, 235));
+        top.setLayout(new GridLayout());
+
+        brandingGroup();
+        patientInfoGroup();
+        sampleTextGroup();
+        actionButtonGroup();
+
+        sessionSourceProvider
+            .addSourceProviderListener(new ISourceProviderListener() {
+                @Override
+                public void sourceChanged(int sourcePriority,
+                    String sourceName, Object sourceValue) {
+                    if (sourceValue != null) {
+                        loggedIn = sourceValue
+                            .equals(BgcSessionState.LOGGED_IN);
+                        updateForm();
+                    }
+                }
+
+                @Override
+                public void sourceChanged(int sourcePriority,
+                    @SuppressWarnings("rawtypes") Map sourceValuesByName) {
+                }
+            });
+
+        
+        templateStore = null;
+        updateForm();
+
+    }
+
+    private void updateForm() {
         try {
-            shell = parent.getShell();
-            top = new Composite(parent, SWT.NONE);
-            top.setBackground(new Color(Display.getCurrent(), 237, 236, 235));
-            top.setLayout(new GridLayout());
-            brandingGroup();
-            patientInfoGroup();
-            sampleTextGroup();
-            actionButtonGroup();
+            if (loggedIn) {
+                if (templateStore == null) {
+                    templateStore = new TemplateStore();
+                }
+                
+                templateCombo.removeAll();
+                for(String templateName : templateStore.getTemplateNames()){
+                    templateCombo.add(templateName);
+                }
+                
+
+                if (templateCombo.getItemCount() > 0)
+                    templateCombo.select(0);
+
+                for (int i = 0; i < templateCombo.getItemCount(); i++) {
+                    if (templateCombo.getItem(i).equals(
+                        perferenceStore
+                            .getString(PreferenceConstants.TEMPLATE_NAME))) {
+                        templateCombo.select(i);
+                        break;
+                    }
+                }
+                setEnable(true);
+                templateCombo.redraw();
+
+            } else {
+                setEnable(false);
+                templateCombo.removeAll();
+                templateCombo.redraw();
+
+            }
         } catch (ApplicationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            BgcPlugin.openAsyncError("Database Error",
+                "Error while updating form", e);
         }
+    }
+
+    private void setEnable(boolean enable) {
+        projectTitleText.setEnabled(enable);
+        logoText.setEnabled(enable);
+        logoButton.setEnabled(enable);
+        label1Text.setEnabled(enable);
+        value1Checkbox.setEnabled(enable);
+        label1Checkbox.setEnabled(enable);
+        printBarcode1Checkbox.setEnabled(enable);
+        value1Text.setEnabled(enable);
+        patientIDText.setEnabled(enable);
+        label2Checkbox.setEnabled(enable);
+        label2Text.setEnabled(enable);
+        value2Checkbox.setEnabled(enable);
+        value2Text.setEnabled(enable);
+        printBarcode2Checkbox.setEnabled(enable);
+        label3Checkbox.setEnabled(enable);
+        label3Text.setEnabled(enable);
+        value3Checkbox.setEnabled(enable);
+        value3Text.setEnabled(enable);
+        printBarcode3Checkbox.setEnabled(enable);
+        sampleTypeCheckbox.setEnabled(enable);
+        sampleTypeText.setEnabled(enable);
+        templateCombo.setEnabled(enable);
+        printerCombo.setEnabled(enable);
+        printButton.setEnabled(enable);
+        savePdfButton.setEnabled(enable);
+        cLabel.setEnabled(enable);
     }
 
     private void loadPreferenceStore() {
@@ -163,7 +254,7 @@ public class LabelPrinterView extends ViewPart {
      * @throws ApplicationException
      * 
      */
-    private void createComposite3() throws ApplicationException {
+    private void createComposite3() {
         GridData gridData1 = new GridData();
         gridData1.horizontalAlignment = GridData.FILL;
         gridData1.grabExcessHorizontalSpace = true;
@@ -177,17 +268,16 @@ public class LabelPrinterView extends ViewPart {
         composite3 = new Composite(group3, SWT.NONE);
         composite3.setLayout(gridLayout);
         composite3.setLayoutData(gridData);
-        label = new Label(composite3, SWT.NONE);
-        label.setText("Project Title:");
+        new Label(composite3, SWT.NONE).setText("Project Title:");
+
         projectTitleText = new Text(composite3, SWT.BORDER);
         projectTitleText.setLayoutData(gridData);
         projectTitleText.setTextLimit(12);
         projectTitleText.setText(perferenceStore
             .getString(PreferenceConstants.PROJECT_TITLE));
-        @SuppressWarnings("unused")
-        Label filler = new Label(composite3, SWT.NONE);
-        label1 = new Label(composite3, SWT.NONE);
-        label1.setText("Logo:");
+
+        new Label(composite3, SWT.NONE);
+        new Label(composite3, SWT.NONE).setText("Logo:");
         logoText = new Text(composite3, SWT.BORDER);
         logoText.setEditable(false);
         logoText.setLayoutData(gridData1);
@@ -220,32 +310,14 @@ public class LabelPrinterView extends ViewPart {
         gridData21.verticalAlignment = GridData.CENTER;
         gridData21.horizontalAlignment = GridData.FILL;
 
-        label9 = new Label(composite3, SWT.NONE);
-        label9.setText("Template:");
+        new Label(composite3, SWT.NONE).setText("Template:");
         templateCombo = new Combo(composite3, SWT.DROP_DOWN | SWT.BORDER);
         templateCombo.setLayoutData(gridData21);
-
-        // TODO: have application service returned by biobank.gui.common plugin
-        TemplateStore store = new TemplateStore();
-        for (String s : store.getTemplateNames()) {
-            templateCombo.add(s);
-        }
-
-        if (templateCombo.getItemCount() > 0)
-            templateCombo.select(0);
-
-        for (int i = 0; i < templateCombo.getItemCount(); i++) {
-            if (templateCombo.getItem(i).equals(
-                perferenceStore.getString(PreferenceConstants.TEMPLATE_NAME))) {
-                templateCombo.select(i);
-                break;
-            }
-        }
-
         templateCombo.addSelectionListener(new SelectionListener() {
 
             @Override
             public void widgetSelected(SelectionEvent e) {
+
                 loadSelectedTemplate();
             }
 
@@ -255,19 +327,16 @@ public class LabelPrinterView extends ViewPart {
             }
         });
 
-        filler = new Label(composite3, SWT.NONE);
+        new Label(composite3, SWT.NONE);
+        new Label(composite3, SWT.NONE).setText("Intended Printer:");
 
-        label9 = new Label(composite3, SWT.NONE);
-        label9.setText("Intended Printer:");
         intendedPrinter = new Label(composite3, SWT.NONE);
         intendedPrinter.setForeground(new Color(shell.getDisplay(), 255, 0, 0));
         intendedPrinter.setText("default");
-        loadSelectedTemplate();
 
-        filler = new Label(composite3, SWT.NONE);
+        new Label(composite3, SWT.NONE);
+        new Label(composite3, SWT.NONE).setText("Printer:");
 
-        label9 = new Label(composite3, SWT.NONE);
-        label9.setText("Printer:");
         printerCombo = new Combo(composite3, SWT.DROP_DOWN | SWT.BORDER);
         printerCombo.setLayoutData(gridData21);
 
@@ -287,23 +356,24 @@ public class LabelPrinterView extends ViewPart {
                 break;
             }
         }
+        loadSelectedTemplate();
 
     }
 
     private void loadSelectedTemplate() {
-
+        // FIXME load templatestore when you updateform
         if (templateCombo.getSelectionIndex() >= 0) {
+            try {
+                loadedTemplate = templateStore.getTemplate(templateCombo
+                    .getItem(templateCombo.getSelectionIndex()));
+            } catch (Exception ee) {
+                BgcPlugin.openAsyncError("Verifcation Issue",
+                    "Could not load template: " + ee.getMessage());
+            }
+        }
 
-            // FIXME
-            // selectedTemplate = templateStore.getTemplate(templateCombo
-            // .getItem(templateCombo.getSelectionIndex()));
-
-            // load gui elements that use template data
-            if (selectedTemplate != null)
-                intendedPrinter.setText(selectedTemplate.getPrinterName());
-
-        } else
-            selectedTemplate = null;
+        if (loadedTemplate != null)
+            intendedPrinter.setText(loadedTemplate.getPrinterName());
     }
 
     /**
@@ -439,16 +509,12 @@ public class LabelPrinterView extends ViewPart {
         composite5 = new Composite(group1, SWT.NONE);
         composite5.setLayout(gridLayout2);
         composite5.setLayoutData(gridData6);
-        label2 = new Label(composite5, SWT.NONE);
-        label2.setText("Enable:");
-        label3 = new Label(composite5, SWT.NONE);
-        label3.setText("Label (Patient Name/PHN/etc):");
-        label4 = new Label(composite5, SWT.NONE);
-        label4.setText("Enable:");
-        label5 = new Label(composite5, SWT.NONE);
-        label5.setText("Value (eg BOB MARLEY):");
-        label6 = new Label(composite5, SWT.NONE);
-        label6.setText("Print Barcode:");
+        new Label(composite5, SWT.NONE).setText("Enable:");
+        new Label(composite5, SWT.NONE)
+            .setText("Label (Patient Name/PHN/etc):");
+        new Label(composite5, SWT.NONE).setText("Enable:");
+        new Label(composite5, SWT.NONE).setText("Value (eg BOB MARLEY):");
+        new Label(composite5, SWT.NONE).setText("Print Barcode:");
 
         label1Checkbox = new Button(composite5, SWT.CHECK);
         label1Checkbox.setSelection(perferenceStore
@@ -526,8 +592,7 @@ public class LabelPrinterView extends ViewPart {
         gridLayout3.numColumns = 5;
         composite6 = new Composite(group1, SWT.NONE);
         composite6.setLayout(gridLayout3);
-        label7 = new Label(composite6, SWT.NONE);
-        label7.setText("Patient ID:");
+        new Label(composite6, SWT.NONE).setText("Patient ID:");
         patientIDText = new Text(composite6, SWT.BORDER);
         patientIDText.setLayoutData(gridData4);
         patientIDText.setTextLimit(12);
@@ -573,10 +638,8 @@ public class LabelPrinterView extends ViewPart {
             .getString(PreferenceConstants.SAMPLETYPE_TEXT));
         sampleTypeText.setTextLimit(25);
         sampleTypeText.setLayoutData(gridData2);
-        label8 = new Label(group2, SWT.LEFT | SWT.HORIZONTAL);
-        label8.setText("");
-        @SuppressWarnings("unused")
-        Label filler61 = new Label(group2, SWT.NONE);
+        new Label(group2, SWT.LEFT | SWT.HORIZONTAL).setText("");
+        new Label(group2, SWT.NONE);
 
         group2.setLayout(gridLayout5);
         group2.setText("Additonal Configuration");
@@ -590,7 +653,7 @@ public class LabelPrinterView extends ViewPart {
      * @throws ApplicationException
      * 
      */
-    private void brandingGroup() throws ApplicationException {
+    private void brandingGroup() {
 
         GridData gridData = new GridData();
         gridData.horizontalAlignment = GridData.FILL;
@@ -796,7 +859,7 @@ public class LabelPrinterView extends ViewPart {
                 sampleTypeStr = sampleTypeText.getText();
             }
 
-            template = selectedTemplate;
+            template = loadedTemplate;
 
             if (template == null) {
                 throw new CBSRGuiVerificationException("Verifcation Issue",

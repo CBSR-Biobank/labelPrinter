@@ -12,7 +12,7 @@
                minimized="false"
                moveable="false"
                ratio="1"
-               relationship="top"
+               relationship="right"
                relative="org.eclipse.ui.editorss"
                showTitle="true"
                standalone="true"
@@ -39,19 +39,21 @@
       </perspectiveExtension>
    </extension>
    <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="edu.ualberta.med.biobank.barcodegenerator.forms.TemplateEntryForm"
+            id="edu.ualberta.med.biobank.barcodegenerator.forms.TemplateEntryForm"
+            default="false"
+            name="Printer Templates Editor">
+      </editor>
+      </extension>
+   <extension
          point="org.eclipse.ui.views">
       <view
             name="Print Patient Barcodes"
             allowMultiple="false"
             class="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView"
             id="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView"
-            restorable="true">
-      </view>
-      <view
-            allowMultiple="false"
-            class="edu.ualberta.med.biobank.barcodegenerator.views.TemplateEntryForm"
-            id="edu.ualberta.med.biobank.barcodegenerator.views.TemplateEditorView"
-            name="Printer Templates Editor"
             restorable="true">
       </view>
       <view

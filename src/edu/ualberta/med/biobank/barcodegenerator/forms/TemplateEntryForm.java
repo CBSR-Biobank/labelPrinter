@@ -1,4 +1,4 @@
-package edu.ualberta.med.biobank.barcodegenerator.views;
+package edu.ualberta.med.biobank.barcodegenerator.forms;
 
 import java.net.URL;
 import java.util.Map;
@@ -53,7 +53,7 @@ import gov.nih.nci.system.applicationservice.ApplicationException;
 // FIXME add form close listener
 public class TemplateEntryForm extends BgcFormBase {
 
-    public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.views.TemplateEditorView";
+    public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.forms.TemplateEntryForm";
     private Composite top = null;
     private Group group = null;
     private Composite composite = null;

@@ -1,9 +1,7 @@
 package edu.ualberta.med.biobank.barcodegenerator.views;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,7 +10,6 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -63,13 +60,109 @@ public class JasperFileEditorView extends ViewPart {
     private Button browseButton = null;
     private List list = null;
 
-    private Map<String, JasperTemplateWrapper> templateMap;
+    private String loadedJasperFileXml = null;
+    private String prevJasperName = null;
 
-    private JasperTemplateWrapper selectedTemplate = null;
+    private Map<String, JasperTemplateWrapper> templateMap;
 
     boolean jasperConfigDirty = false;
 
-    private boolean loggedIn;
+    private boolean loggedIn = false;
+
+    private GridData gridFill = null;
+
+    @Override
+    public void setFocus() {
+    }
+
+    private void createGroup() {
+
+        group = new Group(top, SWT.NONE);
+        group.setLayout(new GridLayout());
+        group.setLayoutData(gridFill);
+        group.setText("Jasper Configuration Editor");
+
+        createComposite();
+        createComposite1();
+    }
+
+    private void createComposite() {
+        GridLayout gridLayout = new GridLayout();
+        gridLayout.numColumns = 3;
+        composite = new Composite(group, SWT.NONE);
+        createComposite2();
+        composite.setLayoutData(gridFill);
+        composite.setLayout(gridLayout);
+        @SuppressWarnings("unused")
+        Label filler = new Label(composite, SWT.NONE);
+        createComposite3();
+    }
+
+    private void createComposite1() {
+        GridData gridData2 = new GridData();
+        gridData2.horizontalAlignment = GridData.FILL;
+        gridData2.grabExcessHorizontalSpace = true;
+        gridData2.grabExcessVerticalSpace = false;
+        gridData2.verticalAlignment = GridData.CENTER;
+
+        composite1 = new Composite(group, SWT.NONE);
+        composite1.setLayoutData(gridData2);
+        composite1.setLayout(new FillLayout());
+
+        new Label(composite1, SWT.NONE);
+        new Label(composite1, SWT.NONE);
+        new Label(composite1, SWT.NONE);
+        new Label(composite1, SWT.NONE);
+
+        saveButton = new Button(composite1, SWT.NONE);
+        saveButton.setText("Save Jasper Config");
+        saveButton.addSelectionListener(saveAllListener);
+    }
+
+    private void createComposite2() {
+        GridData gridData3 = new GridData();
+        gridData3.horizontalAlignment = GridData.BEGINNING;
+        gridData3.grabExcessVerticalSpace = true;
+        gridData3.grabExcessHorizontalSpace = false;
+        gridData3.verticalAlignment = GridData.FILL;
+        composite2 = new Composite(composite, SWT.NONE);
+        composite2.setLayout(new GridLayout());
+        composite2.setLayoutData(gridData3);
+        createGroup1();
+        createComposite4();
+    }
+
+    private void createComposite3() {
+        GridData gridData4 = new GridData();
+        gridData4.horizontalAlignment = GridData.FILL;
+        gridData4.grabExcessHorizontalSpace = true;
+        gridData4.grabExcessVerticalSpace = true;
+        gridData4.verticalAlignment = GridData.FILL;
+        composite3 = new Composite(composite, SWT.NONE);
+        composite3.setLayoutData(gridData4);
+        composite3.setLayout(new GridLayout());
+        createComposite5();
+    }
+
+    private void createGroup1() {
+        GridData gridData6 = new GridData();
+        gridData6.grabExcessVerticalSpace = true;
+        gridData6.verticalAlignment = GridData.FILL;
+        gridData6.grabExcessHorizontalSpace = true;
+        gridData6.horizontalAlignment = GridData.FILL;
+        gridData6.heightHint = 200;
+        gridData6.widthHint = 125;
+        FillLayout fillLayout1 = new FillLayout();
+        fillLayout1.type = org.eclipse.swt.SWT.VERTICAL;
+
+        group1 = new Group(composite2, SWT.NONE);
+        group1.setText("Jasper Configurations");
+        group1.setLayoutData(gridData6);
+        group1.setLayout(fillLayout1);
+        list = new List(group1, SWT.BORDER | SWT.V_SCROLL);
+        list.addSelectionListener(listListener);
+        list.redraw();
+    }
 
     @Override
     public void createPartControl(Composite parent) {
@@ -82,6 +175,12 @@ public class JasperFileEditorView extends ViewPart {
 
         top = new Composite(parent, SWT.NONE);
         top.setLayout(new GridLayout());
+
+        gridFill = new GridData();
+        gridFill.horizontalAlignment = GridData.FILL;
+        gridFill.grabExcessHorizontalSpace = true;
+        gridFill.grabExcessVerticalSpace = true;
+        gridFill.verticalAlignment = GridData.FILL;
 
         createGroup();
 
@@ -106,21 +205,42 @@ public class JasperFileEditorView extends ViewPart {
         updateForm();
     }
 
+    private void setEnable(boolean enable) {
+
+        deleteButton.setEnabled(enable);
+        browseButton.setEnabled(enable);
+        newButton.setEnabled(enable);
+        saveButton.setEnabled(enable);
+    }
+
     private void updateForm() {
         if (templateMap == null) {
             templateMap = new HashMap<String, JasperTemplateWrapper>();
         }
 
         try {
+
             if (loggedIn) {
+                setEnable(true);
+
+                list.setEnabled(true);
+
                 for (JasperTemplateWrapper t : JasperTemplateWrapper
                     .getAllTemplates(SessionManager.getAppService())) {
                     String name = t.getName();
                     templateMap.put(name, t);
                     list.add(name);
                 }
+                list.redraw();
             } else {
-                // TODO: unpopulate list, blannk out all widgets
+
+                setEnable(false);
+
+                templateMap.clear();
+
+                list.removeAll();
+                list.setEnabled(false);
+                list.redraw();
             }
         } catch (ApplicationException e) {
             BgcPlugin.openAsyncError("Database Error",
@@ -128,152 +248,39 @@ public class JasperFileEditorView extends ViewPart {
         }
     }
 
-    @Override
-    public void setFocus() {
-    }
-
     /**
-     * This method initializes group
+     * Sets the name of the selected jasper template list to prevJasperName.
      * 
      */
-    private void createGroup() {
-        GridData gridData = new GridData();
-        gridData.horizontalAlignment = GridData.FILL;
-        gridData.grabExcessHorizontalSpace = true;
-        gridData.grabExcessVerticalSpace = true;
-        gridData.verticalAlignment = GridData.FILL;
-        group = new Group(top, SWT.NONE);
-        group.setText("Jasper Configuration Editor");
-        group.setLayoutData(gridData);
-        createComposite();
-        group.setLayout(new GridLayout());
-        createComposite1();
-    }
-
-    /**
-     * This method initializes composite
-     * 
-     */
-    private void createComposite() {
-        GridLayout gridLayout = new GridLayout();
-        gridLayout.numColumns = 3;
-        GridData gridData1 = new GridData();
-        gridData1.horizontalAlignment = GridData.FILL;
-        gridData1.grabExcessHorizontalSpace = true;
-        gridData1.grabExcessVerticalSpace = true;
-        gridData1.verticalAlignment = GridData.FILL;
-        composite = new Composite(group, SWT.NONE);
-        createComposite2();
-        composite.setLayoutData(gridData1);
-        composite.setLayout(gridLayout);
-        @SuppressWarnings("unused")
-        Label filler = new Label(composite, SWT.NONE);
-        createComposite3();
-    }
-
-    /**
-     * This method initializes composite1
-     * 
-     */
-    private void createComposite1() {
-        GridData gridData2 = new GridData();
-        gridData2.horizontalAlignment = GridData.FILL;
-        gridData2.grabExcessHorizontalSpace = true;
-        gridData2.grabExcessVerticalSpace = false;
-        gridData2.verticalAlignment = GridData.CENTER;
-        composite1 = new Composite(group, SWT.NONE);
-        composite1.setLayoutData(gridData2);
-        composite1.setLayout(new FillLayout());
-
-        @SuppressWarnings("unused")
-        Label filler22 = new Label(composite1, SWT.NONE);
-        @SuppressWarnings("unused")
-        Label filler21 = new Label(composite1, SWT.NONE);
-        @SuppressWarnings("unused")
-        Label filler2 = new Label(composite1, SWT.NONE);
-        filler2 = new Label(composite1, SWT.NONE);
-
-        saveButton = new Button(composite1, SWT.NONE);
-        saveButton.setText("Save Jasper Config");
-        saveButton.addSelectionListener(saveAllListener);
-    }
-
-    /**
-     * This method initializes composite2
-     * 
-     */
-    private void createComposite2() {
-        GridData gridData3 = new GridData();
-        gridData3.horizontalAlignment = GridData.BEGINNING;
-        gridData3.grabExcessVerticalSpace = true;
-        gridData3.grabExcessHorizontalSpace = false;
-        gridData3.verticalAlignment = GridData.FILL;
-        composite2 = new Composite(composite, SWT.NONE);
-        createGroup1();
-        composite2.setLayout(new GridLayout());
-        composite2.setLayoutData(gridData3);
-        createComposite4();
-    }
-
-    /**
-     * This method initializes composite3
-     * 
-     */
-    private void createComposite3() {
-        GridData gridData4 = new GridData();
-        gridData4.horizontalAlignment = GridData.FILL;
-        gridData4.grabExcessHorizontalSpace = true;
-        gridData4.grabExcessVerticalSpace = true;
-        gridData4.verticalAlignment = GridData.FILL;
-        composite3 = new Composite(composite, SWT.NONE);
-        createComposite5();
-        composite3.setLayoutData(gridData4);
-        createComposite62();
-        composite3.setLayout(new GridLayout());
-    }
-
-    /**
-     * This method initializes group1
-     * 
-     */
-    private void createGroup1() {
-        GridData gridData6 = new GridData();
-        gridData6.grabExcessVerticalSpace = true;
-        gridData6.verticalAlignment = GridData.FILL;
-        gridData6.grabExcessHorizontalSpace = true;
-        gridData6.horizontalAlignment = GridData.FILL;
-        gridData6.heightHint = 200;
-        gridData6.widthHint = 125;
-        FillLayout fillLayout1 = new FillLayout();
-        fillLayout1.type = org.eclipse.swt.SWT.VERTICAL;
-
-        group1 = new Group(composite2, SWT.NONE);
-        group1.setText("Jasper Configurations");
-        group1.setLayoutData(gridData6);
-        group1.setLayout(fillLayout1);
-        list = new List(group1, SWT.BORDER | SWT.V_SCROLL);
-        list.addSelectionListener(listListener);
-        list.redraw();
-    }
-
     private SelectionListener listListener = new SelectionListener() {
         @Override
         public void widgetSelected(SelectionEvent e) {
             try {
                 String[] selectedItems = list.getSelection();
                 if (selectedItems.length == 1) {
-                    if (selectedTemplate != null) {
-                        if (jasperConfigDirty) {
-                            if (BgcPlugin
-                                .openConfirm(
-                                    "Jasper Configuration Editor Saving",
-                                    "Jasper Configuration has been modified, do you want to save your changes?")) {
-                                selectedTemplate.persist();
-                            }
-                        }
+                    saveTemplate();
+
+                    if (selectedItems[0] != null) {
+                        JasperTemplateWrapper selectedTemplate = (templateMap
+                            .get(selectedItems[0]));
+                        jasperNameTexty.setText(selectedTemplate.getName());
+                        if (selectedTemplate.getXml() == null
+                            || selectedTemplate.getXml().isEmpty()) {
+                            jasperFileText
+                                .setText("Please select a Jasper file");
+                        } else
+                            jasperFileText.setText("Jasper file loaded");
+
+                        prevJasperName = selectedItems[0];
+                        jasperConfigDirty = false;
+
+                    } else {
+                        jasperNameTexty.setText("Please select a template");
+                        jasperFileText.setText("");
+                        prevJasperName = null;
+                        jasperConfigDirty = false;
                     }
 
-                    setSelectedJasperConifg(templateMap.get(selectedItems[0]));
                 } else {
                     BgcPlugin.openAsyncError("Selection Listener Error",
                         "invalid selected items length: "
@@ -292,56 +299,37 @@ public class JasperFileEditorView extends ViewPart {
         }
     };
 
-    private void updateJasperFileText(String selectedName) {
+    private void saveTemplate() throws Exception {
+        if (prevJasperName != null) {
+            if (jasperConfigDirty) {
+                if (BgcPlugin
+                    .openConfirm("Jasper Configuration Editor Saving",
+                        "Jasper Configuration has been modified, do you want to save your changes?")) {
 
-        if (selectedTemplate == null)
-            return;
+                    JasperTemplateWrapper selectedTemplate = (templateMap
+                        .get(prevJasperName));
 
-        String xml = selectedTemplate.getXml();
+                    if (loadedJasperFileXml != null) {
+                        selectedTemplate.setXml(loadedJasperFileXml);
+                        loadedJasperFileXml = null;
 
-        if ((xml == null) || xml.isEmpty()) {
-            jasperFileText.setText("Select a Jasper file.");
-            jasperFileText
-                .setBackground(new Color(PlatformUI.getWorkbench()
-                    .getActiveWorkbenchWindow().getShell().getDisplay(), 255,
-                    0, 0));
-        } else {
-            if (selectedName == null) {
-                selectedName = "Jasper file loaded";
+                    }
+
+                    if (selectedTemplate.getXml() != null
+                        && !selectedTemplate.getXml().isEmpty()) {
+                        selectedTemplate.persist();
+                        jasperFileText.setText("Jasper file loaded");
+
+                    } else {
+                        jasperFileText.setText("Please select a Jasper file");
+                        throw new Exception("Jasper file was not selected");
+                    }
+                }
+                jasperConfigDirty = false;
             }
-            jasperFileText.setText(selectedName);
-            jasperFileText.setBackground(new Color(PlatformUI.getWorkbench()
-                .getActiveWorkbenchWindow().getShell().getDisplay(), 255, 255,
-                255));
         }
-        jasperFileText.redraw();
     }
 
-    private void setSelectedJasperConifg(JasperTemplateWrapper t) {
-        if ((t != null) && (t == selectedTemplate))
-            return;
-
-        if (t != null) {
-            selectedTemplate = t;
-            jasperNameTexty.setText(t.getName());
-            updateJasperFileText(null);
-
-        } else {
-            selectedTemplate = null;
-            jasperNameTexty.setText("Select a Jasper Configuration.");
-            jasperFileText.setText("");
-            jasperFileText.setBackground(new Color(PlatformUI.getWorkbench()
-                .getActiveWorkbenchWindow().getShell().getDisplay(), 255, 255,
-                255));
-        }
-
-        jasperConfigDirty = false;
-    }
-
-    /**
-     * This method initializes composite4
-     * 
-     */
     private void createComposite4() {
 
         composite4 = new Composite(composite2, SWT.NONE);
@@ -353,42 +341,48 @@ public class JasperFileEditorView extends ViewPart {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 try {
-                    if (selectedTemplate != null) {
-                        MessageBox messageBox = new MessageBox(PlatformUI
-                            .getWorkbench().getActiveWorkbenchWindow()
-                            .getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
-                        messageBox
-                            .setMessage("Are you sure you want to delete "
-                                + selectedTemplate.getName() + "?");
-                        messageBox.setText("Deleting Jasper Configuration");
 
-                        int response = messageBox.open();
-                        if (response == SWT.YES) {
-                            selectedTemplate.delete();
-                            list.remove(selectedTemplate.getName());
+                    if (list.getSelectionCount() == 1 && prevJasperName != null) {
+                        JasperTemplateWrapper selected = templateMap
+                            .get(prevJasperName);
 
-                            if (list.getItemCount() > 0) {
+                        if (selected != null) {
+                            MessageBox messageBox = new MessageBox(PlatformUI
+                                .getWorkbench().getActiveWorkbenchWindow()
+                                .getShell(), SWT.ICON_QUESTION | SWT.YES
+                                | SWT.NO);
+                            messageBox
+                                .setMessage("Are you sure you want to delete "
+                                    + selected.getName() + "?");
+                            messageBox.setText("Deleting Jasper Configuration");
+
+                            int response = messageBox.open();
+                            if (response == SWT.YES) {
+
+                                if (!selected.isNew())
+                                    selected.delete();
+                                templateMap.remove(prevJasperName);
+                                list.remove(prevJasperName);
+
+                                jasperNameTexty
+                                    .setText("Please select a template");
+                                jasperFileText.setText("");
+                                prevJasperName = null;
+                                jasperConfigDirty = false;
+
                                 list.deselectAll();
-
-                                int lastItemIndex = list.getItemCount() - 1;
-
-                                if (lastItemIndex >= 0) {
-                                    list.select(lastItemIndex);
-                                    setSelectedJasperConifg(templateMap
-                                        .get(list.getItem(lastItemIndex)));
-                                }
-
-                            } else {
-                                Error("Jasper Configuration not found.",
-                                    "Jasper Configuration does not exist, already deleted.");
-                                return;
+                                list.redraw();
                             }
                         }
                     }
                 } catch (Exception e1) {
-                    BgcPlugin.openAsyncError("Template Delete Error",
-                        "Could not delete template", e1);
+                    BgcPlugin
+                        .openAsyncError(
+                            "Template Delete Error",
+                            "Could not delete template. A printer template may be using this jasper configuration.",
+                            e1);
                 }
+
             }
 
             @Override
@@ -411,14 +405,26 @@ public class JasperFileEditorView extends ViewPart {
                     String jasperConfigName = dialog.getValue();
 
                     if (!templateMap.containsKey(jasperConfigName)) {
-                        selectedTemplate = new JasperTemplateWrapper(
+                        JasperTemplateWrapper newTemplate = new JasperTemplateWrapper(
                             SessionManager.getAppService());
-                        selectedTemplate.setName(jasperConfigName);
-                        list.add(jasperConfigName);
-                        list.redraw();
+
+                        try {
+                            newTemplate.setName(jasperConfigName);
+                            templateMap.put(jasperConfigName, newTemplate);
+                            list.add(jasperConfigName);
+
+                            list.redraw();
+                        } catch (Exception e1) {
+                            BgcPlugin.openAsyncError(
+                                "Failed to Save",
+                                "Faile to save newly created template: "
+                                    + e1.getMessage());
+                        }
+
                     } else {
-                        Error("Jasper Configuration Exists",
-                            "Your new Jasper Configuration must have a unique name.");
+                        BgcPlugin
+                            .openAsyncError("Jasper Configuration Exists",
+                                "Your new Jasper Configuration must have a unique name.");
                     }
                 }
             }
@@ -456,9 +462,6 @@ public class JasperFileEditorView extends ViewPart {
         browseButton.setText("Browse...");
         browseButton.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {
-                if (selectedTemplate == null)
-                    return;
-
                 FileDialog fd = new FileDialog(PlatformUI.getWorkbench()
                     .getActiveWorkbenchWindow().getShell(), SWT.OPEN);
                 fd.setText("Select Jasper File");
@@ -468,14 +471,21 @@ public class JasperFileEditorView extends ViewPart {
                 if (path != null) {
                     try {
                         File f = new File(path);
-                        selectedTemplate.setXml(FileUtils.readFileToString(f));
-                        updateJasperFileText(path);
-                        jasperConfigDirty = true;
+                        if (f.exists()) {
+                            loadedJasperFileXml = FileUtils.readFileToString(f);
+                            jasperFileText.setText(path);
+                            jasperConfigDirty = true;
+                        } else {
+                            BgcPlugin.openAsyncError("File Not Found",
+                                "File selected does not exist.");
+                        }
+
                     } catch (IOException e) {
                         BgcPlugin.openAsyncError("Template Read Error",
                             "Could not open the template file for reading", e);
                     }
                 }
+
             }
 
             public void widgetDefaultSelected(SelectionEvent event) {
@@ -484,73 +494,11 @@ public class JasperFileEditorView extends ViewPart {
         });
     }
 
-    public static byte[] fileToBytes(File file) throws IOException {
-        InputStream is = new FileInputStream(file);
-
-        byte[] bytes = new byte[(int) file.length()];
-
-        int offset = 0;
-        int readCount = 0;
-        while (offset < bytes.length
-            && (readCount = is.read(bytes, offset, bytes.length - offset)) >= 0) {
-            offset += readCount;
-        }
-
-        if (offset < bytes.length) {
-            throw new IOException("Could not completely read file "
-                + file.getName());
-        }
-
-        is.close();
-        return bytes;
-    }
-
-    private void createComposite62() {
-        GridData gridData10 = new GridData();
-        gridData10.horizontalAlignment = GridData.FILL;
-        gridData10.grabExcessVerticalSpace = true;
-        gridData10.verticalAlignment = GridData.FILL;
-        GridData gridData9 = new GridData();
-        gridData9.grabExcessHorizontalSpace = true;
-        gridData9.verticalAlignment = GridData.FILL;
-        gridData9.grabExcessVerticalSpace = true;
-        gridData9.widthHint = -1;
-        gridData9.horizontalAlignment = GridData.FILL;
-    }
-
-    private void Error(String title, String message) {
-        MessageBox messageBox = new MessageBox(PlatformUI.getWorkbench()
-            .getActiveWorkbenchWindow().getShell(), SWT.ICON_ERROR);
-        messageBox.setMessage(message);
-        messageBox.setText(title);
-        messageBox.open();
-    }
-
-    private boolean saveCurrentJasperConfig() throws Exception {
-
-        if (selectedTemplate == null) {
-            Error("No Jasper Configuration Selected",
-                "Cannot save jasper configuration. Please select one first.");
-            return false;
-        }
-        selectedTemplate.persist();
-        jasperConfigDirty = false;
-        return true;
-    }
-
     private SelectionListener saveAllListener = new SelectionListener() {
         @Override
         public void widgetSelected(SelectionEvent e) {
             try {
-                if (saveCurrentJasperConfig()) {
-                    MessageBox messageBox = new MessageBox(PlatformUI
-                        .getWorkbench().getActiveWorkbenchWindow().getShell(),
-                        SWT.ICON_INFORMATION | SWT.OK);
-                    messageBox
-                        .setMessage("Jasper Configuration has been successfully saved.");
-                    messageBox.setText("Jasper Configuration Saved");
-                    messageBox.open();
-                }
+                saveTemplate();
             } catch (Exception e1) {
                 BgcPlugin.openAsyncError("Template Save Error",
                     "Could not save the template to the database", e1);
