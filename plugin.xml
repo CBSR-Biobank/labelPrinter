@@ -21,18 +21,6 @@
       </perspectiveExtension>
       <perspectiveExtension
             targetID="barcodeGenerator.perspective.templateeditor">
-         <view
-               closeable="false"
-               id="edu.ualberta.med.biobank.barcodegenerator.views.TemplateEditorView"
-               moveable="true"
-               ratio="1"
-               minimized="false"
-               relationship="top"
-               relative="org.eclipse.ui.editorss"
-               showTitle="true"
-               standalone="true"
-               visible="true">
-         </view>
       </perspectiveExtension>
       <perspectiveExtension
             targetID="barcodeGenerator.perspective.jaspereditor">
@@ -61,7 +49,7 @@
       </view>
       <view
             allowMultiple="false"
-            class="edu.ualberta.med.biobank.barcodegenerator.views.TemplateEditorView"
+            class="edu.ualberta.med.biobank.barcodegenerator.views.TemplateEntryForm"
             id="edu.ualberta.med.biobank.barcodegenerator.views.TemplateEditorView"
             name="Printer Templates Editor"
             restorable="true">
