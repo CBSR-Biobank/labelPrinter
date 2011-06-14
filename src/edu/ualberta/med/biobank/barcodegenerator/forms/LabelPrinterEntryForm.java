@@ -42,6 +42,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISourceProviderListener;
 import org.eclipse.ui.PlatformUI;
 
+
 import edu.ualberta.med.biobank.barcodegenerator.BarcodeGenPlugin;
 import edu.ualberta.med.biobank.barcodegenerator.UniquePatientID;
 import edu.ualberta.med.biobank.barcodegenerator.preferences.PreferenceConstants;
@@ -69,21 +70,15 @@ import gov.nih.nci.system.applicationservice.ApplicationException;
 public class LabelPrinterEntryForm extends BgcFormBase {
 
     public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView";
-    private Composite top = null;
-    private Composite composite3 = null;
     private Text projectTitleText = null;
     private Text logoText = null;
     private Button logoButton = null;
-    private Composite group = null;
     private Canvas logoCanvas = null;
-    private Composite group1 = null;
-    private Composite composite5 = null;
     private Text label1Text = null;
     private Button value1Checkbox = null;
     private Button label1Checkbox = null;
     private Button printBarcode1Checkbox = null;
     private Text value1Text = null;
-    private Composite composite6 = null;
     private Text patientIDText = null;
     private Button label2Checkbox = null;
 
@@ -96,15 +91,12 @@ public class LabelPrinterEntryForm extends BgcFormBase {
     private Button value3Checkbox = null;
     private Text value3Text = null;
     private Button printBarcode3Checkbox = null;
-    private Composite group2 = null;
     private Image logoImage = null;
     private Label intendedPrinter = null;
     private Button sampleTypeCheckbox = null;
     private Text sampleTypeText = null;
     private Combo templateCombo = null;
     private Combo printerCombo = null;
-    private Composite group3 = null;
-    private Composite group4 = null;
     private Button printButton = null;
     private Button savePdfButton = null;
     private CLabel cLabel = null;
@@ -146,7 +138,7 @@ public class LabelPrinterEntryForm extends BgcFormBase {
 
         shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 
-        top = toolkit.createComposite(page, SWT.NONE);
+        Composite top = toolkit.createComposite(page, SWT.NONE);
         top.setBackground(new Color(Display.getCurrent(), 237, 236, 235));
         top.setLayout(new GridLayout());
 
@@ -271,7 +263,7 @@ public class LabelPrinterEntryForm extends BgcFormBase {
      * @throws ApplicationException
      * 
      */
-    private void createComposite3() {
+    private void createComposite3(Composite group3) {
         GridData gridData1 = new GridData();
         gridData1.horizontalAlignment = GridData.FILL;
         gridData1.grabExcessHorizontalSpace = true;
@@ -282,7 +274,7 @@ public class LabelPrinterEntryForm extends BgcFormBase {
         GridLayout gridLayout = new GridLayout();
         gridLayout.numColumns = 3;
         gridLayout.makeColumnsEqualWidth = false;
-        composite3 = toolkit.createComposite(group3, SWT.NONE);
+        Composite composite3 = toolkit.createComposite(group3, SWT.NONE);
         composite3.setLayout(gridLayout);
         composite3.setLayoutData(gridData);
         new Label(composite3, SWT.NONE).setText("Project Title:");
@@ -402,9 +394,9 @@ public class LabelPrinterEntryForm extends BgcFormBase {
         gridData2.grabExcessHorizontalSpace = true;
         gridData2.grabExcessVerticalSpace = true;
         gridData2.verticalAlignment = GridData.FILL;
-        group = createSectionWithClient("Logo");
+        Composite group = createSectionWithClient("Logo");
         group.setLayout(new GridLayout());
-        createLogoCanvas();
+        createLogoCanvas(group);
         group.setLayoutData(gridData2);
     }
 
@@ -412,7 +404,7 @@ public class LabelPrinterEntryForm extends BgcFormBase {
      * This method initializes logoCanvas
      * 
      */
-    private void createLogoCanvas() {
+    private void createLogoCanvas(Composite group) {
         GridData gridData3 = new GridData();
         gridData3.grabExcessHorizontalSpace = true;
         gridData3.horizontalAlignment = GridData.FILL;
@@ -481,18 +473,18 @@ public class LabelPrinterEntryForm extends BgcFormBase {
         gridData.grabExcessVerticalSpace = false;
         gridData.verticalAlignment = GridData.FILL;
 
-        group1 = createSectionWithClient("Patient Information");
+        Composite group1 = createSectionWithClient("Patient Information");
         group1.setLayoutData(gridData);
         group1.setLayout(new GridLayout());
-        createComposite6();
-        createComposite5();
+        createComposite6(group1);
+        createComposite5(group1);
     }
 
     /**
      * This method initializes composite5
      * 
      */
-    private void createComposite5() {
+    private void createComposite5(Composite group1) {
         GridData gridData11 = new GridData();
         gridData11.horizontalAlignment = GridData.BEGINNING;
         gridData11.verticalAlignment = GridData.CENTER;
@@ -520,7 +512,7 @@ public class LabelPrinterEntryForm extends BgcFormBase {
         GridLayout gridLayout2 = new GridLayout();
         gridLayout2.numColumns = 5;
         gridLayout2.makeColumnsEqualWidth = false;
-        composite5 = toolkit.createComposite(group1, SWT.NONE);
+        Composite composite5 = toolkit.createComposite(group1, SWT.NONE);
         composite5.setLayout(gridLayout2);
         composite5.setLayoutData(gridData6);
         new Label(composite5, SWT.NONE).setText("Enable:");
@@ -593,7 +585,7 @@ public class LabelPrinterEntryForm extends BgcFormBase {
      * This method initializes composite6
      * 
      */
-    private void createComposite6() {
+    private void createComposite6(Composite group1) {
         GridData gridData4 = new GridData();
         gridData4.horizontalAlignment = GridData.FILL;
         gridData4.grabExcessHorizontalSpace = false;
@@ -604,7 +596,7 @@ public class LabelPrinterEntryForm extends BgcFormBase {
         GridLayout gridLayout3 = new GridLayout();
         gridLayout3.verticalSpacing = 2;
         gridLayout3.numColumns = 5;
-        composite6 = toolkit.createComposite(group1, SWT.NONE);
+        Composite composite6 = toolkit.createComposite(group1, SWT.NONE);
         composite6.setLayout(gridLayout3);
         new Label(composite6, SWT.NONE).setText("Patient ID:");
         patientIDText = new Text(composite6, SWT.BORDER);
@@ -637,7 +629,7 @@ public class LabelPrinterEntryForm extends BgcFormBase {
         GridLayout gridLayout5 = new GridLayout();
         gridLayout5.numColumns = 4;
 
-        group2 = createSectionWithClient("Additonal Configuration");
+        Composite group2 = createSectionWithClient("Additonal Configuration");
         group2.setLayout(gridLayout5);
         group2.setLayoutData(gridData);
 
@@ -680,11 +672,11 @@ public class LabelPrinterEntryForm extends BgcFormBase {
         gridLayout3.numColumns = 2;
         gridLayout3.makeColumnsEqualWidth = true;
 
-        group3 = createSectionWithClient("Branding");
+        Composite group3 = createSectionWithClient("Branding");
         group3.setLayoutData(gridData);
         group3.setLayout(gridLayout3);
 
-        createComposite3();
+        createComposite3(group3);
         createGroup();
     }
 
@@ -707,7 +699,7 @@ public class LabelPrinterEntryForm extends BgcFormBase {
         gridData7.grabExcessHorizontalSpace = true;
         gridData7.horizontalAlignment = GridData.FILL;
 
-        group4 = createSectionWithClient("Actions");
+        Composite group4 = createSectionWithClient("Actions");
 
         savePdfButton = new Button(group4, SWT.NONE);
         savePdfButton.setText("Print to PDF");
