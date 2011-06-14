@@ -43,34 +43,22 @@ import gov.nih.nci.system.applicationservice.ApplicationException;
 public class JasperConfigEntryForm extends BgcFormBase {
 
     public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.views.JasperFileEditorView";
-    private Composite top = null;
-    private Composite group = null;
-    private Composite composite = null;
-    private Composite composite1 = null;
-    private Composite composite2 = null;
-    private Composite composite3 = null;
-    private Composite group1 = null;
-    private Composite composite4 = null;
     private Button deleteButton = null;
     private Button newButton = null;
     private Button saveButton = null;
-    private Composite composite5 = null;
-    private Label label = null;
+    private Button browseButton = null;
     private Text jasperNameTexty = null;
     private Text jasperConfigText = null;
-    private Button browseButton = null;
     private List list = null;
 
     private String loadedJasperFileXml = null;
     private String prevJasperName = null;
 
-    private Map<String, JasperTemplateWrapper> templateMap;
+    private Map<String, JasperTemplateWrapper> templateMap = null;
 
     boolean jasperConfigDirty = false;
 
     private boolean loggedIn = false;
-
-    private GridData gridFill = null;
 
     @Override
     protected void init() throws Exception {
@@ -88,11 +76,11 @@ public class JasperConfigEntryForm extends BgcFormBase {
 
     @Override
     protected void createFormContent() throws Exception {
-        
+
         form.setText("Jasper Configuration Templates");
-       // form.setMessage(getOkMessage(), IMessageProvider.NONE);
+        // form.setMessage(getOkMessage(), IMessageProvider.NONE);
         page.setLayout(new GridLayout(1, false));
-        
+
         BgcSessionState sessionSourceProvider = BgcPlugin
             .getSessionStateSourceProvider();
 
@@ -100,15 +88,8 @@ public class JasperConfigEntryForm extends BgcFormBase {
             .get(BgcSessionState.SESSION_STATE_SOURCE_NAME)
             .equals(BgcSessionState.LOGGED_IN);
 
-        top =  toolkit.createComposite(page, SWT.NONE);
+        Composite top = toolkit.createComposite(page, SWT.NONE);
         top.setLayout(new GridLayout());
-        
-
-        gridFill = new GridData();
-        gridFill.horizontalAlignment = GridData.FILL;
-        gridFill.grabExcessHorizontalSpace = true;
-        gridFill.grabExcessVerticalSpace = true;
-        gridFill.verticalAlignment = GridData.FILL;
 
         createGroup();
 
@@ -138,35 +119,46 @@ public class JasperConfigEntryForm extends BgcFormBase {
     }
 
     private void createGroup() {
-        
-        group = createSectionWithClient("Jasper Configuration Editor");
+        GridData gridFill = new GridData();
+        gridFill.horizontalAlignment = GridData.FILL;
+        gridFill.grabExcessHorizontalSpace = true;
+        gridFill.grabExcessVerticalSpace = true;
+        gridFill.verticalAlignment = GridData.FILL;
+
+        Composite group = createSectionWithClient("Jasper Configuration Editor");
         group.setLayout(new GridLayout());
         group.setLayoutData(gridFill);
 
-        createComposite();
-        createComposite1();
+        createComposite(group);
+        createComposite1(group);
     }
 
-    private void createComposite() {
+    private void createComposite(Composite group) {
+        GridData gridFill = new GridData();
+        gridFill.horizontalAlignment = GridData.FILL;
+        gridFill.grabExcessHorizontalSpace = true;
+        gridFill.grabExcessVerticalSpace = true;
+        gridFill.verticalAlignment = GridData.FILL;
+
         GridLayout gridLayout = new GridLayout();
         gridLayout.numColumns = 3;
-        composite = toolkit.createComposite(group, SWT.NONE);
+        Composite composite = toolkit.createComposite(group, SWT.NONE);
         composite.setLayoutData(gridFill);
         composite.setLayout(gridLayout);
 
-        createComposite2();
+        createComposite2(composite);
         new Label(composite, SWT.NONE);
-        createComposite3();
+        createComposite3(composite);
     }
 
-    private void createComposite1() {
+    private void createComposite1(Composite group) {
         GridData gridData2 = new GridData();
         gridData2.horizontalAlignment = GridData.FILL;
         gridData2.grabExcessHorizontalSpace = true;
         gridData2.grabExcessVerticalSpace = false;
         gridData2.verticalAlignment = GridData.CENTER;
 
-        composite1 = toolkit.createComposite(group, SWT.NONE);
+        Composite composite1 = toolkit.createComposite(group, SWT.NONE);
         composite1.setLayoutData(gridData2);
         composite1.setLayout(new FillLayout());
 
@@ -180,29 +172,29 @@ public class JasperConfigEntryForm extends BgcFormBase {
         saveButton.addSelectionListener(saveAllListener);
     }
 
-    private void createComposite2() {
+    private void createComposite2(Composite composite) {
         GridData gridData3 = new GridData();
         gridData3.horizontalAlignment = GridData.BEGINNING;
         gridData3.grabExcessVerticalSpace = true;
         gridData3.grabExcessHorizontalSpace = false;
         gridData3.verticalAlignment = GridData.FILL;
-        composite2 = toolkit.createComposite(composite, SWT.NONE);
+        Composite composite2 = toolkit.createComposite(composite, SWT.NONE);
         composite2.setLayout(new GridLayout());
         composite2.setLayoutData(gridData3);
         createGroup1();
-        createComposite4();
+        createComposite4(composite2);
     }
 
-    private void createComposite3() {
+    private void createComposite3(Composite composite) {
         GridData gridData4 = new GridData();
         gridData4.horizontalAlignment = GridData.FILL;
         gridData4.grabExcessHorizontalSpace = true;
         gridData4.grabExcessVerticalSpace = true;
         gridData4.verticalAlignment = GridData.FILL;
-        composite3 = toolkit.createComposite(composite, SWT.NONE);
+        Composite composite3 = toolkit.createComposite(composite, SWT.NONE);
         composite3.setLayoutData(gridData4);
         composite3.setLayout(new GridLayout());
-        createComposite5();
+        createComposite5(composite3);
     }
 
     private void createGroup1() {
@@ -216,14 +208,13 @@ public class JasperConfigEntryForm extends BgcFormBase {
         FillLayout fillLayout1 = new FillLayout();
         fillLayout1.type = org.eclipse.swt.SWT.VERTICAL;
 
-        group1 = createSectionWithClient("Jasper Configurations");
+        Composite group1 = createSectionWithClient("Jasper Configurations");
         group1.setLayoutData(gridData6);
         group1.setLayout(fillLayout1);
         list = new List(group1, SWT.BORDER | SWT.V_SCROLL);
         list.addSelectionListener(listListener);
         list.redraw();
     }
-
 
     private void setEnable(boolean enable) {
 
@@ -349,9 +340,9 @@ public class JasperConfigEntryForm extends BgcFormBase {
         }
     }
 
-    private void createComposite4() {
+    private void createComposite4(Composite composite2) {
 
-        composite4 = toolkit.createComposite(composite2, SWT.NONE);
+        Composite composite4 = toolkit.createComposite(composite2, SWT.NONE);
         composite4.setLayout(new RowLayout());
         new Label(composite2, SWT.NONE);
         newButton = new Button(composite4, SWT.NONE);
@@ -459,24 +450,26 @@ public class JasperConfigEntryForm extends BgcFormBase {
      * This method initializes composite5
      * 
      */
-    private void createComposite5() {
-        composite5 = toolkit.createComposite(composite3, SWT.NONE);
+    private void createComposite5(Composite composite3) {
+        Composite composite5 = toolkit.createComposite(composite3, SWT.NONE);
         composite5.setLayout(new GridLayout(3, false));
         composite5.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        label = new Label(composite5, SWT.NONE);
-        label.setText("Configuration Name:");
-        jasperNameTexty = new Text(composite5, SWT.BORDER);
-        jasperNameTexty.setEditable(false);
+        new Label(composite5, SWT.NONE).setText("Configuration Name:");
+
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalSpan = 2;
-        jasperNameTexty.setLayoutData(gd);
 
-        Label label = new Label(composite5, SWT.NONE);
-        label.setText("Jasper File:");
+        jasperNameTexty = new Text(composite5, SWT.BORDER);
+        jasperNameTexty.setLayoutData(gd);
+        jasperNameTexty.setEditable(false);
+
+        new Label(composite5, SWT.NONE).setText("Jasper File:");
+
         jasperConfigText = new Text(composite5, SWT.BORDER);
         jasperConfigText.setEditable(false);
         jasperConfigText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
         browseButton = new Button(composite5, SWT.NONE);
         browseButton.setText("Browse...");
         browseButton.addSelectionListener(new SelectionListener() {

@@ -19,7 +19,6 @@ import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
-import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -41,7 +40,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISourceProviderListener;
 import org.eclipse.ui.PlatformUI;
-
 
 import edu.ualberta.med.biobank.barcodegenerator.BarcodeGenPlugin;
 import edu.ualberta.med.biobank.barcodegenerator.UniquePatientID;
@@ -70,38 +68,45 @@ import gov.nih.nci.system.applicationservice.ApplicationException;
 public class LabelPrinterEntryForm extends BgcFormBase {
 
     public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView";
+
     private Text projectTitleText = null;
     private Text logoText = null;
     private Button logoButton = null;
-    private Canvas logoCanvas = null;
-    private Text label1Text = null;
     private Button value1Checkbox = null;
     private Button label1Checkbox = null;
     private Button printBarcode1Checkbox = null;
-    private Text value1Text = null;
-    private Text patientIDText = null;
     private Button label2Checkbox = null;
-
-    private Text label2Text = null;
     private Button value2Checkbox = null;
-    private Text value2Text = null;
     private Button printBarcode2Checkbox = null;
     private Button label3Checkbox = null;
-    private Text label3Text = null;
     private Button value3Checkbox = null;
-    private Text value3Text = null;
     private Button printBarcode3Checkbox = null;
-    private Image logoImage = null;
-    private Label intendedPrinter = null;
     private Button sampleTypeCheckbox = null;
-    private Text sampleTypeText = null;
-    private Combo templateCombo = null;
-    private Combo printerCombo = null;
     private Button printButton = null;
     private Button savePdfButton = null;
-    private CLabel cLabel = null;
+
+    private Text label1Text = null;
+    private Text value1Text = null;
+    private Text patientIDText = null;
+    private Text label2Text = null;
+    private Text value2Text = null;
+    private Text label3Text = null;
+    private Text value3Text = null;
+    private Text sampleTypeText = null;
+
+    private Combo templateCombo = null;
+    private Combo printerCombo = null;
+    
+    private Label intendedPrinter = null;
+    
+    private Image logoImage = null;
+    private Canvas logoCanvas = null;
+
+    
     private Shell shell;
+    
     private IPreferenceStore perferenceStore;
+    
     private Template loadedTemplate;
     private TemplateStore templateStore;
 
@@ -234,7 +239,6 @@ public class LabelPrinterEntryForm extends BgcFormBase {
         printerCombo.setEnabled(enable);
         printButton.setEnabled(enable);
         savePdfButton.setEnabled(enable);
-        cLabel.setEnabled(enable);
     }
 
     private void loadPreferenceStore() {
@@ -637,9 +641,9 @@ public class LabelPrinterEntryForm extends BgcFormBase {
         sampleTypeCheckbox.setText("Enable");
         sampleTypeCheckbox.setSelection(perferenceStore
             .getBoolean(PreferenceConstants.SAMPLETYPE_CHECKBOX));
-        cLabel = new CLabel(group2, SWT.NONE);
-        cLabel.setText("Sample Type (on labels):");
-
+        
+        new Label(group2, SWT.NONE).setText("Sample Type (on labels):");
+        
         sampleTypeText = new Text(group2, SWT.BORDER | SWT.V_SCROLL
             | SWT.SINGLE);
         sampleTypeText.setText(perferenceStore
@@ -648,8 +652,6 @@ public class LabelPrinterEntryForm extends BgcFormBase {
         sampleTypeText.setLayoutData(gridData2);
         new Label(group2, SWT.LEFT | SWT.HORIZONTAL).setText("");
         new Label(group2, SWT.NONE);
-
-
 
     }
 
