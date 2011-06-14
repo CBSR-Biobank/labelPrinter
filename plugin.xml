@@ -6,42 +6,18 @@
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
             targetID="barcodeGenerator.perspective.labeprinter">
-         <view
-               closeable="false"
-               id="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView"
-               minimized="false"
-               moveable="false"
-               ratio="1"
-               relationship="right"
-               relative="org.eclipse.ui.editorss"
-               showTitle="true"
-               standalone="true"
-               visible="true">
-         </view>
       </perspectiveExtension>
       <perspectiveExtension
             targetID="barcodeGenerator.perspective.templateeditor">
       </perspectiveExtension>
       <perspectiveExtension
             targetID="barcodeGenerator.perspective.jaspereditor">
-         <view
-               closeable="false"
-               id="edu.ualberta.med.biobank.barcodegenerator.views.JasperFileEditorView"
-               minimized="false"
-               moveable="true"
-               ratio="1"
-               relationship="top"
-               relative="org.eclipse.ui.editorss"
-               showTitle="true"
-               standalone="true"
-               visible="true">
-         </view>
       </perspectiveExtension>
    </extension>
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="edu.ualberta.med.biobank.barcodegenerator.forms.TemplateEntryForm"
+            class="edu.ualberta.med.biobank.barcodegenerator.forms.LabelTemplateEntryForm"
             id="edu.ualberta.med.biobank.barcodegenerator.forms.TemplateEntryForm"
             default="false"
             name="Printer Templates Editor">
@@ -78,7 +54,7 @@
             <command
                   commandId="edu.ualberta.med.barcodegenerator.commands.templateeditor"
                   id="edu.ualberta.med.barcodegenerator.menu.templateeditor"
-                  label="Edit Printer Templates"
+                  label="Label Templates"
                   style="push">
             </command>
             <command

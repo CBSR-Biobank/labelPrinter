@@ -48,7 +48,7 @@ import gov.nih.nci.system.applicationservice.ApplicationException;
  */
 
 // FIXME add form close listener
-public class TemplateEntryForm extends BgcFormBase {
+public class LabelTemplateEntryForm extends BgcFormBase {
 
     public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.forms.TemplateEntryForm";
     private Button deleteButton = null;
@@ -140,16 +140,12 @@ public class TemplateEntryForm extends BgcFormBase {
     }
 
     private void createMasterDetail() throws ApplicationException {
-        Composite topComp = toolkit.createComposite(page);
-        GridLayout layout = new GridLayout(2, false);
-        layout.horizontalSpacing = 0;
-        layout.verticalSpacing = 0;
-        topComp.setLayout(layout);
-        topComp.setLayoutData(new GridData(GridData.FILL, GridData.FILL
-            | SWT.TOP, true, true));
+        page.setLayout(new GridLayout(2, false));
+        page.setLayoutData(new GridData(GridData.FILL, GridData.FILL | SWT.TOP,
+            true, true));
 
         // master section
-        Composite masterComp = toolkit.createComposite(topComp);
+        Composite masterComp = toolkit.createComposite(page);
         masterComp.setLayout(new GridLayout(1, false));
         masterComp.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
             true, true));
@@ -186,11 +182,11 @@ public class TemplateEntryForm extends BgcFormBase {
         deleteButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
             true, true));
 
-        createComposite3(topComp);
+        createComposite3();
     }
 
-    private void createComposite3(Composite parent) {
-        Composite detailsComp = toolkit.createComposite(parent);
+    private void createComposite3() {
+        Composite detailsComp = toolkit.createComposite(page);
         detailsComp.setLayout(new GridLayout(1, false));
         detailsComp.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
             true, true));
@@ -233,19 +229,14 @@ public class TemplateEntryForm extends BgcFormBase {
     private void createFormButtons() {
         Composite composite = toolkit.createComposite(page);
         composite.setLayout(new GridLayout(5, true));
-        composite.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
-            true, true));
+        GridData gd = new GridData(GridData.FILL, GridData.FILL, true, true);
+        gd.horizontalSpan = 2;
+        composite.setLayoutData(gd);
 
         helpButton = toolkit.createButton(composite, "Help", SWT.PUSH);
         helpButton.addSelectionListener(helpListener);
         helpButton.setLayoutData(new GridData(GridData.FILL,
             GridData.BEGINNING, true, true));
-
-        Composite spacer = toolkit.createComposite(composite);
-        GridData gd = new GridData(GridData.FILL, GridData.BEGINNING, true,
-            true);
-        gd.horizontalSpan = 3;
-        spacer.setLayoutData(gd);
 
         saveButton = toolkit.createButton(composite, "Save Template", SWT.PUSH);
         saveButton.addSelectionListener(saveAllListener);
