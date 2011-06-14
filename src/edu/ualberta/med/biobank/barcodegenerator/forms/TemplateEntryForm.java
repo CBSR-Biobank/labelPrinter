@@ -497,7 +497,6 @@ public class TemplateEntryForm extends BgcFormBase {
 
                         String selectedJasperConfig = jasperComboDialog
                             .getValue();
-
                         if (selectedJasperConfig == null
                             || selectedJasperConfig.length() == 0)
                             return;
@@ -506,7 +505,6 @@ public class TemplateEntryForm extends BgcFormBase {
 
                         ct.setName(newTemplateName);
                         ct.setPrinterName("default");
-
                         ct.setJasperTemplate(getJasperTemplateWrapper(selectedJasperConfig));
 
                         if (selectedJasperConfig.equals("CBSR")) {
