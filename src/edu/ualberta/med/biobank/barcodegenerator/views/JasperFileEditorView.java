@@ -90,11 +90,11 @@ public class JasperFileEditorView extends ViewPart {
         GridLayout gridLayout = new GridLayout();
         gridLayout.numColumns = 3;
         composite = new Composite(group, SWT.NONE);
-        createComposite2();
         composite.setLayoutData(gridFill);
         composite.setLayout(gridLayout);
-        @SuppressWarnings("unused")
-        Label filler = new Label(composite, SWT.NONE);
+        
+        createComposite2();
+        new Label(composite, SWT.NONE);
         createComposite3();
     }
 
@@ -335,6 +335,50 @@ public class JasperFileEditorView extends ViewPart {
         composite4 = new Composite(composite2, SWT.NONE);
         composite4.setLayout(new RowLayout());
         new Label(composite2, SWT.NONE);
+        newButton = new Button(composite4, SWT.NONE);
+        newButton.setText("New");
+        newButton.addSelectionListener(new SelectionListener() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+
+                StringInputDialog dialog = new StringInputDialog(
+                    "New Jasper Configuration Name",
+                    "What is the name of this new Jasper Configuration?",
+                    "Name", PlatformUI.getWorkbench()
+                        .getActiveWorkbenchWindow().getShell());
+                if (dialog.open() == Dialog.OK) {
+                    String jasperConfigName = dialog.getValue();
+
+                    if (!templateMap.containsKey(jasperConfigName)) {
+                        JasperTemplateWrapper newTemplate = new JasperTemplateWrapper(
+                            SessionManager.getAppService());
+
+                        try {
+                            newTemplate.setName(jasperConfigName);
+                            templateMap.put(jasperConfigName, newTemplate);
+                            list.add(jasperConfigName);
+
+                            list.redraw();
+                        } catch (Exception e1) {
+                            BgcPlugin.openAsyncError(
+                                "Failed to Save",
+                                "Faile to save newly created template: "
+                                    + e1.getMessage());
+                        }
+
+                    } else {
+                        BgcPlugin
+                            .openAsyncError("Jasper Configuration Exists",
+                                "Your new Jasper Configuration must have a unique name.");
+                    }
+                }
+            }
+
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
+                widgetSelected(e);
+            }
+        });
         deleteButton = new Button(composite4, SWT.NONE);
         deleteButton.setText("Delete ");
         deleteButton.addSelectionListener(new SelectionListener() {
@@ -383,50 +427,6 @@ public class JasperFileEditorView extends ViewPart {
                             e1);
                 }
 
-            }
-
-            @Override
-            public void widgetDefaultSelected(SelectionEvent e) {
-                widgetSelected(e);
-            }
-        });
-        newButton = new Button(composite4, SWT.NONE);
-        newButton.setText("New");
-        newButton.addSelectionListener(new SelectionListener() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-
-                StringInputDialog dialog = new StringInputDialog(
-                    "New Jasper Configuration Name",
-                    "What is the name of this new Jasper Configuration?",
-                    "Name", PlatformUI.getWorkbench()
-                        .getActiveWorkbenchWindow().getShell());
-                if (dialog.open() == Dialog.OK) {
-                    String jasperConfigName = dialog.getValue();
-
-                    if (!templateMap.containsKey(jasperConfigName)) {
-                        JasperTemplateWrapper newTemplate = new JasperTemplateWrapper(
-                            SessionManager.getAppService());
-
-                        try {
-                            newTemplate.setName(jasperConfigName);
-                            templateMap.put(jasperConfigName, newTemplate);
-                            list.add(jasperConfigName);
-
-                            list.redraw();
-                        } catch (Exception e1) {
-                            BgcPlugin.openAsyncError(
-                                "Failed to Save",
-                                "Faile to save newly created template: "
-                                    + e1.getMessage());
-                        }
-
-                    } else {
-                        BgcPlugin
-                            .openAsyncError("Jasper Configuration Exists",
-                                "Your new Jasper Configuration must have a unique name.");
-                    }
-                }
             }
 
             @Override
