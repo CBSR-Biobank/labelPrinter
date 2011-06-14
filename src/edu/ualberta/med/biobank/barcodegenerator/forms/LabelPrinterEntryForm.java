@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceStore;
@@ -96,17 +97,16 @@ public class LabelPrinterEntryForm extends BgcFormBase {
 
     private Combo templateCombo = null;
     private Combo printerCombo = null;
-    
+
     private Label intendedPrinter = null;
-    
+
     private Image logoImage = null;
     private Canvas logoCanvas = null;
 
-    
     private Shell shell;
-    
+
     private IPreferenceStore perferenceStore;
-    
+
     private Template loadedTemplate;
     private TemplateStore templateStore;
 
@@ -126,10 +126,14 @@ public class LabelPrinterEntryForm extends BgcFormBase {
         return null;
     }
 
+    protected String getOkMessage() {
+        return "Used to print labels for patients";
+    }
+
     @Override
     protected void createFormContent() throws Exception {
-        form.setText("Jasper Configuration Templates");
-        // form.setMessage(getOkMessage(), IMessageProvider.NONE);
+        form.setText("Label Printing");
+        form.setMessage(getOkMessage(), IMessageProvider.NONE);
         page.setLayout(new GridLayout(1, false));
 
         BgcSessionState sessionSourceProvider = BgcPlugin
@@ -144,13 +148,13 @@ public class LabelPrinterEntryForm extends BgcFormBase {
         shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 
         Composite top = toolkit.createComposite(page, SWT.NONE);
-        top.setBackground(new Color(Display.getCurrent(), 237, 236, 235));
         top.setLayout(new GridLayout());
+        top.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 
-        brandingGroup();
-        patientInfoGroup();
-        sampleTextGroup();
-        actionButtonGroup();
+        brandingGroup(top);
+        patientInfoGroup(top);
+        sampleTextGroup(top);
+        actionButtonGroup(top);
 
         sessionSourceProvider
             .addSourceProviderListener(new ISourceProviderListener() {
@@ -200,7 +204,7 @@ public class LabelPrinterEntryForm extends BgcFormBase {
                 }
                 setEnable(true);
                 templateCombo.redraw();
-
+                loadSelectedTemplate();
             } else {
                 setEnable(false);
                 templateCombo.removeAll();
@@ -376,29 +380,39 @@ public class LabelPrinterEntryForm extends BgcFormBase {
     private void loadSelectedTemplate() {
         if (templateCombo.getSelectionIndex() >= 0) {
             try {
-                loadedTemplate = templateStore.getTemplate(templateCombo
-                    .getItem(templateCombo.getSelectionIndex()));
+
+                String comboSelectedTemplate = templateCombo
+                    .getItem(templateCombo.getSelectionIndex());
+
+                // already loaded
+                if (loadedTemplate == null
+                    || !loadedTemplate.getName().equals(comboSelectedTemplate)) {
+                    loadedTemplate = templateStore
+                        .getTemplate(comboSelectedTemplate);
+                }
+
             } catch (Exception ee) {
                 BgcPlugin.openAsyncError("Verifcation Issue",
                     "Could not load template: " + ee.getMessage());
             }
+
+            if (loadedTemplate != null)
+                intendedPrinter.setText(loadedTemplate.getPrinterName());
         }
 
-        if (loadedTemplate != null)
-            intendedPrinter.setText(loadedTemplate.getPrinterName());
     }
 
     /**
      * This method initializes group
      * 
      */
-    private void createGroup() {
+    private void createGroup(Composite group3) {
         GridData gridData2 = new GridData();
         gridData2.horizontalAlignment = GridData.FILL;
         gridData2.grabExcessHorizontalSpace = true;
         gridData2.grabExcessVerticalSpace = true;
         gridData2.verticalAlignment = GridData.FILL;
-        Composite group = createSectionWithClient("Logo");
+        Composite group = createSectionWithClient("Logo", group3);
         group.setLayout(new GridLayout());
         createLogoCanvas(group);
         group.setLayoutData(gridData2);
@@ -469,7 +483,7 @@ public class LabelPrinterEntryForm extends BgcFormBase {
      * This method initializes group1
      * 
      */
-    private void patientInfoGroup() {
+    private void patientInfoGroup(Composite top) {
 
         GridData gridData = new GridData();
         gridData.horizontalAlignment = GridData.FILL;
@@ -477,7 +491,7 @@ public class LabelPrinterEntryForm extends BgcFormBase {
         gridData.grabExcessVerticalSpace = false;
         gridData.verticalAlignment = GridData.FILL;
 
-        Composite group1 = createSectionWithClient("Patient Information");
+        Composite group1 = createSectionWithClient("Patient Information", top);
         group1.setLayoutData(gridData);
         group1.setLayout(new GridLayout());
         createComposite6(group1);
@@ -620,7 +634,7 @@ public class LabelPrinterEntryForm extends BgcFormBase {
      * This method initializes group2
      * 
      */
-    private void sampleTextGroup() {
+    private void sampleTextGroup(Composite top) {
 
         GridData gridData = new GridData();
         gridData.horizontalAlignment = GridData.FILL;
@@ -633,7 +647,8 @@ public class LabelPrinterEntryForm extends BgcFormBase {
         GridLayout gridLayout5 = new GridLayout();
         gridLayout5.numColumns = 4;
 
-        Composite group2 = createSectionWithClient("Additonal Configuration");
+        Composite group2 = createSectionWithClient("Additonal Configuration",
+            top);
         group2.setLayout(gridLayout5);
         group2.setLayoutData(gridData);
 
@@ -641,9 +656,9 @@ public class LabelPrinterEntryForm extends BgcFormBase {
         sampleTypeCheckbox.setText("Enable");
         sampleTypeCheckbox.setSelection(perferenceStore
             .getBoolean(PreferenceConstants.SAMPLETYPE_CHECKBOX));
-        
+
         new Label(group2, SWT.NONE).setText("Sample Type (on labels):");
-        
+
         sampleTypeText = new Text(group2, SWT.BORDER | SWT.V_SCROLL
             | SWT.SINGLE);
         sampleTypeText.setText(perferenceStore
@@ -661,7 +676,7 @@ public class LabelPrinterEntryForm extends BgcFormBase {
      * @throws ApplicationException
      * 
      */
-    private void brandingGroup() {
+    private void brandingGroup(Composite top) {
 
         GridData gridData = new GridData();
         gridData.horizontalAlignment = GridData.FILL;
@@ -674,19 +689,19 @@ public class LabelPrinterEntryForm extends BgcFormBase {
         gridLayout3.numColumns = 2;
         gridLayout3.makeColumnsEqualWidth = true;
 
-        Composite group3 = createSectionWithClient("Branding");
+        Composite group3 = createSectionWithClient("Branding", top);
         group3.setLayoutData(gridData);
         group3.setLayout(gridLayout3);
 
         createComposite3(group3);
-        createGroup();
+        createGroup(group3);
     }
 
     /**
      * This method initializes group4
      * 
      */
-    private void actionButtonGroup() {
+    private void actionButtonGroup(Composite top) {
         GridLayout gridLayout5 = new GridLayout();
         gridLayout5.numColumns = 6;
         gridLayout5.makeColumnsEqualWidth = true;
@@ -701,7 +716,7 @@ public class LabelPrinterEntryForm extends BgcFormBase {
         gridData7.grabExcessHorizontalSpace = true;
         gridData7.horizontalAlignment = GridData.FILL;
 
-        Composite group4 = createSectionWithClient("Actions");
+        Composite group4 = createSectionWithClient("Actions", top);
 
         savePdfButton = new Button(group4, SWT.NONE);
         savePdfButton.setText("Print to PDF");
@@ -869,7 +884,7 @@ public class LabelPrinterEntryForm extends BgcFormBase {
 
             if (template == null) {
                 throw new CBSRGuiVerificationException("Verifcation Issue",
-                    "Could not load template.");
+                    "Could not load template.. Selected template is null.");
             }
 
             if (!(template).jasperTemplateExists()) {

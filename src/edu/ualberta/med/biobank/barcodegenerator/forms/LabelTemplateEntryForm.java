@@ -1,6 +1,5 @@
 package edu.ualberta.med.biobank.barcodegenerator.forms;
 
-import java.net.URL;
 import java.util.Map;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -34,7 +33,7 @@ import edu.ualberta.med.biobank.barcodegenerator.trees.TreeException;
 import edu.ualberta.med.biobank.common.wrappers.JasperTemplateWrapper;
 import edu.ualberta.med.biobank.gui.common.BgcPlugin;
 import edu.ualberta.med.biobank.gui.common.BgcSessionState;
-import edu.ualberta.med.biobank.gui.common.forms.BgcFormBase;
+import edu.ualberta.med.biobank.gui.common.forms.BgcEntryForm;
 import edu.ualberta.med.biobank.gui.common.widgets.BgcBaseText;
 import gov.nih.nci.system.applicationservice.ApplicationException;
 
@@ -48,14 +47,13 @@ import gov.nih.nci.system.applicationservice.ApplicationException;
  */
 
 // FIXME add form close listener
-public class LabelTemplateEntryForm extends BgcFormBase {
+public class LabelTemplateEntryForm extends BgcEntryForm implements
+    SelectionListener {
 
     public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.forms.TemplateEntryForm";
     private Button deleteButton = null;
     private Button copyButton = null;
     private Button newButton = null;
-    private Button helpButton = null;
-    private Button saveButton = null;
 
     private BgcBaseText templateNameText = null;
 
@@ -69,13 +67,9 @@ public class LabelTemplateEntryForm extends BgcFormBase {
 
     private Shell shell;
 
-    boolean templateDirty = false;
     private TemplateStore templateStore;
 
     private boolean loggedIn = false;
-
-    // constants
-    final private String HELP_URL = "http://www.example.com";
 
     @Override
     protected void init() throws Exception {
@@ -95,6 +89,7 @@ public class LabelTemplateEntryForm extends BgcFormBase {
 
     @Override
     protected void createFormContent() throws Exception {
+        super.createFormContent();
         form.setText("Label Templates");
         form.setMessage(getOkMessage(), IMessageProvider.NONE);
         page.setLayout(new GridLayout(1, false));
@@ -109,7 +104,6 @@ public class LabelTemplateEntryForm extends BgcFormBase {
         shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 
         createMasterDetail();
-        createFormButtons();
 
         sessionSourceProvider
             .addSourceProviderListener(new ISourceProviderListener() {
@@ -168,17 +162,17 @@ public class LabelTemplateEntryForm extends BgcFormBase {
             true, true));
 
         newButton = toolkit.createButton(composite4, "New", SWT.PUSH);
-        newButton.addSelectionListener(newListener);
+        newButton.addSelectionListener(this);
         newButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
             true, true));
 
         copyButton = toolkit.createButton(composite4, "Copy", SWT.PUSH);
-        copyButton.addSelectionListener(copyListener);
+        copyButton.addSelectionListener(this);
         copyButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
             true, true));
 
         deleteButton = toolkit.createButton(composite4, "Delete", SWT.PUSH);
-        deleteButton.addSelectionListener(deleteListener);
+        deleteButton.addSelectionListener(this);
         deleteButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
             true, true));
 
@@ -226,31 +220,11 @@ public class LabelTemplateEntryForm extends BgcFormBase {
         configTree = new ConfigurationTree(client, SWT.NONE);
     }
 
-    private void createFormButtons() {
-        Composite composite = toolkit.createComposite(page);
-        composite.setLayout(new GridLayout(5, true));
-        GridData gd = new GridData(GridData.FILL, GridData.FILL, true, true);
-        gd.horizontalSpan = 2;
-        composite.setLayoutData(gd);
-
-        helpButton = toolkit.createButton(composite, "Help", SWT.PUSH);
-        helpButton.addSelectionListener(helpListener);
-        helpButton.setLayoutData(new GridData(GridData.FILL,
-            GridData.BEGINNING, true, true));
-
-        saveButton = toolkit.createButton(composite, "Save Template", SWT.PUSH);
-        saveButton.addSelectionListener(saveAllListener);
-        saveButton.setLayoutData(new GridData(GridData.FILL,
-            GridData.BEGINNING, true, true));
-    }
-
     private void setEnable(boolean enable) {
         configTree.setEnabled(enable);
         deleteButton.setEnabled(enable);
         copyButton.setEnabled(enable);
         newButton.setEnabled(enable);
-        helpButton.setEnabled(enable);
-        saveButton.setEnabled(enable);
         printerNameText.setEnabled(enable);
     }
 
@@ -303,7 +277,7 @@ public class LabelTemplateEntryForm extends BgcFormBase {
                 }
 
                 try {
-                    saveCurrentTemplate();
+                    confirm();
                 } catch (Exception e1) {
                     BgcPlugin.openAsyncError("Template Saving",
                         "Failed to save template: " + e1.getMessage());
@@ -348,7 +322,7 @@ public class LabelTemplateEntryForm extends BgcFormBase {
                             ee.getMessage());
                         return;
                     }
-                    templateDirty = selectedTemplate.isNew();
+                    setDirty(selectedTemplate.isNew());
 
                 } else {
                     prevTemplateName = null;
@@ -364,7 +338,7 @@ public class LabelTemplateEntryForm extends BgcFormBase {
                                 "Error: Could not clear the Template Configuration Tree",
                                 e1.getError());
                     }
-                    templateDirty = false;
+                    setDirty(false);
 
                 }
 
@@ -396,260 +370,214 @@ public class LabelTemplateEntryForm extends BgcFormBase {
         return null;
     }
 
-    private void saveCurrentTemplate() throws Exception {
-
-        if (prevTemplateName != null) {
-
-            if (templateDirty || configTree.isDirty()) {
-                if (BgcPlugin
-                    .openConfirm("Template Saving",
-                        "Template has been modified, do you want to save your changes?")) {
-
-                    Template selectedTemplate = templateStore
-                        .getTemplate(prevTemplateName);
-
-                    String printerName = printerNameText.getText();
-                    if (printerName == null || printerName.length() == 0) {
-                        selectedTemplate.setPrinterName("default");
-                    } else {
-                        if (!printerName.equals(selectedTemplate
-                            .getPrinterName())) {
-                            selectedTemplate.setPrinterName(printerName);
-                        }
-                    }
-
-                    if (configTree.isDirty()) {
-                        selectedTemplate.setConfiguration(configTree
-                            .getConfiguration());
-                    }
-                    selectedTemplate.persist();
-
-                }
-
-            }
-            templateDirty = false;
-            configTree.unDirty();
-
-        }
-    }
-
-    private SelectionListener newListener = new SelectionListener() {
-        @Override
-        public void widgetSelected(SelectionEvent e) {
-            try {
-
-                StringInputDialog dialog = new StringInputDialog(
-                    "New Template",
-                    "Please enter the name for the new template", "Name", shell);
-                if (dialog.open() == Dialog.OK) {
-
-                    String newTemplateName = dialog.getValue();
-
-                    if (!templateStore.getTemplateNames().contains(
-                        newTemplateName)) {
-
-                        // jasper config combo selection
-                        ComboInputDialog jasperComboDialog = new ComboInputDialog(
-                            "Jasper Configuration Selection",
-                            "Please select a Jasper Configuration that you would like to base this template on.",
-                            JasperTemplateWrapper
-                                .getTemplateNames(SessionManager
-                                    .getAppService()), null, shell);
-                        jasperComboDialog.open();
-
-                        String selectedJasperConfig = jasperComboDialog
-                            .getValue();
-                        if (selectedJasperConfig == null
-                            || selectedJasperConfig.length() == 0)
-                            return;
-
-                        Template ct = new Template();
-
-                        ct.setName(newTemplateName);
-                        ct.setPrinterName("default");
-                        ct.setJasperTemplate(getJasperTemplateWrapper(selectedJasperConfig));
-
-                        if (selectedJasperConfig.equals("CBSR")) {
-                            ct.setConfiguration(CBSRLabelMaker
-                                .getDefaultConfiguration());
-
-                        } else {
-                            ct.setConfiguration(CBSRLabelMaker
-                                .getDefaultConfiguration());
-                        }
-
-                        templateStore.addTemplate(ct);
-                        templateNamesList.add(ct.getName());
-                        templateNamesList.redraw();
-                    } else {
-                        BgcPlugin.openAsyncError("Template Exists",
-                            "Your new template must have a unique name.");
-                        return;
-                    }
-                }
-            } catch (Exception e1) {
-                BgcPlugin.openAsyncError("Template Create Error",
-                    "Could not create template", e1);
-            }
-        }
-
-        @Override
-        public void widgetDefaultSelected(SelectionEvent e) {
-            widgetSelected(e);
-        }
-    };
-
-    // FIXME make cloning work.
-    private SelectionListener copyListener = new SelectionListener() {
-        @Override
-        public void widgetSelected(SelectionEvent e) {
-            try {
-                if (prevTemplateName == null)
-                    return;
-
-                StringInputDialog dialog = new StringInputDialog(
-                    "Cloned Template Name",
-                    "What is the name of the cloned template?", "Name", shell);
-                dialog.setValue(prevTemplateName + " copy");
-
-                if (dialog.open() == Dialog.OK) {
-
-                    Template selectedTemplate = templateStore
-                        .getTemplate(prevTemplateName);
-
-                    String newTemplateName = dialog.getValue();
-
-                    if (!templateStore.getTemplateNames().contains(
-                        newTemplateName)) {
-
-                        Template cloned = selectedTemplate.clone();
-
-                        if (cloned != null) {
-
-                            cloned.setName(newTemplateName);
-                            cloned.persist();
-
-                            templateStore.addTemplate(cloned);
-                            templateNamesList.add(newTemplateName);
-                            templateNamesList.redraw();
-                        } else {
-                            BgcPlugin.openAsyncError("Copy Template Error",
-                                "Could not copy template. An error occured.");
-                            return;
-                        }
-                    } else {
-                        BgcPlugin.openAsyncError("Template Exists",
-                            "Your new template must have a unique name.");
-                        return;
-                    }
-                }
-            } catch (Exception e1) {
-                BgcPlugin.openAsyncError("Template Create Error",
-                    "Could not create template", e1);
-            }
-        }
-
-        @Override
-        public void widgetDefaultSelected(SelectionEvent e) {
-            widgetSelected(e);
-        }
-    };
-
-    private SelectionListener deleteListener = new SelectionListener() {
-        @Override
-        public void widgetSelected(SelectionEvent e) {
-            try {
-
-                if (prevTemplateName != null) {
-                    MessageBox messageBox = new MessageBox(shell,
-                        SWT.ICON_QUESTION | SWT.YES | SWT.NO);
-                    messageBox.setMessage("Are you sure you want to delete "
-                        + prevTemplateName + "?");
-                    messageBox.setText("Deleting Template");
-
-                    int response = messageBox.open();
-                    if (response == SWT.YES) {
+    public void confirm() {
+        try {
+            if (prevTemplateName != null) {
+                if (isDirty() || configTree.isDirty()) {
+                    if (BgcPlugin
+                        .openConfirm("Template Saving",
+                            "Template has been modified, do you want to save your changes?")) {
 
                         Template selectedTemplate = templateStore
                             .getTemplate(prevTemplateName);
 
-                        templateStore.deleteTemplate(prevTemplateName);
-                        templateNamesList.remove(selectedTemplate.getName());
-
-                        if (!selectedTemplate.isNew()) {
-                            selectedTemplate.delete();
+                        String printerName = printerNameText.getText();
+                        if (printerName == null || printerName.length() == 0) {
+                            selectedTemplate.setPrinterName("default");
+                        } else {
+                            if (!printerName.equals(selectedTemplate
+                                .getPrinterName())) {
+                                selectedTemplate.setPrinterName(printerName);
+                            }
                         }
 
-                        templateNameText.setText("Please select a template");
-
-                        templateNamesList.deselectAll();
-                        templateNamesList.redraw();
-
-                        prevTemplateName = null;
-                        printerNameText.setText("");
-                        printerNameText.setEnabled(false);
-
-                        jasperConfigText.setText("");
-
-                        configTree.populateTree(null);
+                        if (configTree.isDirty()) {
+                            selectedTemplate.setConfiguration(configTree
+                                .getConfiguration());
+                        }
+                        selectedTemplate.persist();
 
                     }
-                }
-            } catch (Exception e1) {
-                BgcPlugin.openAsyncError("Template Delete Error",
-                    "Could not delete template", e1);
-            }
-        }
 
-        @Override
-        public void widgetDefaultSelected(SelectionEvent e) {
-            widgetSelected(e);
+                }
+                setDirty(false);
+                configTree.unDirty();
+
+            }
+        } catch (Exception e1) {
+            BgcPlugin.openAsyncError("Template Save Error",
+                "Could not save the template to the database", e1);
         }
-    };
+    }
+
+    @Override
+    public void widgetSelected(SelectionEvent e) {
+        if (e.getSource() == newButton) {
+            newButtonSelected(e);
+        } else if (e.getSource() == copyButton) {
+            copyButtonSelected(e);
+        } else if (e.getSource() == deleteButton) {
+            deleteButtonSelected(e);
+        } else {
+            BgcPlugin.openAsyncError("Invalid selection event",
+                "invalid selection source");
+        }
+    }
+
+    @Override
+    public void widgetDefaultSelected(SelectionEvent e) {
+        widgetSelected(e);
+    }
+
+    private void newButtonSelected(SelectionEvent e) {
+        try {
+            StringInputDialog dialog = new StringInputDialog("New Template",
+                "Please enter the name for the new template", "Name", shell);
+            if (dialog.open() == Dialog.OK) {
+
+                String newTemplateName = dialog.getValue();
+
+                if (!templateStore.getTemplateNames().contains(newTemplateName)) {
+
+                    // jasper config combo selection
+                    ComboInputDialog jasperComboDialog = new ComboInputDialog(
+                        "Jasper Configuration Selection",
+                        "Please select a Jasper Configuration that you would like to base this template on.",
+                        JasperTemplateWrapper.getTemplateNames(SessionManager
+                            .getAppService()), null, shell);
+                    jasperComboDialog.open();
+
+                    String selectedJasperConfig = jasperComboDialog.getValue();
+                    if (selectedJasperConfig == null
+                        || selectedJasperConfig.length() == 0)
+                        return;
+
+                    Template ct = new Template();
+
+                    ct.setName(newTemplateName);
+                    ct.setPrinterName("default");
+                    ct.setJasperTemplate(getJasperTemplateWrapper(selectedJasperConfig));
+
+                    if (selectedJasperConfig.equals("CBSR")) {
+                        ct.setConfiguration(CBSRLabelMaker
+                            .getDefaultConfiguration());
+
+                    } else {
+                        ct.setConfiguration(CBSRLabelMaker
+                            .getDefaultConfiguration());
+                    }
+
+                    templateStore.addTemplate(ct);
+                    templateNamesList.add(ct.getName());
+                    templateNamesList.redraw();
+                } else {
+                    BgcPlugin.openAsyncError("Template Exists",
+                        "Your new template must have a unique name.");
+                    return;
+                }
+            }
+        } catch (Exception e1) {
+            BgcPlugin.openAsyncError("Template Create Error",
+                "Could not create template", e1);
+        }
+    }
+
+    // FIXME make cloning work.
+    private void copyButtonSelected(SelectionEvent e) {
+        try {
+            if (prevTemplateName == null)
+                return;
+
+            StringInputDialog dialog = new StringInputDialog(
+                "Cloned Template Name",
+                "What is the name of the cloned template?", "Name", shell);
+            dialog.setValue(prevTemplateName + " copy");
+
+            if (dialog.open() == Dialog.OK) {
+
+                Template selectedTemplate = templateStore
+                    .getTemplate(prevTemplateName);
+
+                String newTemplateName = dialog.getValue();
+
+                if (!templateStore.getTemplateNames().contains(newTemplateName)) {
+
+                    Template cloned = selectedTemplate.clone();
+
+                    if (cloned != null) {
+
+                        cloned.setName(newTemplateName);
+                        cloned.persist();
+
+                        templateStore.addTemplate(cloned);
+                        templateNamesList.add(newTemplateName);
+                        templateNamesList.redraw();
+                    } else {
+                        BgcPlugin.openAsyncError("Copy Template Error",
+                            "Could not copy template. An error occured.");
+                        return;
+                    }
+                } else {
+                    BgcPlugin.openAsyncError("Template Exists",
+                        "Your new template must have a unique name.");
+                    return;
+                }
+            }
+        } catch (Exception e1) {
+            BgcPlugin.openAsyncError("Template Create Error",
+                "Could not create template", e1);
+        }
+    }
+
+    private void deleteButtonSelected(SelectionEvent e) {
+        try {
+
+            if (prevTemplateName != null) {
+                MessageBox messageBox = new MessageBox(shell, SWT.ICON_QUESTION
+                    | SWT.YES | SWT.NO);
+                messageBox.setMessage("Are you sure you want to delete "
+                    + prevTemplateName + "?");
+                messageBox.setText("Deleting Template");
+
+                int response = messageBox.open();
+                if (response == SWT.YES) {
+
+                    Template selectedTemplate = templateStore
+                        .getTemplate(prevTemplateName);
+
+                    templateStore.deleteTemplate(prevTemplateName);
+                    templateNamesList.remove(selectedTemplate.getName());
+
+                    if (!selectedTemplate.isNew()) {
+                        selectedTemplate.delete();
+                    }
+
+                    templateNameText.setText("Please select a template");
+
+                    templateNamesList.deselectAll();
+                    templateNamesList.redraw();
+
+                    prevTemplateName = null;
+                    printerNameText.setText("");
+                    printerNameText.setEnabled(false);
+
+                    jasperConfigText.setText("");
+
+                    configTree.populateTree(null);
+
+                }
+            }
+        } catch (Exception e1) {
+            BgcPlugin.openAsyncError("Template Delete Error",
+                "Could not delete template", e1);
+        }
+    }
 
     private ModifyListener printerNameModifyListener = new ModifyListener() {
 
         @Override
         public void modifyText(ModifyEvent e) {
-            templateDirty = true;
-        }
-    };
-
-    private SelectionListener saveAllListener = new SelectionListener() {
-        @Override
-        public void widgetSelected(SelectionEvent e) {
-            try {
-                saveCurrentTemplate();
-            } catch (Exception e1) {
-                BgcPlugin.openAsyncError("Template Save Error",
-                    "Could not save the template to the database", e1);
-            }
-        }
-
-        @Override
-        public void widgetDefaultSelected(SelectionEvent e) {
-            widgetSelected(e);
-
-        }
-    };
-
-    private SelectionListener helpListener = new SelectionListener() {
-        @Override
-        public void widgetSelected(SelectionEvent e) {
-            try {
-                // TODO make a valid documentation page for help.
-                PlatformUI.getWorkbench().getBrowserSupport()
-                    .getExternalBrowser().openURL(new URL(HELP_URL));
-            } catch (Exception e1) {
-                BgcPlugin.openAsyncError("Open URL Problem",
-                    "Could not open help url.\n\n" + e1.getMessage());
-                return;
-            }
-        }
-
-        @Override
-        public void widgetDefaultSelected(SelectionEvent e) {
-            widgetSelected(e);
+            setDirty(true);
         }
     };
 

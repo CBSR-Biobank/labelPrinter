@@ -78,6 +78,10 @@ public class JasperConfigEntryForm extends BgcEntryForm implements
         return null;
     }
 
+    protected String getOkMessage() {
+        return "Used to configure jasper files for printer label templates";
+    }
+
     @Override
     protected void createFormContent() throws Exception {
         super.createFormContent();
