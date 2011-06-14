@@ -514,18 +514,27 @@ public class TemplateEditorView extends ViewPart {
                     if (!templateStore.getTemplateNames().contains(
                         newTemplateName)) {
 
+                        java.util.List<String> jasperTemplateNames = JasperTemplateWrapper
+                            .getTemplateNames(SessionManager.getAppService());
+
+                        if (jasperTemplateNames == null
+                            || jasperTemplateNames.size() == 0) {
+                            BgcPlugin
+                                .openInformation("No Jasper Configurations",
+                                    "No jasper configurations exist to base this template on.");
+                            return;
+                        }
+
                         // jasper config combo selection
                         ComboInputDialog jasperComboDialog = new ComboInputDialog(
                             "Jasper Configuration Selection",
                             "Please select a Jasper Configuration that you would like to base this template on.",
-                            JasperTemplateWrapper
-                                .getTemplateNames(SessionManager
-                                    .getAppService()), null, shell);
+                            jasperTemplateNames, null, shell);
+
                         jasperComboDialog.open();
 
                         String selectedJasperConfig = jasperComboDialog
                             .getValue();
-
                         if (selectedJasperConfig == null
                             || selectedJasperConfig.length() == 0)
                             return;
@@ -534,7 +543,6 @@ public class TemplateEditorView extends ViewPart {
 
                         ct.setName(newTemplateName);
                         ct.setPrinterName("default");
-
                         ct.setJasperTemplate(getJasperTemplateWrapper(selectedJasperConfig));
 
                         if (selectedJasperConfig.equals("CBSR")) {

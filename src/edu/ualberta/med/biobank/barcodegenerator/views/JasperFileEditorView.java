@@ -56,7 +56,7 @@ public class JasperFileEditorView extends ViewPart {
     private Composite composite5 = null;
     private Label label = null;
     private Text jasperNameTexty = null;
-    private Text jasperFileText = null;
+    private Text jasperConfigText = null;
     private Button browseButton = null;
     private List list = null;
 
@@ -266,17 +266,17 @@ public class JasperFileEditorView extends ViewPart {
                         jasperNameTexty.setText(selectedTemplate.getName());
                         if (selectedTemplate.getXml() == null
                             || selectedTemplate.getXml().isEmpty()) {
-                            jasperFileText
+                            jasperConfigText
                                 .setText("Please select a Jasper file");
                         } else
-                            jasperFileText.setText("Jasper file loaded");
+                            jasperConfigText.setText("Jasper file loaded");
 
                         prevJasperName = selectedItems[0];
                         jasperConfigDirty = false;
 
                     } else {
                         jasperNameTexty.setText("Please select a template");
-                        jasperFileText.setText("");
+                        jasperConfigText.setText("");
                         prevJasperName = null;
                         jasperConfigDirty = false;
                     }
@@ -318,10 +318,10 @@ public class JasperFileEditorView extends ViewPart {
                     if (selectedTemplate.getXml() != null
                         && !selectedTemplate.getXml().isEmpty()) {
                         selectedTemplate.persist();
-                        jasperFileText.setText("Jasper file loaded");
+                        jasperConfigText.setText("Jasper file loaded");
 
                     } else {
-                        jasperFileText.setText("Please select a Jasper file");
+                        jasperConfigText.setText("Please select a Jasper file");
                         throw new Exception("Jasper file was not selected");
                     }
                 }
@@ -410,7 +410,7 @@ public class JasperFileEditorView extends ViewPart {
 
                                 jasperNameTexty
                                     .setText("Please select a template");
-                                jasperFileText.setText("");
+                                jasperConfigText.setText("");
                                 prevJasperName = null;
                                 jasperConfigDirty = false;
 
@@ -455,9 +455,9 @@ public class JasperFileEditorView extends ViewPart {
 
         Label label = new Label(composite5, SWT.NONE);
         label.setText("Jasper File:");
-        jasperFileText = new Text(composite5, SWT.BORDER);
-        jasperFileText.setEditable(false);
-        jasperFileText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        jasperConfigText = new Text(composite5, SWT.BORDER);
+        jasperConfigText.setEditable(false);
+        jasperConfigText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         browseButton = new Button(composite5, SWT.NONE);
         browseButton.setText("Browse...");
         browseButton.addSelectionListener(new SelectionListener() {
@@ -473,7 +473,7 @@ public class JasperFileEditorView extends ViewPart {
                         File f = new File(path);
                         if (f.exists()) {
                             loadedJasperFileXml = FileUtils.readFileToString(f);
-                            jasperFileText.setText(path);
+                            jasperConfigText.setText(path);
                             jasperConfigDirty = true;
                         } else {
                             BgcPlugin.openAsyncError("File Not Found",
