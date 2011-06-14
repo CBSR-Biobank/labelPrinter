@@ -379,7 +379,7 @@ public class JasperFileEditorView extends ViewPart {
                     BgcPlugin
                         .openAsyncError(
                             "Template Delete Error",
-                            "Could not delete template. A printer template may be using this jasper configuration.",
+                            "Could not delete template. A printer template is using this jasper configuration.",
                             e1);
                 }
 
