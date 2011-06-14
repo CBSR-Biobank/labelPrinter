@@ -405,7 +405,6 @@ public class JasperFileEditorView extends ViewPart {
                     String jasperConfigName = dialog.getValue();
 
                     if (!templateMap.containsKey(jasperConfigName)) {
-
                         JasperTemplateWrapper newTemplate = new JasperTemplateWrapper(
                             SessionManager.getAppService());
 
