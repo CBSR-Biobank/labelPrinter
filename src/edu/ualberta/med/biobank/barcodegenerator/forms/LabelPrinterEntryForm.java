@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceStore;
@@ -125,10 +126,14 @@ public class LabelPrinterEntryForm extends BgcFormBase {
         return null;
     }
 
+    protected String getOkMessage() {
+        return "Used to print labels for patients";
+    }
+
     @Override
     protected void createFormContent() throws Exception {
-        form.setText("Jasper Configuration Templates");
-        // form.setMessage(getOkMessage(), IMessageProvider.NONE);
+        form.setText("Label Printing");
+        form.setMessage(getOkMessage(), IMessageProvider.NONE);
         page.setLayout(new GridLayout(1, false));
 
         BgcSessionState sessionSourceProvider = BgcPlugin
@@ -144,9 +149,7 @@ public class LabelPrinterEntryForm extends BgcFormBase {
 
         Composite top = toolkit.createComposite(page, SWT.NONE);
         top.setLayout(new GridLayout());
-        top.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
-            true, true));
-
+        top.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 
         brandingGroup(top);
         patientInfoGroup(top);
@@ -201,7 +204,7 @@ public class LabelPrinterEntryForm extends BgcFormBase {
                 }
                 setEnable(true);
                 templateCombo.redraw();
-
+                loadSelectedTemplate();
             } else {
                 setEnable(false);
                 templateCombo.removeAll();
@@ -377,16 +380,26 @@ public class LabelPrinterEntryForm extends BgcFormBase {
     private void loadSelectedTemplate() {
         if (templateCombo.getSelectionIndex() >= 0) {
             try {
-                loadedTemplate = templateStore.getTemplate(templateCombo
-                    .getItem(templateCombo.getSelectionIndex()));
+
+                String comboSelectedTemplate = templateCombo
+                    .getItem(templateCombo.getSelectionIndex());
+
+                // already loaded
+                if (loadedTemplate == null
+                    || !loadedTemplate.getName().equals(comboSelectedTemplate)) {
+                    loadedTemplate = templateStore
+                        .getTemplate(comboSelectedTemplate);
+                }
+
             } catch (Exception ee) {
                 BgcPlugin.openAsyncError("Verifcation Issue",
                     "Could not load template: " + ee.getMessage());
             }
+
+            if (loadedTemplate != null)
+                intendedPrinter.setText(loadedTemplate.getPrinterName());
         }
 
-        if (loadedTemplate != null)
-            intendedPrinter.setText(loadedTemplate.getPrinterName());
     }
 
     /**
@@ -399,7 +412,7 @@ public class LabelPrinterEntryForm extends BgcFormBase {
         gridData2.grabExcessHorizontalSpace = true;
         gridData2.grabExcessVerticalSpace = true;
         gridData2.verticalAlignment = GridData.FILL;
-        Composite group = createSectionWithClient("Logo",group3);
+        Composite group = createSectionWithClient("Logo", group3);
         group.setLayout(new GridLayout());
         createLogoCanvas(group);
         group.setLayoutData(gridData2);
@@ -478,7 +491,7 @@ public class LabelPrinterEntryForm extends BgcFormBase {
         gridData.grabExcessVerticalSpace = false;
         gridData.verticalAlignment = GridData.FILL;
 
-        Composite group1 = createSectionWithClient("Patient Information",top);
+        Composite group1 = createSectionWithClient("Patient Information", top);
         group1.setLayoutData(gridData);
         group1.setLayout(new GridLayout());
         createComposite6(group1);
@@ -634,7 +647,8 @@ public class LabelPrinterEntryForm extends BgcFormBase {
         GridLayout gridLayout5 = new GridLayout();
         gridLayout5.numColumns = 4;
 
-        Composite group2 = createSectionWithClient("Additonal Configuration",top);
+        Composite group2 = createSectionWithClient("Additonal Configuration",
+            top);
         group2.setLayout(gridLayout5);
         group2.setLayoutData(gridData);
 
@@ -675,7 +689,7 @@ public class LabelPrinterEntryForm extends BgcFormBase {
         gridLayout3.numColumns = 2;
         gridLayout3.makeColumnsEqualWidth = true;
 
-        Composite group3 = createSectionWithClient("Branding",top);
+        Composite group3 = createSectionWithClient("Branding", top);
         group3.setLayoutData(gridData);
         group3.setLayout(gridLayout3);
 
@@ -702,7 +716,7 @@ public class LabelPrinterEntryForm extends BgcFormBase {
         gridData7.grabExcessHorizontalSpace = true;
         gridData7.horizontalAlignment = GridData.FILL;
 
-        Composite group4 = createSectionWithClient("Actions",top);
+        Composite group4 = createSectionWithClient("Actions", top);
 
         savePdfButton = new Button(group4, SWT.NONE);
         savePdfButton.setText("Print to PDF");
@@ -870,7 +884,7 @@ public class LabelPrinterEntryForm extends BgcFormBase {
 
             if (template == null) {
                 throw new CBSRGuiVerificationException("Verifcation Issue",
-                    "Could not load template.");
+                    "Could not load template.. Selected template is null.");
             }
 
             if (!(template).jasperTemplateExists()) {

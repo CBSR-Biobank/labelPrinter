@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -74,11 +75,15 @@ public class JasperConfigEntryForm extends BgcFormBase {
         return null;
     }
 
+    protected String getOkMessage() {
+        return "Used to configure jasper files for printer label templates";
+    }
+
     @Override
     protected void createFormContent() throws Exception {
 
         form.setText("Jasper Configuration Templates");
-        // form.setMessage(getOkMessage(), IMessageProvider.NONE);
+        form.setMessage(getOkMessage(), IMessageProvider.NONE);
         page.setLayout(new GridLayout(1, false));
 
         BgcSessionState sessionSourceProvider = BgcPlugin
@@ -90,9 +95,7 @@ public class JasperConfigEntryForm extends BgcFormBase {
 
         Composite top = toolkit.createComposite(page, SWT.NONE);
         top.setLayout(new GridLayout());
-        top.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
-            true, true));
-
+        top.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 
         createGroup(top);
 
@@ -122,31 +125,21 @@ public class JasperConfigEntryForm extends BgcFormBase {
     }
 
     private void createGroup(Composite top) {
-        GridData gridFill = new GridData();
-        gridFill.horizontalAlignment = GridData.FILL;
-        gridFill.grabExcessHorizontalSpace = true;
-        gridFill.grabExcessVerticalSpace = true;
-        gridFill.verticalAlignment = GridData.FILL;
-
-        Composite group = createSectionWithClient("Jasper Configuration Editor",top);
+        Composite group = createSectionWithClient(
+            "Jasper Configuration Editor", top);
         group.setLayout(new GridLayout());
-        group.setLayoutData(gridFill);
+        group.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
 
         createComposite(group);
         createComposite1(group);
     }
 
     private void createComposite(Composite group) {
-        GridData gridFill = new GridData();
-        gridFill.horizontalAlignment = GridData.FILL;
-        gridFill.grabExcessHorizontalSpace = true;
-        gridFill.grabExcessVerticalSpace = true;
-        gridFill.verticalAlignment = GridData.FILL;
 
         GridLayout gridLayout = new GridLayout();
         gridLayout.numColumns = 3;
         Composite composite = toolkit.createComposite(group, SWT.NONE);
-        composite.setLayoutData(gridFill);
+        composite.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
         composite.setLayout(gridLayout);
 
         createComposite2(composite);
@@ -206,17 +199,17 @@ public class JasperConfigEntryForm extends BgcFormBase {
         gridData6.verticalAlignment = GridData.FILL;
         gridData6.grabExcessHorizontalSpace = true;
         gridData6.horizontalAlignment = GridData.FILL;
-        gridData6.heightHint = 200;
+        gridData6.heightHint = 500;
         gridData6.widthHint = 125;
-        FillLayout fillLayout1 = new FillLayout();
-        fillLayout1.type = org.eclipse.swt.SWT.VERTICAL;
 
-        Composite group1 = createSectionWithClient("Jasper Configurations",composite2);
+        //FIXME make template list longer vertically
+        Composite group1 = createSectionWithClient("Jasper Configurations",
+            composite2);
         group1.setLayoutData(gridData6);
-        group1.setLayout(fillLayout1);
         list = new List(group1, SWT.BORDER | SWT.V_SCROLL);
         list.addSelectionListener(listListener);
         list.redraw();
+        list.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
     }
 
     private void setEnable(boolean enable) {
