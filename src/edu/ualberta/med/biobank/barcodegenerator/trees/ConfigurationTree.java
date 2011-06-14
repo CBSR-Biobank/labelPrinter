@@ -2,7 +2,6 @@ package edu.ualberta.med.biobank.barcodegenerator.trees;
 
 import java.util.Map.Entry;
 
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
 import org.eclipse.swt.events.ModifyEvent;
@@ -39,154 +38,6 @@ public class ConfigurationTree {
 
     private Configuration configuration;
 
-    /**
-     * Used for modifying configuration data. Creates a tree structure from the
-     * key name.
-     * 
-     * createTreeItem("animal.dog.nose.hair", new Rectangle(1,2,3,4)) will
-     * create the root node "animal", then the child node "dog", then the
-     * child-child node "nose", the last (leaf) node "hair" will have its column
-     * values set to 1,2,3,4.
-     * 
-     * @param location eg. "animal.dog.nose.hair"
-     * @param value eg. new Rectangle(1,2,3,4)
-     * @throws TreeException
-     */
-    public void createTreeItem(String location, Rectangle value)
-        throws TreeException {
-
-        if (tree == null)
-            throw new TreeException("Cannot create an item in a null tree.");
-
-        if (location == null)
-            throw new TreeException("Cannot create an item in a null location.");
-
-        if (value == null)
-            throw new TreeException(
-                "Cannot create an item with a null rectangle value.");
-
-        int locationIndex = 0;
-        String[] locationSegments = location.split("\\.");
-        if (locationSegments.length <= 0)
-            throw new TreeException(
-                "Location must contain at least one segment.");
-
-        // to traverse through the tree
-        Object currentItem = tree;
-
-        MAIN_LOOP: while (true) {
-
-            TreeItem[] currentItemChildren = null;
-
-            if (currentItem instanceof Tree) {
-                currentItemChildren = ((Tree) currentItem).getItems();
-
-            } else if (currentItem instanceof TreeItem) {
-                currentItemChildren = ((TreeItem) currentItem).getItems();
-            }
-
-            if (currentItemChildren != null && currentItemChildren.length != 0) {
-                for (TreeItem childItem : currentItemChildren) {
-                    if (childItem.getText(0).replaceAll("\t", "")
-                        .equals(locationSegments[locationIndex])) {
-                        currentItem = childItem;
-                        locationIndex++;
-                        continue MAIN_LOOP;
-                    }
-                }
-            }
-            // if foundItem: found a child item that matches the next
-            // locationSegment name.
-
-            // if our location does not exist, add nodes until the entire
-            // set of locationSegments are complete.
-
-            // the leaf node is special: it requires a tab in the first
-            // index of its string values -- and the it sets its other fields
-            // depending on the value parameter.
-            if (currentItem != null) {
-
-                for (int i = locationIndex; i < locationSegments.length; i++) {
-                    TreeItem newItem;
-                    if (currentItem instanceof Tree) {
-                        newItem = new TreeItem((Tree) currentItem, SWT.NONE);
-                    } else {
-                        newItem = new TreeItem((TreeItem) currentItem, SWT.NONE);
-                    }
-                    newItem.setText(locationSegments[i]);
-                    currentItem = newItem;
-                }
-
-                String[] values = rectangleToString(value);
-                values[0] = "\t"
-                    + locationSegments[locationSegments.length - 1];
-                ((TreeItem) currentItem).setText(values);
-
-                break;
-            } else {
-                throw new TreeException(
-                    "TreeItem searching failed: currentItem is null.");
-            }
-
-        }
-
-    }
-
-    public void setEnabled(boolean enable) {
-        tree.setEnabled(enable);
-        
-    }
-
-    public Configuration getConfiguration() {
-        return configuration;
-    }
-
-    public void resetEditor() throws TreeException {
-        if (textEdit != null)
-            textEdit.dispose();
-        textEdit = null;
-
-        if (editor == null)
-            throw new TreeException("Cannot populate tree: Editor is null.");
-
-        editor.setEditor(null, null, 0);
-
-    }
-
-    /**
-     * Removes all the TreeItem children of the tree. It then adds all of the
-     * configuration data to tree. NOTE: the configuration data keys must
-     * contain periods to segregate different types of configuration settings.
-     * 
-     * @param config Any changes made to the tree will be reflected in the
-     *            specified configuration file.
-     * @throws TreeException
-     */
-    public void populateTree(Configuration config) throws TreeException {
-
-        resetEditor();
-        isDirty = false;
-
-        if (tree == null)
-            throw new TreeException("Cannot populate tree: Tree is null.");
-
-        tree.removeAll();
-
-        if (config == null)
-            return;
-
-        if (config.getSettings() == null)
-            throw new TreeException(
-                "A valid configuration setting is required.");
-
-        for (Entry<String, Rectangle> e : config.getSettings().entrySet()) {
-            createTreeItem(e.getKey(), e.getValue());
-        }
-        configuration = config;
-
-        tree.redraw();
-    }
-
     public ConfigurationTree(Composite parent, int style) {
 
         tree = new Tree(parent, style | SWT.BORDER | SWT.H_SCROLL
@@ -194,9 +45,10 @@ public class ConfigurationTree {
         tree.setHeaderVisible(true);
 
         // remove this to make the standalone main function work.
-        GridData data = new GridData(GridData.FILL_BOTH);
-        data.heightHint = 150;
-        tree.setLayoutData(data);
+        GridData gd = new GridData(GridData.FILL_BOTH);
+        gd.horizontalSpan = 2;
+        gd.heightHint = 150;
+        tree.setLayoutData(gd);
 
         editor = new TreeEditor(tree);
         editor.horizontalAlignment = SWT.LEFT;
@@ -324,6 +176,154 @@ public class ConfigurationTree {
                 }
             }
         });
+    }
+
+    /**
+     * Used for modifying configuration data. Creates a tree structure from the
+     * key name.
+     * 
+     * createTreeItem("animal.dog.nose.hair", new Rectangle(1,2,3,4)) will
+     * create the root node "animal", then the child node "dog", then the
+     * child-child node "nose", the last (leaf) node "hair" will have its column
+     * values set to 1,2,3,4.
+     * 
+     * @param location eg. "animal.dog.nose.hair"
+     * @param value eg. new Rectangle(1,2,3,4)
+     * @throws TreeException
+     */
+    public void createTreeItem(String location, Rectangle value)
+        throws TreeException {
+
+        if (tree == null)
+            throw new TreeException("Cannot create an item in a null tree.");
+
+        if (location == null)
+            throw new TreeException("Cannot create an item in a null location.");
+
+        if (value == null)
+            throw new TreeException(
+                "Cannot create an item with a null rectangle value.");
+
+        int locationIndex = 0;
+        String[] locationSegments = location.split("\\.");
+        if (locationSegments.length <= 0)
+            throw new TreeException(
+                "Location must contain at least one segment.");
+
+        // to traverse through the tree
+        Object currentItem = tree;
+
+        MAIN_LOOP: while (true) {
+
+            TreeItem[] currentItemChildren = null;
+
+            if (currentItem instanceof Tree) {
+                currentItemChildren = ((Tree) currentItem).getItems();
+
+            } else if (currentItem instanceof TreeItem) {
+                currentItemChildren = ((TreeItem) currentItem).getItems();
+            }
+
+            if (currentItemChildren != null && currentItemChildren.length != 0) {
+                for (TreeItem childItem : currentItemChildren) {
+                    if (childItem.getText(0).replaceAll("\t", "")
+                        .equals(locationSegments[locationIndex])) {
+                        currentItem = childItem;
+                        locationIndex++;
+                        continue MAIN_LOOP;
+                    }
+                }
+            }
+            // if foundItem: found a child item that matches the next
+            // locationSegment name.
+
+            // if our location does not exist, add nodes until the entire
+            // set of locationSegments are complete.
+
+            // the leaf node is special: it requires a tab in the first
+            // index of its string values -- and the it sets its other fields
+            // depending on the value parameter.
+            if (currentItem != null) {
+
+                for (int i = locationIndex; i < locationSegments.length; i++) {
+                    TreeItem newItem;
+                    if (currentItem instanceof Tree) {
+                        newItem = new TreeItem((Tree) currentItem, SWT.NONE);
+                    } else {
+                        newItem = new TreeItem((TreeItem) currentItem, SWT.NONE);
+                    }
+                    newItem.setText(locationSegments[i]);
+                    currentItem = newItem;
+                }
+
+                String[] values = rectangleToString(value);
+                values[0] = "\t"
+                    + locationSegments[locationSegments.length - 1];
+                ((TreeItem) currentItem).setText(values);
+
+                break;
+            } else {
+                throw new TreeException(
+                    "TreeItem searching failed: currentItem is null.");
+            }
+
+        }
+
+    }
+
+    public void setEnabled(boolean enable) {
+        tree.setEnabled(enable);
+
+    }
+
+    public Configuration getConfiguration() {
+        return configuration;
+    }
+
+    public void resetEditor() throws TreeException {
+        if (textEdit != null)
+            textEdit.dispose();
+        textEdit = null;
+
+        if (editor == null)
+            throw new TreeException("Cannot populate tree: Editor is null.");
+
+        editor.setEditor(null, null, 0);
+
+    }
+
+    /**
+     * Removes all the TreeItem children of the tree. It then adds all of the
+     * configuration data to tree. NOTE: the configuration data keys must
+     * contain periods to segregate different types of configuration settings.
+     * 
+     * @param config Any changes made to the tree will be reflected in the
+     *            specified configuration file.
+     * @throws TreeException
+     */
+    public void populateTree(Configuration config) throws TreeException {
+
+        resetEditor();
+        isDirty = false;
+
+        if (tree == null)
+            throw new TreeException("Cannot populate tree: Tree is null.");
+
+        tree.removeAll();
+
+        if (config == null)
+            return;
+
+        if (config.getSettings() == null)
+            throw new TreeException(
+                "A valid configuration setting is required.");
+
+        for (Entry<String, Rectangle> e : config.getSettings().entrySet()) {
+            createTreeItem(e.getKey(), e.getValue());
+        }
+        configuration = config;
+
+        tree.redraw();
     }
 
     public void unDirty() {
