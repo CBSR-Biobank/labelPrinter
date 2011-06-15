@@ -25,6 +25,10 @@ import edu.ualberta.med.biobank.barcodegenerator.template.configuration.Rectangl
 
 /**
  * 
+ * Creates a tree from a specified configuration file. Child nodes have editable
+ * fields, any change to a field will be reflected in the configuration file.
+ * The tree structure is created as mentioned below.
+ * 
  * @author Thomas Polasek 2011
  * 
  */
@@ -46,9 +50,9 @@ public class ConfigurationTree {
         tree.setHeaderVisible(true);
 
         // remove this to make the standalone main function work.
-        GridData gd = new GridData(GridData.FILL_BOTH);
+        GridData gd = new GridData(GridData.FILL, GridData.FILL, true, true);
         gd.horizontalSpan = 2;
-        gd.heightHint = 150;
+        gd.heightHint = 350;
         tree.setLayoutData(gd);
 
         editor = new TreeEditor(tree);
@@ -272,27 +276,6 @@ public class ConfigurationTree {
 
     }
 
-    public void setEnabled(boolean enable) {
-        tree.setEnabled(enable);
-
-    }
-
-    public Configuration getConfiguration() {
-        return configuration;
-    }
-
-    public void resetEditor() throws TreeException {
-        if (textEdit != null)
-            textEdit.dispose();
-        textEdit = null;
-
-        if (editor == null)
-            throw new TreeException("Cannot populate tree: Editor is null.");
-
-        editor.setEditor(null, null, 0);
-
-    }
-
     /**
      * Removes all the TreeItem children of the tree. It then adds all of the
      * configuration data to tree. NOTE: the configuration data keys must
@@ -329,34 +312,6 @@ public class ConfigurationTree {
         configuration = config;
 
         tree.redraw();
-    }
-
-    public void unDirty() {
-        isDirty = false;
-    }
-
-    public boolean isDirty() {
-        return isDirty;
-    }
-
-    public Rectangle getTreeValue(String location) {
-        TreeItem ti = getTreeItem(location);
-        return StringToRectangle(new String[] { ti.getText(1), ti.getText(2),
-            ti.getText(3), ti.getText(4) });
-    }
-
-    public boolean setTreeValue(String location, Rectangle r) {
-
-        TreeItem currentItem = getTreeItem(location);
-
-        if (currentItem == null)
-            return false;
-
-        String[] values = rectangleToString(r);
-        values[0] = ((TreeItem) currentItem).getText(0);
-
-        ((TreeItem) currentItem).setText(values);
-        return true;
     }
 
     private String[] rectangleToString(Rectangle r) {
@@ -396,60 +351,46 @@ public class ConfigurationTree {
             item.getText(2), item.getText(3), item.getText(4) });
     }
 
+    public void setEnabled(boolean enable) {
+        tree.setEnabled(enable);
+    }
+
     /**
-     * Changes a particular row in the tree. The location specified must be in
-     * the form: ROOT.CHILD.SUBCHILD.SUBSUB[CHILD].LEAF eg.
-     * "Patient Info.Top Field.1D Barcode"
+     * Returns the configuration. Main purpose is to obtain and save the current
+     * configuration. unDirty() should be called shortly after saving this tree
+     * configuration.
      * 
-     **/
-    private TreeItem getTreeItem(String location) {
-        if (tree == null || location == null)
-            return null;
+     * @return
+     */
+    public Configuration getConfiguration() {
+        return configuration;
+    }
 
-        String[] locationSegments = location.split("\\.");
+    /**
+     * This should be called the configuration has been saved externally.
+     */
+    public void unDirty() {
+        isDirty = false;
+    }
 
-        if (locationSegments.length == 0)
-            return null;
+    /**
+     * Any field changes to the configuration tree will make isDirty true.
+     * 
+     * @return
+     */
+    public boolean isDirty() {
+        return isDirty;
+    }
 
-        int locationIndex = 0;
-        Object currentItem = tree;
+    public void resetEditor() throws TreeException {
+        if (textEdit != null)
+            textEdit.dispose();
+        textEdit = null;
 
-        while (true) {
+        if (editor == null)
+            throw new TreeException("Cannot populate tree: Editor is null.");
 
-            TreeItem[] currentItemChildren = null;
-
-            if (currentItem instanceof Tree) {
-                currentItemChildren = ((Tree) currentItem).getItems();
-
-            } else if (currentItem instanceof TreeItem) {
-                currentItemChildren = ((TreeItem) currentItem).getItems();
-            }
-
-            if (currentItemChildren == null || currentItemChildren.length == 0)
-                break;
-
-            boolean foundItem = false;
-            for (TreeItem childItem : currentItemChildren) {
-                if (childItem.getText(0).replaceAll("\t", "")
-                    .equals(locationSegments[locationIndex])) {
-                    currentItem = childItem;
-                    locationIndex++;
-                    foundItem = true;
-                    break;
-                }
-            }
-
-            if (!foundItem) {
-                currentItem = null;
-                break;
-            }
-
-        }
-        if (currentItem instanceof TreeItem) {
-            return (TreeItem) currentItem;
-        } else {
-            return null;
-        }
+        editor.setEditor(null, null, 0);
     }
 
 }

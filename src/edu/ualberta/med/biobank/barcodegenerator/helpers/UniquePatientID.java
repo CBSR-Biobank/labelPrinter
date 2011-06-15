@@ -1,4 +1,4 @@
-package edu.ualberta.med.biobank.barcodegenerator;
+package edu.ualberta.med.biobank.barcodegenerator.helpers;
 
 import java.util.ArrayList;
 import java.util.UUID;

@@ -43,7 +43,7 @@ import org.eclipse.ui.ISourceProviderListener;
 import org.eclipse.ui.PlatformUI;
 
 import edu.ualberta.med.biobank.barcodegenerator.BarcodeGenPlugin;
-import edu.ualberta.med.biobank.barcodegenerator.UniquePatientID;
+import edu.ualberta.med.biobank.barcodegenerator.helpers.UniquePatientID;
 import edu.ualberta.med.biobank.barcodegenerator.preferences.PreferenceConstants;
 import edu.ualberta.med.biobank.barcodegenerator.preferences.PreferenceInitializer;
 import edu.ualberta.med.biobank.barcodegenerator.progress.PrintOperation;
