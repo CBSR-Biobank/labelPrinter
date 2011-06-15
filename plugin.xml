@@ -24,15 +24,15 @@
       </editor>
       <editor
             class="edu.ualberta.med.biobank.barcodegenerator.forms.JasperConfigEntryForm"
-            id="edu.ualberta.med.biobank.barcodegenerator.views.JasperFileEditorView"
+            id="edu.ualberta.med.biobank.barcodegenerator.forms.JasperFileEditorView"
             default="false"
             name="Jasper Templates Editor">
       </editor>
             <editor
             class="edu.ualberta.med.biobank.barcodegenerator.forms.LabelPrinterEntryForm"
-            id="edu.ualberta.med.biobank.barcodegenerator.views.LabelPrinterView"
+            id="edu.ualberta.med.biobank.barcodegenerator.forms.LabelPrinterView"
             default="false"
-           name="Print Patient Barcodes">
+           name="Specimen Labels">
       </editor>
       </extension>
    <extension
@@ -44,11 +44,11 @@
             locationURI="menu:org.eclipse.ui.main.menu?after=edu.ualberta.med.biobank.menu.additions">
          <menu
                id="edu.ualberta.med.barcodegenerator.menu.barcodegenerator"
-               label="Barcode Printing">
+               label="Printer Labels">
             <command
                   commandId="edu.ualberta.med.barcodegenerator.commands.labelprinter"
                   id="edu.ualberta.med.barcodegenerator.menu.labelprinter"
-                  label="Print Patient Barcodes"
+                  label="Specimen Labels"
                   style="push">
             </command>
             <command

@@ -41,7 +41,7 @@ import gov.nih.nci.system.applicationservice.ApplicationException;
 public class JasperConfigEntryForm extends BgcEntryForm implements
     SelectionListener {
 
-    public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.views.JasperFileEditorView";
+    public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.forms.JasperFileEditorView";
 
     private Button deleteButton = null;
 
