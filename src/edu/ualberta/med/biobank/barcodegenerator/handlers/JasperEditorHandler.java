@@ -9,7 +9,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 
 import edu.ualberta.med.biobank.barcodegenerator.BarcodeGenPlugin;
-import edu.ualberta.med.biobank.barcodegenerator.forms.JasperConfigEntryForm;
+import edu.ualberta.med.biobank.barcodegenerator.forms.JasperTemplateEntryForm;
 import edu.ualberta.med.biobank.barcodegenerator.perspective.JasperEditorPerspective;
 import edu.ualberta.med.biobank.gui.common.forms.BgcFormInput;
 
@@ -31,9 +31,9 @@ public class JasperEditorHandler extends AbstractHandler implements IHandler {
                     .getActiveWorkbenchWindow()
                     .getActivePage()
                     .openEditor(
-                        new BgcFormInput(JasperConfigEntryForm.ID,
-                            JasperConfigEntryForm.ID),
-                        JasperConfigEntryForm.ID, true);
+                        new BgcFormInput(JasperTemplateEntryForm.ID,
+                            JasperTemplateEntryForm.ID),
+                        JasperTemplateEntryForm.ID, true);
             }
         } catch (WorkbenchException e) {
             throw new ExecutionException(

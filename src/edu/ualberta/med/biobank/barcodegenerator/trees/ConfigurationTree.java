@@ -39,7 +39,7 @@ public class ConfigurationTree {
     private TreeEditor editor;
     private Text textEdit;
 
-    private boolean isDirty;
+    private boolean isDirty; 
 
     private Configuration configuration;
 

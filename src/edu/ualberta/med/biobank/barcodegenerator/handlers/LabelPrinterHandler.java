@@ -9,7 +9,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 
 import edu.ualberta.med.biobank.barcodegenerator.BarcodeGenPlugin;
-import edu.ualberta.med.biobank.barcodegenerator.forms.LabelPrinterEntryForm;
+import edu.ualberta.med.biobank.barcodegenerator.forms.SpecimanLabelEntryForm;
 import edu.ualberta.med.biobank.barcodegenerator.perspective.LabelPrinterPerspective;
 import edu.ualberta.med.biobank.gui.common.forms.BgcFormInput;
 
@@ -31,8 +31,8 @@ public class LabelPrinterHandler extends AbstractHandler implements IHandler {
                     .getActiveWorkbenchWindow()
                     .getActivePage()
                     .openEditor(
-                        new BgcFormInput(LabelPrinterEntryForm.ID,
-                            LabelPrinterEntryForm.ID), LabelPrinterEntryForm.ID, true);
+                        new BgcFormInput(SpecimanLabelEntryForm.ID,
+                            SpecimanLabelEntryForm.ID), SpecimanLabelEntryForm.ID, true);
 
             }
         } catch (WorkbenchException e) {

@@ -49,23 +49,22 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
     SelectionListener {
 
     public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.forms.TemplateEntryForm";
+
     private Button deleteButton = null;
     private Button copyButton = null;
     private Button newButton = null;
 
     private BgcBaseText templateNameText = null;
-
     private BgcBaseText printerNameText = null;
-
     private BgcBaseText jasperConfigText = null;
 
     private List templateNamesList = null;
     private ConfigurationTree configTree = null;
     private String prevTemplateName = null;
 
-    private Shell shell;
+    private Shell shell = null;
 
-    private TemplateStore templateStore;
+    private TemplateStore templateStore = null;
 
     private boolean loggedIn = false;
 

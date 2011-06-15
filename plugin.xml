@@ -23,14 +23,14 @@
             name="Printer Templates Editor">
       </editor>
       <editor
-            class="edu.ualberta.med.biobank.barcodegenerator.forms.JasperConfigEntryForm"
-            id="edu.ualberta.med.biobank.barcodegenerator.forms.JasperFileEditorView"
+            class="edu.ualberta.med.biobank.barcodegenerator.forms.JasperTemplateEntryForm"
+            id="edu.ualberta.med.biobank.barcodegenerator.forms.JasperTemplateEntryForm"
             default="false"
             name="Jasper Templates Editor">
       </editor>
             <editor
-            class="edu.ualberta.med.biobank.barcodegenerator.forms.LabelPrinterEntryForm"
-            id="edu.ualberta.med.biobank.barcodegenerator.forms.LabelPrinterView"
+            class="edu.ualberta.med.biobank.barcodegenerator.forms.SpecimanLabelEntryForm"
+            id="edu.ualberta.med.biobank.barcodegenerator.forms.SpecimanLabelEntryForm"
             default="false"
            name="Specimen Labels">
       </editor>
