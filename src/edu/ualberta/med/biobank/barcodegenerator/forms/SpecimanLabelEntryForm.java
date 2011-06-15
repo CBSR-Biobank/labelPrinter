@@ -53,7 +53,8 @@ import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSRData;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.exceptions.CBSRGuiVerificationException;
 import edu.ualberta.med.biobank.gui.common.BgcPlugin;
 import edu.ualberta.med.biobank.gui.common.BgcSessionState;
-import edu.ualberta.med.biobank.gui.common.forms.BgcFormBase;
+import edu.ualberta.med.biobank.gui.common.forms.BgcEntryForm;
+import edu.ualberta.med.biobank.gui.common.forms.BgcEntryFormActions;
 import edu.ualberta.med.biobank.gui.common.widgets.BgcBaseText;
 import gov.nih.nci.system.applicationservice.ApplicationException;
 
@@ -66,7 +67,7 @@ import gov.nih.nci.system.applicationservice.ApplicationException;
  * @author Thomas Polasek 2011
  * 
  */
-public class SpecimanLabelEntryForm extends BgcFormBase {
+public class SpecimanLabelEntryForm extends BgcEntryForm {
 
     public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.forms.SpecimanLabelEntryForm";
 
@@ -85,7 +86,6 @@ public class SpecimanLabelEntryForm extends BgcFormBase {
     private Button printBarcode3Checkbox = null;
 
     private Button sampleTypeCheckbox = null;
-    private Button printButton = null;
     private Button savePdfButton = null;
 
     private BgcBaseText projectTitleText = null;
@@ -133,8 +133,77 @@ public class SpecimanLabelEntryForm extends BgcFormBase {
         return null;
     }
 
+    // FIXME pressing the reset button does not cause this method to be called
+    @Override
+    public void reset() {
+        clearUserInput();
+    }
+
+    private void clearUserInput() {
+        if (BgcPlugin
+            .openConfirm("Reset Form Information",
+                "Do you want to clear any information that you have entered into this form?")) {
+            patientIDText.setText("");
+            value1Text.setText("");
+            value2Text.setText("");
+            value3Text.setText("");
+        }
+    }
+
+    @Override
+    public boolean print() {
+
+        BarcodeViewGuiData guiData = null;
+        try {
+            guiData = new BarcodeViewGuiData();
+        } catch (CBSRGuiVerificationException e1) {
+            BgcPlugin.openAsyncError("Gui Validation", e1.getMessage());
+            return false;
+        }
+
+        ArrayList<String> patientIDs = UniquePatientID
+            .generatePatient2DBarcodes(guiData.patientIdStr);
+
+        // print operation
+        PrintOperation printOperation = new PrintOperation(guiData, patientIDs);
+
+        try {
+            new ProgressMonitorDialog(shell).run(true, true, printOperation);
+        } catch (InvocationTargetException e1) {
+            printOperation.saveFailed();
+            printOperation.setError("Error", "InvocationTargetException: "
+                + e1.getCause().getMessage());
+
+        } catch (InterruptedException e2) {
+        }
+
+        if (printOperation.isSuccessful()) {
+            updateSavePreferences();
+        }
+
+        if (printOperation.errorExists()) {
+            BgcPlugin.openAsyncError(printOperation.getError()[0],
+                printOperation.getError()[1]);
+            clearUserInput();
+            return false;
+        }
+
+        clearUserInput();
+        return true;
+    }
+
+    @Override
+    protected void addToolbarButtons() {
+        formActions = new BgcEntryFormActions(this);
+        formActions
+            .addResetAction("edu.ualberta.med.biobank.gui.common.commands.reset");
+        formActions.addPrintAction();
+        form.updateToolBar();
+    }
+
     @Override
     protected void createFormContent() throws Exception {
+        super.createFormContent();
         form.setText("Specimen Labels");
         form.setMessage("Print source specimen labels for a patient",
             IMessageProvider.NONE);
@@ -241,7 +310,6 @@ public class SpecimanLabelEntryForm extends BgcFormBase {
         sampleTypeText.setEnabled(enable);
         templateCombo.setEnabled(enable);
         printerCombo.setEnabled(enable);
-        printButton.setEnabled(enable);
         savePdfButton.setEnabled(enable);
     }
 
@@ -720,15 +788,11 @@ public class SpecimanLabelEntryForm extends BgcFormBase {
         Composite group4 = createSectionWithClient("Actions", page);
 
         savePdfButton = new Button(group4, SWT.NONE);
-        savePdfButton.setText("Print to PDF");
+        savePdfButton.setText("Export to PDF");
         savePdfButton.addSelectionListener(savePdfListener);
         savePdfButton.setLayoutData(gridData7);
 
-        printButton = new Button(group4, SWT.NONE);
-        printButton.setText("Print Label Sheet");
-        printButton.addSelectionListener(printButtonListener);
-        printButton.setLayoutData(gridData7);
-
+        new Label(group4, SWT.NONE);
         new Label(group4, SWT.NONE);
         new Label(group4, SWT.NONE);
         new Label(group4, SWT.NONE);
@@ -896,54 +960,6 @@ public class SpecimanLabelEntryForm extends BgcFormBase {
         }
     };
 
-    private SelectionListener printButtonListener = new SelectionListener() {
-        @Override
-        public void widgetSelected(SelectionEvent e) {
-
-            BarcodeViewGuiData guiData = null;
-            try {
-                guiData = new BarcodeViewGuiData();
-            } catch (CBSRGuiVerificationException e1) {
-                BgcPlugin.openAsyncError("Gui Validation", e1.getMessage());
-                return;
-            }
-
-            ArrayList<String> patientIDs = UniquePatientID
-                .generatePatient2DBarcodes(guiData.patientIdStr);
-
-            // print operation
-            PrintOperation printOperation = new PrintOperation(guiData,
-                patientIDs);
-
-            try {
-                new ProgressMonitorDialog(shell)
-                    .run(true, true, printOperation);
-            } catch (InvocationTargetException e1) {
-                printOperation.saveFailed();
-                printOperation.setError("Error", "InvocationTargetException: "
-                    + e1.getCause().getMessage());
-
-            } catch (InterruptedException e2) {
-            }
-
-            if (printOperation.isSuccessful()) {
-                updateSavePreferences();
-
-            }
-
-            if (printOperation.errorExists()) {
-                BgcPlugin.openAsyncError(printOperation.getError()[0],
-                    printOperation.getError()[1]);
-            }
-
-        }
-
-        @Override
-        public void widgetDefaultSelected(SelectionEvent e) {
-            widgetSelected(e);
-
-        }
-    };
     private SelectionListener savePdfListener = new SelectionListener() {
         @Override
         public void widgetSelected(SelectionEvent e) {
@@ -999,6 +1015,8 @@ public class SpecimanLabelEntryForm extends BgcFormBase {
                 BgcPlugin.openAsyncError(saveOperation.getError()[0],
                     saveOperation.getError()[1]);
             }
+
+            clearUserInput();
 
         }
 
