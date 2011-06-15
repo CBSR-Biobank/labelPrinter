@@ -46,7 +46,6 @@ import gov.nih.nci.system.applicationservice.ApplicationException;
  * 
  */
 
-// FIXME add form close listener
 public class LabelTemplateEntryForm extends BgcEntryForm implements
     SelectionListener {
 
@@ -259,22 +258,12 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
         }
     }
 
-    // if (templateDirty || configTree.isDirty()) {
-
     private SelectionListener listListener = new SelectionListener() {
         @Override
         public void widgetSelected(SelectionEvent e) {
+
             String[] selectedItems = templateNamesList.getSelection();
             if (selectedItems.length == 1) {
-
-                // TODO call resetEditor in the appropiate locations
-                try {
-                    configTree.resetEditor();
-                } catch (TreeException e1) {
-                    BgcPlugin.openAsyncError("Tree Editor",
-                        "Failed to reset tree editor");
-                    return;
-                }
 
                 try {
                     confirm();
@@ -295,33 +284,45 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                         return;
                     }
 
-                    // TODO check that template name matches selectedItem
+                    if (!selectedTemplate.getName().equals(selectedItems[0])) {
+                        BgcPlugin
+                            .openAsyncError("Template Name Error",
+                                "Severe Error: Internal template names do not match.");
+                        return;
+                    }
 
-                    templateNameText.setText(selectedTemplate.getName());
-                    prevTemplateName = selectedTemplate.getName();
-
-                    printerNameText.setText(selectedTemplate.getPrinterName());
-
+                    // load selected template into gui elements
                     try {
                         jasperConfigText.setText(selectedTemplate
                             .getJasperTemplateName());
                     } catch (Exception e1) {
+                        jasperConfigText.setText("");
                         BgcPlugin.openAsyncError("Template Selection",
                             "Failed to find the jasper configuration name.");
+                        return;
                     }
-                    printerNameText.setEnabled(true);
-
-                    // TODO handle errors with correct branching.
 
                     try {
                         configTree.populateTree(selectedTemplate
                             .getConfiguration());
                     } catch (Exception ee) {
+                        jasperConfigText.setText("");
+
+                        try {
+                            configTree.populateTree(null);
+                        } catch (TreeException e1) {
+                        }
+
                         BgcPlugin.openAsyncError(
                             "Error: Could not set Template Configuration Tree",
                             ee.getMessage());
                         return;
                     }
+
+                    templateNameText.setText(selectedTemplate.getName());
+                    prevTemplateName = selectedTemplate.getName();
+                    printerNameText.setText(selectedTemplate.getPrinterName());
+                    printerNameText.setEnabled(true);
                     setDirty(selectedTemplate.isNew());
 
                 } else {
@@ -339,7 +340,6 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                                 e1.getError());
                     }
                     setDirty(false);
-
                 }
 
             } else {
@@ -372,6 +372,13 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
 
     public void confirm() {
         try {
+            try {
+                configTree.resetEditor();
+            } catch (TreeException e1) {
+                BgcPlugin.openAsyncError("Tree Editor",
+                    "Failed to reset tree editor");
+            }
+
             if (prevTemplateName != null) {
                 if (isDirty() || configTree.isDirty()) {
                     if (BgcPlugin
@@ -482,7 +489,6 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
         }
     }
 
-    // FIXME make cloning work.
     private void copyButtonSelected(SelectionEvent e) {
         try {
             if (prevTemplateName == null)

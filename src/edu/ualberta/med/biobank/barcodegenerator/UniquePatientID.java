@@ -32,12 +32,6 @@ public class UniquePatientID {
     }
 
     // TODO add exceptions to patient ID generation
-
-    // FIXME remove barcodes associated to a patient from the database
-    public static boolean removePatient2DBarcodes(ArrayList<String> barcodes) {
-        return true;
-    }
-
     // FIXME generate and persit patient barcode IDs
     public static ArrayList<String> generatePatient2DBarcodes(String patientName) {
         return randStringArray(32);

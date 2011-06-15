@@ -2,7 +2,6 @@ package edu.ualberta.med.biobank.barcodegenerator.trees;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Map.Entry;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
@@ -324,9 +323,9 @@ public class ConfigurationTree {
             .keySet());
         Collections.sort(mapKeys);
 
-        for (String key : mapKeys) 
+        for (String key : mapKeys)
             createTreeItem(key, config.getSetting(key));
-        
+
         configuration = config;
 
         tree.redraw();

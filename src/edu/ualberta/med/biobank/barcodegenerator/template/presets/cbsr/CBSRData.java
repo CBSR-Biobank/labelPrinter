@@ -15,6 +15,8 @@ public class CBSRData {
     public String projectTileStr;
     public ByteArrayInputStream logoStream;
 
+    public String fontName;
+    
     public String patientIdStr;
 
     public String label1Str;

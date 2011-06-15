@@ -27,4 +27,6 @@ public class PreferenceConstants {
     public static final String SAMPLETYPE_TEXT = "barcodegen.other.sampletype.text";
     public static final String PDF_DIRECTORY_PATH = "barcodegen.pdf.directory";
     
+    public static final String TEXT_FONT_NAME = "barcodegen.font.name";
+    
 }

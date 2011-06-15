@@ -113,6 +113,8 @@ public class CBSRLabelMaker {
         JasperOutline.Branding branding = new JasperOutline.Branding(
             cbsrData.projectTileStr, cbsrData.logoStream);
 
+        Font baseFont = new Font(cbsrData.fontName, Font.PLAIN, 22);
+
         // Point position, Dimension size, String message,String label, String
         // value, Font font, boolean printBarcode
         // -------patient info------------
@@ -120,42 +122,41 @@ public class CBSRLabelMaker {
 
         try {
             patientInfo.getElements().addAll(
-                FieldGenerator.generateElements(tplt
-                    .getKey("Patient Info.Top Field.Field Text"),
-                    cbsrData.label1Str, cbsrData.value1Str, new Font(
-                        "Times New Roman", Font.PLAIN, 23), tplt
-                        .getKey("Patient Info.Top Field.1D Barcode"),
+                FieldGenerator.generateElements(
+                    tplt.getKey("Patient Info.Top Field.Field Text"),
+                    cbsrData.label1Str, cbsrData.value1Str,
+                    baseFont.deriveFont(23),
+                    tplt.getKey("Patient Info.Top Field.1D Barcode"),
                     cbsrData.barcode1Print));
 
             patientInfo.getElements().addAll(
-                FieldGenerator.generateElements(tplt
-                    .getKey("Patient Info.Middle Field.Field Text"),
-                    cbsrData.label2Str, cbsrData.value2Str, new Font(
-                        "Times New Roman", Font.PLAIN, 23), tplt
-                        .getKey("Patient Info.Middle Field.1D Barcode"),
+                FieldGenerator.generateElements(
+                    tplt.getKey("Patient Info.Middle Field.Field Text"),
+                    cbsrData.label2Str, cbsrData.value2Str,
+                    baseFont.deriveFont(23),
+                    tplt.getKey("Patient Info.Middle Field.1D Barcode"),
                     cbsrData.barcode2Print));
 
             patientInfo.getElements().addAll(
-                FieldGenerator.generateElements(tplt
-                    .getKey("Patient Info.Bottom Field.Field Text"),
-                    cbsrData.label3Str, cbsrData.value3Str, new Font(
-                        "Times New Roman", Font.PLAIN, 23), tplt
-                        .getKey("Patient Info.Bottom Field.1D Barcode"),
+                FieldGenerator.generateElements(
+                    tplt.getKey("Patient Info.Bottom Field.Field Text"),
+                    cbsrData.label3Str, cbsrData.value3Str,
+                    baseFont.deriveFont(23),
+                    tplt.getKey("Patient Info.Bottom Field.1D Barcode"),
                     cbsrData.barcode3Print));
 
             patientInfo.getElements().add(
                 new Barcode1D(
                     tplt.getKey("Patient Info.Patient ID.1D Barcode"),
-                    cbsrData.patientIdStr, new Font("Times New Roman",
-                        Font.PLAIN, 22)));
+                    cbsrData.patientIdStr, baseFont.deriveFont(22)));
 
-        } catch (ElementCreationException e) {
+        } catch (ElementCreationException eee) {
             throw new CBSRPdfGenException(
                 "Failed to create element in patient info box : "
-                    + e.getError());
-        } catch (JAXBException e) {
+                    + eee.getError());
+        } catch (JAXBException ee) {
             throw new CBSRPdfGenException(
-                "Failed to load configuration setting " + e.getMessage());
+                "Failed to load configuration setting " + ee.getMessage());
         }
         // -------barcode info------------
         JasperOutline.PatientBarcodeInformation pbi = new JasperOutline.PatientBarcodeInformation();
@@ -181,7 +182,7 @@ public class CBSRLabelMaker {
                             + barcode.getHeight());
 
                     Barcode1D item1D = new Barcode1D(r, cbsrData.patientIdStr,
-                        new Font("Times New Roman", Font.PLAIN, 22));
+                        baseFont.deriveFont(22));
                     bi.getElements().add(item1D);
                 } else {
                     throw new CBSRPdfGenException(
@@ -222,18 +223,18 @@ public class CBSRLabelMaker {
                         master.getHeight() + barcode.getHeight());
 
                     Text itemText = new Text(rectdim, cbsrData.sampleTypeStr,
-                        new Font("Times New Roman", Font.PLAIN, 22));
+                        baseFont.deriveFont(22));
                     bi.getElements().add(itemText);
                 }
                 pbi.getLayout().add(bi);
             }
-        } catch (ElementCreationException e) {
+        } catch (ElementCreationException e2) {
             throw new CBSRPdfGenException(
                 "Failed to create element in PatientBarcodeInformation box : "
-                    + e.getError());
-        } catch (JAXBException e) {
+                    + e2.getError());
+        } catch (JAXBException e1) {
             throw new CBSRPdfGenException(
-                "Failed to load configuration setting " + e.getMessage());
+                "Failed to load configuration setting " + e1.getMessage());
         }
 
         if (!tplt.jasperTemplateExists()) {
@@ -247,10 +248,10 @@ public class CBSRLabelMaker {
             JasperOutline jo = new JasperOutline();
             jo.setOutline(branding, patientInfo, pbi, inputStream);
             return jo;
-        } catch (Exception e) {
+        } catch (Exception e5) {
             throw new CBSRPdfGenException(
                 "Failed to create element in patient info box : "
-                    + e.getMessage());
+                    + e5.getMessage());
         }
     }
 

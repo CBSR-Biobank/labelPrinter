@@ -1,5 +1,9 @@
 package edu.ualberta.med.biobank.barcodegenerator.preferences;
 
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
+import java.util.ArrayList;
+
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
 
@@ -9,7 +13,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
     @Override
     public void initializeDefaultPreferences() {
-        IPreferenceStore store = BarcodeGenPlugin.getDefault().getPreferenceStore();
+        IPreferenceStore store = BarcodeGenPlugin.getDefault()
+            .getPreferenceStore();
 
         setDefaults(store);
     }
@@ -37,8 +42,47 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         store.setDefault(PreferenceConstants.BARCODE_CHECKBOX_3, true);
 
         store.setDefault(PreferenceConstants.SAMPLETYPE_CHECKBOX, true);
-        store.setDefault(PreferenceConstants.SAMPLETYPE_TEXT, "Pt Type___________");
+        store.setDefault(PreferenceConstants.SAMPLETYPE_TEXT,
+            "Pt Type___________");
         store.setDefault(PreferenceConstants.PDF_DIRECTORY_PATH, "");
+
+        // sets the default font.
+        GraphicsEnvironment e = GraphicsEnvironment
+            .getLocalGraphicsEnvironment();
+        Font[] fonts = e.getAllFonts();
+
+        if (e.getAllFonts().length >= 1) {
+            String defaultFontName = fonts[0].getFontName();
+
+            ArrayList<String> fontNames = new ArrayList<String>();
+            for (Font f : fonts) {
+                fontNames.add(f.getFontName());
+
+                if (f.getFontName().toLowerCase().contains("times new")) {
+                    defaultFontName = f.getFontName();
+                    break;
+                } else if (f.getFontName().toLowerCase().contains("courier")) {
+                    defaultFontName = f.getFontName();
+                    break;
+                } else if (f.getFontName().toLowerCase().contains("arial")) {
+                    defaultFontName = f.getFontName();
+                    break;
+                } else if (f.getFontName().toLowerCase().contains("serif")) {
+                    defaultFontName = f.getFontName();
+                    break;
+                } else if (f.getFontName().toLowerCase().contains("sans")) {
+                    defaultFontName = f.getFontName();
+                    break;
+                } else if (f.getFontName().toLowerCase().contains("mono")) {
+                    defaultFontName = f.getFontName();
+                    break;
+                }
+            }
+            store.setDefault(PreferenceConstants.TEXT_FONT_NAME,
+                defaultFontName);
+        } else
+            store.setDefault(PreferenceConstants.TEXT_FONT_NAME, "");
+
     }
 
 }

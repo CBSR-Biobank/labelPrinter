@@ -297,6 +297,7 @@ public class LabelPrinterEntryForm extends BgcFormBase {
         logoButton.setText("Browse...");
         logoButton.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent event) {
+
                 FileDialog fd = new FileDialog(shell, SWT.OPEN);
                 fd.setText("Select Logo");
                 String[] filterExt = { "*.png" };
@@ -812,12 +813,13 @@ public class LabelPrinterEntryForm extends BgcFormBase {
             }
             logoStream = bis;
 
-            /*
-             * templateFile = new File(templateText.getText()); if
-             * (!templateFile.exists()) {
-             * Activator.openAsyncError("Error: Could Not Find Template",
-             * "A valid template file location is required."); return; }
-             */
+            fontName = perferenceStore
+                .getDefaultString(PreferenceConstants.TEXT_FONT_NAME);
+            
+            System.out.println("Using font:" + fontName);
+            
+            if (fontName == null)
+                fontName = "";
 
             patientIdStr = patientIDText.getText();
             if (patientIdStr == null || patientIdStr.length() == 0) {
@@ -920,9 +922,6 @@ public class LabelPrinterEntryForm extends BgcFormBase {
             if (printOperation.isSuccessful()) {
                 updateSavePreferences();
 
-            } else {
-                UniquePatientID.removePatient2DBarcodes(printOperation
-                    .getPatientIDsUsed());
             }
 
             if (printOperation.errorExists()) {
@@ -987,9 +986,6 @@ public class LabelPrinterEntryForm extends BgcFormBase {
 
                 updateSavePreferences();
 
-            } else {
-                UniquePatientID.removePatient2DBarcodes(saveOperation
-                    .getPatientIDsUsed());
             }
 
             if (saveOperation.errorExists()) {

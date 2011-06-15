@@ -16,7 +16,8 @@ import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.Elem
  */
 public class Text extends Element {
 
-    // TODO allow user to set font size
+    // TODO allow user to set font size.
+    // TODO select a valid font if the default is not found.
     Font font;
 
     public Text(Rectangle rect, String message, Font font)
