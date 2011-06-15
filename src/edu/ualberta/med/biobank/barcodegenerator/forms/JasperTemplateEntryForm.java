@@ -38,6 +38,8 @@ import gov.nih.nci.system.applicationservice.ApplicationException;
  * @author Thomas Polasek 2011
  * 
  */
+
+// FIXME this form does not save when the user clicks on the X tab.
 public class JasperTemplateEntryForm extends BgcEntryForm implements
     SelectionListener {
 
@@ -56,8 +58,6 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
     private String prevJasperName = null;
 
     private Map<String, JasperTemplateWrapper> templateMap = null;
-
-    boolean jasperConfigDirty = false;
 
     private boolean loggedIn = false;
 
@@ -78,8 +78,6 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
     protected String getOkMessage() {
         return "Used to configure jasper files for printer label templates";
     }
-    
-
 
     @Override
     protected void createFormContent() throws Exception {
@@ -198,6 +196,7 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
     }
 
     private void setEnable(boolean enable) {
+        jasperTemplateList.setEnabled(enable);
         deleteButton.setEnabled(enable);
         browseButton.setEnabled(enable);
         newButton.setEnabled(enable);
@@ -262,13 +261,13 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
                             jasperConfigText.setText("Jasper file loaded");
 
                         prevJasperName = selectedItems[0];
-                        jasperConfigDirty = false;
+                        setDirty(false);
 
                     } else {
                         jasperNameText.setText("Please select a template");
                         jasperConfigText.setText("");
                         prevJasperName = null;
-                        jasperConfigDirty = false;
+                        setDirty(false);
                     }
 
                 } else {
@@ -292,7 +291,7 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
     public void confirm() {
         try {
             if (prevJasperName != null) {
-                if (jasperConfigDirty) {
+                if (isDirty()) {
                     if (BgcPlugin
                         .openConfirm("Jasper Configuration Editor Saving",
                             "Jasper Configuration has been modified, do you want to save your changes?")) {
@@ -316,7 +315,7 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
                             throw new Exception("Jasper file was not selected");
                         }
                     }
-                    jasperConfigDirty = false;
+                    setDirty(false);
                 }
             }
         } catch (Exception e1) {
@@ -386,7 +385,7 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
                             jasperNameText.setText("Please select a template");
                             jasperConfigText.setText("");
                             prevJasperName = null;
-                            jasperConfigDirty = false;
+                            setDirty(false);
 
                             jasperTemplateList.deselectAll();
                             jasperTemplateList.redraw();
@@ -413,7 +412,7 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
                     if (f.exists()) {
                         loadedJasperFileXml = FileUtils.readFileToString(f);
                         jasperConfigText.setText(path);
-                        jasperConfigDirty = true;
+                        setDirty(true);
                     } else {
                         BgcPlugin.openAsyncError("File Not Found",
                             "File selected does not exist.");
