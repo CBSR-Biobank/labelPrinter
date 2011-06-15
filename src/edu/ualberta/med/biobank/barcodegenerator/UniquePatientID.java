@@ -31,8 +31,8 @@ public class UniquePatientID {
         return l;
     }
 
-    // TODO add exceptions to patient ID generation
-    // FIXME generate and persit patient barcode IDs
+
+    // FIXME generate and persit patient barcode IDs &&  add exceptions to patient ID generation
     public static ArrayList<String> generatePatient2DBarcodes(String patientName) {
         return randStringArray(32);
     }

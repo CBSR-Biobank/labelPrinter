@@ -2,7 +2,6 @@ package edu.ualberta.med.biobank.barcodegenerator.preferences;
 
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
-import java.util.ArrayList;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -49,32 +48,36 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         // sets the default font.
         GraphicsEnvironment e = GraphicsEnvironment
             .getLocalGraphicsEnvironment();
-        Font[] fonts = e.getAllFonts();
 
-        if (e.getAllFonts().length >= 1) {
+        Font[] fonts = null;
+        if (e != null)
+            fonts = e.getAllFonts();
+
+        if (fonts != null && fonts.length >= 1) {
             String defaultFontName = fonts[0].getFontName();
 
-            ArrayList<String> fontNames = new ArrayList<String>();
             for (Font f : fonts) {
-                fontNames.add(f.getFontName());
 
-                if (f.getFontName().toLowerCase().contains("times new")) {
-                    defaultFontName = f.getFontName();
+                String cFontName = f.getFontName();
+                String cFontLower = f.getFontName().toLowerCase();
+
+                if (cFontLower.contains("times new")) {
+                    defaultFontName = cFontName;
                     break;
-                } else if (f.getFontName().toLowerCase().contains("courier")) {
-                    defaultFontName = f.getFontName();
+                } else if (cFontLower.contains("courier")) {
+                    defaultFontName = cFontName;
                     break;
-                } else if (f.getFontName().toLowerCase().contains("arial")) {
-                    defaultFontName = f.getFontName();
+                } else if (cFontLower.contains("arial")) {
+                    defaultFontName = cFontName;
                     break;
-                } else if (f.getFontName().toLowerCase().contains("serif")) {
-                    defaultFontName = f.getFontName();
+                } else if (cFontLower.contains("serif")) {
+                    defaultFontName = cFontName;
                     break;
-                } else if (f.getFontName().toLowerCase().contains("sans")) {
-                    defaultFontName = f.getFontName();
+                } else if (cFontLower.contains("sans")) {
+                    defaultFontName = cFontName;
                     break;
-                } else if (f.getFontName().toLowerCase().contains("mono")) {
-                    defaultFontName = f.getFontName();
+                } else if (cFontLower.contains("mono")) {
+                    defaultFontName = cFontName;
                     break;
                 }
             }
