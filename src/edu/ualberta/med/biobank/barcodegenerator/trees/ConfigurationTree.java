@@ -1,5 +1,7 @@
 package edu.ualberta.med.biobank.barcodegenerator.trees;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map.Entry;
 
 import org.eclipse.swt.SWT;
@@ -318,9 +320,13 @@ public class ConfigurationTree {
             throw new TreeException(
                 "A valid configuration setting is required.");
 
-        for (Entry<String, Rectangle> e : config.getSettings().entrySet()) {
-            createTreeItem(e.getKey(), e.getValue());
-        }
+        ArrayList<String> mapKeys = new ArrayList<String>(config.getSettings()
+            .keySet());
+        Collections.sort(mapKeys);
+
+        for (String key : mapKeys) 
+            createTreeItem(key, config.getSetting(key));
+        
         configuration = config;
 
         tree.redraw();
