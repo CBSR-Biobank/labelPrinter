@@ -887,8 +887,6 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
             fontName = perferenceStore
                 .getDefaultString(PreferenceConstants.TEXT_FONT_NAME);
 
-            System.out.println("Using font:" + fontName);
-
             if (fontName == null)
                 fontName = "";
 

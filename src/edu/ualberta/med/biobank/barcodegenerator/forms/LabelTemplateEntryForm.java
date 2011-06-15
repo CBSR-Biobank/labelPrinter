@@ -33,7 +33,6 @@ import edu.ualberta.med.biobank.common.wrappers.JasperTemplateWrapper;
 import edu.ualberta.med.biobank.gui.common.BgcPlugin;
 import edu.ualberta.med.biobank.gui.common.BgcSessionState;
 import edu.ualberta.med.biobank.gui.common.forms.BgcEntryForm;
-import edu.ualberta.med.biobank.gui.common.forms.BgcEntryFormActions;
 import edu.ualberta.med.biobank.gui.common.widgets.BgcBaseText;
 import gov.nih.nci.system.applicationservice.ApplicationException;
 
@@ -78,7 +77,6 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
     protected void performDoubleClick(DoubleClickEvent event) {
         // do nothing
     }
-
 
     @Override
     protected void createFormContent() throws Exception {
@@ -351,19 +349,6 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
         }
     };
 
-    // FIXME get the selected jaspertemplatewrapper correctly.
-    private JasperTemplateWrapper getJasperTemplateWrapper(String name)
-        throws ApplicationException {
-
-        for (JasperTemplateWrapper t : JasperTemplateWrapper
-            .getAllTemplates(SessionManager.getAppService())) {
-            if (t.getName().equals(name)) {
-                return t;
-            }
-        }
-        return null;
-    }
-
     public void confirm() {
         try {
             try {
@@ -457,7 +442,9 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
 
                     ct.setName(newTemplateName);
                     ct.setPrinterName("default");
-                    ct.setJasperTemplate(getJasperTemplateWrapper(selectedJasperConfig));
+                    ct.setJasperTemplate(JasperTemplateWrapper
+                        .getTemplateByName(SessionManager.getAppService(),
+                            selectedJasperConfig));
 
                     if (selectedJasperConfig.equals("CBSR")) {
                         ct.setConfiguration(CBSRLabelMaker

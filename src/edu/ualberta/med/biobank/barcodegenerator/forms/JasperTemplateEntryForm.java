@@ -29,7 +29,6 @@ import edu.ualberta.med.biobank.common.wrappers.JasperTemplateWrapper;
 import edu.ualberta.med.biobank.gui.common.BgcPlugin;
 import edu.ualberta.med.biobank.gui.common.BgcSessionState;
 import edu.ualberta.med.biobank.gui.common.forms.BgcEntryForm;
-import edu.ualberta.med.biobank.gui.common.forms.BgcEntryFormActions;
 import edu.ualberta.med.biobank.gui.common.widgets.BgcBaseText;
 import gov.nih.nci.system.applicationservice.ApplicationException;
 
