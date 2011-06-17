@@ -2,7 +2,7 @@ package edu.ualberta.med.biobank.barcodegenerator.progress;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
@@ -24,8 +24,8 @@ public class SaveOperation extends BarcodeGenerationOperation {
 
     private String pdfFilePath = "";
 
-    public SaveOperation(BarcodeViewGuiData guiData,
-        ArrayList<String> patientIDs, String pdfFilePath) {
+    public SaveOperation(BarcodeViewGuiData guiData, List<String> patientIDs,
+        String pdfFilePath) {
         super(guiData, patientIDs);
         this.pdfFilePath = pdfFilePath;
     }

@@ -3,6 +3,7 @@ package edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr;
 import java.awt.Font;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
@@ -48,8 +49,7 @@ public class CBSRLabelMaker {
      * @throws JAXBException
      */
     public static byte[] generatePdfCBSR(CBSRData cbsrData,
-        ArrayList<String> barcodeStrings) throws CBSRPdfGenException,
-        JAXBException {
+        List<String> barcodeStrings) throws CBSRPdfGenException, JAXBException {
 
         Configuration configDataStr = cbsrData.template.getConfiguration();
 
@@ -80,7 +80,7 @@ public class CBSRLabelMaker {
      * @throws CBSRPdfGenException
      */
     public static void printLabelsCBSR(CBSRData cbsrData,
-        ArrayList<String> barcodeStrings) throws CBSRPdfGenException {
+        List<String> barcodeStrings) throws CBSRPdfGenException {
 
         JasperOutline jo = generateJasperOutline(cbsrData, barcodeStrings);
 
@@ -96,7 +96,7 @@ public class CBSRLabelMaker {
     }
 
     private static JasperOutline generateJasperOutline(CBSRData cbsrData,
-        ArrayList<String> barcodeStrings) throws CBSRPdfGenException {
+        List<String> barcodeStrings) throws CBSRPdfGenException {
 
         Template tplt = cbsrData.template;
 

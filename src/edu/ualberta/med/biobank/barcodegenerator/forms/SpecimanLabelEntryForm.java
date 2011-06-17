@@ -6,7 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
@@ -41,8 +41,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISourceProviderListener;
 import org.eclipse.ui.PlatformUI;
 
+import edu.ualberta.med.biobank.SessionManager;
 import edu.ualberta.med.biobank.barcodegenerator.BarcodeGenPlugin;
-import edu.ualberta.med.biobank.barcodegenerator.helpers.UniquePatientID;
 import edu.ualberta.med.biobank.barcodegenerator.preferences.PreferenceConstants;
 import edu.ualberta.med.biobank.barcodegenerator.preferences.PreferenceInitializer;
 import edu.ualberta.med.biobank.barcodegenerator.progress.PrintOperation;
@@ -56,6 +56,7 @@ import edu.ualberta.med.biobank.gui.common.BgcSessionState;
 import edu.ualberta.med.biobank.gui.common.forms.BgcEntryForm;
 import edu.ualberta.med.biobank.gui.common.forms.BgcEntryFormActions;
 import edu.ualberta.med.biobank.gui.common.widgets.BgcBaseText;
+import edu.ualberta.med.biobank.server.applicationservice.exceptions.BiobankServerException;
 import gov.nih.nci.system.applicationservice.ApplicationException;
 
 /**
@@ -152,44 +153,49 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
 
     @Override
     public boolean print() {
-
+        PrintOperation printOperation = null;
         BarcodeViewGuiData guiData = null;
         try {
             guiData = new BarcodeViewGuiData();
+
+            List<String> patientIDs = SessionManager.getAppService()
+                .executeGetSourceSpecimenUniqueInventoryIds(32);
+
+            // print operation
+            printOperation = new PrintOperation(guiData, patientIDs);
+
+            try {
+                new ProgressMonitorDialog(shell)
+                    .run(true, true, printOperation);
+            } catch (InvocationTargetException e1) {
+                printOperation.saveFailed();
+                printOperation.setError("Error", "InvocationTargetException: "
+                    + e1.getCause().getMessage());
+            }
+
+            if (printOperation.isSuccessful()) {
+                updateSavePreferences();
+            }
+
+            if (printOperation.errorExists()) {
+                BgcPlugin.openAsyncError(printOperation.getError()[0],
+                    printOperation.getError()[1]);
+                clearUserInput();
+                return false;
+            }
+
+            clearUserInput();
+            return true;
+        } catch (BiobankServerException e) {
+            BgcPlugin.openAsyncError("Specimen ID Error", e.getMessage());
+        } catch (ApplicationException e) {
+            BgcPlugin.openAsyncError("Server Error", e.getMessage());
         } catch (CBSRGuiVerificationException e1) {
             BgcPlugin.openAsyncError("Gui Validation", e1.getMessage());
-            return false;
-        }
-
-        ArrayList<String> patientIDs = UniquePatientID
-            .generatePatient2DBarcodes(guiData.patientIdStr);
-
-        // print operation
-        PrintOperation printOperation = new PrintOperation(guiData, patientIDs);
-
-        try {
-            new ProgressMonitorDialog(shell).run(true, true, printOperation);
-        } catch (InvocationTargetException e1) {
-            printOperation.saveFailed();
-            printOperation.setError("Error", "InvocationTargetException: "
-                + e1.getCause().getMessage());
-
         } catch (InterruptedException e2) {
+            // do nothing
         }
-
-        if (printOperation.isSuccessful()) {
-            updateSavePreferences();
-        }
-
-        if (printOperation.errorExists()) {
-            BgcPlugin.openAsyncError(printOperation.getError()[0],
-                printOperation.getError()[1]);
-            clearUserInput();
-            return false;
-        }
-
-        clearUserInput();
-        return true;
+        return false;
     }
 
     @Override
@@ -965,57 +971,62 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
 
             try {
                 guiData = new BarcodeViewGuiData();
+
+                // save dialog for pdf file.
+                FileDialog fileDialog = new FileDialog(shell, SWT.SAVE);
+                fileDialog.setFilterPath(perferenceStore
+                    .getString(PreferenceConstants.PDF_DIRECTORY_PATH));
+                fileDialog.setOverwrite(true);
+                fileDialog.setFileName("default.pdf");
+                String pdfFilePath = fileDialog.open();
+
+                if (pdfFilePath == null)
+                    return;
+
+                List<String> patientIDs = SessionManager.getAppService()
+                    .executeGetSourceSpecimenUniqueInventoryIds(32);
+
+                SaveOperation saveOperation = new SaveOperation(guiData,
+                    patientIDs, pdfFilePath);
+
+                try {
+                    new ProgressMonitorDialog(shell).run(true, true,
+                        saveOperation);
+
+                } catch (InvocationTargetException e1) {
+                    saveOperation.saveFailed();
+                    saveOperation.setError("Error",
+                        "InvocationTargetException: "
+                            + e1.getCause().getMessage());
+
+                } catch (InterruptedException e2) {
+                }
+
+                if (saveOperation.isSuccessful()) {
+                    String parentDir = new File(pdfFilePath).getParentFile()
+                        .getPath();
+                    if (parentDir != null)
+                        perferenceStore.setValue(
+                            PreferenceConstants.PDF_DIRECTORY_PATH, parentDir);
+
+                    updateSavePreferences();
+
+                }
+
+                if (saveOperation.errorExists()) {
+                    BgcPlugin.openAsyncError(saveOperation.getError()[0],
+                        saveOperation.getError()[1]);
+                }
+
+                clearUserInput();
             } catch (CBSRGuiVerificationException e1) {
                 BgcPlugin.openAsyncError("Gui Validation", e1.getMessage());
                 return;
+            } catch (BiobankServerException e2) {
+                BgcPlugin.openAsyncError("Specimen ID Error", e2.getMessage());
+            } catch (ApplicationException e3) {
+                BgcPlugin.openAsyncError("Server Error", e3.getMessage());
             }
-
-            // save dialog for pdf file.
-            FileDialog fileDialog = new FileDialog(shell, SWT.SAVE);
-            fileDialog.setFilterPath(perferenceStore
-                .getString(PreferenceConstants.PDF_DIRECTORY_PATH));
-            fileDialog.setOverwrite(true);
-            fileDialog.setFileName("default.pdf");
-            String pdfFilePath = fileDialog.open();
-
-            if (pdfFilePath == null)
-                return;
-
-            ArrayList<String> patientIDs = UniquePatientID
-                .generatePatient2DBarcodes(guiData.patientIdStr);
-
-            SaveOperation saveOperation = new SaveOperation(guiData,
-                patientIDs, pdfFilePath);
-
-            try {
-                new ProgressMonitorDialog(shell).run(true, true, saveOperation);
-
-            } catch (InvocationTargetException e1) {
-                saveOperation.saveFailed();
-                saveOperation.setError("Error", "InvocationTargetException: "
-                    + e1.getCause().getMessage());
-
-            } catch (InterruptedException e2) {
-            }
-
-            if (saveOperation.isSuccessful()) {
-                String parentDir = new File(pdfFilePath).getParentFile()
-                    .getPath();
-                if (parentDir != null)
-                    perferenceStore.setValue(
-                        PreferenceConstants.PDF_DIRECTORY_PATH, parentDir);
-
-                updateSavePreferences();
-
-            }
-
-            if (saveOperation.errorExists()) {
-                BgcPlugin.openAsyncError(saveOperation.getError()[0],
-                    saveOperation.getError()[1]);
-            }
-
-            clearUserInput();
-
         }
 
         @Override

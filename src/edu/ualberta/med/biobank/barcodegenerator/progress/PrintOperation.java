@@ -1,7 +1,7 @@
 package edu.ualberta.med.biobank.barcodegenerator.progress;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -19,8 +19,7 @@ import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.exception
  */
 public class PrintOperation extends BarcodeGenerationOperation {
 
-    public PrintOperation(BarcodeViewGuiData guiData,
-        ArrayList<String> patientIDs) {
+    public PrintOperation(BarcodeViewGuiData guiData, List<String> patientIDs) {
         super(guiData, patientIDs);
     }
 

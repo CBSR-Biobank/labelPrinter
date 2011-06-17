@@ -1,7 +1,7 @@
 package edu.ualberta.med.biobank.barcodegenerator.progress;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -9,22 +9,22 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import edu.ualberta.med.biobank.barcodegenerator.forms.SpecimanLabelEntryForm.BarcodeViewGuiData;
 
 /**
- * Base class for generating label prints.
- * After the class is run, check isSuccessful() if the operation succeeded.
- * If isSuccessful() fails then obtain the error message with getError().
+ * Base class for generating label prints. After the class is run, check
+ * isSuccessful() if the operation succeeded. If isSuccessful() fails then
+ * obtain the error message with getError().
  * 
  * @author Thomas Polasek 2011
  * 
  */
 abstract class BarcodeGenerationOperation implements IRunnableWithProgress {
     protected BarcodeViewGuiData guiData = null;
-    protected ArrayList<String> patientIDs = null;
+    protected List<String> patientIDs = null;
     protected boolean successful = false;
     protected String errorTitle = null;
     protected String errorMessage = null;
 
     public BarcodeGenerationOperation(BarcodeViewGuiData guiData,
-        ArrayList<String> patientIDs) {
+        List<String> patientIDs) {
         this.guiData = guiData;
         this.patientIDs = patientIDs;
         successful = false;
@@ -38,7 +38,7 @@ abstract class BarcodeGenerationOperation implements IRunnableWithProgress {
         return successful;
     }
 
-    public ArrayList<String> getPatientIDsUsed() {
+    public List<String> getPatientIDsUsed() {
         return patientIDs;
     }
 
