@@ -2,6 +2,7 @@ package edu.ualberta.med.biobank.barcodegenerator.template.jasper.element;
 
 import java.awt.Font;
 import java.util.ArrayList;
+import java.util.List;
 
 import edu.ualberta.med.biobank.barcodegenerator.template.configuration.Rectangle;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.barcodes.Barcode1D;
@@ -17,7 +18,7 @@ import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.Elem
  */
 public class FieldGenerator {
 
-    public static ArrayList<Element> generateElements(Rectangle textRect,
+    public static List<Element> generateElements(Rectangle textRect,
         String label, String value, Font font, Rectangle barcodeRect,
         boolean printBarcode) throws ElementCreationException {
 
@@ -28,7 +29,7 @@ public class FieldGenerator {
         if (textRect == null || barcodeRect == null)
             throw new ElementCreationException("Null dimensions specified.");
 
-        ArrayList<Element> elements = new ArrayList<Element>();
+        List<Element> elements = new ArrayList<Element>();
 
         String textLabel = "";
 

@@ -1,15 +1,16 @@
 package edu.ualberta.med.biobank.barcodegenerator.template.jasper.containers;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.Element;
 
 
 
 public abstract class ElementContainer {
-	protected ArrayList<Element> elements  = new ArrayList<Element>();
+	protected List<Element> elements  = new ArrayList<Element>();
 	
-	public ArrayList<Element> getElements(){
+	public List<Element> getElements(){
 		return this.elements;
 	}
 }

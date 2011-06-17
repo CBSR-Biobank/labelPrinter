@@ -305,7 +305,7 @@ public class CBSRLabelMaker {
         return config;
     }
 
-    private static ArrayList<String> getConfigurationKeyList() {
+    private static List<String> getConfigurationKeyList() {
         String[] configKeyList = new String[] {
             "Patient Info.Top Field.Field Text",
             "Patient Info.Top Field.1D Barcode",
@@ -316,10 +316,10 @@ public class CBSRLabelMaker {
             "Patient Info.Patient ID.1D Barcode", "Barcodes.All.Barcode 1D",
             "Barcodes.All.Barcode 2D", "Barcodes.All.Sample Text" };
 
-        ArrayList<String> output = new ArrayList<String>();
-        for (String ckl : configKeyList) {
+        List<String> output = new ArrayList<String>();
+        for (String ckl : configKeyList)
             output.add(ckl);
-        }
+
         for (int i = 1; i <= BARCODE_COUNT; i++) {
             output.add(String.format(
                 "Barcodes.Individual.Barcode %03d.Barcode 1D", i));

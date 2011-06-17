@@ -10,6 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
@@ -257,7 +258,7 @@ public class JasperFiller {
      */
     private JasperPrint generateJasperPint() throws JasperFillException {
         ByteArrayInputStream patientInfoImg;
-        ArrayList<ByteArrayInputStream> barcodeIDBufferList = new ArrayList<ByteArrayInputStream>();
+        List<ByteArrayInputStream> barcodeIDBufferList = new ArrayList<ByteArrayInputStream>();
 
         // place patient image.
         try {
@@ -319,7 +320,7 @@ public class JasperFiller {
 
     private Map<String, Object> generateParameters(
         ByteArrayInputStream patientInfoImg,
-        ArrayList<ByteArrayInputStream> barcodeIDImageList) {
+        List<ByteArrayInputStream> barcodeIDImageList) {
 
         Map<String, Object> parameters = new HashMap<String, Object>();
 
@@ -337,8 +338,8 @@ public class JasperFiller {
     }
 
     private ByteArrayInputStream drawElementsToPngStream(
-        ArrayList<Element> elementList, int width, int height)
-        throws IOException, BarcodeCreationException {
+        List<Element> elementList, int width, int height) throws IOException,
+        BarcodeCreationException {
 
         int imageScale = 4;
 

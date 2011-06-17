@@ -2,6 +2,7 @@ package edu.ualberta.med.biobank.barcodegenerator.trees;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
@@ -302,7 +303,7 @@ public class ConfigurationTree {
             throw new TreeException(
                 "A valid configuration setting is required.");
 
-        ArrayList<String> mapKeys = new ArrayList<String>(config.getSettings()
+        List<String> mapKeys = new ArrayList<String>(config.getSettings()
             .keySet());
         Collections.sort(mapKeys);
 

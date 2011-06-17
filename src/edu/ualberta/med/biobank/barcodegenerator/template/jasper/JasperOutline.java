@@ -3,6 +3,7 @@ package edu.ualberta.med.biobank.barcodegenerator.template.jasper;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.containers.BarcodeImage;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.containers.PatientInfo;
@@ -59,13 +60,13 @@ public class JasperOutline {
     };
 
     public static class PatientBarcodeInformation {
-        private ArrayList<BarcodeImage> barcodeImageLayouts;
+        private List<BarcodeImage> barcodeImageLayouts;
 
         public PatientBarcodeInformation() {
             barcodeImageLayouts = new ArrayList<BarcodeImage>();
         }
 
-        public ArrayList<BarcodeImage> getLayout() {
+        public List<BarcodeImage> getLayout() {
             return this.barcodeImageLayouts;
         }
     }
