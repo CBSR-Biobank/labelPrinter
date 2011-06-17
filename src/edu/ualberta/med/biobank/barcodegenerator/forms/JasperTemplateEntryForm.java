@@ -307,6 +307,7 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
                         if (selectedTemplate.getXml() != null
                             && !selectedTemplate.getXml().isEmpty()) {
                             selectedTemplate.persist();
+                            setDirty(false);
                             jasperConfigText.setText("Jasper file loaded");
 
                         } else {
@@ -314,8 +315,9 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
                                 .setText("Please select a Jasper file");
                             throw new Exception("Jasper file was not selected");
                         }
+
                     }
-                    setDirty(false);
+
                 }
             }
         } catch (Exception e1) {

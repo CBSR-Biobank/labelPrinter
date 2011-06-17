@@ -382,12 +382,11 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                                 .getConfiguration());
                         }
                         selectedTemplate.persist();
-
+                        setDirty(false);
+                        configTree.unDirty();
                     }
 
                 }
-                setDirty(false);
-                configTree.unDirty();
 
             }
         } catch (Exception e1) {

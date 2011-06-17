@@ -137,18 +137,22 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
     // FIXME pressing the reset button does not cause this method to be called
     @Override
     public void reset() {
-        clearUserInput();
+        clearFields();
     }
 
-    private void clearUserInput() {
+    private void clearFieldsConfirm() {
         if (BgcPlugin
             .openConfirm("Reset Form Information",
                 "Do you want to clear any information that you have entered into this form?")) {
-            patientIDText.setText("");
-            value1Text.setText("");
-            value2Text.setText("");
-            value3Text.setText("");
+            clearFields();
         }
+    }
+
+    private void clearFields() {
+        patientIDText.setText("");
+        value1Text.setText("");
+        value2Text.setText("");
+        value3Text.setText("");
     }
 
     @Override
@@ -175,17 +179,16 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
 
             if (printOperation.isSuccessful()) {
                 updateSavePreferences();
+                clearFieldsConfirm();
+                return true;
             }
 
             if (printOperation.errorExists()) {
                 BgcPlugin.openAsyncError(printOperation.getError()[0],
                     printOperation.getError()[1]);
-                clearUserInput();
                 return false;
             }
 
-            clearUserInput();
-            return true;
         } catch (BiobankServerException e) {
             BgcPlugin.openAsyncError("Specimen ID Error", e.getMessage());
         } catch (ApplicationException e) {
@@ -1010,15 +1013,16 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
                             PreferenceConstants.PDF_DIRECTORY_PATH, parentDir);
 
                     updateSavePreferences();
-
+                    clearFieldsConfirm();
+                    return;
                 }
 
                 if (saveOperation.errorExists()) {
                     BgcPlugin.openAsyncError(saveOperation.getError()[0],
                         saveOperation.getError()[1]);
+                    return;
                 }
 
-                clearUserInput();
             } catch (CBSRGuiVerificationException e1) {
                 BgcPlugin.openAsyncError("Gui Validation", e1.getMessage());
                 return;
