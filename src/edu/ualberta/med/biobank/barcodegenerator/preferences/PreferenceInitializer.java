@@ -40,8 +40,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         store.setDefault(PreferenceConstants.BARCODE_CHECKBOX_2, true);
         store.setDefault(PreferenceConstants.BARCODE_CHECKBOX_3, true);
 
-        store.setDefault(PreferenceConstants.SAMPLETYPE_CHECKBOX, true);
-        store.setDefault(PreferenceConstants.SAMPLETYPE_TEXT,
+        store.setDefault(PreferenceConstants.SPECIMEN_TYPE_CHECKBOX, true);
+        store.setDefault(PreferenceConstants.SPECIMEN_TYPE_TEXT,
             "Pt Type___________");
         store.setDefault(PreferenceConstants.PDF_DIRECTORY_PATH, "");
 

@@ -31,7 +31,7 @@ public class CBSRData {
     public String value3Str;
     public boolean barcode3Print;
 
-    public String sampleTypeStr;
+    public String specimenTypeStr;
 
     public String printerNameStr;
 

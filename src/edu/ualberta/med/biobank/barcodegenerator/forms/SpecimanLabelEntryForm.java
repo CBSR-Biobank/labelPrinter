@@ -86,7 +86,7 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
     private Button printBarcode2Checkbox = null;
     private Button printBarcode3Checkbox = null;
 
-    private Button sampleTypeCheckbox = null;
+    private Button specimenTypeCheckbox = null;
     private Button savePdfButton = null;
 
     private BgcBaseText projectTitleText = null;
@@ -101,7 +101,7 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
     private BgcBaseText value3Text = null;
 
     private BgcBaseText patientIDText = null;
-    private BgcBaseText sampleTypeText = null;
+    private BgcBaseText specimenTypeText = null;
 
     private Combo templateCombo = null;
     private Combo printerCombo = null;
@@ -231,7 +231,7 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
 
         brandingGroup();
         patientInfoGroup();
-        sampleTextGroup();
+        specimenTextGroup();
         actionButtonGroup();
 
         sessionSourceProvider
@@ -315,8 +315,8 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
         value3Checkbox.setEnabled(enable);
         value3Text.setEnabled(enable);
         printBarcode3Checkbox.setEnabled(enable);
-        sampleTypeCheckbox.setEnabled(enable);
-        sampleTypeText.setEnabled(enable);
+        specimenTypeCheckbox.setEnabled(enable);
+        specimenTypeText.setEnabled(enable);
         templateCombo.setEnabled(enable);
         printerCombo.setEnabled(enable);
         savePdfButton.setEnabled(enable);
@@ -712,7 +712,7 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
      * This method initializes group2
      * 
      */
-    private void sampleTextGroup() {
+    private void specimenTextGroup() {
 
         GridData gridData = new GridData();
         gridData.horizontalAlignment = GridData.FILL;
@@ -730,19 +730,19 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
         group2.setLayout(gridLayout5);
         group2.setLayoutData(gridData);
 
-        sampleTypeCheckbox = new Button(group2, SWT.CHECK | SWT.LEFT);
-        sampleTypeCheckbox.setText("Enable");
-        sampleTypeCheckbox.setSelection(perferenceStore
-            .getBoolean(PreferenceConstants.SAMPLETYPE_CHECKBOX));
+        specimenTypeCheckbox = new Button(group2, SWT.CHECK | SWT.LEFT);
+        specimenTypeCheckbox.setText("Enable");
+        specimenTypeCheckbox.setSelection(perferenceStore
+            .getBoolean(PreferenceConstants.SPECIMEN_TYPE_CHECKBOX));
 
-        new Label(group2, SWT.NONE).setText("Sample Type (on labels):");
+        new Label(group2, SWT.NONE).setText("Specimen Type (on labels):");
 
-        sampleTypeText = new BgcBaseText(group2, SWT.BORDER | SWT.V_SCROLL
+        specimenTypeText = new BgcBaseText(group2, SWT.BORDER | SWT.V_SCROLL
             | SWT.SINGLE);
-        sampleTypeText.setText(perferenceStore
-            .getString(PreferenceConstants.SAMPLETYPE_TEXT));
-        sampleTypeText.setTextLimit(25);
-        sampleTypeText.setLayoutData(gridData2);
+        specimenTypeText.setText(perferenceStore
+            .getString(PreferenceConstants.SPECIMEN_TYPE_TEXT));
+        specimenTypeText.setTextLimit(25);
+        specimenTypeText.setLayoutData(gridData2);
         new Label(group2, SWT.LEFT | SWT.HORIZONTAL).setText("");
         new Label(group2, SWT.NONE);
 
@@ -856,10 +856,10 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
         perferenceStore.setValue(PreferenceConstants.BARCODE_CHECKBOX_3,
             printBarcode3Checkbox.getSelection());
 
-        perferenceStore.setValue(PreferenceConstants.SAMPLETYPE_CHECKBOX,
-            sampleTypeCheckbox.getSelection());
-        perferenceStore.setValue(PreferenceConstants.SAMPLETYPE_TEXT,
-            sampleTypeText.getText());
+        perferenceStore.setValue(PreferenceConstants.SPECIMEN_TYPE_CHECKBOX,
+            specimenTypeCheckbox.getSelection());
+        perferenceStore.setValue(PreferenceConstants.SPECIMEN_TYPE_TEXT,
+            specimenTypeText.getText());
 
     }
 
@@ -948,9 +948,9 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
             else
                 printerNameStr = null;
 
-            sampleTypeStr = null;
-            if (sampleTypeCheckbox.getSelection()) {
-                sampleTypeStr = sampleTypeText.getText();
+            specimenTypeStr = null;
+            if (specimenTypeCheckbox.getSelection()) {
+                specimenTypeStr = specimenTypeText.getText();
             }
 
             template = loadedTemplate;

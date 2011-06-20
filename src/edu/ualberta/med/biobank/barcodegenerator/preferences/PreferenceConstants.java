@@ -23,8 +23,8 @@ public class PreferenceConstants {
     public static final String BARCODE_CHECKBOX_2 = "barcodegen.patientinfo.barcodeprint.2.enabled";
     public static final String BARCODE_CHECKBOX_3 = "barcodegen.patientinfo.barcodeprint.3.enabled";
     
-    public static final String SAMPLETYPE_CHECKBOX = "barcodegen.other.sampletype.enabled";
-    public static final String SAMPLETYPE_TEXT = "barcodegen.other.sampletype.text";
+    public static final String SPECIMEN_TYPE_CHECKBOX = "barcodegen.other.specimentype.enabled";
+    public static final String SPECIMEN_TYPE_TEXT = "barcodegen.other.specimentype.text";
     public static final String PDF_DIRECTORY_PATH = "barcodegen.pdf.directory";
     
     public static final String TEXT_FONT_NAME = "barcodegen.font.name";

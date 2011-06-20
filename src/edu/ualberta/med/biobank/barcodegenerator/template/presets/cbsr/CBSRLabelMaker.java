@@ -209,20 +209,20 @@ public class CBSRLabelMaker {
                         "Barcode ID must be a 12 character alphanumeric string.");
                 }
 
-                if (cbsrData.sampleTypeStr != null
-                    && cbsrData.sampleTypeStr.length() > 0) {
+                if (cbsrData.specimenTypeStr != null
+                    && cbsrData.specimenTypeStr.length() > 0) {
 
-                    Rectangle master = tplt.getKey("Barcodes.All.Sample Text");
+                    Rectangle master = tplt.getKey("Barcodes.All.Specimen Text");
 
                     Rectangle barcode = tplt.getKey(String.format(
-                        "Barcodes.Individual.Barcode %03d.Sample Text", i));
+                        "Barcodes.Individual.Barcode %03d.Specimen Text", i));
 
                     Rectangle rectdim = new Rectangle(master.getX()
                         + barcode.getX(), master.getY() + barcode.getY(),
                         master.getWidth() + barcode.getWidth(),
                         master.getHeight() + barcode.getHeight());
 
-                    Text itemText = new Text(rectdim, cbsrData.sampleTypeStr,
+                    Text itemText = new Text(rectdim, cbsrData.specimenTypeStr,
                         baseFont.deriveFont(22));
                     bi.getElements().add(itemText);
                 }
@@ -287,7 +287,7 @@ public class CBSRLabelMaker {
         config
             .setSetting("Barcodes.All.Barcode 2D", new Rectangle(40, 7, 6, 6));
         config
-            .setSetting("Barcodes.All.Sample Text", new Rectangle(8, 2, 0, 0));
+            .setSetting("Barcodes.All.Specimen Text", new Rectangle(8, 2, 0, 0));
 
         for (int i = 1; i <= BARCODE_COUNT; i++) {
             config
@@ -299,7 +299,7 @@ public class CBSRLabelMaker {
                     "Barcodes.Individual.Barcode %03d.Barcode 2D", i),
                     new Rectangle(0, 0, 0, 0));
             config.setSetting(String.format(
-                "Barcodes.Individual.Barcode %03d.Sample Text", i),
+                "Barcodes.Individual.Barcode %03d.Specimen Text", i),
                 new Rectangle(0, 0, 0, 0));
         }
         return config;
@@ -314,7 +314,7 @@ public class CBSRLabelMaker {
             "Patient Info.Bottom Field.Field Text",
             "Patient Info.Bottom Field.1D Barcode",
             "Patient Info.Patient ID.1D Barcode", "Barcodes.All.Barcode 1D",
-            "Barcodes.All.Barcode 2D", "Barcodes.All.Sample Text" };
+            "Barcodes.All.Barcode 2D", "Barcodes.All.Specimen Text" };
 
         List<String> output = new ArrayList<String>();
         for (String ckl : configKeyList)
@@ -326,7 +326,7 @@ public class CBSRLabelMaker {
             output.add(String.format(
                 "Barcodes.Individual.Barcode %03d.Barcode 2D", i));
             output.add(String.format(
-                "Barcodes.Individual.Barcode %03d.Sample Text", i));
+                "Barcodes.Individual.Barcode %03d.Specimen Text", i));
         }
         return output;
 
