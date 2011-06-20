@@ -470,7 +470,7 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
                 }
 
             } catch (Exception ee) {
-                BgcPlugin.openAsyncError("Verifcation Issue",
+                BgcPlugin.openAsyncError("Verification Issue",
                     "Could not load template: " + ee.getMessage());
             }
 
@@ -956,12 +956,12 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
             template = loadedTemplate;
 
             if (template == null) {
-                throw new CBSRGuiVerificationException("Verifcation Issue",
+                throw new CBSRGuiVerificationException("Verification Issue",
                     "Could not load template.. Selected template is null.");
             }
 
             if (!(template).jasperTemplateExists()) {
-                throw new CBSRGuiVerificationException("Verifcation Issue",
+                throw new CBSRGuiVerificationException("Verification Issue",
                     "Template is lacking a jasper file.");
             }
         }
