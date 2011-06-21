@@ -2,6 +2,8 @@ package edu.ualberta.med.biobank.barcodegenerator.forms;
 
 import java.util.Map;
 
+import javax.xml.bind.JAXBException;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -23,6 +25,7 @@ import org.eclipse.ui.PlatformUI;
 
 import edu.ualberta.med.biobank.SessionManager;
 import edu.ualberta.med.biobank.barcodegenerator.dialogs.ComboInputDialog;
+import edu.ualberta.med.biobank.barcodegenerator.dialogs.ComboInputDialog.InvalidOptionsException;
 import edu.ualberta.med.biobank.barcodegenerator.dialogs.StringInputDialog;
 import edu.ualberta.med.biobank.barcodegenerator.template.Template;
 import edu.ualberta.med.biobank.barcodegenerator.template.TemplateStore;
@@ -454,19 +457,36 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                             .getDefaultConfiguration());
                     }
 
-                    templateStore.addTemplate(ct);
+                    try {
+                        templateStore.addTemplate(ct);
+                    } catch (Exception e1) {
+                        BgcPlugin.openAsyncError("Cannot Add Template",
+                            "Failed to add template to the template store.");
+                        return;
+                    }
                     templateNamesList.add(ct.getName());
                     templateNamesList.redraw();
+
                 } else {
                     BgcPlugin.openAsyncError("Template Exists",
                         "Your new template must have a unique name.");
                     return;
                 }
             }
-        } catch (Exception e1) {
-            BgcPlugin.openAsyncError("Template Create Error",
-                "Could not create template", e1);
+        } catch (ApplicationException e1) {
+            BgcPlugin.openAsyncError("Template Creation Error",
+                "Application Exception: could not create template", e1);
+        } catch (InvalidOptionsException e1) {
+            BgcPlugin
+                .openAsyncError(
+                    "Template Creation Error",
+                    "No Jasper Configurations Exist.\n\nPlease create at least one Jasper Configuration first.",
+                    e1);
+        } catch (JAXBException e1) {
+            BgcPlugin.openAsyncError("Template Creation Error",
+                "Failed to set configuration data.", e1);
         }
+
     }
 
     private void copyButtonSelected(SelectionEvent e) {
