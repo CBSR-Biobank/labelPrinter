@@ -261,7 +261,7 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
             if (selectedItems.length == 1) {
 
                 try {
-                    confirm();
+                    confirm(true);
                 } catch (Exception e1) {
                     BgcPlugin.openAsyncError("Template Saving",
                         "Failed to save template: " + e1.getMessage());
@@ -353,6 +353,10 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
     };
 
     public void confirm() {
+        confirm(false);
+    }
+
+    public void confirm(boolean askUserToSave) {
         try {
             try {
                 configTree.resetEditor();
@@ -363,12 +367,14 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
 
             if (prevTemplateName != null) {
                 if (isDirty() || configTree.isDirty()) {
-                    if (BgcPlugin
-                        .openConfirm("Template Saving",
-                            "Template has been modified, do you want to save your changes?")) {
 
-                        Template selectedTemplate = templateStore
-                            .getTemplate(prevTemplateName);
+                    Template selectedTemplate = templateStore
+                        .getTemplate(prevTemplateName);
+
+                    if (!askUserToSave
+                        || BgcPlugin
+                            .openConfirm("Template Saving",
+                                "Template has been modified, do you want to save your changes?")) {
 
                         String printerName = printerNameText.getText();
                         if (printerName == null || printerName.length() == 0) {

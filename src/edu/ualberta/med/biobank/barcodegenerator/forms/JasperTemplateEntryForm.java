@@ -292,12 +292,14 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
         try {
             if (prevJasperName != null) {
                 if (isDirty()) {
-                    if (BgcPlugin
-                        .openConfirm("Jasper Configuration Editor Saving",
-                            "Jasper Configuration has been modified, do you want to save your changes?")) {
 
-                        JasperTemplateWrapper selectedTemplate = (templateMap
-                            .get(prevJasperName));
+                    JasperTemplateWrapper selectedTemplate = (templateMap
+                        .get(prevJasperName));
+
+                    if (selectedTemplate.isNew()
+                        || BgcPlugin
+                            .openConfirm("Jasper Configuration Editor Saving",
+                                "Jasper Configuration has been modified, do you want to save your changes?")) {
 
                         if (loadedJasperFileXml != null) {
                             selectedTemplate.setXml(loadedJasperFileXml);
