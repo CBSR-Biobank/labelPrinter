@@ -134,10 +134,13 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
         return null;
     }
 
-    // FIXME pressing the reset button does not cause this method to be called
+    @Override
+    public void setFocus() {
+
+    }
 
     @Override
-    public void reset(){
+    public void reset() {
         clearFields();
     }
 
@@ -264,7 +267,9 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
                 if (templateStore == null) {
                     templateStore = new TemplateStore();
                 }
+                setEnable(true);
 
+                // remove and reload template combo
                 templateCombo.removeAll();
                 for (String templateName : templateStore.getTemplateNames()) {
                     templateCombo.add(templateName);
@@ -281,9 +286,10 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
                         break;
                     }
                 }
-                setEnable(true);
                 templateCombo.redraw();
+
                 loadSelectedTemplate();
+
             } else {
                 setEnable(false);
                 templateCombo.removeAll();
@@ -337,18 +343,6 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
         }
     }
 
-    @Override
-    public void setFocus() {
-
-    }
-
-    /**
-     * 
-     * This method initializes composite3
-     * 
-     * @throws ApplicationException
-     * 
-     */
     private void createComposite3(Composite group3) {
         GridData gridData1 = new GridData();
         gridData1.horizontalAlignment = GridData.FILL;
@@ -456,6 +450,11 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
 
     }
 
+    /**
+     * Loads the Template from templateCombo.
+     * 
+     * A new template is loaded for each selection change in templateCombo.
+     */
     private void loadSelectedTemplate() {
         if (templateCombo.getSelectionIndex() >= 0) {
             try {
@@ -481,34 +480,26 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
 
     }
 
-    /**
-     * This method initializes group
-     * 
-     */
-    private void createGroup(Composite group3) {
+    private void createLogoGroup(Composite parentComposite) {
         GridData gridData2 = new GridData();
         gridData2.horizontalAlignment = GridData.FILL;
         gridData2.grabExcessHorizontalSpace = true;
         gridData2.grabExcessVerticalSpace = true;
         gridData2.verticalAlignment = GridData.FILL;
-        Composite group = createSectionWithClient("Logo", group3);
-        group.setLayout(new GridLayout());
-        createLogoCanvas(group);
-        group.setLayoutData(gridData2);
+        Composite logoGroup = createSectionWithClient("Logo", parentComposite);
+        logoGroup.setLayout(new GridLayout());
+        createLogoCanvas(logoGroup);
+        logoGroup.setLayoutData(gridData2);
     }
 
-    /**
-     * This method initializes logoCanvas
-     * 
-     */
-    private void createLogoCanvas(Composite group) {
+    private void createLogoCanvas(Composite logoGroup) {
         GridData gridData3 = new GridData();
         gridData3.grabExcessHorizontalSpace = true;
         gridData3.horizontalAlignment = GridData.FILL;
         gridData3.verticalAlignment = GridData.FILL;
         gridData3.grabExcessVerticalSpace = true;
 
-        logoCanvas = new Canvas(group, SWT.NONE);
+        logoCanvas = new Canvas(logoGroup, SWT.NONE);
         logoCanvas
             .setBackground(new Color(Display.getCurrent(), 255, 255, 255));
         logoCanvas.addPaintListener(new PaintListener() {
@@ -558,10 +549,6 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
         logoCanvas.redraw();
     }
 
-    /**
-     * This method initializes group1
-     * 
-     */
     private void patientInfoGroup() {
 
         GridData gridData = new GridData();
@@ -577,41 +564,14 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
         createComposite5(group1);
     }
 
-    /**
-     * This method initializes composite5
-     * 
-     */
     private void createComposite5(Composite group1) {
-        GridData gridData11 = new GridData();
-        gridData11.horizontalAlignment = GridData.BEGINNING;
-        gridData11.verticalAlignment = GridData.CENTER;
-        GridData gridData10 = new GridData();
-        gridData10.horizontalAlignment = GridData.FILL;
-        gridData10.verticalAlignment = GridData.CENTER;
-        GridData gridData9 = new GridData();
-        gridData9.horizontalAlignment = GridData.FILL;
-        gridData9.verticalAlignment = GridData.CENTER;
-        GridData gridData8 = new GridData();
-        gridData8.horizontalAlignment = GridData.FILL;
-        gridData8.verticalAlignment = GridData.CENTER;
-        GridData gridData5 = new GridData();
-        gridData5.horizontalAlignment = GridData.FILL;
-        gridData5.verticalAlignment = GridData.CENTER;
-        GridData gridData7 = new GridData();
-        gridData7.horizontalAlignment = GridData.FILL;
-        gridData7.grabExcessHorizontalSpace = true;
-        gridData7.verticalAlignment = GridData.FILL;
-        GridData gridData6 = new GridData();
-        gridData6.horizontalAlignment = GridData.FILL;
-        gridData6.grabExcessVerticalSpace = false;
-        gridData6.grabExcessHorizontalSpace = true;
-        gridData6.verticalAlignment = GridData.FILL;
         GridLayout gridLayout2 = new GridLayout();
         gridLayout2.numColumns = 5;
         gridLayout2.makeColumnsEqualWidth = false;
         Composite composite5 = toolkit.createComposite(group1, SWT.NONE);
         composite5.setLayout(gridLayout2);
-        composite5.setLayoutData(gridData6);
+        composite5.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
+            true, false));
         new Label(composite5, SWT.NONE).setText("Enable:");
         new Label(composite5, SWT.NONE)
             .setText("Label (Patient Name/PHN/etc):");
@@ -637,7 +597,8 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
         });
 
         label1Text = new BgcBaseText(composite5, SWT.BORDER);
-        label1Text.setLayoutData(gridData6);
+        label1Text.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
+            true, false));
         label1Text.setTextLimit(12);
         label1Text.setText(perferenceStore
             .getString(PreferenceConstants.LABEL_TEXT_1));
@@ -669,11 +630,13 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
         });
 
         value1Text = new BgcBaseText(composite5, SWT.BORDER);
-        value1Text.setLayoutData(gridData6);
+        value1Text.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
+            true, false));
         value1Text.setTextLimit(24);
 
         printBarcode1Checkbox = new Button(composite5, SWT.CHECK);
-        printBarcode1Checkbox.setLayoutData(gridData11);
+        printBarcode1Checkbox.setLayoutData(new GridData(GridData.BEGINNING,
+            GridData.CENTER, false, false));
         printBarcode1Checkbox.setSelection(perferenceStore
             .getBoolean(PreferenceConstants.BARCODE_CHECKBOX_1));
 
@@ -695,7 +658,8 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
         });
 
         label2Text = new BgcBaseText(composite5, SWT.BORDER);
-        label2Text.setLayoutData(gridData8);
+        label2Text.setLayoutData(new GridData(GridData.FILL, GridData.CENTER,
+            false, false));
         label2Text.setTextLimit(12);
         label2Text.setText(perferenceStore
             .getString(PreferenceConstants.LABEL_TEXT_2));
@@ -727,7 +691,8 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
         });
 
         value2Text = new BgcBaseText(composite5, SWT.BORDER);
-        value2Text.setLayoutData(gridData6);
+        value2Text.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
+            true, false));
         value2Text.setTextLimit(24);
         printBarcode2Checkbox = new Button(composite5, SWT.CHECK);
         printBarcode2Checkbox.setSelection(perferenceStore
@@ -751,7 +716,8 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
         });
 
         label3Text = new BgcBaseText(composite5, SWT.BORDER);
-        label3Text.setLayoutData(gridData10);
+        label3Text.setLayoutData(new GridData(GridData.FILL, GridData.CENTER,
+            false, false));
         label3Text.setTextLimit(12);
         label3Text.setText(perferenceStore
             .getString(PreferenceConstants.LABEL_TEXT_3));
@@ -782,17 +748,14 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
         });
 
         value3Text = new BgcBaseText(composite5, SWT.BORDER);
-        value3Text.setLayoutData(gridData6);
+        value3Text.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
+            true, false));
         value3Text.setTextLimit(24);
         printBarcode3Checkbox = new Button(composite5, SWT.CHECK);
         printBarcode3Checkbox.setSelection(perferenceStore
             .getBoolean(PreferenceConstants.BARCODE_CHECKBOX_3));
     }
 
-    /**
-     * This method initializes composite6
-     * 
-     */
     private void createComposite6(Composite group1) {
         GridData gridData4 = new GridData();
         gridData4.horizontalAlignment = GridData.FILL;
@@ -820,10 +783,6 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
         });
     }
 
-    /**
-     * This method initializes group2
-     * 
-     */
     private void specimenTextGroup() {
 
         GridData gridData = new GridData();
@@ -873,12 +832,6 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
 
     }
 
-    /**
-     * This method initializes group3
-     * 
-     * @throws ApplicationException
-     * 
-     */
     private void brandingGroup() {
 
         GridData gridData = new GridData();
@@ -897,13 +850,9 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
         group3.setLayout(gridLayout3);
 
         createComposite3(group3);
-        createGroup(group3);
+        createLogoGroup(group3);
     }
 
-    /**
-     * This method initializes group4
-     * 
-     */
     private void actionButtonGroup() {
         GridLayout gridLayout5 = new GridLayout();
         gridLayout5.numColumns = 6;
@@ -937,7 +886,9 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
 
     }
 
-    // called after a successful print or save.
+    /**
+     * Should be called after a successful print or save.
+     */
     private void updateSavePreferences() {
 
         perferenceStore.setValue(PreferenceConstants.LOGO_FILE_LOCATION,

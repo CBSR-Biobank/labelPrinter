@@ -39,8 +39,6 @@ import gov.nih.nci.system.applicationservice.ApplicationException;
  * @author Thomas Polasek 2011
  * 
  */
-
-// FIXME this form does not save when the user clicks on the X tab.
 public class JasperTemplateEntryForm extends BgcEntryForm implements
     SelectionListener {
 
