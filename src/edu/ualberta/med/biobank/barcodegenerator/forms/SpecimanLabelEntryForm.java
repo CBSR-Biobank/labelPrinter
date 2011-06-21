@@ -621,6 +621,20 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
         label1Checkbox = new Button(composite5, SWT.CHECK);
         label1Checkbox.setSelection(perferenceStore
             .getBoolean(PreferenceConstants.LABEL_CHECKBOX_1));
+        label1Checkbox.addSelectionListener(new SelectionListener() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                label1Text.setEnabled(label1Checkbox.getSelection());
+
+            }
+
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
+                widgetSelected(e);
+            }
+        });
+
         label1Text = new BgcBaseText(composite5, SWT.BORDER);
         label1Text.setLayoutData(gridData6);
         label1Text.setTextLimit(12);
@@ -630,6 +644,29 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
         value1Checkbox = new Button(composite5, SWT.CHECK);
         value1Checkbox.setSelection(perferenceStore
             .getBoolean(PreferenceConstants.VALUE_CHECKBOX_1));
+        value1Checkbox.addSelectionListener(new SelectionListener() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+
+                if (value1Checkbox.getSelection()) {
+                    value1Text.setEnabled(true);
+                    printBarcode1Checkbox.setEnabled(true);
+                } else {
+                    value1Text.setText("");
+                    value1Text.setEnabled(false);
+                    printBarcode1Checkbox.setSelection(false);
+                    printBarcode1Checkbox.setEnabled(false);
+                }
+
+            }
+
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
+                widgetSelected(e);
+            }
+        });
+
         value1Text = new BgcBaseText(composite5, SWT.BORDER);
         value1Text.setLayoutData(gridData6);
         value1Text.setTextLimit(24);
@@ -642,6 +679,20 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
         label2Checkbox = new Button(composite5, SWT.CHECK);
         label2Checkbox.setSelection(perferenceStore
             .getBoolean(PreferenceConstants.LABEL_CHECKBOX_2));
+        label2Checkbox.addSelectionListener(new SelectionListener() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                label2Text.setEnabled(label2Checkbox.getSelection());
+
+            }
+
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
+                widgetSelected(e);
+            }
+        });
+
         label2Text = new BgcBaseText(composite5, SWT.BORDER);
         label2Text.setLayoutData(gridData8);
         label2Text.setTextLimit(12);
@@ -651,6 +702,29 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
         value2Checkbox = new Button(composite5, SWT.CHECK);
         value2Checkbox.setSelection(perferenceStore
             .getBoolean(PreferenceConstants.VALUE_CHECKBOX_2));
+        value2Checkbox.addSelectionListener(new SelectionListener() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+
+                if (value2Checkbox.getSelection()) {
+                    value2Text.setEnabled(true);
+                    printBarcode2Checkbox.setEnabled(true);
+                } else {
+                    value2Text.setText("");
+                    value2Text.setEnabled(false);
+                    printBarcode2Checkbox.setSelection(false);
+                    printBarcode2Checkbox.setEnabled(false);
+                }
+
+            }
+
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
+                widgetSelected(e);
+            }
+        });
+
         value2Text = new BgcBaseText(composite5, SWT.BORDER);
         value2Text.setLayoutData(gridData6);
         value2Text.setTextLimit(24);
@@ -661,6 +735,20 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
         label3Checkbox = new Button(composite5, SWT.CHECK);
         label3Checkbox.setSelection(perferenceStore
             .getBoolean(PreferenceConstants.LABEL_CHECKBOX_3));
+        label3Checkbox.addSelectionListener(new SelectionListener() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                label3Text.setEnabled(label3Checkbox.getSelection());
+
+            }
+
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
+                widgetSelected(e);
+            }
+        });
+
         label3Text = new BgcBaseText(composite5, SWT.BORDER);
         label3Text.setLayoutData(gridData10);
         label3Text.setTextLimit(12);
@@ -669,6 +757,29 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
         value3Checkbox = new Button(composite5, SWT.CHECK);
         value3Checkbox.setSelection(perferenceStore
             .getBoolean(PreferenceConstants.VALUE_CHECKBOX_3));
+        value3Checkbox.addSelectionListener(new SelectionListener() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+
+                if (value3Checkbox.getSelection()) {
+                    value3Text.setEnabled(true);
+                    printBarcode3Checkbox.setEnabled(true);
+                } else {
+                    value3Text.setText("");
+                    value3Text.setEnabled(false);
+                    printBarcode3Checkbox.setSelection(false);
+                    printBarcode3Checkbox.setEnabled(false);
+                }
+
+            }
+
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
+                widgetSelected(e);
+            }
+        });
+
         value3Text = new BgcBaseText(composite5, SWT.BORDER);
         value3Text.setLayoutData(gridData6);
         value3Text.setTextLimit(24);
@@ -734,6 +845,19 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
         specimenTypeCheckbox.setText("Enable");
         specimenTypeCheckbox.setSelection(perferenceStore
             .getBoolean(PreferenceConstants.SPECIMEN_TYPE_CHECKBOX));
+        specimenTypeCheckbox.addSelectionListener(new SelectionListener() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                specimenTypeText.setEnabled(specimenTypeCheckbox.getSelection());
+
+            }
+
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
+                widgetSelected(e);
+            }
+        });
 
         new Label(group2, SWT.NONE).setText("Specimen Type (on labels):");
 
