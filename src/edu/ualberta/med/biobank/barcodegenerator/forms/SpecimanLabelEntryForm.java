@@ -135,8 +135,9 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
     }
 
     // FIXME pressing the reset button does not cause this method to be called
+
     @Override
-    public void reset() {
+    public void reset(){
         clearFields();
     }
 

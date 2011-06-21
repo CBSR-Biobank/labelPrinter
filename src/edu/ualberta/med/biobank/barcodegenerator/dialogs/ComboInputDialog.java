@@ -14,14 +14,16 @@ import edu.ualberta.med.biobank.gui.common.dialogs.BgcBaseDialog;
 import edu.ualberta.med.biobank.gui.common.widgets.utils.ComboSelectionUpdate;
 
 public class ComboInputDialog extends BgcBaseDialog {
-    
-    
-    public class InvalidOptionsException extends Exception{
-        public InvalidOptionsException(){
+
+    public class InvalidOptionsException extends Exception {
+
+        private static final long serialVersionUID = 9119312688155129785L;
+
+        public InvalidOptionsException() {
             super();
         }
     }
-    
+
     private class ValuePojo {
         public String name;
 
@@ -49,13 +51,13 @@ public class ComboInputDialog extends BgcBaseDialog {
     private String defaultOption;
 
     public ComboInputDialog(String title, String message, List<String> options,
-        String defaultOption, Shell parent) throws InvalidOptionsException{
+        String defaultOption, Shell parent) throws InvalidOptionsException {
         super(parent);
-        
-        if(options  == null || options.size() == 0){
+
+        if (options == null || options.size() == 0) {
             throw new InvalidOptionsException();
         }
-        
+
         this.title = title;
         this.message = message;
         this.options = options;
