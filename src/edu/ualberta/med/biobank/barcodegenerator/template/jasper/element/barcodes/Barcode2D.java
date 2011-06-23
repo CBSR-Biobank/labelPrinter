@@ -20,8 +20,8 @@ public class Barcode2D extends Element {
     public Barcode2D(Rectangle rect, String message)
         throws ElementCreationException {
 
-        if (message == null || message.length() == 0
-            || message.replaceAll("[^a-zA-Z0-9]", "").length() != 12)
+        if ((message == null) || (message.length() == 0)
+            || (message.replaceAll("[^a-zA-Z0-9]", "").length() != 12))
             throw new ElementCreationException(
                 "only a 12 character alphanumeric message is allowed for the 2D barcode element.");
 
@@ -35,6 +35,7 @@ public class Barcode2D extends Element {
 
     }
 
+    @Override
     public void render(Graphics2D g, int scale) throws BarcodeCreationException {
         BufferedImage barcode2DImg;
         try {

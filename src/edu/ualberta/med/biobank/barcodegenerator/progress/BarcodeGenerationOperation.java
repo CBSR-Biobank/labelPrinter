@@ -48,13 +48,14 @@ abstract class BarcodeGenerationOperation implements IRunnableWithProgress {
     }
 
     public boolean errorExists() {
-        return getError()[0] != null || getError()[1] != null;
+        return (getError()[0] != null) || (getError()[1] != null);
     }
 
     public String[] getError() {
         return new String[] { errorTitle, errorMessage };
     }
 
+    @Override
     public abstract void run(IProgressMonitor monitor)
         throws InvocationTargetException, InterruptedException;
 

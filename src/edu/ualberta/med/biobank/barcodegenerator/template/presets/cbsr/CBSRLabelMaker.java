@@ -210,7 +210,8 @@ public class CBSRLabelMaker {
                 if (cbsrData.specimenTypeStr != null
                     && cbsrData.specimenTypeStr.length() > 0) {
 
-                    Rectangle master = tplt.getKey("Barcodes.All.Specimen Text");
+                    Rectangle master = tplt
+                        .getKey("Barcodes.All.Specimen Text");
 
                     Rectangle barcode = tplt.getKey(String.format(
                         "Barcodes.Individual.Barcode %03d.Specimen Text", i));
@@ -284,8 +285,8 @@ public class CBSRLabelMaker {
             .setSetting("Barcodes.All.Barcode 1D", new Rectangle(8, 7, 29, 8));
         config
             .setSetting("Barcodes.All.Barcode 2D", new Rectangle(40, 7, 6, 6));
-        config
-            .setSetting("Barcodes.All.Specimen Text", new Rectangle(8, 2, 0, 0));
+        config.setSetting("Barcodes.All.Specimen Text", new Rectangle(8, 2, 0,
+            0));
 
         for (int i = 1; i <= BARCODE_COUNT; i++) {
             config

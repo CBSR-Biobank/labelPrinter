@@ -2,21 +2,22 @@ package edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions;
 
 public class ElementCreationException extends BarcodeCreationException {
 
-	private static final long serialVersionUID = -1742566077364261222L;
-	
-	String mistake;
+    private static final long serialVersionUID = -1742566077364261222L;
 
-	public ElementCreationException() {
-		super();
-		mistake = "not available";
-	}
+    String mistake;
 
-	public ElementCreationException(String error) {
-		super(error);
-		mistake = error;
-	}
+    public ElementCreationException() {
+        super();
+        mistake = "not available";
+    }
 
-	public String getError() {
-		return mistake;
-	}
+    public ElementCreationException(String error) {
+        super(error);
+        mistake = error;
+    }
+
+    @Override
+    public String getError() {
+        return mistake;
+    }
 }

@@ -23,7 +23,7 @@ public class Barcode1D extends Element {
     public Barcode1D(Rectangle rect, String message, Font font)
         throws ElementCreationException {
 
-        if (message == null || message.length() == 0)
+        if ((message == null) || (message.length() == 0))
             throw new ElementCreationException(
                 "empty or null message specified to 1D barcode element.");
 
@@ -42,6 +42,7 @@ public class Barcode1D extends Element {
 
     }
 
+    @Override
     public void render(Graphics2D g, int scale) throws BarcodeCreationException {
         BufferedImage barcode1DImg;
         try {

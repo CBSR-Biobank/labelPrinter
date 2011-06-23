@@ -21,7 +21,7 @@ public class Text extends Element {
     public Text(Rectangle rect, String message, Font font)
         throws ElementCreationException {
 
-        if (message == null || message.length() == 0)
+        if ((message == null) || (message.length() == 0))
             throw new ElementCreationException(
                 "empty or null message specified to text element.");
 
@@ -39,6 +39,7 @@ public class Text extends Element {
         this.font = font;
     }
 
+    @Override
     public void render(Graphics2D g, int scale) {
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
             RenderingHints.VALUE_TEXT_ANTIALIAS_ON);

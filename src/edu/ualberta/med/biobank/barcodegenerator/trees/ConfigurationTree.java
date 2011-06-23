@@ -82,6 +82,7 @@ public class ConfigurationTree {
         column6.setText("");
 
         tree.addListener(SWT.MouseDown, new Listener() {
+            @Override
             public void handleEvent(Event event) {
 
                 Control oldEditor = editor.getEditor();
@@ -92,8 +93,8 @@ public class ConfigurationTree {
                 final TreeItem currentTableItem = tree.getItem(pt);
 
                 // stop if not a leaf item.
-                if (currentTableItem == null
-                    || currentTableItem.getItemCount() != 0)
+                if ((currentTableItem == null)
+                    || (currentTableItem.getItemCount() != 0))
                     return;
 
                 int editableColumn = -1;
@@ -107,6 +108,7 @@ public class ConfigurationTree {
                         textEdit = new Text(tree, SWT.CENTER);
                         textEdit.setText(currentTableItem.getText(fColIndex));
                         textEdit.addModifyListener(new ModifyListener() {
+                            @Override
                             public void modifyText(ModifyEvent me) {
                                 Text text = (Text) editor.getEditor();
 
@@ -114,7 +116,8 @@ public class ConfigurationTree {
                                 try {
                                     int parsedInt = Integer.parseInt(text
                                         .getText());
-                                    if (parsedInt <= -1000 || parsedInt >= 1000)
+                                    if ((parsedInt <= -1000)
+                                        || (parsedInt >= 1000))
                                         validNumber = false;
 
                                 } catch (NumberFormatException e) {
@@ -171,7 +174,7 @@ public class ConfigurationTree {
                     }
 
                 }
-                if (textEdit != null && editableColumn >= 0) {
+                if ((textEdit != null) && (editableColumn >= 0)) {
                     textEdit.selectAll();
                     textEdit.setFocus();
                     editor
@@ -227,7 +230,8 @@ public class ConfigurationTree {
                 currentItemChildren = ((TreeItem) currentItem).getItems();
             }
 
-            if (currentItemChildren != null && currentItemChildren.length != 0) {
+            if ((currentItemChildren != null)
+                && (currentItemChildren.length != 0)) {
                 for (TreeItem childItem : currentItemChildren) {
                     if (childItem.getText(0).equals(
                         locationSegments[locationIndex])) {
