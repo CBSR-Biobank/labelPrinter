@@ -37,8 +37,6 @@ public class CBSRLabelMaker {
 
     private static final int BARCODE_COUNT = 32;
 
-    private static final long serialVersionUID = -6346822010546940605L;
-
     /**
      * Generates a jasper outline and creates a pdf file byte array.
      * 

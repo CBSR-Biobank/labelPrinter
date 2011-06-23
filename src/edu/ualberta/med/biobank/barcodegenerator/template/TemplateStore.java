@@ -17,8 +17,6 @@ import java.util.Set;
  */
 public class TemplateStore {
 
-    private static final long serialVersionUID = 5502373669875110097L;
-
     private Map<String, Template> templates;
 
     public TemplateStore() throws ApplicationException {
