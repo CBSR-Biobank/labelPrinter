@@ -53,6 +53,7 @@ import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSRData;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.exceptions.CBSRGuiVerificationException;
 import edu.ualberta.med.biobank.gui.common.BgcPlugin;
 import edu.ualberta.med.biobank.gui.common.BgcSessionState;
+import edu.ualberta.med.biobank.gui.common.forms.Actions;
 import edu.ualberta.med.biobank.gui.common.forms.BgcEntryForm;
 import edu.ualberta.med.biobank.gui.common.forms.BgcEntryFormActions;
 import edu.ualberta.med.biobank.gui.common.widgets.BgcBaseText;
@@ -208,8 +209,7 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
     @Override
     protected void addToolbarButtons() {
         formActions = new BgcEntryFormActions(this);
-        formActions
-            .addResetAction("edu.ualberta.med.biobank.gui.common.commands.reset");
+        formActions.addResetAction(Actions.GUI_COMMON_RESET);
         formActions.addPrintAction();
         form.updateToolBar();
     }
