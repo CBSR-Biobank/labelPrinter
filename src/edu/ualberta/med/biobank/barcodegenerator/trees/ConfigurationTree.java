@@ -40,7 +40,7 @@ public class ConfigurationTree {
     private TreeEditor editor;
     private Text textEdit;
 
-    private boolean isDirty; 
+    private boolean isDirty;
 
     private Configuration configuration;
 
@@ -127,14 +127,11 @@ public class ConfigurationTree {
 
                                     TreeItem c = currentTableItem;
                                     if (c != null && c.getText() != null) {
-                                        String location = c.getText()
-                                            .replaceAll("\t", "");
+                                        String location = c.getText();
                                         while (c != null) {
                                             c = c.getParentItem();
                                             if (c != null)
-                                                location = c.getText()
-                                                    .replaceAll("\t", "")
-                                                    + "."
+                                                location = c.getText() + "."
                                                     + location;
                                         }
                                         if (configuration.getSettings()
@@ -232,8 +229,8 @@ public class ConfigurationTree {
 
             if (currentItemChildren != null && currentItemChildren.length != 0) {
                 for (TreeItem childItem : currentItemChildren) {
-                    if (childItem.getText(0).replaceAll("\t", "")
-                        .equals(locationSegments[locationIndex])) {
+                    if (childItem.getText(0).equals(
+                        locationSegments[locationIndex])) {
                         currentItem = childItem;
                         locationIndex++;
                         continue MAIN_LOOP;
@@ -263,8 +260,7 @@ public class ConfigurationTree {
                 }
 
                 String[] values = rectangleToString(value);
-                values[0] = "\t"
-                    + locationSegments[locationSegments.length - 1];
+                values[0] = locationSegments[locationSegments.length - 1];
                 ((TreeItem) currentItem).setText(values);
 
                 break;
