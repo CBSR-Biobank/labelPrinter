@@ -42,6 +42,7 @@ public class Template implements Serializable {
         plt = new PrinterLabelTemplateWrapper(SessionManager.getAppService());
     }
 
+    @Override
     public Template clone() {
         Template clone = new Template();
 
@@ -205,6 +206,7 @@ public class Template implements Serializable {
         return tplt;
     }
 
+    @Override
     public String toString() {
         return new StringBuilder(name).toString();
     }

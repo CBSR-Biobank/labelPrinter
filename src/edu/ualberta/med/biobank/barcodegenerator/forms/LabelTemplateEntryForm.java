@@ -361,6 +361,7 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
         }
     };
 
+    @Override
     public void confirm() {
         confirm(false);
     }
@@ -386,7 +387,8 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                                 "Template has been modified, do you want to save your changes?")) {
 
                         String printerName = printerNameText.getText();
-                        if (printerName == null || printerName.length() == 0) {
+                        if ((printerName == null)
+                            || (printerName.length() == 0)) {
                             selectedTemplate.setPrinterName("default");
                         } else {
                             if (!printerName.equals(selectedTemplate
@@ -451,8 +453,8 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                     jasperComboDialog.open();
 
                     String selectedJasperConfig = jasperComboDialog.getValue();
-                    if (selectedJasperConfig == null
-                        || selectedJasperConfig.length() == 0)
+                    if ((selectedJasperConfig == null)
+                        || (selectedJasperConfig.length() == 0))
                         return;
 
                     Template ct = new Template();

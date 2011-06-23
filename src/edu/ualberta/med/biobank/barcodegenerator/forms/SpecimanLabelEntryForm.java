@@ -375,6 +375,7 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
         logoButton = new Button(composite3, SWT.NONE);
         logoButton.setText("Browse...");
         logoButton.addSelectionListener(new SelectionListener() {
+            @Override
             public void widgetSelected(SelectionEvent event) {
 
                 FileDialog fd = new FileDialog(shell, SWT.OPEN);
@@ -390,6 +391,7 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
 
             }
 
+            @Override
             public void widgetDefaultSelected(SelectionEvent event) {
                 widgetSelected(event);
             }
@@ -463,7 +465,7 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
                     .getItem(templateCombo.getSelectionIndex());
 
                 // already loaded
-                if (loadedTemplate == null
+                if ((loadedTemplate == null)
                     || !loadedTemplate.getName().equals(comboSelectedTemplate)) {
                     loadedTemplate = templateStore
                         .getTemplate(comboSelectedTemplate);
@@ -774,6 +776,7 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
         patientIDText.setLayoutData(gridData4);
         patientIDText.setTextLimit(12);
         patientIDText.addListener(SWT.Verify, new Listener() {
+            @Override
             public void handleEvent(Event e) {
                 if (!e.text.matches("[{a-zA-Z0-9}]*")) {
                     e.doit = false;
@@ -945,7 +948,7 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
 
             projectTileStr = projectTitleText.getText();
 
-            if (projectTileStr == null || projectTileStr.length() == 0) {
+            if ((projectTileStr == null) || (projectTileStr.length() == 0)) {
                 throw new CBSRGuiVerificationException("Incorrect Title",
                     "A valid title is required.");
             }
@@ -976,7 +979,7 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
                 fontName = "";
 
             patientIdStr = patientIDText.getText();
-            if (patientIdStr == null || patientIdStr.length() == 0) {
+            if ((patientIdStr == null) || (patientIdStr.length() == 0)) {
                 throw new CBSRGuiVerificationException("Incorrect PatientID",
                     "A valid patient Id is required.");
 

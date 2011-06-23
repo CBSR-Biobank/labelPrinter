@@ -260,7 +260,7 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
                         JasperTemplateWrapper selectedTemplate = (templateMap
                             .get(selectedItems[0]));
                         jasperNameText.setText(selectedTemplate.getName());
-                        if (selectedTemplate.getXml() == null
+                        if ((selectedTemplate.getXml() == null)
                             || selectedTemplate.getXml().isEmpty()) {
                             jasperConfigText
                                 .setText("Please select a Jasper file");
@@ -295,6 +295,7 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
         }
     };
 
+    @Override
     public void confirm() {
         try {
             if (prevJasperName != null) {
@@ -313,7 +314,7 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
                             loadedJasperFileXml = null;
                         }
 
-                        if (selectedTemplate.getXml() != null
+                        if ((selectedTemplate.getXml() != null)
                             && !selectedTemplate.getXml().isEmpty()) {
                             selectedTemplate.persist();
                             setDirty(false);
@@ -371,8 +372,8 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
         } else if (e.getSource() == deleteButton) {
             try {
 
-                if (jasperTemplateList.getSelectionCount() == 1
-                    && prevJasperName != null) {
+                if ((jasperTemplateList.getSelectionCount() == 1)
+                    && (prevJasperName != null)) {
                     JasperTemplateWrapper selected = templateMap
                         .get(prevJasperName);
 

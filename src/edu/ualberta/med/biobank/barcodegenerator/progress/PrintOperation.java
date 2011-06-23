@@ -23,6 +23,7 @@ public class PrintOperation extends BarcodeGenerationOperation {
         super(guiData, patientIDs);
     }
 
+    @Override
     public void run(IProgressMonitor monitor) throws InvocationTargetException,
         InterruptedException {
 
