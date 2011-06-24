@@ -336,6 +336,10 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
         }
     }
 
+    private void jasperTemplateSelectLast() {
+
+    }
+
     @Override
     public void widgetSelected(SelectionEvent e) {
         if (e.getSource() == newButton) {

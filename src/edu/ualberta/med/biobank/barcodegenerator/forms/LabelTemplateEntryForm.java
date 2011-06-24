@@ -16,6 +16,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.MessageBox;
@@ -434,6 +435,14 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
         widgetSelected(e);
     }
 
+    private void templatesNamesSelectLast() {
+        if ((templateNamesList != null)
+            && ((templateNamesList.getItemCount() - 1) >= 0)) {
+            templateNamesList.select(templateNamesList.getItemCount() - 1);
+            templateNamesList.notifyListeners(SWT.Selection, new Event());
+        }
+    }
+
     private void newButtonSelected(SelectionEvent e) {
         try {
             StringInputDialog dialog = new StringInputDialog("New Template",
@@ -481,7 +490,9 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                             "Failed to add template to the template store.");
                         return;
                     }
+
                     templateNamesList.add(ct.getName());
+                    templatesNamesSelectLast();
                     templateNamesList.redraw();
 
                 } else {
@@ -533,7 +544,9 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                         cloned.persist();
 
                         templateStore.addTemplate(cloned);
+
                         templateNamesList.add(newTemplateName);
+                        templatesNamesSelectLast();
                         templateNamesList.redraw();
                     } else {
                         BgcPlugin.openAsyncError("Copy Template Error",
@@ -578,6 +591,7 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                     templateNameText.setText("Please select a template");
 
                     templateNamesList.deselectAll();
+                    templatesNamesSelectLast();
                     templateNamesList.redraw();
 
                     prevTemplateName = null;
