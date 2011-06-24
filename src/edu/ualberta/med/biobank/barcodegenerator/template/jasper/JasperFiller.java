@@ -122,7 +122,7 @@ public class JasperFiller {
 
         JRElement patientImg = jasperSubDesign.getTitle().getElementByKey(
             JasperConstants.patientImageField);
-        if (jasperSubDesign.getTitle() != null && patientImg != null) {
+        if ((jasperSubDesign.getTitle() != null) && (patientImg != null)) {
             jasperConstants.patientImageWidth = patientImg.getWidth();
             jasperConstants.patientImageHeight = patientImg.getHeight();
         } else {
@@ -130,9 +130,9 @@ public class JasperFiller {
                 "Failed to patient image dimensions from the jasper report.");
         }
 
-        if (jasperSubDesign.getPageFooter() != null
-            && jasperSubDesign.getPageFooter().getElements() != null
-            && jasperSubDesign.getPageFooter().getElements().length > 0) {
+        if ((jasperSubDesign.getPageFooter() != null)
+            && (jasperSubDesign.getPageFooter().getElements() != null)
+            && (jasperSubDesign.getPageFooter().getElements().length > 0)) {
             jasperConstants.barcodeImageWidth = jasperSubDesign.getPageFooter()
                 .getElements()[0].getWidth();
             jasperConstants.barcodeImageHeight = jasperSubDesign
@@ -141,8 +141,8 @@ public class JasperFiller {
                 .getElements().length;
 
             for (JRElement jr : jasperSubDesign.getPageFooter().getElements()) {
-                if (jr.getWidth() != jasperConstants.barcodeImageWidth
-                    || jr.getHeight() != jasperConstants.barcodeImageHeight) {
+                if ((jr.getWidth() != jasperConstants.barcodeImageWidth)
+                    || (jr.getHeight() != jasperConstants.barcodeImageHeight)) {
                     throw new JasperFillException(
                         "All barcode image fields must be of equal size.");
                 }
@@ -203,8 +203,8 @@ public class JasperFiller {
         printRequestAttributeSet.add(new Copies(1));
         printRequestAttributeSet.add(PrintQuality.HIGH);
         printRequestAttributeSet.add(MediaSizeName.NA_LETTER);
-        printRequestAttributeSet.add(new MediaPrintableArea(0, 0, (float) print
-            .getPageWidth() / 72f, (float) print.getPageHeight() / 72f,
+        printRequestAttributeSet.add(new MediaPrintableArea(0, 0, print
+            .getPageWidth() / 72f, print.getPageHeight() / 72f,
             MediaPrintableArea.INCH));
 
         JRPrintServiceExporter exporter = new JRPrintServiceExporter();
@@ -350,10 +350,6 @@ public class JasperFiller {
 
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, width * imageScale, height * imageScale);
-
-        // border
-        g.setColor(Color.BLACK);
-        g.drawRect(0, 0, width * imageScale - 1, height * imageScale - 1);
 
         for (Element e : elementList) {
             e.render(g, imageScale);
