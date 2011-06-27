@@ -63,14 +63,12 @@
 	<title>
 		<band height="280">
 			<textField>
-				<reportElement x="1" y="16" width="612" height="26"/>
-				<textElement textAlignment="Center" verticalAlignment="Top">
-					<font fontName="FreeSans" size="14" isBold="true" isItalic="false"/>
-				</textElement>
+				<reportElement x="246" y="14" width="132" height="26"/>
+				<textElement textAlignment="Center" verticalAlignment="Top"/>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{PROJECT_TITLE}]]></textFieldExpression>
 			</textField>
 			<image>
-				<reportElement x="494" y="17" width="100" height="43"/>
+				<reportElement x="490" y="17" width="100" height="43"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{LOGO}]]></imageExpression>
 			</image>
 			<image>
