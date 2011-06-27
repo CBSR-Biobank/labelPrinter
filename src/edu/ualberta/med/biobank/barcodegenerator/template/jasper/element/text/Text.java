@@ -1,5 +1,6 @@
 package edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.text;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -45,8 +46,13 @@ public class Text extends Element {
             RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g.setFont(font);
 
+        Color previousColor = g.getColor();
+
+        g.setColor(Color.BLACK);
         g.drawString(message, mmToPixel(rect.getX(), scale),
             mmToPixel(rect.getY(), scale));
+
+        g.setColor(previousColor);
 
     }
 

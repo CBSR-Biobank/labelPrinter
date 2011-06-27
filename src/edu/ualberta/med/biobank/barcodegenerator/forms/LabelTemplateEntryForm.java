@@ -316,12 +316,12 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                         try {
                             configTree.populateTree(null);
                         } catch (TreeException e1) {
+                            BgcPlugin
+                                .openAsyncError(
+                                    "Error: Could not set Template Configuration Tree",
+                                    ee.getMessage());
+                            return;
                         }
-
-                        BgcPlugin.openAsyncError(
-                            "Error: Could not set Template Configuration Tree",
-                            ee.getMessage());
-                        return;
                     }
 
                     templateNameText.setText(selectedTemplate.getName());
