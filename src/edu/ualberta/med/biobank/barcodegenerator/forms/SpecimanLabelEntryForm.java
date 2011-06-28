@@ -19,9 +19,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.SWTException;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -29,10 +26,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
@@ -108,9 +103,6 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
     private Combo printerCombo = null;
 
     private Label intendedPrinter = null;
-
-    private Image logoImage = null;
-    private Canvas logoCanvas = null;
 
     private Shell shell;
 
@@ -385,8 +377,6 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
                 String selected = fd.open();
                 if (selected != null) {
                     logoText.setText(selected);
-                    logoImage = null;
-                    logoCanvas.redraw();
                 }
 
             }
@@ -480,75 +470,6 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
                 intendedPrinter.setText(loadedTemplate.getPrinterName());
         }
 
-    }
-
-    private void createLogoGroup(Composite parentComposite) {
-        GridData gridData2 = new GridData();
-        gridData2.horizontalAlignment = GridData.FILL;
-        gridData2.grabExcessHorizontalSpace = true;
-        gridData2.grabExcessVerticalSpace = true;
-        gridData2.verticalAlignment = GridData.FILL;
-        Composite logoGroup = createSectionWithClient("Logo", parentComposite);
-        logoGroup.setLayout(new GridLayout());
-        createLogoCanvas(logoGroup);
-        logoGroup.setLayoutData(gridData2);
-    }
-
-    private void createLogoCanvas(Composite logoGroup) {
-        GridData gridData3 = new GridData();
-        gridData3.grabExcessHorizontalSpace = true;
-        gridData3.horizontalAlignment = GridData.FILL;
-        gridData3.verticalAlignment = GridData.FILL;
-        gridData3.grabExcessVerticalSpace = true;
-
-        logoCanvas = new Canvas(logoGroup, SWT.NONE);
-        logoCanvas
-            .setBackground(new Color(Display.getCurrent(), 255, 255, 255));
-        logoCanvas.addPaintListener(new PaintListener() {
-
-            @Override
-            public void paintControl(PaintEvent e) {
-                if (new File(logoText.getText()).exists()) {
-
-                    if (logoImage == null) {
-                        try {
-                            logoImage = new Image(shell.getDisplay(), logoText
-                                .getText());
-                        } catch (SWTException swte) {
-                            logoImage = null;
-                        }
-                    }
-
-                    if (logoImage != null) {
-
-                        double aspectRatio = logoImage.getBounds().width
-                            / logoImage.getBounds().height;
-
-                        int maxHeight = logoCanvas.getParent().getBounds().height - 25;
-
-                        int maxWidth = logoCanvas.getParent().getBounds().width - 10;
-                        int newWidth = (int) (aspectRatio * maxHeight);
-                        newWidth = (newWidth > maxWidth) ? maxWidth : newWidth;
-
-                        logoCanvas.setBounds(5, 15, newWidth, maxHeight);
-
-                        e.gc.drawImage(logoImage, 0, 0,
-                            logoImage.getBounds().width,
-                            logoImage.getBounds().height, 0, 0,
-                            logoCanvas.getBounds().width,
-                            logoCanvas.getBounds().height);
-
-                    } else {
-                        e.gc.drawString("Bad image", 0, 0);
-                    }
-
-                } else {
-                    e.gc.drawString("No logo", 0, 0);
-                }
-            }
-
-        });
-        logoCanvas.redraw();
     }
 
     private void patientInfoGroup() {
@@ -844,8 +765,8 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
         gridData.verticalAlignment = GridData.FILL;
 
         GridLayout gridLayout3 = new GridLayout();
-        gridLayout3.verticalSpacing = 2;
-        gridLayout3.numColumns = 2;
+        gridLayout3.verticalSpacing = 1;
+        gridLayout3.numColumns = 1;
         gridLayout3.makeColumnsEqualWidth = true;
 
         Composite group3 = createSectionWithClient("Branding", page);
@@ -853,7 +774,6 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
         group3.setLayout(gridLayout3);
 
         createComposite3(group3);
-        createLogoGroup(group3);
     }
 
     private void actionButtonGroup() {
