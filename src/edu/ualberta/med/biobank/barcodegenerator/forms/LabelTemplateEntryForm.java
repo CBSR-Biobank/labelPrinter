@@ -386,8 +386,11 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
 
                     if (!askUserToSave
                         || BgcPlugin
-                            .openConfirm("Template Saving",
-                                "Template has been modified, do you want to save your changes?")) {
+                            .openConfirm(
+                                "Template Saving",
+                                "Template "
+                                    + selectedTemplate.getName()
+                                    + " has been modified, do you want to save your changes?")) {
 
                         String printerName = printerNameText.getText();
                         if ((printerName == null)
@@ -592,10 +595,6 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
 
                     templateNameText.setText("Please select a template");
 
-                    templateNamesList.deselectAll();
-                    templatesNamesSelectLast();
-                    templateNamesList.redraw();
-
                     prevTemplateName = null;
                     printerNameText.setText("");
                     printerNameText.setEnabled(false);
@@ -603,6 +602,10 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                     jasperConfigText.setText("");
 
                     configTree.populateTree(null);
+
+                    templateNamesList.deselectAll();
+                    templatesNamesSelectLast();
+                    templateNamesList.redraw();
 
                 }
             }
