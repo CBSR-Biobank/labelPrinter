@@ -9,13 +9,13 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 
 import edu.ualberta.med.biobank.barcodegenerator.BarcodeGenPlugin;
-import edu.ualberta.med.biobank.barcodegenerator.forms.SpecimanLabelEntryForm;
-import edu.ualberta.med.biobank.barcodegenerator.perspective.LabelPrinterPerspective;
+import edu.ualberta.med.biobank.barcodegenerator.forms.PatientLabelEntryForm;
+import edu.ualberta.med.biobank.barcodegenerator.perspective.PatientLabelPerspective;
 import edu.ualberta.med.biobank.gui.common.forms.BgcFormInput;
 
-public class LabelPrinterHandler extends AbstractHandler implements IHandler {
+public class PatientLabelHandler extends AbstractHandler implements IHandler {
 
-    public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.handlers.LabelPrinterHandler";
+    public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.handlers.patientlabelHandler";
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -23,7 +23,7 @@ public class LabelPrinterHandler extends AbstractHandler implements IHandler {
         try {
             if (workbench.getActiveWorkbenchWindow().getActivePage()
                 .closeAllEditors(true)) {
-                workbench.showPerspective(LabelPrinterPerspective.ID,
+                workbench.showPerspective(PatientLabelPerspective.ID,
                     workbench.getActiveWorkbenchWindow());
 
                 PlatformUI
@@ -31,8 +31,8 @@ public class LabelPrinterHandler extends AbstractHandler implements IHandler {
                     .getActiveWorkbenchWindow()
                     .getActivePage()
                     .openEditor(
-                        new BgcFormInput(SpecimanLabelEntryForm.ID,
-                            SpecimanLabelEntryForm.ID), SpecimanLabelEntryForm.ID, true);
+                        new BgcFormInput(PatientLabelEntryForm.ID,
+                            PatientLabelEntryForm.ID), PatientLabelEntryForm.ID, true);
 
             }
         } catch (WorkbenchException e) {

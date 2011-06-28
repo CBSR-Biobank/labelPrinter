@@ -5,7 +5,7 @@
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
-            targetID="barcodeGenerator.perspective.labeprinter">
+            targetID="barcodeGenerator.perspective.patientlabel">
       </perspectiveExtension>
       <perspectiveExtension
             targetID="barcodeGenerator.perspective.templateeditor">
@@ -29,10 +29,10 @@
             name="Jasper Templates Editor">
       </editor>
             <editor
-            class="edu.ualberta.med.biobank.barcodegenerator.forms.SpecimanLabelEntryForm"
+            class="edu.ualberta.med.biobank.barcodegenerator.forms.PatientLabelEntryForm"
             id="edu.ualberta.med.biobank.barcodegenerator.forms.SpecimanLabelEntryForm"
             default="false"
-           name="Specimen Labels">
+           name="Patient Labels">
       </editor>
       </extension>
    <extension
@@ -46,9 +46,9 @@
                id="edu.ualberta.med.barcodegenerator.menu.barcodegenerator"
                label="Printer Labels">
             <command
-                  commandId="edu.ualberta.med.barcodegenerator.commands.labelprinter"
-                  id="edu.ualberta.med.barcodegenerator.menu.labelprinter"
-                  label="Specimen Labels"
+                  commandId="edu.ualberta.med.barcodegenerator.commands.patientlabel"
+                  id="edu.ualberta.med.barcodegenerator.menu.patientlabel"
+                  label="Patient Labels"
                   style="push">
             </command>
             <command
@@ -69,8 +69,8 @@
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="edu.ualberta.med.biobank.barcodegenerator.handlers.LabelPrinterHandler"
-            commandId="edu.ualberta.med.barcodegenerator.commands.labelprinter">
+            class="edu.ualberta.med.biobank.barcodegenerator.handlers.PatientLabelHandler"
+            commandId="edu.ualberta.med.barcodegenerator.commands.patientlabel">
          <enabledWhen>
                <reference
                      definitionId="edu.ualberta.med.biobank.gui.common.loggedIn">
@@ -99,7 +99,7 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            id="edu.ualberta.med.barcodegenerator.commands.labelprinter"
+            id="edu.ualberta.med.barcodegenerator.commands.patientlabel"
             name="Label Printer Command">
       </command>
      <command
@@ -120,8 +120,8 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            class="edu.ualberta.med.biobank.barcodegenerator.perspective.LabelPrinterPerspective"
-            id="barcodeGenerator.perspective.labeprinter"
+            class="edu.ualberta.med.biobank.barcodegenerator.perspective.PatientLabelPerspective"
+            id="barcodeGenerator.perspective.patientlabel"
             name="Label Printer View">
       </perspective>
       <perspective

@@ -69,7 +69,7 @@ import gov.nih.nci.system.applicationservice.ApplicationException;
  * @author Thomas Polasek 2011
  * 
  */
-public class SpecimanLabelEntryForm extends BgcEntryForm {
+public class PatientLabelEntryForm extends BgcEntryForm {
 
     public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.forms.SpecimanLabelEntryForm";
 
@@ -123,11 +123,12 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
 
     @Override
     protected void init() throws Exception {
-        setPartName("Specimen Labels");
+        setPartName("Patient Labels");
     }
 
     @Override
     protected void performDoubleClick(DoubleClickEvent event) {
+        // do nothing for now
     }
 
     @Override
@@ -137,7 +138,7 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
 
     @Override
     public void setFocus() {
-
+        // do nothing for now
     }
 
     @Override
@@ -217,7 +218,7 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
     @Override
     protected void createFormContent() throws Exception {
         super.createFormContent();
-        form.setText("Specimen Labels");
+        form.setText("Patient Labels");
         form.setMessage("Print source specimen labels for a patient",
             IMessageProvider.NONE);
         page.setLayout(new GridLayout(1, false));
@@ -253,6 +254,7 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
                 @Override
                 public void sourceChanged(int sourcePriority,
                     @SuppressWarnings("rawtypes") Map sourceValuesByName) {
+                    // do nothing for now
                 }
             });
 
@@ -1082,6 +1084,7 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
                             + e1.getCause().getMessage());
 
                 } catch (InterruptedException e2) {
+                    BgcPlugin.openAsyncError("Save error", e2);
                 }
 
                 if (saveOperation.isSuccessful()) {
@@ -1099,7 +1102,6 @@ public class SpecimanLabelEntryForm extends BgcEntryForm {
                 if (saveOperation.errorExists()) {
                     BgcPlugin.openAsyncError(saveOperation.getError()[0],
                         saveOperation.getError()[1]);
-                    return;
                 }
 
             } catch (CBSRGuiVerificationException e1) {

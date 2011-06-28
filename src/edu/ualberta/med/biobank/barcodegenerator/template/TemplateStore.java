@@ -39,7 +39,7 @@ public class TemplateStore {
         return t;
     }
 
-    public void addTemplate(Template updatedTemplate) throws Exception {
+    public void addTemplate(Template updatedTemplate) {
         String name = updatedTemplate.getName();
         Template oldTemplate = templates.get(name);
         if (oldTemplate != null) {
