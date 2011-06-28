@@ -68,6 +68,7 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
 
     @Override
     protected void performDoubleClick(DoubleClickEvent event) {
+        // do nothing for now
     }
 
     @Override
@@ -119,6 +120,7 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
                 @Override
                 public void sourceChanged(int sourcePriority,
                     @SuppressWarnings("rawtypes") Map sourceValuesByName) {
+                    // do nothing for now
                 }
             });
 
@@ -127,6 +129,7 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
 
     @Override
     public void setFocus() {
+        // do nothing for now
     }
 
     private void createMasterDetail() {
@@ -334,10 +337,6 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
             BgcPlugin.openAsyncError("Template Save Error",
                 "Could not save the template to the database", e1);
         }
-    }
-
-    private void jasperTemplateSelectLast() {
-
     }
 
     @Override

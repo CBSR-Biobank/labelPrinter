@@ -6,7 +6,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
-import edu.ualberta.med.biobank.barcodegenerator.forms.SpecimanLabelEntryForm.BarcodeViewGuiData;
+import edu.ualberta.med.biobank.barcodegenerator.forms.PatientLabelEntryForm.BarcodeViewGuiData;
 
 /**
  * Base class for generating label prints. After the class is run, check

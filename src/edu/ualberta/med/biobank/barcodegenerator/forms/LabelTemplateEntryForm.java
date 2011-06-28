@@ -124,6 +124,7 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                 @Override
                 public void sourceChanged(int sourcePriority,
                     @SuppressWarnings("rawtypes") Map sourceValuesByName) {
+                    // do nothing for now
                 }
             });
         updateForm();
@@ -135,9 +136,10 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
 
     @Override
     public void setFocus() {
+        // do nothing for now
     }
 
-    private void createMasterDetail() throws ApplicationException {
+    private void createMasterDetail() {
         page.setLayout(new GridLayout(2, false));
         page.setLayoutData(new GridData(GridData.FILL, GridData.FILL | SWT.TOP,
             true, true));
