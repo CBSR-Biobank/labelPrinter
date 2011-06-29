@@ -121,26 +121,26 @@ public class CBSRLabelMaker {
         try {
             patientInfo.getElements().addAll(
                 FieldGenerator.generateElements(
-                    tplt.getKey("Patient Info.Top Field.Field Text"),
+                    tplt.getKey("Patient Info.Custom Field 1.Field Text"),
                     cbsrData.label1Str, cbsrData.value1Str,
                     baseFont.deriveFont(23),
-                    tplt.getKey("Patient Info.Top Field.1D Barcode"),
+                    tplt.getKey("Patient Info.Custom Field 1.1D Barcode"),
                     cbsrData.barcode1Print));
 
             patientInfo.getElements().addAll(
                 FieldGenerator.generateElements(
-                    tplt.getKey("Patient Info.Middle Field.Field Text"),
+                    tplt.getKey("Patient Info.Custom Field 2.Field Text"),
                     cbsrData.label2Str, cbsrData.value2Str,
                     baseFont.deriveFont(23),
-                    tplt.getKey("Patient Info.Middle Field.1D Barcode"),
+                    tplt.getKey("Patient Info.Custom Field 2.1D Barcode"),
                     cbsrData.barcode2Print));
 
             patientInfo.getElements().addAll(
                 FieldGenerator.generateElements(
-                    tplt.getKey("Patient Info.Bottom Field.Field Text"),
+                    tplt.getKey("Patient Info.Custom Field 3.Field Text"),
                     cbsrData.label3Str, cbsrData.value3Str,
                     baseFont.deriveFont(23),
-                    tplt.getKey("Patient Info.Bottom Field.1D Barcode"),
+                    tplt.getKey("Patient Info.Custom Field 3.1D Barcode"),
                     cbsrData.barcode3Print));
 
             patientInfo.getElements().add(
@@ -268,17 +268,17 @@ public class CBSRLabelMaker {
     public static Configuration getDefaultConfiguration() {
         Configuration config = new Configuration();
 
-        config.setSetting("Patient Info.Top Field.Field Text", new Rectangle(1,
+        config.setSetting("Patient Info.Custom Field 1.Field Text", new Rectangle(1,
             4, 0, 0));
-        config.setSetting("Patient Info.Top Field.1D Barcode", new Rectangle(
+        config.setSetting("Patient Info.Custom Field 1.1D Barcode", new Rectangle(
             38, 1, 29, 8));
-        config.setSetting("Patient Info.Middle Field.Field Text",
+        config.setSetting("Patient Info.Custom Field 2.Field Text",
             new Rectangle(1, 13, 0, 0));
-        config.setSetting("Patient Info.Middle Field.1D Barcode",
+        config.setSetting("Patient Info.Custom Field 2.1D Barcode",
             new Rectangle(38, 13, 29, 8));
-        config.setSetting("Patient Info.Bottom Field.Field Text",
+        config.setSetting("Patient Info.Custom Field 3.Field Text",
             new Rectangle(1, 25, 0, 0));
-        config.setSetting("Patient Info.Bottom Field.1D Barcode",
+        config.setSetting("Patient Info.Custom Field 3.1D Barcode",
             new Rectangle(38, 25, 29, 8));
         config.setSetting("Patient Info.Patient ID.1D Barcode", new Rectangle(
             1, 33, 29, 8));
@@ -307,12 +307,12 @@ public class CBSRLabelMaker {
 
     private static List<String> getConfigurationKeyList() {
         String[] configKeyList = new String[] {
-            "Patient Info.Top Field.Field Text",
-            "Patient Info.Top Field.1D Barcode",
-            "Patient Info.Middle Field.Field Text",
-            "Patient Info.Middle Field.1D Barcode",
-            "Patient Info.Bottom Field.Field Text",
-            "Patient Info.Bottom Field.1D Barcode",
+            "Patient Info.Custom Field 1.Field Text",
+            "Patient Info.Custom Field 1.1D Barcode",
+            "Patient Info.Custom Field 2.Field Text",
+            "Patient Info.Custom Field 2.1D Barcode",
+            "Patient Info.Custom Field 3.Field Text",
+            "Patient Info.Custom Field 3.1D Barcode",
             "Patient Info.Patient ID.1D Barcode", "Barcodes.General.Barcode 1D",
             "Barcodes.General.Barcode 2D", "Barcodes.General.Specimen Text" };
 

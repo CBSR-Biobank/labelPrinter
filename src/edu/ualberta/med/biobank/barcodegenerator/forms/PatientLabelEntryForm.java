@@ -506,6 +506,7 @@ public class PatientLabelEntryForm extends BgcEntryForm {
         new Label(composite5, SWT.NONE).setText("Print Barcode:");
 
         label1Checkbox = new Button(composite5, SWT.CHECK);
+        label1Checkbox.setText("Custom Field 1");
         label1Checkbox.setSelection(perferenceStore
             .getBoolean(PreferenceConstants.LABEL_CHECKBOX_1));
         label1Checkbox.addSelectionListener(new SelectionListener() {
@@ -567,6 +568,7 @@ public class PatientLabelEntryForm extends BgcEntryForm {
             .getBoolean(PreferenceConstants.BARCODE_CHECKBOX_1));
 
         label2Checkbox = new Button(composite5, SWT.CHECK);
+        label2Checkbox.setText("Custom Field 2");
         label2Checkbox.setSelection(perferenceStore
             .getBoolean(PreferenceConstants.LABEL_CHECKBOX_2));
         label2Checkbox.addSelectionListener(new SelectionListener() {
@@ -625,6 +627,7 @@ public class PatientLabelEntryForm extends BgcEntryForm {
             .getBoolean(PreferenceConstants.BARCODE_CHECKBOX_2));
 
         label3Checkbox = new Button(composite5, SWT.CHECK);
+        label3Checkbox.setText("Custom Field 3");
         label3Checkbox.setSelection(perferenceStore
             .getBoolean(PreferenceConstants.LABEL_CHECKBOX_3));
         label3Checkbox.addSelectionListener(new SelectionListener() {

@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * Configurations are loaded and edited in the configuration tree class.
  * 
  * Format of the key is string is alphanumeric text with a period seperator. For
- * instance, "Patient Info.Bottom Field.Field Text".
+ * instance, "Patient Info.Custom Field 3.Field Text".
  * 
  * @author Thomas Polasek 2011
  * 
