@@ -21,7 +21,6 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -99,10 +98,10 @@ public class PatientLabelEntryForm extends BgcEntryForm {
     private BgcBaseText patientNumText = null;
     private BgcBaseText specimenTypeText = null;
 
+    private BgcBaseText printerText = null;
+
     private Combo templateCombo = null;
     private Combo printerCombo = null;
-
-    private Label intendedPrinter = null;
 
     private Shell shell;
 
@@ -413,11 +412,8 @@ public class PatientLabelEntryForm extends BgcEntryForm {
         });
 
         new Label(composite3, SWT.NONE);
-        new Label(composite3, SWT.NONE).setText("Intended Printer:");
-
-        intendedPrinter = new Label(composite3, SWT.NONE);
-        intendedPrinter.setForeground(new Color(shell.getDisplay(), 255, 0, 0));
-        intendedPrinter.setText("default");
+        printerText = this.createReadOnlyLabelledField(composite3, SWT.NONE,
+            "Intended Printer");
 
         new Label(composite3, SWT.NONE);
         new Label(composite3, SWT.NONE).setText("Printer:");
@@ -471,7 +467,7 @@ public class PatientLabelEntryForm extends BgcEntryForm {
             }
 
             if (loadedTemplate != null)
-                intendedPrinter.setText(loadedTemplate.getPrinterName());
+                printerText.setText(loadedTemplate.getPrinterName());
         }
 
     }
