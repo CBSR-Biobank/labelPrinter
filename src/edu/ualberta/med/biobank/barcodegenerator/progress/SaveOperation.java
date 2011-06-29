@@ -24,9 +24,9 @@ public class SaveOperation extends BarcodeGenerationOperation {
 
     private String pdfFilePath = "";
 
-    public SaveOperation(BarcodeViewGuiData guiData, List<String> patientIDs,
+    public SaveOperation(BarcodeViewGuiData guiData, List<String> patientNumbers,
         String pdfFilePath) {
-        super(guiData, patientIDs);
+        super(guiData, patientNumbers);
         this.pdfFilePath = pdfFilePath;
     }
 
@@ -41,7 +41,7 @@ public class SaveOperation extends BarcodeGenerationOperation {
 
         try {
             monitor.subTask("Generating PDF");
-            pdfdata = CBSRLabelMaker.generatePdfCBSR(guiData, patientIDs);
+            pdfdata = CBSRLabelMaker.generatePdfCBSR(guiData, patientNumbers);
 
         } catch (CBSRPdfGenException e1) {
             monitor.done();

@@ -146,7 +146,7 @@ public class CBSRLabelMaker {
             patientInfo.getElements().add(
                 new Barcode1D(
                     tplt.getKey("Patient Info.Patient ID.1D Barcode"),
-                    cbsrData.patientIdStr, baseFont.deriveFont(22)));
+                    cbsrData.patientNumberStr, baseFont.deriveFont(22)));
 
         } catch (ElementCreationException eee) {
             throw new CBSRPdfGenException(
@@ -167,8 +167,8 @@ public class CBSRLabelMaker {
 
                 i++;
                 // 1d barcode
-                if ((cbsrData.patientIdStr != null)
-                    && (cbsrData.patientIdStr.length() > 0)) {
+                if ((cbsrData.patientNumberStr != null)
+                    && (cbsrData.patientNumberStr.length() > 0)) {
 
                     Rectangle master = tplt.getKey("Barcodes.All.Barcode 1D");
                     Rectangle barcode = tplt.getKey(String.format(
@@ -179,7 +179,7 @@ public class CBSRLabelMaker {
                             + barcode.getWidth(), master.getHeight()
                             + barcode.getHeight());
 
-                    Barcode1D item1D = new Barcode1D(r, cbsrData.patientIdStr,
+                    Barcode1D item1D = new Barcode1D(r, cbsrData.patientNumberStr,
                         baseFont.deriveFont(22));
                     bi.getElements().add(item1D);
                 } else {

@@ -17,7 +17,7 @@ public class CBSRData {
 
     public String fontName;
     
-    public String patientIdStr;
+    public String patientNumberStr;
 
     public String label1Str;
     public String value1Str;

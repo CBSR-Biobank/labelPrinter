@@ -96,7 +96,7 @@ public class PatientLabelEntryForm extends BgcEntryForm {
     private BgcBaseText value2Text = null;
     private BgcBaseText value3Text = null;
 
-    private BgcBaseText patientIDText = null;
+    private BgcBaseText patientNumText = null;
     private BgcBaseText specimenTypeText = null;
 
     private Combo templateCombo = null;
@@ -147,7 +147,7 @@ public class PatientLabelEntryForm extends BgcEntryForm {
     }
 
     private void clearFields() {
-        patientIDText.setText("");
+        patientNumText.setText("");
         value1Text.setText("");
         value2Text.setText("");
         value3Text.setText("");
@@ -160,11 +160,11 @@ public class PatientLabelEntryForm extends BgcEntryForm {
         try {
             guiData = new BarcodeViewGuiData();
 
-            List<String> patientIDs = SessionManager.getAppService()
+            List<String> patientNumbers = SessionManager.getAppService()
                 .executeGetSourceSpecimenUniqueInventoryIds(32);
 
             // print operation
-            printOperation = new PrintOperation(guiData, patientIDs);
+            printOperation = new PrintOperation(guiData, patientNumbers);
 
             try {
                 new ProgressMonitorDialog(shell)
@@ -305,7 +305,7 @@ public class PatientLabelEntryForm extends BgcEntryForm {
         label1Checkbox.setEnabled(enable);
         printBarcode1Checkbox.setEnabled(enable);
         value1Text.setEnabled(enable);
-        patientIDText.setEnabled(enable);
+        patientNumText.setEnabled(enable);
         label2Checkbox.setEnabled(enable);
         label2Text.setEnabled(enable);
         value2Checkbox.setEnabled(enable);
@@ -500,8 +500,7 @@ public class PatientLabelEntryForm extends BgcEntryForm {
         composite5.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
             true, false));
         new Label(composite5, SWT.NONE).setText("Enable:");
-        new Label(composite5, SWT.NONE)
-            .setText("Label (Patient Name/PHN/etc):");
+        new Label(composite5, SWT.NONE).setText("Label:");
         new Label(composite5, SWT.NONE).setText("Enable:");
         new Label(composite5, SWT.NONE).setText("Value:");
         new Label(composite5, SWT.NONE).setText("Print Barcode:");
@@ -696,11 +695,11 @@ public class PatientLabelEntryForm extends BgcEntryForm {
         gridLayout3.numColumns = 5;
         Composite composite6 = toolkit.createComposite(group1, SWT.NONE);
         composite6.setLayout(gridLayout3);
-        new Label(composite6, SWT.NONE).setText("Patient ID:");
-        patientIDText = new BgcBaseText(composite6, SWT.BORDER);
-        patientIDText.setLayoutData(gridData4);
-        patientIDText.setTextLimit(12);
-        patientIDText.addListener(SWT.Verify, new Listener() {
+        new Label(composite6, SWT.NONE).setText("Patient Number:");
+        patientNumText = new BgcBaseText(composite6, SWT.BORDER);
+        patientNumText.setLayoutData(gridData4);
+        patientNumText.setTextLimit(12);
+        patientNumText.addListener(SWT.Verify, new Listener() {
             @Override
             public void handleEvent(Event e) {
                 if (!e.text.matches("[{a-zA-Z0-9}]*")) {
@@ -902,10 +901,11 @@ public class PatientLabelEntryForm extends BgcEntryForm {
             if (fontName == null)
                 fontName = "";
 
-            patientIdStr = patientIDText.getText();
-            if ((patientIdStr == null) || (patientIdStr.length() == 0)) {
-                throw new CBSRGuiVerificationException("Incorrect PatientID",
-                    "A valid patient Id is required.");
+            patientNumberStr = patientNumText.getText();
+            if ((patientNumberStr == null) || (patientNumberStr.length() == 0)) {
+                throw new CBSRGuiVerificationException(
+                    "Invalid Patient Number",
+                    "Entry error. Please enter a patient number.");
 
             }
             // ------------ patient info start-----------------
@@ -989,11 +989,11 @@ public class PatientLabelEntryForm extends BgcEntryForm {
                 if (pdfFilePath == null)
                     return;
 
-                List<String> patientIDs = SessionManager.getAppService()
+                List<String> patientNumbers = SessionManager.getAppService()
                     .executeGetSourceSpecimenUniqueInventoryIds(32);
 
                 SaveOperation saveOperation = new SaveOperation(guiData,
-                    patientIDs, pdfFilePath);
+                    patientNumbers, pdfFilePath);
 
                 try {
                     new ProgressMonitorDialog(shell).run(true, true,

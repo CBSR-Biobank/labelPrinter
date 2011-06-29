@@ -42,7 +42,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
         store.setDefault(PreferenceConstants.SPECIMEN_TYPE_CHECKBOX, true);
         store.setDefault(PreferenceConstants.SPECIMEN_TYPE_TEXT,
-            "Pt Type___________");
+            "Sp. Type__________");
         store.setDefault(PreferenceConstants.PDF_DIRECTORY_PATH, "");
 
         // sets the default font.
@@ -53,7 +53,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         if (e != null)
             fonts = e.getAllFonts();
 
-        if (fonts != null && fonts.length >= 1) {
+        if ((fonts != null) && (fonts.length >= 1)) {
             String defaultFontName = fonts[0].getFontName();
 
             for (Font f : fonts) {

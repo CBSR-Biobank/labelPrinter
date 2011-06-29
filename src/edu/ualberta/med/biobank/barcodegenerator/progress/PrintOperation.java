@@ -19,8 +19,8 @@ import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.exception
  */
 public class PrintOperation extends BarcodeGenerationOperation {
 
-    public PrintOperation(BarcodeViewGuiData guiData, List<String> patientIDs) {
-        super(guiData, patientIDs);
+    public PrintOperation(BarcodeViewGuiData guiData, List<String> patientNumbers) {
+        super(guiData, patientNumbers);
     }
 
     @Override
@@ -33,7 +33,7 @@ public class PrintOperation extends BarcodeGenerationOperation {
 
         try {
             monitor.subTask("Sending Data to Printer");
-            CBSRLabelMaker.printLabelsCBSR(guiData, patientIDs);
+            CBSRLabelMaker.printLabelsCBSR(guiData, patientNumbers);
             successful = true;
 
         } catch (CBSRPdfGenException e1) {

@@ -18,15 +18,15 @@ import edu.ualberta.med.biobank.barcodegenerator.forms.PatientLabelEntryForm.Bar
  */
 abstract class BarcodeGenerationOperation implements IRunnableWithProgress {
     protected BarcodeViewGuiData guiData = null;
-    protected List<String> patientIDs = null;
+    protected List<String> patientNumbers = null;
     protected boolean successful = false;
     protected String errorTitle = null;
     protected String errorMessage = null;
 
     public BarcodeGenerationOperation(BarcodeViewGuiData guiData,
-        List<String> patientIDs) {
+        List<String> patientNumbers) {
         this.guiData = guiData;
-        this.patientIDs = patientIDs;
+        this.patientNumbers = patientNumbers;
         successful = false;
     }
 
@@ -38,8 +38,8 @@ abstract class BarcodeGenerationOperation implements IRunnableWithProgress {
         return successful;
     }
 
-    public List<String> getPatientIDsUsed() {
-        return patientIDs;
+    public List<String> getPatientNumbersUsed() {
+        return patientNumbers;
     }
 
     public void setError(String title, String msg) {
