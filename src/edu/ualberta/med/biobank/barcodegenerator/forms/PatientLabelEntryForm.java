@@ -395,7 +395,8 @@ public class PatientLabelEntryForm extends BgcEntryForm {
         gridData21.horizontalAlignment = GridData.FILL;
 
         new Label(composite3, SWT.NONE).setText("Template:");
-        templateCombo = new Combo(composite3, SWT.DROP_DOWN | SWT.BORDER);
+        templateCombo = new Combo(composite3, SWT.DROP_DOWN | SWT.BORDER
+            | SWT.READ_ONLY);
         templateCombo.setLayoutData(gridData21);
         templateCombo.addSelectionListener(new SelectionListener() {
 
@@ -421,7 +422,8 @@ public class PatientLabelEntryForm extends BgcEntryForm {
         new Label(composite3, SWT.NONE);
         new Label(composite3, SWT.NONE).setText("Printer:");
 
-        printerCombo = new Combo(composite3, SWT.DROP_DOWN | SWT.BORDER);
+        printerCombo = new Combo(composite3, SWT.DROP_DOWN | SWT.BORDER
+            | SWT.READ_ONLY);
         printerCombo.setLayoutData(gridData21);
 
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null,
@@ -501,7 +503,7 @@ public class PatientLabelEntryForm extends BgcEntryForm {
         new Label(composite5, SWT.NONE)
             .setText("Label (Patient Name/PHN/etc):");
         new Label(composite5, SWT.NONE).setText("Enable:");
-        new Label(composite5, SWT.NONE).setText("Value (eg BOB MARLEY):");
+        new Label(composite5, SWT.NONE).setText("Value:");
         new Label(composite5, SWT.NONE).setText("Print Barcode:");
 
         label1Checkbox = new Button(composite5, SWT.CHECK);
