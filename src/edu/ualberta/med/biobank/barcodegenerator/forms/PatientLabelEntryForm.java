@@ -351,7 +351,7 @@ public class PatientLabelEntryForm extends BgcEntryForm {
         Composite composite3 = toolkit.createComposite(group3, SWT.NONE);
         composite3.setLayout(gridLayout);
         composite3.setLayoutData(gridData);
-        new Label(composite3, SWT.NONE).setText("Project Title:");
+        new Label(composite3, SWT.NONE).setText("Title:");
 
         projectTitleText = new BgcBaseText(composite3, SWT.BORDER);
         projectTitleText.setLayoutData(gridData);

@@ -99,10 +99,10 @@ public class CBSRLabelMaker {
         Template tplt = cbsrData.template;
 
         if (cbsrData.projectTileStr == null) {
-            throw new CBSRPdfGenException("Cannot have a null project title");
+            throw new CBSRPdfGenException("Cannot have a null title");
         }
 
-        if (barcodeStrings == null || barcodeStrings.size() == 0) {
+        if ((barcodeStrings == null) || (barcodeStrings.size() == 0)) {
             throw new CBSRPdfGenException(
                 "Require a valid amount of barcode strings");
         }
@@ -167,8 +167,8 @@ public class CBSRLabelMaker {
 
                 i++;
                 // 1d barcode
-                if (cbsrData.patientIdStr != null
-                    && cbsrData.patientIdStr.length() > 0) {
+                if ((cbsrData.patientIdStr != null)
+                    && (cbsrData.patientIdStr.length() > 0)) {
 
                     Rectangle master = tplt.getKey("Barcodes.All.Barcode 1D");
                     Rectangle barcode = tplt.getKey(String.format(
@@ -188,8 +188,9 @@ public class CBSRLabelMaker {
                 }
 
                 // 2d barcode;
-                if (rStrArray != null && rStrArray.length() > 0
-                    && rStrArray.replaceAll("[^a-zA-Z0-9 ]", "").length() == 12) {
+                if ((rStrArray != null)
+                    && (rStrArray.length() > 0)
+                    && (rStrArray.replaceAll("[^a-zA-Z0-9 ]", "").length() == 12)) {
 
                     Rectangle master = tplt.getKey("Barcodes.All.Barcode 2D");
                     Rectangle barcode = tplt.getKey(String.format(
@@ -207,8 +208,8 @@ public class CBSRLabelMaker {
                         "Barcode ID must be a 12 character alphanumeric string.");
                 }
 
-                if (cbsrData.specimenTypeStr != null
-                    && cbsrData.specimenTypeStr.length() > 0) {
+                if ((cbsrData.specimenTypeStr != null)
+                    && (cbsrData.specimenTypeStr.length() > 0)) {
 
                     Rectangle master = tplt
                         .getKey("Barcodes.All.Specimen Text");
