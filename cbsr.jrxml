@@ -67,7 +67,7 @@
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{PROJECT_TITLE}]]> </textFieldExpression>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{PROJECT_TITLE}]]></textFieldExpression>
 			</textField>
 			<image>
 				<reportElement x="490" y="17" width="100" height="43"/>
