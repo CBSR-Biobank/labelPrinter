@@ -1,6 +1,7 @@
 package edu.ualberta.med.biobank.barcodegenerator.template.configuration;
 
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -22,7 +23,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class Configuration {
 
-    private Map<String, Rectangle> settings = new HashMap<String, Rectangle>();
+    private Map<String, Rectangle> settings = Collections
+        .synchronizedMap(new LinkedHashMap<String, Rectangle>());
 
     public Map<String, Rectangle> getSettings() {
         return this.settings;

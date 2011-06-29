@@ -500,9 +500,9 @@ public class PatientLabelEntryForm extends BgcEntryForm {
         composite5.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
             true, false));
         new Label(composite5, SWT.NONE).setText("Enable:");
-        new Label(composite5, SWT.NONE).setText("Label:");
+        new Label(composite5, SWT.NONE).setText("Field Name:");
         new Label(composite5, SWT.NONE).setText("Enable:");
-        new Label(composite5, SWT.NONE).setText("Value:");
+        new Label(composite5, SWT.NONE).setText("Field Value:");
         new Label(composite5, SWT.NONE).setText("Print Barcode:");
 
         label1Checkbox = new Button(composite5, SWT.CHECK);
