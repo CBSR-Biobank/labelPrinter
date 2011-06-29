@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CBSR Template" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
 	<property name="com.jasperassistant.designer.Units" value="Millimeters"/>
-	<property name="ireport.zoom" value="0.8264462809917359"/>
+	<property name="ireport.zoom" value="0.8264462809917362"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="table">
@@ -62,17 +62,19 @@
 	<parameter name="PATIENT_BARCODE_31" class="java.io.InputStream"/>
 	<title>
 		<band height="280">
-			<textField>
-				<reportElement x="246" y="14" width="132" height="26"/>
-				<textElement textAlignment="Center" verticalAlignment="Top"/>
-				<textFieldExpression class="java.lang.String"><![CDATA[$P{PROJECT_TITLE}]]></textFieldExpression>
+			<textField isBlankWhenNull="true">
+				<reportElement x="246" y="14" width="132" height="17" isRemoveLineWhenBlank="true"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{PROJECT_TITLE}]]> </textFieldExpression>
 			</textField>
 			<image>
 				<reportElement x="490" y="17" width="100" height="43"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{LOGO}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement key="PATIENT_INFO_IMG" x="17" y="80" width="238" height="182"/>
+				<reportElement key="PATIENT_INFO_IMG" x="17" y="102" width="238" height="160"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_INFO_IMG}]]></imageExpression>
 			</image>
 		</band>
@@ -80,131 +82,131 @@
 	<pageFooter>
 		<band height="512">
 			<image>
-				<reportElement x="0" y="1" width="153" height="63"/>
+				<reportElement x="0" y="24" width="153" height="61"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_0}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="153" y="1" width="153" height="63"/>
+				<reportElement x="153" y="23" width="153" height="61"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_1}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="305" y="1" width="153" height="63"/>
+				<reportElement x="305" y="23" width="153" height="61"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_2}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="458" y="1" width="153" height="63"/>
+				<reportElement x="458" y="21" width="153" height="61"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_3}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="0" y="64" width="153" height="63"/>
+				<reportElement x="0" y="84" width="153" height="61"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_4}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="153" y="64" width="153" height="63"/>
+				<reportElement x="153" y="83" width="153" height="61"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_5}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="305" y="64" width="153" height="63"/>
+				<reportElement x="305" y="83" width="153" height="61"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_6}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="458" y="64" width="153" height="63"/>
+				<reportElement x="458" y="82" width="153" height="61"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_7}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="0" y="127" width="153" height="63"/>
+				<reportElement x="0" y="145" width="153" height="61"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_8}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="153" y="127" width="153" height="63"/>
+				<reportElement x="153" y="143" width="153" height="61"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_9}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="305" y="127" width="153" height="63"/>
+				<reportElement x="305" y="143" width="153" height="61"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_10}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="458" y="127" width="153" height="63"/>
+				<reportElement x="458" y="142" width="153" height="61"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_11}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="0" y="190" width="153" height="63"/>
+				<reportElement x="0" y="205" width="153" height="61"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_12}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="153" y="190" width="153" height="63"/>
+				<reportElement x="153" y="203" width="153" height="61"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_13}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="305" y="190" width="153" height="63"/>
+				<reportElement x="305" y="204" width="153" height="61"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_14}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="458" y="190" width="153" height="63"/>
+				<reportElement x="458" y="203" width="153" height="61"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_15}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="0" y="253" width="153" height="63"/>
+				<reportElement x="0" y="265" width="153" height="61"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_16}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="153" y="253" width="153" height="63"/>
+				<reportElement x="153" y="263" width="153" height="61"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_17}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="305" y="253" width="153" height="63"/>
+				<reportElement x="305" y="264" width="153" height="61"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_18}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="458" y="253" width="153" height="63"/>
+				<reportElement x="458" y="263" width="153" height="61"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_19}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="0" y="316" width="153" height="63"/>
+				<reportElement x="0" y="325" width="153" height="61"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_20}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="153" y="316" width="153" height="63"/>
+				<reportElement x="153" y="324" width="153" height="61"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_21}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="305" y="316" width="153" height="63"/>
+				<reportElement x="305" y="324" width="153" height="61"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_22}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="458" y="316" width="153" height="63"/>
+				<reportElement x="458" y="324" width="153" height="61"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_23}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="0" y="379" width="153" height="63"/>
+				<reportElement x="0" y="385" width="153" height="61"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_24}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="153" y="379" width="153" height="63"/>
+				<reportElement x="153" y="384" width="153" height="61"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_25}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="305" y="379" width="153" height="63"/>
+				<reportElement x="305" y="384" width="153" height="61"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_26}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="458" y="379" width="153" height="63"/>
+				<reportElement x="458" y="384" width="153" height="61"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_27}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="0" y="442" width="153" height="63"/>
+				<reportElement x="0" y="444" width="153" height="61"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_28}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="153" y="442" width="153" height="63"/>
+				<reportElement x="153" y="444" width="153" height="61"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_29}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="305" y="442" width="153" height="63"/>
+				<reportElement x="305" y="444" width="153" height="61"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_30}]]></imageExpression>
 			</image>
 			<image>
-				<reportElement x="458" y="442" width="153" height="63"/>
+				<reportElement x="458" y="444" width="153" height="61"/>
 				<imageExpression class="java.io.InputStream"><![CDATA[$P{PATIENT_BARCODE_31}]]></imageExpression>
 			</image>
 		</band>
