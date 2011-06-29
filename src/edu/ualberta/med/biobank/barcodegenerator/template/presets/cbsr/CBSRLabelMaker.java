@@ -170,7 +170,7 @@ public class CBSRLabelMaker {
                 if ((cbsrData.patientNumberStr != null)
                     && (cbsrData.patientNumberStr.length() > 0)) {
 
-                    Rectangle master = tplt.getKey("Barcodes.All.Barcode 1D");
+                    Rectangle master = tplt.getKey("Barcodes.General.Barcode 1D");
                     Rectangle barcode = tplt.getKey(String.format(
                         "Barcodes.Individual.Barcode %03d.Barcode 1D", i));
 
@@ -179,8 +179,8 @@ public class CBSRLabelMaker {
                             + barcode.getWidth(), master.getHeight()
                             + barcode.getHeight());
 
-                    Barcode1D item1D = new Barcode1D(r, cbsrData.patientNumberStr,
-                        baseFont.deriveFont(22));
+                    Barcode1D item1D = new Barcode1D(r,
+                        cbsrData.patientNumberStr, baseFont.deriveFont(22));
                     bi.getElements().add(item1D);
                 } else {
                     throw new CBSRPdfGenException(
@@ -192,7 +192,7 @@ public class CBSRLabelMaker {
                     && (rStrArray.length() > 0)
                     && (rStrArray.replaceAll("[^a-zA-Z0-9 ]", "").length() == 12)) {
 
-                    Rectangle master = tplt.getKey("Barcodes.All.Barcode 2D");
+                    Rectangle master = tplt.getKey("Barcodes.General.Barcode 2D");
                     Rectangle barcode = tplt.getKey(String.format(
                         "Barcodes.Individual.Barcode %03d.Barcode 2D", i));
 
@@ -212,7 +212,7 @@ public class CBSRLabelMaker {
                     && (cbsrData.specimenTypeStr.length() > 0)) {
 
                     Rectangle master = tplt
-                        .getKey("Barcodes.All.Specimen Text");
+                        .getKey("Barcodes.General.Specimen Text");
 
                     Rectangle barcode = tplt.getKey(String.format(
                         "Barcodes.Individual.Barcode %03d.Specimen Text", i));
@@ -283,10 +283,10 @@ public class CBSRLabelMaker {
         config.setSetting("Patient Info.Patient ID.1D Barcode", new Rectangle(
             1, 33, 29, 8));
         config
-            .setSetting("Barcodes.All.Barcode 1D", new Rectangle(8, 7, 29, 8));
+            .setSetting("Barcodes.General.Barcode 1D", new Rectangle(8, 7, 29, 8));
         config
-            .setSetting("Barcodes.All.Barcode 2D", new Rectangle(40, 7, 6, 6));
-        config.setSetting("Barcodes.All.Specimen Text", new Rectangle(8, 2, 0,
+            .setSetting("Barcodes.General.Barcode 2D", new Rectangle(40, 7, 6, 6));
+        config.setSetting("Barcodes.General.Specimen Text", new Rectangle(8, 2, 0,
             0));
 
         for (int i = 1; i <= BARCODE_COUNT; i++) {
@@ -313,8 +313,8 @@ public class CBSRLabelMaker {
             "Patient Info.Middle Field.1D Barcode",
             "Patient Info.Bottom Field.Field Text",
             "Patient Info.Bottom Field.1D Barcode",
-            "Patient Info.Patient ID.1D Barcode", "Barcodes.All.Barcode 1D",
-            "Barcodes.All.Barcode 2D", "Barcodes.All.Specimen Text" };
+            "Patient Info.Patient ID.1D Barcode", "Barcodes.General.Barcode 1D",
+            "Barcodes.General.Barcode 2D", "Barcodes.General.Specimen Text" };
 
         List<String> output = new ArrayList<String>();
         for (String ckl : configKeyList)
