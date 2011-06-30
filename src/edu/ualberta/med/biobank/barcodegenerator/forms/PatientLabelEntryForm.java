@@ -511,6 +511,10 @@ public class PatientLabelEntryForm extends BgcEntryForm {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 label1Text.setEnabled(label1Checkbox.getSelection());
+                if (label1Checkbox.getSelection()) {
+                    value1Checkbox.setSelection(true);
+                    value1Checkbox.notifyListeners(SWT.Selection, new Event());
+                }
 
             }
 
@@ -537,6 +541,7 @@ public class PatientLabelEntryForm extends BgcEntryForm {
 
                 if (value1Checkbox.getSelection()) {
                     value1Text.setEnabled(true);
+                    printBarcode1Checkbox.setSelection(true);
                     printBarcode1Checkbox.setEnabled(true);
                 } else {
                     value1Text.setText("");
@@ -573,7 +578,10 @@ public class PatientLabelEntryForm extends BgcEntryForm {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 label2Text.setEnabled(label2Checkbox.getSelection());
-
+                if (label2Checkbox.getSelection()) {
+                    value2Checkbox.setSelection(true);
+                    value2Checkbox.notifyListeners(SWT.Selection, new Event());
+                }
             }
 
             @Override
@@ -599,6 +607,7 @@ public class PatientLabelEntryForm extends BgcEntryForm {
 
                 if (value2Checkbox.getSelection()) {
                     value2Text.setEnabled(true);
+                    printBarcode2Checkbox.setSelection(true);
                     printBarcode2Checkbox.setEnabled(true);
                 } else {
                     value2Text.setText("");
@@ -632,6 +641,10 @@ public class PatientLabelEntryForm extends BgcEntryForm {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 label3Text.setEnabled(label3Checkbox.getSelection());
+                if (label3Checkbox.getSelection()) {
+                    value3Checkbox.setSelection(true);
+                    value3Checkbox.notifyListeners(SWT.Selection, new Event());
+                }
 
             }
 
@@ -657,6 +670,7 @@ public class PatientLabelEntryForm extends BgcEntryForm {
 
                 if (value3Checkbox.getSelection()) {
                     value3Text.setEnabled(true);
+                    printBarcode3Checkbox.setSelection(true);
                     printBarcode3Checkbox.setEnabled(true);
                 } else {
                     value3Text.setText("");
@@ -911,34 +925,74 @@ public class PatientLabelEntryForm extends BgcEntryForm {
             label1Str = null;
             if (label1Checkbox.getSelection()) {
                 label1Str = label1Text.getText();
+
+                if ((label1Str == null) || (label1Str.length() == 0)) {
+                    throw new CBSRGuiVerificationException(
+                        "Entry Error",
+                        "Custom field 1 contains an empty name. Please disable the name field or enter some text.");
+                }
+
             }
             value1Str = null;
             barcode1Print = false;
             if (value1Checkbox.getSelection()) {
                 value1Str = value1Text.getText();
                 barcode1Print = printBarcode1Checkbox.getSelection();
+
+                if ((value1Str == null) || (value1Str.length() == 0)) {
+                    throw new CBSRGuiVerificationException(
+                        "Entry Error",
+                        "Custom field 1 contains an empty value. Please disable the value field or enter some text.");
+                }
             }
 
             label2Str = null;
             if (label2Checkbox.getSelection()) {
                 label2Str = label2Text.getText();
+
+                if ((label2Str == null) || (label2Str.length() == 0)) {
+                    throw new CBSRGuiVerificationException(
+                        "Entry Error",
+                        "Custom field 2 contains an empty name. Please disable the name field or enter some text.");
+                }
             }
+
             value2Str = null;
             barcode2Print = false;
             if (value2Checkbox.getSelection()) {
                 value2Str = value2Text.getText();
                 barcode2Print = printBarcode2Checkbox.getSelection();
+
+                if ((value2Str == null) || (value2Str.length() == 0)) {
+                    throw new CBSRGuiVerificationException(
+                        "Entry Error",
+                        "Custom field 2 contains an empty value. Please disable the value field or enter some text.");
+                }
+
             }
 
             label3Str = null;
             if (label3Checkbox.getSelection()) {
                 label3Str = label3Text.getText();
+
+                if ((label3Str == null) || (label3Str.length() == 0)) {
+                    throw new CBSRGuiVerificationException(
+                        "Entry Error",
+                        "Custom field 3 contains an empty name. Please disable the name field or enter some text.");
+                }
             }
             value3Str = null;
             barcode3Print = false;
             if (value3Checkbox.getSelection()) {
                 value3Str = value3Text.getText();
                 barcode3Print = printBarcode3Checkbox.getSelection();
+
+                if ((value3Str == null) || (value3Str.length() == 0)) {
+                    throw new CBSRGuiVerificationException(
+                        "Entry Error",
+                        "Custom field 3 contains an empty value. Please disable the value field or enter some text.");
+                }
+
             }
             // ------------ patient info end-----------------
 
