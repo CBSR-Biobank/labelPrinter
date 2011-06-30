@@ -30,10 +30,6 @@ public class Template implements Serializable {
 
     private static final long serialVersionUID = -4213741888020425604L;
 
-    private String intendedPrinterName = "default";
-
-    private String name = "default";
-
     private PrinterLabelTemplateWrapper plt;
 
     private Configuration config = null;
@@ -57,10 +53,10 @@ public class Template implements Serializable {
         }
 
         // clone template name
-        clone.setName(this.name);
+        clone.setName(this.getName());
 
         // clone intended printer name
-        clone.setPrinterName(this.intendedPrinterName);
+        clone.setPrinterName(this.getPrinterName());
 
         // clone configuration
         if (config != null) {
@@ -198,6 +194,10 @@ public class Template implements Serializable {
         plt = null;
     }
 
+    public boolean hasWrapper() {
+        return (plt != null);
+    }
+
     public static Template getTemplateByName(String name)
         throws ApplicationException {
         Template tplt = new Template();
@@ -208,6 +208,6 @@ public class Template implements Serializable {
 
     @Override
     public String toString() {
-        return new StringBuilder(name).toString();
+        return new StringBuilder(getName()).toString();
     }
 }

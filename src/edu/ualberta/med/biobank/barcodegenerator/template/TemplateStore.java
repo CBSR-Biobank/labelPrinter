@@ -4,6 +4,7 @@ import edu.ualberta.med.biobank.SessionManager;
 import edu.ualberta.med.biobank.common.wrappers.PrinterLabelTemplateWrapper;
 import gov.nih.nci.system.applicationservice.ApplicationException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -53,7 +54,7 @@ public class TemplateStore {
         if (!templates.containsKey(name)) {
             throw new Exception("template with name " + name + " not found");
         }
-        templates.remove(template);
+        templates.remove(name);
     }
 
     public void deleteTemplate(String name) throws Exception {
@@ -67,7 +68,17 @@ public class TemplateStore {
     public void reloadTemplate(String name) throws Exception {
         deleteTemplate(name);
         templates.put(name, Template.getTemplateByName(name));
-
     }
 
+    public void purge() {
+        ArrayList<Template> removeTemplateList = new ArrayList<Template>();
+
+        for (Template t : templates.values())
+            if (!t.hasWrapper())
+                removeTemplateList.add(t);
+
+        for (Template t : removeTemplateList)
+            templates.remove(t);
+
+    }
 }

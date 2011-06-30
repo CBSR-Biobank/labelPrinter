@@ -604,8 +604,8 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                     Template selectedTemplate = templateStore
                         .getTemplate(prevTemplateName);
 
+                    templateNamesList.remove(prevTemplateName);
                     templateStore.deleteTemplate(prevTemplateName);
-                    templateNamesList.remove(selectedTemplate.getName());
 
                     if (!selectedTemplate.isNew()) {
                         selectedTemplate.delete();
@@ -622,6 +622,8 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                     configTree.populateTree(null);
 
                     templateNamesList.deselectAll();
+                    setDirty(false);
+
                     templatesNamesSelectLast();
                     templateNamesList.redraw();
                 }
@@ -631,5 +633,4 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                 "Could not delete template", e1);
         }
     }
-
 }

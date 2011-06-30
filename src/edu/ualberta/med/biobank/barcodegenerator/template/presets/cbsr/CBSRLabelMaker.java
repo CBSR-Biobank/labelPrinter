@@ -284,12 +284,12 @@ public class CBSRLabelMaker {
             new Rectangle(38, 25, 29, 8));
         config.setSetting("Patient Info.Patient ID.1D Barcode", new Rectangle(
             1, 33, 29, 8));
-        config.setSetting("Barcodes.General.Barcode 1D", new Rectangle(8, 7,
+        config.setSetting("Barcodes.General.Barcode 1D", new Rectangle(11, 5,
             29, 8));
-        config.setSetting("Barcodes.General.Barcode 2D", new Rectangle(40, 7,
+        config.setSetting("Barcodes.General.Barcode 2D", new Rectangle(43, 5,
             6, 6));
-        config.setSetting("Barcodes.General.Specimen Text", new Rectangle(8, 2,
-            0, 0));
+        config.setSetting("Barcodes.General.Specimen Text", new Rectangle(11,
+            17, 0, 0));
 
         for (int i = 1; i <= BARCODE_COUNT; i++) {
             config
