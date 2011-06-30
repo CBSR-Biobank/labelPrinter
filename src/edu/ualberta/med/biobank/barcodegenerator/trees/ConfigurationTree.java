@@ -79,107 +79,7 @@ public class ConfigurationTree {
         column6.setWidth(1);
         column6.setText("");
 
-        tree.addListener(SWT.MouseDown, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-
-                Control oldEditor = editor.getEditor();
-                if (oldEditor != null)
-                    oldEditor.dispose();
-
-                Point pt = new Point(event.x, event.y);
-                final TreeItem currentTableItem = tree.getItem(pt);
-
-                // stop if not a leaf item.
-                if ((currentTableItem == null)
-                    || (currentTableItem.getItemCount() != 0))
-                    return;
-
-                int editableColumn = -1;
-
-                for (int colIndex = 1; colIndex < 5; colIndex++) {
-                    final int fColIndex = colIndex;
-
-                    org.eclipse.swt.graphics.Rectangle rect = currentTableItem
-                        .getBounds(colIndex);
-                    if (rect.contains(pt)) {
-                        textEdit = new Text(tree, SWT.CENTER);
-                        textEdit.setText(currentTableItem.getText(fColIndex));
-                        textEdit.addModifyListener(new ModifyListener() {
-                            @Override
-                            public void modifyText(ModifyEvent me) {
-                                Text text = (Text) editor.getEditor();
-
-                                boolean validNumber = true;
-                                try {
-                                    int parsedInt = Integer.parseInt(text
-                                        .getText());
-                                    if ((parsedInt <= -1000)
-                                        || (parsedInt >= 1000))
-                                        validNumber = false;
-
-                                } catch (NumberFormatException e) {
-                                    validNumber = false;
-                                }
-
-                                if (validNumber) {
-                                    editor.getItem().setText(fColIndex,
-                                        text.getText());
-
-                                    TreeItem c = currentTableItem;
-                                    if ((c != null) && (c.getText() != null)) {
-                                        String location = c.getText();
-                                        while (c != null) {
-                                            c = c.getParentItem();
-                                            if (c != null)
-                                                location = c.getText() + "."
-                                                    + location;
-                                        }
-                                        if (configuration.getSettings()
-                                            .containsKey(location)) {
-
-                                            configuration
-                                                .setSetting(
-                                                    location,
-                                                    TreeItemToRectangle(currentTableItem));
-                                            notifyModifyListeners();
-                                        } else {
-                                            System.err
-                                                .println("Could not find key in configuration :"
-                                                    + location);
-                                        }
-                                    }
-
-                                }
-
-                            }
-                        });
-                        textEdit.addVerifyListener(new VerifyListener() {
-
-                            @Override
-                            public void verifyText(VerifyEvent e) {
-                                if (!e.text.matches("[{0-9-}]*")) {
-                                    e.doit = false;
-                                    return;
-                                }
-
-                            }
-
-                        });
-
-                        editableColumn = fColIndex;
-                        break;
-                    }
-
-                }
-                if ((textEdit != null) && (editableColumn >= 0)) {
-                    textEdit.selectAll();
-                    textEdit.setFocus();
-                    editor
-                        .setEditor(textEdit, currentTableItem, editableColumn);
-                }
-            }
-        });
+        tree.addListener(SWT.MouseDown, treeListner);
     }
 
     /**
@@ -316,6 +216,159 @@ public class ConfigurationTree {
         tree.redraw();
     }
 
+    /**
+     * Returns the configuration. Main purpose is to obtain and save the current
+     * configuration. unDirty() should be called shortly after saving this tree
+     * configuration.
+     * 
+     * @return
+     */
+    public Configuration getConfiguration() {
+        return configuration;
+    }
+
+    public void setEnabled(boolean enable) {
+        tree.setEnabled(enable);
+    }
+
+    public void resetEditor() throws TreeException {
+        if (textEdit != null)
+            textEdit.dispose();
+        textEdit = null;
+
+        if (editor == null)
+            throw new TreeException("Cannot populate tree: Editor is null.");
+
+        editor.setEditor(null, null, 0);
+    }
+
+    /**
+     * Tree config has a very basic modify listener. When the user changes any
+     * column field the ModifyEvent is passed to all the attached listeners.
+     * Absolutely no information is passed to the modify event. The purpose of
+     * this modify listener is to help set dirty flags in an application
+     * implementing this tree.
+     * 
+     * @param listener
+     */
+    public void addModifyListener(ModifyListener listener) {
+        modifyListeners.add(listener);
+    }
+
+    private void notifyModifyListeners() {
+        Object[] listeners = modifyListeners.getListeners();
+        for (int i = 0; i < listeners.length; ++i) {
+            final ModifyListener l = (ModifyListener) listeners[i];
+            SafeRunnable.run(new SafeRunnable() {
+                @Override
+                public void run() {
+                    Event e = new Event();
+                    e.widget = tree;
+
+                    l.modifyText(new ModifyEvent(e));
+                }
+            });
+        }
+    }
+
+    private Listener treeListner = new Listener() {
+        @Override
+        public void handleEvent(Event event) {
+
+            Control oldEditor = editor.getEditor();
+            if (oldEditor != null)
+                oldEditor.dispose();
+
+            Point pt = new Point(event.x, event.y);
+            final TreeItem currentTableItem = tree.getItem(pt);
+
+            // stop if not a leaf item.
+            if ((currentTableItem == null)
+                || (currentTableItem.getItemCount() != 0))
+                return;
+
+            int editableColumn = -1;
+
+            for (int colIndex = 1; colIndex < 5; colIndex++) {
+                final int fColIndex = colIndex;
+
+                org.eclipse.swt.graphics.Rectangle rect = currentTableItem
+                    .getBounds(colIndex);
+                if (rect.contains(pt)) {
+                    createNewTextEditor(currentTableItem, fColIndex);
+                    editableColumn = fColIndex;
+                    break;
+                }
+
+            }
+            if ((textEdit != null) && (editableColumn >= 0)) {
+                textEdit.selectAll();
+                textEdit.setFocus();
+                editor.setEditor(textEdit, currentTableItem, editableColumn);
+            }
+        }
+    };
+
+    private void createNewTextEditor(final TreeItem currentTableItem,
+        final int fColIndex) {
+        textEdit = new Text(tree, SWT.CENTER);
+        textEdit.setText(currentTableItem.getText(fColIndex));
+        textEdit.addModifyListener(new ModifyListener() {
+            @Override
+            public void modifyText(ModifyEvent me) {
+                Text text = (Text) editor.getEditor();
+
+                boolean validNumber = true;
+                try {
+                    int parsedInt = Integer.parseInt(text.getText());
+                    if ((parsedInt <= -1000) || (parsedInt >= 1000))
+                        validNumber = false;
+
+                } catch (NumberFormatException e) {
+                    validNumber = false;
+                }
+
+                if (validNumber) {
+                    editor.getItem().setText(fColIndex, text.getText());
+
+                    TreeItem c = currentTableItem;
+                    if ((c != null) && (c.getText() != null)) {
+                        String location = c.getText();
+                        while (c != null) {
+                            c = c.getParentItem();
+                            if (c != null)
+                                location = c.getText() + "." + location;
+                        }
+                        if (configuration.getSettings().containsKey(location)) {
+
+                            configuration.setSetting(location,
+                                TreeItemToRectangle(currentTableItem));
+                            notifyModifyListeners();
+                        } else {
+                            System.err
+                                .println("Could not find key in configuration :"
+                                    + location);
+                        }
+                    }
+
+                }
+
+            }
+        });
+        textEdit.addVerifyListener(new VerifyListener() {
+
+            @Override
+            public void verifyText(VerifyEvent e) {
+                if (!e.text.matches("[{0-9-}]*")) {
+                    e.doit = false;
+                    return;
+                }
+
+            }
+
+        });
+    }
+
     private String[] rectangleToString(Rectangle r) {
         if (r == null)
             return null;
@@ -351,52 +404,6 @@ public class ConfigurationTree {
     private Rectangle TreeItemToRectangle(TreeItem item) {
         return StringToRectangle(new String[] { item.getText(1),
             item.getText(2), item.getText(3), item.getText(4) });
-    }
-
-    public void setEnabled(boolean enable) {
-        tree.setEnabled(enable);
-    }
-
-    /**
-     * Returns the configuration. Main purpose is to obtain and save the current
-     * configuration. unDirty() should be called shortly after saving this tree
-     * configuration.
-     * 
-     * @return
-     */
-    public Configuration getConfiguration() {
-        return configuration;
-    }
-
-    public void addModifyListener(ModifyListener listener) {
-        modifyListeners.add(listener);
-    }
-
-    private void notifyModifyListeners() {
-        Object[] listeners = modifyListeners.getListeners();
-        for (int i = 0; i < listeners.length; ++i) {
-            final ModifyListener l = (ModifyListener) listeners[i];
-            SafeRunnable.run(new SafeRunnable() {
-                @Override
-                public void run() {
-                    Event e = new Event();
-                    e.widget = tree;
-
-                    l.modifyText(new ModifyEvent(e));
-                }
-            });
-        }
-    }
-
-    public void resetEditor() throws TreeException {
-        if (textEdit != null)
-            textEdit.dispose();
-        textEdit = null;
-
-        if (editor == null)
-            throw new TreeException("Cannot populate tree: Editor is null.");
-
-        editor.setEditor(null, null, 0);
     }
 
 }

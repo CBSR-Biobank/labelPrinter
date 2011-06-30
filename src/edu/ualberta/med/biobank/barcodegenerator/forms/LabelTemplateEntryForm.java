@@ -424,7 +424,8 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                         return true;
                     } else {
                         // restore original saved version
-                        templateStore.reloadTemplate(prevTemplateName);
+                        if (!selectedTemplate.isNew())
+                            templateStore.reloadTemplate(prevTemplateName);
                     }
 
                     setDirty(false);
