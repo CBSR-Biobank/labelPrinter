@@ -280,10 +280,6 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
                         setDirty(false);
                     }
 
-                } else {
-                    BgcPlugin.openAsyncError("Selection Listener Error",
-                        "invalid selected items length: "
-                            + selectedItems.length);
                 }
             } catch (Exception e1) {
                 BgcPlugin.openAsyncError("Jasper Template Save Error",

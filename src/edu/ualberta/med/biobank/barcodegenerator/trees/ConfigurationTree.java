@@ -2,6 +2,8 @@ package edu.ualberta.med.biobank.barcodegenerator.trees;
 
 import java.util.Map.Entry;
 
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
 import org.eclipse.swt.events.ModifyEvent;
@@ -37,15 +39,13 @@ public class ConfigurationTree {
     private Tree tree;
     private TreeEditor editor;
     private Text textEdit;
-
-    private boolean isDirty;
-
     private Configuration configuration;
+    private ListenerList modifyListeners = new ListenerList();
 
     public ConfigurationTree(Composite parent, int style) {
 
         tree = new Tree(parent, style | SWT.BORDER | SWT.H_SCROLL
-            | SWT.V_SCROLL);
+            | SWT.V_SCROLL | SWT.FULL_SELECTION);
         tree.setHeaderVisible(true);
 
         // remove this to make the standalone main function work.
@@ -142,7 +142,7 @@ public class ConfigurationTree {
                                                 .setSetting(
                                                     location,
                                                     TreeItemToRectangle(currentTableItem));
-                                            isDirty = true;
+                                            notifyModifyListeners();
                                         } else {
                                             System.err
                                                 .println("Could not find key in configuration :"
@@ -287,7 +287,6 @@ public class ConfigurationTree {
     public void populateTree(Configuration config) throws TreeException {
 
         resetEditor();
-        isDirty = false;
 
         if (tree == null)
             throw new TreeException("Cannot populate tree: Tree is null.");
@@ -369,20 +368,21 @@ public class ConfigurationTree {
         return configuration;
     }
 
-    /**
-     * This should be called the configuration has been saved externally.
-     */
-    public void unDirty() {
-        isDirty = false;
+    public void addModifyListener(ModifyListener listener) {
+        modifyListeners.add(listener);
     }
 
-    /**
-     * Any field changes to the configuration tree will make isDirty true.
-     * 
-     * @return
-     */
-    public boolean isDirty() {
-        return isDirty;
+    private void notifyModifyListeners() {
+        Object[] listeners = modifyListeners.getListeners();
+        for (int i = 0; i < listeners.length; ++i) {
+            final ModifyListener l = (ModifyListener) listeners[i];
+            SafeRunnable.run(new SafeRunnable() {
+                @Override
+                public void run() {
+                    l.modifyText(new ModifyEvent(null));
+                }
+            });
+        }
     }
 
     public void resetEditor() throws TreeException {

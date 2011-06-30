@@ -72,6 +72,8 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
 
     private TemplateStore templateStore = null;
 
+    private boolean saveConfig = false;
+
     private boolean loggedIn = false;
 
     @Override
@@ -224,6 +226,14 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
         l.setLayoutData(gd);
 
         configTree = new ConfigurationTree(client, SWT.NONE);
+        configTree.addModifyListener(new ModifyListener() {
+
+            @Override
+            public void modifyText(ModifyEvent e) {
+                setDirty(true);
+                saveConfig = true;
+            }
+        });
     }
 
     private void setEnable(boolean enable) {
@@ -348,11 +358,6 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                     }
                     setDirty(false);
                 }
-
-            } else {
-                BgcPlugin.openAsyncError("Selection Listener Error",
-                    "invalid selected items length: " + selectedItems.length);
-                return;
             }
 
         }
@@ -379,7 +384,7 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
             }
 
             if (prevTemplateName != null) {
-                if (isDirty() || configTree.isDirty()) {
+                if (isDirty()) {
 
                     Template selectedTemplate = templateStore
                         .getTemplate(prevTemplateName);
@@ -403,13 +408,14 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                             }
                         }
 
-                        if (configTree.isDirty()) {
+                        if (saveConfig) {
                             selectedTemplate.setConfiguration(configTree
                                 .getConfiguration());
+                            saveConfig = false;
                         }
+
                         selectedTemplate.persist();
                         setDirty(false);
-                        configTree.unDirty();
                     }
 
                 }

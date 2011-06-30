@@ -902,9 +902,8 @@ public class PatientLabelEntryForm extends BgcEntryForm {
 
             patientNumberStr = patientNumText.getText();
             if ((patientNumberStr == null) || (patientNumberStr.length() == 0)) {
-                throw new CBSRGuiVerificationException(
-                    "Invalid Patient Number",
-                    "Entry error. Please enter a patient number.");
+                throw new CBSRGuiVerificationException("Entry Error",
+                    "Please enter a valid patient number.");
 
             }
             // ------------ patient info start-----------------
@@ -1026,7 +1025,7 @@ public class PatientLabelEntryForm extends BgcEntryForm {
                 }
 
             } catch (CBSRGuiVerificationException e1) {
-                BgcPlugin.openAsyncError("Gui Validation", e1.getMessage());
+                BgcPlugin.openAsyncError(e1.title, e1.messsage);
                 return;
             } catch (BiobankServerException e2) {
                 BgcPlugin.openAsyncError("Specimen ID Error", e2.getMessage());
