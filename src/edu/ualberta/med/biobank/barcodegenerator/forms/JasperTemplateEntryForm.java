@@ -257,7 +257,7 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
             try {
                 String[] selectedItems = jasperTemplateList.getSelection();
                 if (selectedItems.length == 1) {
-                    confirm();
+                    save(false);
 
                     if (selectedItems[0] != null) {
                         JasperTemplateWrapper selectedTemplate = (templateMap
@@ -271,13 +271,11 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
                             jasperConfigText.setText("Jasper file loaded");
 
                         prevJasperName = selectedItems[0];
-                        setDirty(false);
 
                     } else {
                         jasperNameText.setText("Please select a template");
                         jasperConfigText.setText("");
                         prevJasperName = null;
-                        setDirty(false);
                     }
 
                 }
@@ -294,8 +292,7 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
         }
     };
 
-    @Override
-    public void confirm() {
+    public void save(boolean isConfirmButton) {
         try {
             if (prevJasperName != null) {
                 if (isDirty()) {
@@ -303,7 +300,7 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
                     JasperTemplateWrapper selectedTemplate = (templateMap
                         .get(prevJasperName));
 
-                    if (selectedTemplate.isNew()
+                    if (isConfirmButton
                         || BgcPlugin
                             .openConfirm("Jasper Configuration Editor Saving",
                                 "Jasper Configuration has been modified, do you want to save your changes?")) {
@@ -316,7 +313,6 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
                         if ((selectedTemplate.getXml() != null)
                             && !selectedTemplate.getXml().isEmpty()) {
                             selectedTemplate.persist();
-                            setDirty(false);
                             jasperConfigText.setText("Jasper file loaded");
 
                         } else {
@@ -326,13 +322,18 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
                         }
 
                     }
-
+                    setDirty(false);
                 }
             }
         } catch (Exception e1) {
             BgcPlugin.openAsyncError("Template Save Error",
                 "Could not save the template to the database", e1);
         }
+    }
+
+    @Override
+    public void confirm() {
+        save(true);
     }
 
     @Override
@@ -396,7 +397,6 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
                             jasperNameText.setText("Please select a template");
                             jasperConfigText.setText("");
                             prevJasperName = null;
-                            setDirty(false);
 
                             jasperTemplateList.deselectAll();
                             jasperTemplateList.redraw();

@@ -72,8 +72,6 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
 
     private TemplateStore templateStore = null;
 
-    private boolean saveConfig = false;
-
     private boolean loggedIn = false;
 
     @Override
@@ -231,7 +229,6 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
             @Override
             public void modifyText(ModifyEvent e) {
                 setDirty(true);
-                saveConfig = true;
             }
         });
     }
@@ -407,12 +404,8 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                                 selectedTemplate.setPrinterName(printerName);
                             }
                         }
-
-                        if (saveConfig) {
-                            selectedTemplate.setConfiguration(configTree
-                                .getConfiguration());
-                            saveConfig = false;
-                        }
+                        selectedTemplate.setConfiguration(configTree
+                            .getConfiguration());
 
                         selectedTemplate.persist();
                         setDirty(false);
@@ -612,7 +605,6 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                     templateNamesList.deselectAll();
                     templatesNamesSelectLast();
                     templateNamesList.redraw();
-
                 }
             }
         } catch (Exception e1) {
