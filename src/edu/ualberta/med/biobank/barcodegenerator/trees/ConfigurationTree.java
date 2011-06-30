@@ -379,7 +379,10 @@ public class ConfigurationTree {
             SafeRunnable.run(new SafeRunnable() {
                 @Override
                 public void run() {
-                    l.modifyText(new ModifyEvent(null));
+                    Event e = new Event();
+                    e.widget = tree;
+
+                    l.modifyText(new ModifyEvent(e));
                 }
             });
         }

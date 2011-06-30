@@ -216,7 +216,12 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
         printerNameText.setEditable(true);
         printerNameText.setLayoutData(new GridData(GridData.FILL,
             GridData.FILL, true, true));
-        printerNameText.addModifyListener(printerNameModifyListener);
+        printerNameText.addModifyListener(new ModifyListener() {
+            @Override
+            public void modifyText(ModifyEvent e) {
+                setDirty(true);
+            }
+        });
 
         Label l = toolkit.createLabel(client, "Configuration:");
         GridData gd = new GridData(GridData.FILL, GridData.FILL, true, true);
@@ -280,7 +285,7 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
             if (selectedItems.length == 1) {
 
                 try {
-                    confirm(true);
+                    save(false);
                 } catch (Exception e1) {
                     BgcPlugin.openAsyncError("Template Saving",
                         "Failed to save template: " + e1.getMessage());
@@ -313,6 +318,11 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                         jasperConfigText.setText("");
                         BgcPlugin.openAsyncError("Template Selection",
                             "Failed to find the jasper configuration name.");
+                        try {
+                            selectedTemplate.delete();
+                        } catch (Exception e2) {
+                            e2.printStackTrace();
+                        }
                         return;
                     }
 
@@ -353,7 +363,6 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                                 "Error: Could not clear the Template Configuration Tree",
                                 e1.getError());
                     }
-                    setDirty(false);
                 }
             }
 
@@ -368,10 +377,13 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
 
     @Override
     public void confirm() {
-        confirm(false);
+        if (save(true)) {
+            BgcPlugin.openInformation("Template Saved",
+                "Template has been sucessfully saved.");
+        }
     }
 
-    public void confirm(boolean askUserToSave) {
+    public boolean save(boolean isConfirmButton) {
         try {
             try {
                 configTree.resetEditor();
@@ -386,7 +398,7 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                     Template selectedTemplate = templateStore
                         .getTemplate(prevTemplateName);
 
-                    if (!askUserToSave
+                    if (isConfirmButton
                         || BgcPlugin
                             .openConfirm(
                                 "Template Saving",
@@ -409,8 +421,9 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
 
                         selectedTemplate.persist();
                         setDirty(false);
+                        return true;
                     }
-
+                    setDirty(false);
                 }
 
             }
@@ -418,6 +431,7 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
             BgcPlugin.openAsyncError("Template Save Error",
                 "Could not save the template to the database", e1);
         }
+        return false;
     }
 
     @Override
@@ -612,13 +626,5 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                 "Could not delete template", e1);
         }
     }
-
-    private ModifyListener printerNameModifyListener = new ModifyListener() {
-
-        @Override
-        public void modifyText(ModifyEvent e) {
-            setDirty(true);
-        }
-    };
 
 }
