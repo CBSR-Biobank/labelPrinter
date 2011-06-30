@@ -64,4 +64,10 @@ public class TemplateStore {
         deleteTemplate(t);
     }
 
+    public void reloadTemplate(String name) throws Exception {
+        deleteTemplate(name);
+        templates.put(name, Template.getTemplateByName(name));
+
+    }
+
 }

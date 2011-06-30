@@ -422,7 +422,11 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                         selectedTemplate.persist();
                         setDirty(false);
                         return true;
+                    } else {
+                        // restore original saved version
+                        templateStore.reloadTemplate(prevTemplateName);
                     }
+
                     setDirty(false);
                 }
 
