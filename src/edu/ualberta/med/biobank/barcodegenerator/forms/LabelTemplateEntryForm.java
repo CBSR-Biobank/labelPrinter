@@ -282,86 +282,96 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
         public void widgetSelected(SelectionEvent e) {
 
             String[] selectedItems = templateNamesList.getSelection();
-            if (selectedItems.length == 1) {
 
-                try {
-                    save(false);
-                } catch (Exception e1) {
-                    BgcPlugin.openAsyncError("Template Saving",
-                        "Failed to save template: " + e1.getMessage());
-                    return;
-                }
+            if ((selectedItems.length == 1)) {
 
-                if (selectedItems[0] != null) {
-                    Template selectedTemplate;
+                // ask to save and select the template if its not one that is
+                // already selected.
+                if (((prevTemplateName == null) || (!prevTemplateName
+                    .equals(selectedItems[0])))) {
+
                     try {
-                        selectedTemplate = templateStore
-                            .getTemplate(selectedItems[0]);
+                        save(false);
                     } catch (Exception e1) {
-                        BgcPlugin.openAsyncError("Template Selection",
-                            "Failed to load the selected template");
+                        BgcPlugin.openAsyncError("Template Saving",
+                            "Failed to save template: " + e1.getMessage());
                         return;
                     }
 
-                    if (!selectedTemplate.getName().equals(selectedItems[0])) {
-                        BgcPlugin
-                            .openAsyncError("Template Name Error",
-                                "Severe Error: Internal template names do not match.");
-                        return;
-                    }
-
-                    // load selected template into gui elements
-                    try {
-                        jasperConfigText.setText(selectedTemplate
-                            .getJasperTemplateName());
-                    } catch (Exception e1) {
-                        jasperConfigText.setText("");
-                        BgcPlugin.openAsyncError("Template Selection",
-                            "Failed to find the jasper configuration name.");
+                    if (selectedItems[0] != null) {
+                        Template selectedTemplate;
                         try {
-                            selectedTemplate.delete();
-                        } catch (Exception e2) {
-                            e2.printStackTrace();
+                            selectedTemplate = templateStore
+                                .getTemplate(selectedItems[0]);
+                        } catch (Exception e1) {
+                            BgcPlugin.openAsyncError("Template Selection",
+                                "Failed to load the selected template");
+                            return;
                         }
-                        return;
-                    }
 
-                    try {
-                        configTree.populateTree(selectedTemplate
-                            .getConfiguration());
-                    } catch (Exception ee) {
+                        if (!selectedTemplate.getName()
+                            .equals(selectedItems[0])) {
+                            BgcPlugin
+                                .openAsyncError("Template Name Error",
+                                    "Severe Error: Internal template names do not match.");
+                            return;
+                        }
+
+                        // load selected template into gui elements
+                        try {
+                            jasperConfigText.setText(selectedTemplate
+                                .getJasperTemplateName());
+                        } catch (Exception e1) {
+                            jasperConfigText.setText("");
+                            BgcPlugin
+                                .openAsyncError("Template Selection",
+                                    "Failed to find the jasper configuration name.");
+                            try {
+                                selectedTemplate.delete();
+                            } catch (Exception e2) {
+                                e2.printStackTrace();
+                            }
+                            return;
+                        }
+
+                        try {
+                            configTree.populateTree(selectedTemplate
+                                .getConfiguration());
+                        } catch (Exception ee) {
+                            jasperConfigText.setText("");
+
+                            try {
+                                configTree.populateTree(null);
+                            } catch (TreeException e1) {
+                                BgcPlugin
+                                    .openAsyncError(
+                                        "Error: Could not set Template Configuration Tree",
+                                        ee.getMessage());
+                                return;
+                            }
+                        }
+
+                        templateNameText.setText(selectedTemplate.getName());
+                        prevTemplateName = selectedTemplate.getName();
+                        printerNameText.setText(selectedTemplate
+                            .getPrinterName());
+                        printerNameText.setEnabled(true);
+                        setDirty(selectedTemplate.isNew());
+
+                    } else {
+                        prevTemplateName = null;
+                        templateNameText.setText("Please select a template");
+                        printerNameText.setText("");
+                        printerNameText.setEnabled(false);
                         jasperConfigText.setText("");
-
                         try {
                             configTree.populateTree(null);
                         } catch (TreeException e1) {
                             BgcPlugin
                                 .openAsyncError(
-                                    "Error: Could not set Template Configuration Tree",
-                                    ee.getMessage());
-                            return;
+                                    "Error: Could not clear the Template Configuration Tree",
+                                    e1.getError());
                         }
-                    }
-
-                    templateNameText.setText(selectedTemplate.getName());
-                    prevTemplateName = selectedTemplate.getName();
-                    printerNameText.setText(selectedTemplate.getPrinterName());
-                    printerNameText.setEnabled(true);
-                    setDirty(selectedTemplate.isNew());
-
-                } else {
-                    prevTemplateName = null;
-                    templateNameText.setText("Please select a template");
-                    printerNameText.setText("");
-                    printerNameText.setEnabled(false);
-                    jasperConfigText.setText("");
-                    try {
-                        configTree.populateTree(null);
-                    } catch (TreeException e1) {
-                        BgcPlugin
-                            .openAsyncError(
-                                "Error: Could not clear the Template Configuration Tree",
-                                e1.getError());
                     }
                 }
             }
