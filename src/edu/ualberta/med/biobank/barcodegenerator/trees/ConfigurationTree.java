@@ -6,6 +6,8 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.VerifyEvent;
@@ -237,7 +239,7 @@ public class ConfigurationTree {
         textEdit = null;
 
         if (editor == null)
-            throw new TreeException("Cannot populate tree: Editor is null.");
+            throw new TreeException("Editor is null.");
 
         editor.setEditor(null, null, 0);
     }
@@ -313,6 +315,27 @@ public class ConfigurationTree {
         final int fColIndex) {
         textEdit = new Text(tree, SWT.CENTER);
         textEdit.setText(currentTableItem.getText(fColIndex));
+
+        textEdit.addKeyListener(new KeyListener() {
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.keyCode == SWT.CR) {
+                    try {
+                        resetEditor();
+                    } catch (TreeException e1) {
+                        // do nothing
+                    }
+                }
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                // do nothing
+            }
+        });
+
         textEdit.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent me) {
