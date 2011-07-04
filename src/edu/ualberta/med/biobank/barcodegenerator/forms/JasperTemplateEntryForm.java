@@ -60,6 +60,7 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
     private Map<String, JasperTemplateWrapper> templateMap = null;
 
     private boolean loggedIn = false;
+    private ISourceProviderListener loginProvider = null;
 
     @Override
     protected void init() throws Exception {
@@ -78,6 +79,16 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
 
     protected String getOkMessage() {
         return "Used to configure jasper files for printer label templates";
+    }
+
+    @Override
+    public void dispose() {
+        if (loginProvider != null) {
+            BgcPlugin.getSessionStateSourceProvider()
+                .removeSourceProviderListener(loginProvider);
+            loginProvider = null;
+        }
+        super.dispose();
     }
 
     @Override
@@ -105,24 +116,28 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
 
         createMasterDetail();
 
-        sessionSourceProvider
-            .addSourceProviderListener(new ISourceProviderListener() {
-                @Override
-                public void sourceChanged(int sourcePriority,
-                    String sourceName, Object sourceValue) {
-                    if (sourceValue != null) {
-                        loggedIn = sourceValue
-                            .equals(BgcSessionState.LOGGED_IN);
-                        updateForm();
-                    }
-                }
+        if (loginProvider != null) {
+            sessionSourceProvider.removeSourceProviderListener(loginProvider);
+            loginProvider = null;
+        }
 
-                @Override
-                public void sourceChanged(int sourcePriority,
-                    @SuppressWarnings("rawtypes") Map sourceValuesByName) {
-                    // do nothing for now
+        loginProvider = new ISourceProviderListener() {
+            @Override
+            public void sourceChanged(int sourcePriority, String sourceName,
+                Object sourceValue) {
+                if (sourceValue != null) {
+                    loggedIn = sourceValue.equals(BgcSessionState.LOGGED_IN);
+                    updateForm();
                 }
-            });
+            }
+
+            @Override
+            public void sourceChanged(int sourcePriority,
+                @SuppressWarnings("rawtypes") Map sourceValuesByName) {
+                // do nothing for now
+            }
+        };
+        sessionSourceProvider.addSourceProviderListener(loginProvider);
 
         updateForm();
     }
