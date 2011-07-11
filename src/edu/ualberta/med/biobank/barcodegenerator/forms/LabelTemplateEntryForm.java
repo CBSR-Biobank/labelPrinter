@@ -36,7 +36,6 @@ import edu.ualberta.med.biobank.barcodegenerator.trees.TreeException;
 import edu.ualberta.med.biobank.common.wrappers.JasperTemplateWrapper;
 import edu.ualberta.med.biobank.gui.common.BgcPlugin;
 import edu.ualberta.med.biobank.gui.common.BgcSessionState;
-import edu.ualberta.med.biobank.gui.common.forms.Actions;
 import edu.ualberta.med.biobank.gui.common.forms.BgcEntryForm;
 import edu.ualberta.med.biobank.gui.common.forms.BgcEntryFormActions;
 import edu.ualberta.med.biobank.gui.common.widgets.BgcBaseText;
@@ -89,7 +88,7 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
     @Override
     protected void addToolbarButtons() {
         formActions = new BgcEntryFormActions(this);
-        formActions.addConfirmAction(Actions.GUI_COMMON_CONFIRM);
+        addConfirmAction();
         form.updateToolBar();
     }
 
