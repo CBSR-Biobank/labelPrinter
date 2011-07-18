@@ -5,7 +5,7 @@ import org.eclipse.ui.IPerspectiveFactory;
 
 public class JasperEditorPerspective implements IPerspectiveFactory {
 
-    public static final String ID = "barcodeGenerator.perspective.jaspereditor";
+    public static final String ID = "barcodeGenerator.perspective.jaspereditor"; //$NON-NLS-1$
 
     @Override
     public void createInitialLayout(IPageLayout layout) {

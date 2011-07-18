@@ -15,7 +15,7 @@ import edu.ualberta.med.biobank.gui.common.forms.BgcFormInput;
 
 public class JasperEditorHandler extends AbstractHandler implements IHandler {
 
-    public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.handlers.JasperEditorHandler";
+    public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.handlers.JasperEditorHandler"; //$NON-NLS-1$
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -37,7 +37,7 @@ public class JasperEditorHandler extends AbstractHandler implements IHandler {
             }
         } catch (WorkbenchException e) {
             throw new ExecutionException(
-                "Could not open label printer view : ", e);
+                "Could not open label printer view : ", e); //$NON-NLS-1$
         }
         return null;
     }

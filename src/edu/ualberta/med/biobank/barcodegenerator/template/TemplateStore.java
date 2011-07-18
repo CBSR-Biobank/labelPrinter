@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.osgi.util.NLS;
+
 /**
  * For add/editing/listing/removing templates. Contains several helper functions
  * to access template information.
@@ -35,7 +37,8 @@ public class TemplateStore {
     public Template getTemplate(String name) throws Exception {
         Template t = templates.get(name);
         if (t == null) {
-            throw new Exception("template with name " + name + " not found");
+            throw new Exception(NLS.bind(Messages.TemplateStore_notfound_msg,
+                name));
         }
         return t;
     }
@@ -52,7 +55,8 @@ public class TemplateStore {
     public void deleteTemplate(Template template) throws Exception {
         String name = template.getName();
         if (!templates.containsKey(name)) {
-            throw new Exception("template with name " + name + " not found");
+            throw new Exception(NLS.bind(Messages.TemplateStore_notfound_msg,
+                name));
         }
         templates.remove(name);
     }
@@ -60,7 +64,8 @@ public class TemplateStore {
     public void deleteTemplate(String name) throws Exception {
         Template t = templates.get(name);
         if (t == null) {
-            throw new Exception("template with name " + name + " not found");
+            throw new Exception(NLS.bind(Messages.TemplateStore_notfound_msg,
+                name));
         }
         deleteTemplate(t);
     }

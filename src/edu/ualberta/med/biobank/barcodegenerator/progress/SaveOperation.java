@@ -7,6 +7,7 @@ import java.util.List;
 import javax.xml.bind.JAXBException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.osgi.util.NLS;
 
 import edu.ualberta.med.biobank.barcodegenerator.forms.PatientLabelEntryForm.BarcodeViewGuiData;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSRLabelMaker;
@@ -22,10 +23,10 @@ import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.exception
  */
 public class SaveOperation extends BarcodeGenerationOperation {
 
-    private String pdfFilePath = "";
+    private String pdfFilePath = ""; //$NON-NLS-1$
 
-    public SaveOperation(BarcodeViewGuiData guiData, List<String> patientNumbers,
-        String pdfFilePath) {
+    public SaveOperation(BarcodeViewGuiData guiData,
+        List<String> patientNumbers, String pdfFilePath) {
         super(guiData, patientNumbers);
         this.pdfFilePath = pdfFilePath;
     }
@@ -36,27 +37,29 @@ public class SaveOperation extends BarcodeGenerationOperation {
         byte[] pdfdata = null;
 
         successful = false;
-        monitor
-            .beginTask("Saving Barcode Labels PDF", IProgressMonitor.UNKNOWN);
+        monitor.beginTask(Messages.SaveOperation_saving_barcode_pdf_task,
+            IProgressMonitor.UNKNOWN);
 
         try {
-            monitor.subTask("Generating PDF");
+            monitor.subTask(Messages.SaveOperation_generating_pdf_subtask);
             pdfdata = CBSRLabelMaker.generatePdfCBSR(guiData, patientNumbers);
 
         } catch (CBSRPdfGenException e1) {
             monitor.done();
             successful = false;
-            setError("Gui Validation", e1.getError());
+            setError(Messages.SaveOperation_validation_error_title,
+                e1.getError());
         } catch (JAXBException e2) {
             monitor.done();
             successful = false;
-            setError("Gui Validation", e2.getMessage());
+            setError(Messages.SaveOperation_validation_error_title,
+                e2.getMessage());
         }
 
         if (pdfdata != null) {
             FileOutputStream fos;
             try {
-                monitor.subTask("Saving PDF");
+                monitor.subTask(Messages.SaveOperation_saving_pdf_subtask);
                 fos = new FileOutputStream(pdfFilePath);
                 fos.write(pdfdata);
                 fos.close();
@@ -65,8 +68,10 @@ public class SaveOperation extends BarcodeGenerationOperation {
             } catch (Exception e1) {
                 monitor.done();
                 successful = false;
-                setError("Saving Pdf",
-                    "Problem saving file: " + e1.getMessage());
+                setError(
+                    Messages.SaveOperation_saving_pdf_error_title,
+                    NLS.bind(Messages.SaveOperation_saving_pdf_error_msg,
+                        e1.getMessage()));
                 return;
 
             }

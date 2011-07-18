@@ -24,15 +24,15 @@ public class Text extends Element {
 
         if ((message == null) || (message.length() == 0))
             throw new ElementCreationException(
-                "empty or null message specified to text element.");
+                Messages.Text_empty_msg_error);
 
         if (rect == null)
             throw new ElementCreationException(
-                "null dimensions specified to text element.");
+                Messages.Text_null_dim_error);
 
         if (font == null)
             throw new ElementCreationException(
-                "null font specified to text element.");
+                Messages.Text_null_font_error);
 
         this.rect = rect;
         this.type = Element.TYPE.Text;

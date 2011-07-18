@@ -20,19 +20,19 @@
             class="edu.ualberta.med.biobank.barcodegenerator.forms.LabelTemplateEntryForm"
             id="edu.ualberta.med.biobank.barcodegenerator.forms.TemplateEntryForm"
             default="false"
-            name="Printer Templates Editor">
+            name="%printer.template.editor.name">
       </editor>
       <editor
             class="edu.ualberta.med.biobank.barcodegenerator.forms.JasperTemplateEntryForm"
             id="edu.ualberta.med.biobank.barcodegenerator.forms.JasperTemplateEntryForm"
             default="false"
-            name="Jasper Templates Editor">
+            name="%jasper.template.editor.name">
       </editor>
             <editor
             class="edu.ualberta.med.biobank.barcodegenerator.forms.PatientLabelEntryForm"
             id="edu.ualberta.med.biobank.barcodegenerator.forms.SpecimanLabelEntryForm"
             default="false"
-           name="Patient Labels">
+           name="%patient.labels.editor.name">
       </editor>
       </extension>
    <extension
@@ -44,23 +44,20 @@
             locationURI="menu:org.eclipse.ui.main.menu?after=edu.ualberta.med.biobank.menu.additions">
          <menu
                id="edu.ualberta.med.barcodegenerator.menu.barcodegenerator"
-               label="Printer Labels">
+               label="%printer.labels.menu">
             <command
                   commandId="edu.ualberta.med.barcodegenerator.commands.patientlabel"
                   id="edu.ualberta.med.barcodegenerator.menu.patientlabel"
-                  label="Patient Labels"
                   style="push">
             </command>
             <command
                   commandId="edu.ualberta.med.barcodegenerator.commands.templateeditor"
                   id="edu.ualberta.med.barcodegenerator.menu.templateeditor"
-                  label="Label Templates"
                   style="push">
             </command>
             <command
                   commandId="edu.ualberta.med.barcodegenerator.commands.jaspereditor"
                   id="edu.ualberta.med.barcodegenerator.menu.jaspereditor"
-                  label="Jasper Templates"
                   style="push">
             </command>
          </menu>
@@ -115,15 +112,15 @@
          point="org.eclipse.ui.commands">
       <command
             id="edu.ualberta.med.barcodegenerator.commands.patientlabel"
-            name="Label Printer Command">
+            name="%patient.labels.command.name">
       </command>
      <command
             id="edu.ualberta.med.barcodegenerator.commands.templateeditor"
-            name="Template Editor Command">
+            name="%label.template.command.name">
       </command>
      <command
             id="edu.ualberta.med.barcodegenerator.commands.jaspereditor"
-            name="Jasper Editor Command">
+            name="%jasper.template.command.name">
       </command>
    </extension>
    <extension
@@ -137,17 +134,17 @@
       <perspective
             class="edu.ualberta.med.biobank.barcodegenerator.perspective.PatientLabelPerspective"
             id="barcodeGenerator.perspective.patientlabel"
-            name="Label Printer View">
+            name="%label.printer.view.name">
       </perspective>
       <perspective
             class="edu.ualberta.med.biobank.barcodegenerator.perspective.TemplateEditorPerspective"
             id="barcodeGenerator.perspective.templateeditor"
-            name="Template Editor">
+            name="%template.editor.name">
       </perspective>
       <perspective
             class="edu.ualberta.med.biobank.barcodegenerator.perspective.JasperEditorPerspective"
             id="barcodeGenerator.perspective.jaspereditor"
-            name="Jasper Configuration">
+            name="%jasper.configuration.name">
       </perspective>
    </extension>
 

@@ -8,7 +8,7 @@ public class JasperFillException extends Exception {
 
 	public JasperFillException() {
 		super();
-		mistake = "not available";
+		mistake = Messages.JasperFillException_mistake_notavailable_text;
 	}
 
 	public JasperFillException(String error) {

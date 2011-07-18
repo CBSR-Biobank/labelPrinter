@@ -36,6 +36,9 @@ import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.export.JRPrintServiceExporter;
 import net.sf.jasperreports.engine.export.JRPrintServiceExporterParameter;
 import net.sf.jasperreports.engine.xml.JRXmlLoader;
+
+import org.eclipse.osgi.util.NLS;
+
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.containers.BarcodeImage;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.element.Element;
 import edu.ualberta.med.biobank.barcodegenerator.template.jasper.exceptions.BarcodeCreationException;
@@ -67,10 +70,10 @@ public class JasperFiller {
      * 
      */
     private class JasperConstants {
-        public static final String titleField = "PROJECT_TITLE";
-        public static final String logoField = "LOGO";
-        public static final String patientImageField = "PATIENT_INFO_IMG";
-        public static final String patientBarcodeBase = "PATIENT_BARCODE_";
+        public static final String titleField = "PROJECT_TITLE"; //$NON-NLS-1$
+        public static final String logoField = "LOGO"; //$NON-NLS-1$
+        public static final String patientImageField = "PATIENT_INFO_IMG"; //$NON-NLS-1$
+        public static final String patientBarcodeBase = "PATIENT_BARCODE_"; //$NON-NLS-1$
 
         public int barcodeCount = 0;
         public int barcodeImageWidth = 0;
@@ -90,7 +93,7 @@ public class JasperFiller {
     public JasperFiller(JasperOutline req) throws JasperFillException {
 
         if (req == null)
-            throw new JasperFillException("Null request for jasper filler.");
+            throw new JasperFillException("Null request for jasper filler."); //$NON-NLS-1$
 
         this.templateData = req;
 
@@ -108,16 +111,16 @@ public class JasperFiller {
         try {
             templateData.getJasperTemplateStream().reset();
         } catch (IOException e) {
-            throw new JasperFillException(
-                "Failed to reset template data stream : " + e.getMessage());
+            throw new JasperFillException(NLS.bind(
+                Messages.JasperFiller_reset_error_msg, e.getMessage()));
         }
         JasperDesign jasperSubDesign;
         try {
             jasperSubDesign = JRXmlLoader.load(templateData
                 .getJasperTemplateStream());
         } catch (JRException e) {
-            throw new JasperFillException("Failed to load jasper design: "
-                + e.getMessage());
+            throw new JasperFillException(NLS.bind(
+                Messages.JasperFiller_load_jasper_error_msg, e.getMessage()));
         }
 
         JRElement patientImg = jasperSubDesign.getTitle().getElementByKey(
@@ -127,7 +130,7 @@ public class JasperFiller {
             jasperConstants.patientImageHeight = patientImg.getHeight();
         } else {
             throw new JasperFillException(
-                "Failed to patient image dimensions from the jasper report.");
+                Messages.JasperFiller_patient_img_failed_error_msg);
         }
 
         if ((jasperSubDesign.getPageFooter() != null)
@@ -144,20 +147,20 @@ public class JasperFiller {
                 if ((jr.getWidth() != jasperConstants.barcodeImageWidth)
                     || (jr.getHeight() != jasperConstants.barcodeImageHeight)) {
                     throw new JasperFillException(
-                        "All barcode image fields must be of equal size.");
+                        Messages.JasperFiller_image_s_size_error_msg);
                 }
             }
         } else {
             throw new JasperFillException(
-                "Failed to barcode image dimensions from the jasper report.");
+                Messages.JasperFiller_barcode_img_failed_error_msg);
         }
 
         if (templateData.getPatientBarcpdeInf().getLayout().size() != jasperConstants.barcodeCount) {
-            throw new JasperFillException("Error: jasper file contains "
-                + jasperConstants.barcodeCount
-                + " barcode IDs. Configuration data is designed for :"
-                + templateData.getPatientBarcpdeInf().getLayout().size()
-                + " barcode IDs.");
+            throw new JasperFillException(
+                NLS.bind(
+                    Messages.JasperFiller_configuration_error_msg,
+                    jasperConstants.barcodeCount, templateData
+                        .getPatientBarcpdeInf().getLayout().size()));
         }
 
     }
@@ -172,7 +175,7 @@ public class JasperFiller {
         throws JasperFillException {
 
         if (printerName == null) {
-            throw new JasperFillException("Error: No printer was selected!");
+            throw new JasperFillException(Messages.JasperFiller_printer_selection_error_msg);
         }
 
         PrinterJob job = PrinterJob.getPrinterJob();
@@ -187,14 +190,14 @@ public class JasperFiller {
             }
         }
         if (selectedService < 0) {
-            throw new JasperFillException("Failed to find selected printer.");
+            throw new JasperFillException(Messages.JasperFiller_printer_find_error_msg);
         }
 
         try {
             job.setPrintService(services[selectedService]);
         } catch (PrinterException e1) {
-            throw new JasperFillException("Failed to set print service: "
-                + e1.getMessage());
+            throw new JasperFillException(NLS.bind(
+                Messages.JasperFiller_printer_service_error_msg, e1.getMessage()));
         }
 
         JasperPrint print = generateJasperPint();
@@ -223,7 +226,8 @@ public class JasperFiller {
         try {
             exporter.exportReport();
         } catch (JRException e) {
-            throw new JasperFillException("Failed to print: " + e.getMessage());
+            throw new JasperFillException(NLS.bind(Messages.JasperFiller_print_error_msg,
+                e.getMessage()));
         }
     }
 
@@ -242,8 +246,8 @@ public class JasperFiller {
             reportPdfBtyes = JasperExportManager.exportReportToPdf(jp);
         } catch (JRException e) {
 
-            throw new JasperFillException(
-                "Jasper failed to create pdf. Reason : " + e.getMessage());
+            throw new JasperFillException(NLS.bind(
+                Messages.JasperFiller_pdf_error_msg, e.getMessage()));
         }
         return reportPdfBtyes;
     }
@@ -268,11 +272,11 @@ public class JasperFiller {
                 jasperConstants.patientImageHeight);
         } catch (IOException e) {
             throw new JasperFillException(
-                "Failed to draw patientInfoImg to image buffer"
+                Messages.JasperFiller_patient_img_draw_error
                     + e.getMessage());
         } catch (BarcodeCreationException e) {
-            throw new JasperFillException(
-                "Failed to create barcode patientInfoImg : " + e.getError());
+            throw new JasperFillException(NLS.bind(
+                Messages.JasperFiller_barcode_img_error, e.getError()));
         }
         // place patient barcode images
         try {
@@ -283,11 +287,12 @@ public class JasperFiller {
                     jasperConstants.barcodeImageHeight));
             }
         } catch (IOException e) {
-            throw new JasperFillException(
-                "Failed to draw barcodeinfo to image buffer" + e.getMessage());
+            throw new JasperFillException(NLS.bind(
+                Messages.JasperFiller_barcode_img_draw_error,
+                e.getMessage()));
         } catch (BarcodeCreationException e) {
-            throw new JasperFillException(
-                "Failed to create barcode barcodeinfo : " + e.getError());
+            throw new JasperFillException(NLS.bind(
+                Messages.JasperFiller_barcode_info_error_msg, e.getError()));
         }
 
         // generate parameters for jasper
@@ -309,11 +314,11 @@ public class JasperFiller {
 
             return jasperPrint;
         } catch (JRException e) {
-            throw new JasperFillException(
-                "Jasper failed to create pdf. Reason : " + e.getMessage());
+            throw new JasperFillException(NLS.bind(
+                Messages.JasperFiller_pdf_create_error_msg, e.getMessage()));
         } catch (IOException e) {
-            throw new JasperFillException(
-                "Could not reset jasper file stream : " + e.getMessage());
+            throw new JasperFillException(NLS.bind(
+                Messages.JasperFiller_jasper_reset_error_msg, e.getMessage()));
         }
 
     }
@@ -356,7 +361,7 @@ public class JasperFiller {
         }
 
         ByteArrayOutputStream binaryOutputStream = new ByteArrayOutputStream();
-        ImageIO.write(bi, "PNG", binaryOutputStream);
+        ImageIO.write(bi, "PNG", binaryOutputStream); //$NON-NLS-1$
         return new ByteArrayInputStream(binaryOutputStream.toByteArray());
     }
 }

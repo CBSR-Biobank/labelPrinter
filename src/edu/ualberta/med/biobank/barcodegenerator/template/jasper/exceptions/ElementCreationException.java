@@ -8,7 +8,7 @@ public class ElementCreationException extends BarcodeCreationException {
 
     public ElementCreationException() {
         super();
-        mistake = "not available";
+        mistake = Messages.ElementCreationException_mistake_notavailable_text;
     }
 
     public ElementCreationException(String error) {

@@ -83,7 +83,7 @@ public class ComboInputDialog extends BgcBaseDialog {
     protected void createDialogAreaInternal(Composite parent) throws Exception {
 
         if (options.isEmpty())
-            throw new Exception("No options exist. Cannot create combo dialog.");
+            throw new Exception(Messages.ComboInputDialog_nooptions_msg);
 
         if ((defaultOption == null) || !options.contains(defaultOption))
             defaultOption = options.get(0);
@@ -94,8 +94,8 @@ public class ComboInputDialog extends BgcBaseDialog {
 
         value.setName(defaultOption);
 
-        createComboViewer(content, "Jasper Configuration", options,
-            defaultOption, "A jasper configuration should be selected",
+        createComboViewer(content, Messages.ComboInputDialog_config_label, options,
+            defaultOption, Messages.ComboInputDialog_config_validator_msg,
             new ComboSelectionUpdate() {
                 @Override
                 public void doSelection(Object selectedObject) {

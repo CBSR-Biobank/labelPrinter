@@ -19,18 +19,18 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
     }
 
     public static void setDefaults(IPreferenceStore store) {
-        store.setDefault(PreferenceConstants.PROJECT_TITLE, "BBPSP");
-        store.setDefault(PreferenceConstants.LOGO_FILE_LOCATION, "");
-        store.setDefault(PreferenceConstants.TEMPLATE_NAME, "");
-        store.setDefault(PreferenceConstants.PRINTER_NAME, "");
+        store.setDefault(PreferenceConstants.PROJECT_TITLE, "BBPSP"); //$NON-NLS-1$
+        store.setDefault(PreferenceConstants.LOGO_FILE_LOCATION, ""); //$NON-NLS-1$
+        store.setDefault(PreferenceConstants.TEMPLATE_NAME, ""); //$NON-NLS-1$
+        store.setDefault(PreferenceConstants.PRINTER_NAME, ""); //$NON-NLS-1$
 
         store.setDefault(PreferenceConstants.LABEL_CHECKBOX_1, true);
         store.setDefault(PreferenceConstants.LABEL_CHECKBOX_2, true);
         store.setDefault(PreferenceConstants.LABEL_CHECKBOX_3, true);
 
-        store.setDefault(PreferenceConstants.LABEL_TEXT_1, "Patient Name");
-        store.setDefault(PreferenceConstants.LABEL_TEXT_2, "PHN");
-        store.setDefault(PreferenceConstants.LABEL_TEXT_3, "Patient Type");
+        store.setDefault(PreferenceConstants.LABEL_TEXT_1, "Patient Name"); //$NON-NLS-1$
+        store.setDefault(PreferenceConstants.LABEL_TEXT_2, "PHN"); //$NON-NLS-1$
+        store.setDefault(PreferenceConstants.LABEL_TEXT_3, "Patient Type"); //$NON-NLS-1$
 
         store.setDefault(PreferenceConstants.VALUE_CHECKBOX_1, true);
         store.setDefault(PreferenceConstants.VALUE_CHECKBOX_2, true);
@@ -42,8 +42,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
         store.setDefault(PreferenceConstants.SPECIMEN_TYPE_CHECKBOX, true);
         store.setDefault(PreferenceConstants.SPECIMEN_TYPE_TEXT,
-            "Sp. Type__________");
-        store.setDefault(PreferenceConstants.PDF_DIRECTORY_PATH, "");
+            "Sp. Type__________"); //$NON-NLS-1$
+        store.setDefault(PreferenceConstants.PDF_DIRECTORY_PATH, ""); //$NON-NLS-1$
 
         // sets the default font.
         GraphicsEnvironment e = GraphicsEnvironment
@@ -61,22 +61,22 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
                 String cFontName = f.getFontName();
                 String cFontLower = f.getFontName().toLowerCase();
 
-                if (cFontLower.contains("times new")) {
+                if (cFontLower.contains("times new")) { //$NON-NLS-1$
                     defaultFontName = cFontName;
                     break;
-                } else if (cFontLower.contains("courier")) {
+                } else if (cFontLower.contains("courier")) { //$NON-NLS-1$
                     defaultFontName = cFontName;
                     break;
-                } else if (cFontLower.contains("arial")) {
+                } else if (cFontLower.contains("arial")) { //$NON-NLS-1$
                     defaultFontName = cFontName;
                     break;
-                } else if (cFontLower.contains("serif")) {
+                } else if (cFontLower.contains("serif")) { //$NON-NLS-1$
                     defaultFontName = cFontName;
                     break;
-                } else if (cFontLower.contains("sans")) {
+                } else if (cFontLower.contains("sans")) { //$NON-NLS-1$
                     defaultFontName = cFontName;
                     break;
-                } else if (cFontLower.contains("mono")) {
+                } else if (cFontLower.contains("mono")) { //$NON-NLS-1$
                     defaultFontName = cFontName;
                     break;
                 }
@@ -84,7 +84,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
             store.setDefault(PreferenceConstants.TEXT_FONT_NAME,
                 defaultFontName);
         } else
-            store.setDefault(PreferenceConstants.TEXT_FONT_NAME, "");
+            store.setDefault(PreferenceConstants.TEXT_FONT_NAME, ""); //$NON-NLS-1$
 
     }
 

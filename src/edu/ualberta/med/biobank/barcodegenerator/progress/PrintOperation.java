@@ -19,7 +19,8 @@ import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.exception
  */
 public class PrintOperation extends BarcodeGenerationOperation {
 
-    public PrintOperation(BarcodeViewGuiData guiData, List<String> patientNumbers) {
+    public PrintOperation(BarcodeViewGuiData guiData,
+        List<String> patientNumbers) {
         super(guiData, patientNumbers);
     }
 
@@ -29,29 +30,31 @@ public class PrintOperation extends BarcodeGenerationOperation {
 
         successful = false;
 
-        monitor.beginTask("Printing Barcode Labels", IProgressMonitor.UNKNOWN);
+        monitor.beginTask(Messages.PrintOperation_printing_task,
+            IProgressMonitor.UNKNOWN);
 
         try {
-            monitor.subTask("Sending Data to Printer");
+            monitor.subTask(Messages.PrintOperation_sending_data_subtask);
             CBSRLabelMaker.printLabelsCBSR(guiData, patientNumbers);
             successful = true;
 
         } catch (CBSRPdfGenException e1) {
             monitor.done();
             successful = false;
-            setError("Gui Validation", e1.getError());
+            setError(Messages.PrintOperation_validation_error_title,
+                e1.getError());
             return;
         }
 
         monitor.done();
 
         // since the cancel operation does nothing, warn the user that
-        // they should destroy any recent pags that were printed with
+        // they should destroy any recent pages that were printed with
         // by this method.
         if (monitor.isCanceled()) {
-            setError("Printing Operation Cancel",
-                "The current set of prints are invalid, please shred any "
-                    + "sheets that were printed from this operation.");
+            setError(
+                Messages.PrintOperation_cancel_title,
+                Messages.PrintOperation_print_cancel_msg);
         }
     }
 }

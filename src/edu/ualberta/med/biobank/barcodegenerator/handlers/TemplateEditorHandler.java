@@ -15,7 +15,7 @@ import edu.ualberta.med.biobank.gui.common.forms.BgcFormInput;
 
 public class TemplateEditorHandler extends AbstractHandler implements IHandler {
 
-    public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.handlers.TemplateEditorHandler";
+    public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.handlers.TemplateEditorHandler"; //$NON-NLS-1$
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -36,7 +36,7 @@ public class TemplateEditorHandler extends AbstractHandler implements IHandler {
             }
         } catch (WorkbenchException e) {
             throw new ExecutionException(
-                "Could not open label printer view : ", e);
+                "Could not open label printer view : ", e); //$NON-NLS-1$
         }
         return null;
     }
