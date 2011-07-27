@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISourceProviderListener;
 import org.eclipse.ui.PlatformUI;
@@ -727,16 +726,7 @@ public class PatientLabelEntryForm extends BgcEntryForm {
         new Label(composite6, SWT.NONE).setText("Patient Number:");
         patientNumText = new BgcBaseText(composite6, SWT.BORDER);
         patientNumText.setLayoutData(gridData4);
-        patientNumText.setTextLimit(12);
-        patientNumText.addListener(SWT.Verify, new Listener() {
-            @Override
-            public void handleEvent(Event e) {
-                if (!e.text.matches("[{a-zA-Z0-9}]*")) {
-                    e.doit = false;
-                    return;
-                }
-            }
-        });
+        patientNumText.setTextLimit(14);
     }
 
     private void specimenTextGroup() {
