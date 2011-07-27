@@ -31,7 +31,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISourceProviderListener;
 import org.eclipse.ui.PlatformUI;
@@ -49,7 +48,6 @@ import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.exception
 import edu.ualberta.med.biobank.gui.common.BgcLogger;
 import edu.ualberta.med.biobank.gui.common.BgcPlugin;
 import edu.ualberta.med.biobank.gui.common.BgcSessionState;
-import edu.ualberta.med.biobank.gui.common.forms.Actions;
 import edu.ualberta.med.biobank.gui.common.forms.BgcEntryForm;
 import edu.ualberta.med.biobank.gui.common.forms.BgcEntryFormActions;
 import edu.ualberta.med.biobank.gui.common.widgets.BgcBaseText;
