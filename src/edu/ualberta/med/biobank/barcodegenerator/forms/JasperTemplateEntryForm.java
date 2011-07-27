@@ -9,6 +9,7 @@ import org.apache.commons.io.FileUtils;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -28,7 +29,6 @@ import edu.ualberta.med.biobank.barcodegenerator.dialogs.StringInputDialog;
 import edu.ualberta.med.biobank.common.wrappers.JasperTemplateWrapper;
 import edu.ualberta.med.biobank.gui.common.BgcPlugin;
 import edu.ualberta.med.biobank.gui.common.BgcSessionState;
-import edu.ualberta.med.biobank.gui.common.forms.Actions;
 import edu.ualberta.med.biobank.gui.common.forms.BgcEntryForm;
 import edu.ualberta.med.biobank.gui.common.forms.BgcEntryFormActions;
 import edu.ualberta.med.biobank.gui.common.widgets.BgcBaseText;
@@ -43,7 +43,9 @@ import gov.nih.nci.system.applicationservice.ApplicationException;
 public class JasperTemplateEntryForm extends BgcEntryForm implements
     SelectionListener {
 
-    public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.forms.JasperTemplateEntryForm";
+    private static final String JASPER_EXTENSION = "*.jrxml"; //$NON-NLS-1$
+
+    public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.forms.JasperTemplateEntryForm"; //$NON-NLS-1$
 
     private Button deleteButton = null;
     private Button newButton = null;
@@ -64,7 +66,7 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
 
     @Override
     protected void init() throws Exception {
-        setPartName("Jasper Templates");
+        setPartName(Messages.JasperTemplateEntryForm_title);
     }
 
     @Override
@@ -78,7 +80,7 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
     }
 
     protected String getOkMessage() {
-        return "Used to configure jasper files for printer label templates";
+        return Messages.JasperTemplateEntryForm_ok_msg;
     }
 
     @Override
@@ -94,16 +96,15 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
     @Override
     protected void addToolbarButtons() {
         formActions = new BgcEntryFormActions(this);
-        formActions.addConfirmAction(Actions.GUI_COMMON_CONFIRM);
+        addConfirmAction();
         form.updateToolBar();
     }
 
     @Override
     protected void createFormContent() throws Exception {
         super.createFormContent();
-        form.setText("Jasper Configuration Templates");
-        form.setMessage(
-            "Add Jasper configurations for different printer labels",
+        form.setText(Messages.JasperTemplateEntryForm_form_title);
+        form.setMessage(Messages.JasperTemplateEntryForm_description,
             IMessageProvider.NONE);
         page.setLayout(new GridLayout(1, false));
 
@@ -158,8 +159,8 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
         masterComp.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
             true, true));
 
-        Composite client = createSectionWithClient("Jasper Configurations",
-            masterComp);
+        Composite client = createSectionWithClient(
+            Messages.JasperTemplateEntryForm_jasper_configs_label, masterComp);
         client.setLayout(new GridLayout());
 
         jasperTemplateList = new List(client, SWT.BORDER | SWT.V_SCROLL);
@@ -178,12 +179,14 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
         buttonComp.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
             true, true));
 
-        newButton = toolkit.createButton(buttonComp, "New", SWT.NONE);
+        newButton = toolkit.createButton(buttonComp,
+            Messages.JasperTemplateEntryForm_new_btn, SWT.NONE);
         newButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
             true, true));
         newButton.addSelectionListener(this);
 
-        deleteButton = toolkit.createButton(buttonComp, "Delete", SWT.NONE);
+        deleteButton = toolkit.createButton(buttonComp,
+            Messages.JasperTemplateEntryForm_delete_btn, SWT.NONE);
         deleteButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
             true, true));
         deleteButton.addSelectionListener(this);
@@ -198,7 +201,8 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
             true, true));
 
         Composite client = createSectionWithClient(
-            "Jasper Configuration Details", detailsComp);
+            Messages.JasperTemplateEntryForm_jasper_config_details_label,
+            detailsComp);
         client.setLayout(new GridLayout(3, false));
         client.setLayoutData(new GridData(GridData.FILL, GridData.FILL
             | SWT.TOP, true, true));
@@ -207,16 +211,19 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
         gd.horizontalSpan = 2;
 
         jasperNameText = (BgcBaseText) createLabelledWidget(client,
-            BgcBaseText.class, SWT.NONE, "Configuration Name");
+            BgcBaseText.class, SWT.NONE,
+            Messages.JasperTemplateEntryForm_config_name_label);
         jasperNameText.setLayoutData(gd);
         jasperNameText.setEditable(false);
 
         jasperConfigText = (BgcBaseText) createLabelledWidget(client,
-            BgcBaseText.class, SWT.NONE, "Jasper File");
+            BgcBaseText.class, SWT.NONE,
+            Messages.JasperTemplateEntryForm_jasper_file_label);
         jasperConfigText.setEditable(false);
         jasperConfigText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        browseButton = toolkit.createButton(client, "Browse...", SWT.PUSH);
+        browseButton = toolkit.createButton(client,
+            Messages.JasperTemplateEntryForm_browse, SWT.PUSH);
         browseButton.addSelectionListener(this);
     }
 
@@ -257,8 +264,9 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
                 jasperTemplateList.redraw();
             }
         } catch (ApplicationException e) {
-            BgcPlugin.openAsyncError("Database Error",
-                "Error while updating form", e);
+            BgcPlugin.openAsyncError(
+                Messages.JasperTemplateEntryForm_update_error_title,
+                Messages.JasperTemplateEntryForm_update_error_msg, e);
         }
     }
 
@@ -281,22 +289,25 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
                         if ((selectedTemplate.getXml() == null)
                             || selectedTemplate.getXml().isEmpty()) {
                             jasperConfigText
-                                .setText("Please select a Jasper file");
+                                .setText(Messages.JasperTemplateEntryForm_select_file_msg);
                         } else
-                            jasperConfigText.setText("Jasper file loaded");
+                            jasperConfigText
+                                .setText(Messages.JasperTemplateEntryForm_loaded_msg);
 
                         prevJasperName = selectedItems[0];
 
                     } else {
-                        jasperNameText.setText("Please select a template");
-                        jasperConfigText.setText("");
+                        jasperNameText
+                            .setText(Messages.JasperTemplateEntryForm_select_template_msg);
+                        jasperConfigText.setText(""); //$NON-NLS-1$
                         prevJasperName = null;
                     }
 
                 }
             } catch (Exception e1) {
-                BgcPlugin.openAsyncError("Jasper Template Save Error",
-                    "could not save template to database", e1);
+                BgcPlugin.openAsyncError(
+                    Messages.JasperTemplateEntryForm_save_error_title,
+                    Messages.JasperTemplateEntryForm_save_error_msg, e1);
             }
         }
 
@@ -317,8 +328,9 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
 
                     if (isConfirmButton
                         || BgcPlugin
-                            .openConfirm("Jasper Configuration Editor Saving",
-                                "Jasper Configuration has been modified, do you want to save your changes?")) {
+                            .openConfirm(
+                                Messages.JasperTemplateEntryForm_save_confirm_title,
+                                Messages.JasperTemplateEntryForm_save_confirm_msg)) {
 
                         if (loadedJasperFileXml != null) {
                             selectedTemplate.setXml(loadedJasperFileXml);
@@ -328,14 +340,16 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
                         if ((selectedTemplate.getXml() != null)
                             && !selectedTemplate.getXml().isEmpty()) {
                             selectedTemplate.persist();
-                            jasperConfigText.setText("Jasper file loaded");
+                            jasperConfigText
+                                .setText(Messages.JasperTemplateEntryForm_loaded_msg);
                             setDirty(false);
                             return true;
 
                         } else {
                             jasperConfigText
-                                .setText("Please select a Jasper file");
-                            throw new Exception("Jasper file was not selected");
+                                .setText(Messages.JasperTemplateEntryForm_select_file_msg);
+                            throw new Exception(
+                                Messages.JasperTemplateEntryForm_not_selected_msg);
                         }
 
                     }
@@ -343,8 +357,9 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
                 }
             }
         } catch (Exception e1) {
-            BgcPlugin.openAsyncError("Template Save Error",
-                "Could not save the template to the database", e1);
+            BgcPlugin.openAsyncError(
+                Messages.JasperTemplateEntryForm_template_save_error_title,
+                Messages.JasperTemplateEntryForm_template_save_error_msg, e1);
         }
         return false;
     }
@@ -352,8 +367,9 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
     @Override
     public void confirm() {
         if (save(true)) {
-            BgcPlugin.openInformation("Template Saved",
-                "Template has been sucessfully saved.");
+            BgcPlugin.openInformation(
+                Messages.JasperTemplateEntryForm_saved_msg,
+                Messages.JasperTemplateEntryForm_save_success_msg);
         }
     }
 
@@ -361,9 +377,10 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
     public void widgetSelected(SelectionEvent e) {
         if (e.getSource() == newButton) {
             StringInputDialog dialog = new StringInputDialog(
-                "New Jasper Configuration Name",
-                "What is the name of this new Jasper Configuration?", "Name",
-                PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+                Messages.JasperTemplateEntryForm_input_config_name_title,
+                Messages.JasperTemplateEntryForm_input_config_name_msg,
+                Messages.JasperTemplateEntryForm_name_label, PlatformUI
+                    .getWorkbench().getActiveWorkbenchWindow().getShell());
             if (dialog.open() == Dialog.OK) {
                 String jasperConfigName = dialog.getValue();
 
@@ -379,15 +396,17 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
                         jasperTemplateList.redraw();
                     } catch (Exception e1) {
                         BgcPlugin.openAsyncError(
-                            "Failed to Save",
-                            "Faile to save newly created template: "
-                                + e1.getMessage());
+                            Messages.JasperTemplateEntryForm_save_failed_title,
+                            NLS.bind(
+                                Messages.JasperTemplateEntryForm_save_failed_msg,
+                                e1.getMessage()));
                     }
 
                 } else {
                     BgcPlugin
-                        .openAsyncError("Jasper Configuration Exists",
-                            "Your new Jasper Configuration must have a unique name.");
+                        .openAsyncError(
+                            Messages.JasperTemplateEntryForm_name_exists_error_title,
+                            Messages.JasperTemplateEntryForm_name_exists_error_msg);
                 }
             }
         } else if (e.getSource() == deleteButton) {
@@ -402,10 +421,11 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
                         MessageBox messageBox = new MessageBox(PlatformUI
                             .getWorkbench().getActiveWorkbenchWindow()
                             .getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+                        messageBox.setMessage(NLS.bind(
+                            Messages.JasperTemplateEntryForm_delete_confirm_msg,
+                            selected.getName()));
                         messageBox
-                            .setMessage("Are you sure you want to delete "
-                                + selected.getName() + "?");
-                        messageBox.setText("Deleting Jasper Configuration");
+                            .setText(Messages.JasperTemplateEntryForm_deleting);
 
                         int response = messageBox.open();
                         if (response == SWT.YES) {
@@ -415,8 +435,9 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
                             templateMap.remove(prevJasperName);
                             jasperTemplateList.remove(prevJasperName);
 
-                            jasperNameText.setText("Please select a template");
-                            jasperConfigText.setText("");
+                            jasperNameText
+                                .setText(Messages.JasperTemplateEntryForm_select_template_msg);
+                            jasperConfigText.setText(""); //$NON-NLS-1$
                             prevJasperName = null;
 
                             jasperTemplateList.deselectAll();
@@ -425,17 +446,15 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
                     }
                 }
             } catch (Exception e1) {
-                BgcPlugin
-                    .openAsyncError(
-                        "Template Delete Error",
-                        "Could not delete template. A printer template is using this jasper configuration.",
-                        e1);
+                BgcPlugin.openAsyncError(
+                    Messages.JasperTemplateEntryForm_delete_error_title,
+                    Messages.JasperTemplateEntryForm_delete_error_msg, e1);
             }
         } else if (e.getSource() == browseButton) {
             FileDialog fd = new FileDialog(PlatformUI.getWorkbench()
                 .getActiveWorkbenchWindow().getShell(), SWT.OPEN);
-            fd.setText("Select Jasper File");
-            String[] filterExt = { "*.jrxml" };
+            fd.setText(Messages.JasperTemplateEntryForm_select_file_label);
+            String[] filterExt = { JASPER_EXTENSION };
             fd.setFilterExtensions(filterExt);
             String path = fd.open();
             if (path != null) {
@@ -446,18 +465,21 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
                         jasperConfigText.setText(path);
                         setDirty(true);
                     } else {
-                        BgcPlugin.openAsyncError("File Not Found",
-                            "File selected does not exist.");
+                        BgcPlugin
+                            .openAsyncError(
+                                Messages.JasperTemplateEntryForm_file_not_found_title,
+                                Messages.JasperTemplateEntryForm_file_not_found_msg);
                     }
 
                 } catch (IOException e1) {
-                    BgcPlugin.openAsyncError("Template Read Error",
-                        "Could not open the template file for reading", e1);
+                    BgcPlugin.openAsyncError(
+                        Messages.JasperTemplateEntryForm_read_error_title,
+                        Messages.JasperTemplateEntryForm_read_error_msg, e1);
                 }
             }
         } else {
-            BgcPlugin.openAsyncError("Invalid selection event",
-                "invalid selection source");
+            BgcPlugin.openAsyncError("Invalid selection event", //$NON-NLS-1$
+                "invalid selection source"); //$NON-NLS-1$
         }
     }
 

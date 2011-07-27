@@ -9,7 +9,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
-import edu.ualberta.med.biobank.Messages;
 import edu.ualberta.med.biobank.gui.common.dialogs.BgcBaseDialog;
 import edu.ualberta.med.biobank.gui.common.widgets.utils.ComboSelectionUpdate;
 
@@ -54,7 +53,7 @@ public class ComboInputDialog extends BgcBaseDialog {
         String defaultOption, Shell parent) throws InvalidOptionsException {
         super(parent);
 
-        if (options == null || options.size() == 0) {
+        if ((options == null) || (options.size() == 0)) {
             throw new InvalidOptionsException();
         }
 
@@ -84,9 +83,9 @@ public class ComboInputDialog extends BgcBaseDialog {
     protected void createDialogAreaInternal(Composite parent) throws Exception {
 
         if (options.isEmpty())
-            throw new Exception("No options exist. Cannot create combo dialog.");
+            throw new Exception(Messages.ComboInputDialog_nooptions_msg);
 
-        if (defaultOption == null || !options.contains(defaultOption))
+        if ((defaultOption == null) || !options.contains(defaultOption))
             defaultOption = options.get(0);
 
         Composite content = new Composite(parent, SWT.NONE);
@@ -95,8 +94,8 @@ public class ComboInputDialog extends BgcBaseDialog {
 
         value.setName(defaultOption);
 
-        createComboViewer(content, "Jasper Configuration", options, //$NON-NLS-1$
-            defaultOption, Messages.getString("validation.activity"), //$NON-NLS-1$
+        createComboViewer(content, Messages.ComboInputDialog_config_label, options,
+            defaultOption, Messages.ComboInputDialog_config_validator_msg,
             new ComboSelectionUpdate() {
                 @Override
                 public void doSelection(Object selectedObject) {

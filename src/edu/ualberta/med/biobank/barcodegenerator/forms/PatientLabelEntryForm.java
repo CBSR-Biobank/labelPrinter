@@ -18,6 +18,7 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -30,6 +31,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISourceProviderListener;
 import org.eclipse.ui.PlatformUI;
@@ -44,6 +46,7 @@ import edu.ualberta.med.biobank.barcodegenerator.template.Template;
 import edu.ualberta.med.biobank.barcodegenerator.template.TemplateStore;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.CBSRData;
 import edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.exceptions.CBSRGuiVerificationException;
+import edu.ualberta.med.biobank.gui.common.BgcLogger;
 import edu.ualberta.med.biobank.gui.common.BgcPlugin;
 import edu.ualberta.med.biobank.gui.common.BgcSessionState;
 import edu.ualberta.med.biobank.gui.common.forms.Actions;
@@ -64,7 +67,10 @@ import gov.nih.nci.system.applicationservice.ApplicationException;
  */
 public class PatientLabelEntryForm extends BgcEntryForm {
 
-    public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.forms.SpecimanLabelEntryForm";
+    public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.forms.SpecimanLabelEntryForm"; //$NON-NLS-1$
+
+    public static final BgcLogger logger = BgcLogger
+        .getLogger(PatientLabelEntryForm.class.getName());
 
     private Button logoButton = null;
 
@@ -114,7 +120,7 @@ public class PatientLabelEntryForm extends BgcEntryForm {
 
     @Override
     protected void init() throws Exception {
-        setPartName("Patient Labels");
+        setPartName(Messages.PatientLabelEntryForm_main_title);
     }
 
     @Override
@@ -138,18 +144,18 @@ public class PatientLabelEntryForm extends BgcEntryForm {
     }
 
     private void clearFieldsConfirm() {
-        if (BgcPlugin
-            .openConfirm("Reset Form Information",
-                "Do you want to clear any information that you have entered into this form?")) {
+        if (BgcPlugin.openConfirm(
+            Messages.PatientLabelEntryForm_reset_confirm_title,
+            Messages.PatientLabelEntryForm_reset_confirm_msg)) {
             clearFields();
         }
     }
 
     private void clearFields() {
-        patientNumText.setText("");
-        value1Text.setText("");
-        value2Text.setText("");
-        value3Text.setText("");
+        patientNumText.setText(""); //$NON-NLS-1$
+        value1Text.setText(""); //$NON-NLS-1$
+        value2Text.setText(""); //$NON-NLS-1$
+        value3Text.setText(""); //$NON-NLS-1$
     }
 
     @Override
@@ -170,8 +176,10 @@ public class PatientLabelEntryForm extends BgcEntryForm {
                     .run(true, true, printOperation);
             } catch (InvocationTargetException e1) {
                 printOperation.saveFailed();
-                printOperation.setError("Error", "InvocationTargetException: "
-                    + e1.getCause().getMessage());
+                printOperation.setError(
+                    Messages.PatientLabelEntryForm_print_error_title,
+                    "InvocationTargetException: "//$NON-NLS-1$
+                        + e1.getCause().getMessage());
             }
 
             if (printOperation.isSuccessful()) {
@@ -187,11 +195,18 @@ public class PatientLabelEntryForm extends BgcEntryForm {
             }
 
         } catch (BiobankServerException e) {
-            BgcPlugin.openAsyncError("Specimen ID Error", e.getMessage());
+            BgcPlugin.openAsyncError(
+                Messages.PatientLabelEntryForm_specimenid_error_msg,
+                e.getMessage());
         } catch (ApplicationException e) {
-            BgcPlugin.openAsyncError("Server Error", e.getMessage());
+            BgcPlugin
+                .openAsyncError(
+                    Messages.PatientLabelEntryForm_server_error_msg,
+                    e.getMessage());
         } catch (CBSRGuiVerificationException e1) {
-            BgcPlugin.openAsyncError("Gui Validation", e1.getMessage());
+            BgcPlugin.openAsyncError(
+                Messages.PatientLabelEntryForm_validation_error_msg,
+                e1.getMessage());
         } catch (InterruptedException e2) {
             // do nothing
         }
@@ -201,16 +216,16 @@ public class PatientLabelEntryForm extends BgcEntryForm {
     @Override
     protected void addToolbarButtons() {
         formActions = new BgcEntryFormActions(this);
-        formActions.addResetAction(Actions.GUI_COMMON_RESET);
-        formActions.addPrintAction();
+        addResetAction();
+        addPrintAction();
         form.updateToolBar();
     }
 
     @Override
     protected void createFormContent() throws Exception {
         super.createFormContent();
-        form.setText("Patient Labels");
-        form.setMessage("Print source specimen labels for a patient",
+        form.setText(Messages.PatientLabelEntryForm_form_title);
+        form.setMessage(Messages.PatientLabelEntryForm_form_description,
             IMessageProvider.NONE);
         page.setLayout(new GridLayout(1, false));
 
@@ -304,8 +319,8 @@ public class PatientLabelEntryForm extends BgcEntryForm {
 
             }
         } catch (ApplicationException e) {
-            BgcPlugin.openAsyncError("Database Error",
-                "Error while updating form", e);
+            BgcPlugin.openAsyncError("Database Error", //$NON-NLS-1$
+                "Error while updating form", e); //$NON-NLS-1$
         }
     }
 
@@ -344,8 +359,8 @@ public class PatientLabelEntryForm extends BgcEntryForm {
                 .getPreferenceStore();
 
         if (perferenceStore == null) {
-            System.err.println("WARNING: preference store was NULL!");
-            perferenceStore = new PreferenceStore("barcodegen.properties");
+            logger.error("WARNING: preference store was NULL!"); //$NON-NLS-1$
+            perferenceStore = new PreferenceStore("barcodegen.properties"); //$NON-NLS-1$
             PreferenceInitializer.setDefaults(perferenceStore);
         }
     }
@@ -364,7 +379,8 @@ public class PatientLabelEntryForm extends BgcEntryForm {
         Composite composite3 = toolkit.createComposite(group3, SWT.NONE);
         composite3.setLayout(gridLayout);
         composite3.setLayoutData(gridData);
-        new Label(composite3, SWT.NONE).setText("Title:");
+        new Label(composite3, SWT.NONE)
+            .setText(Messages.PatientLabelEntryForm_title_label);
 
         projectTitleText = new BgcBaseText(composite3, SWT.BORDER);
         projectTitleText.setLayoutData(gridData);
@@ -373,21 +389,22 @@ public class PatientLabelEntryForm extends BgcEntryForm {
             .getString(PreferenceConstants.PROJECT_TITLE));
 
         new Label(composite3, SWT.NONE);
-        new Label(composite3, SWT.NONE).setText("Logo:");
+        new Label(composite3, SWT.NONE)
+            .setText(Messages.PatientLabelEntryForm_logo_label);
         logoText = new BgcBaseText(composite3, SWT.BORDER);
         logoText.setEditable(false);
         logoText.setLayoutData(gridData1);
         logoText.setText(perferenceStore
             .getString(PreferenceConstants.LOGO_FILE_LOCATION));
         logoButton = new Button(composite3, SWT.NONE);
-        logoButton.setText("Browse...");
+        logoButton.setText(Messages.PatientLabelEntryForm_browse);
         logoButton.addSelectionListener(new SelectionListener() {
             @Override
             public void widgetSelected(SelectionEvent event) {
 
                 FileDialog fd = new FileDialog(shell, SWT.OPEN);
-                fd.setText("Select Logo");
-                String[] filterExt = { "*.png" };
+                fd.setText(Messages.PatientLabelEntryForm_select_logo_msg);
+                String[] filterExt = { "*.png" }; //$NON-NLS-1$
                 fd.setFilterExtensions(filterExt);
                 String selected = fd.open();
                 if (selected != null) {
@@ -407,7 +424,8 @@ public class PatientLabelEntryForm extends BgcEntryForm {
         gridData21.verticalAlignment = GridData.CENTER;
         gridData21.horizontalAlignment = GridData.FILL;
 
-        new Label(composite3, SWT.NONE).setText("Template:");
+        new Label(composite3, SWT.NONE)
+            .setText(Messages.PatientLabelEntryForm_template_label);
         templateCombo = new Combo(composite3, SWT.DROP_DOWN | SWT.BORDER
             | SWT.READ_ONLY);
         templateCombo.setLayoutData(gridData21);
@@ -427,10 +445,11 @@ public class PatientLabelEntryForm extends BgcEntryForm {
 
         new Label(composite3, SWT.NONE);
         printerText = this.createReadOnlyLabelledField(composite3, SWT.NONE,
-            "Intended Printer");
+            Messages.PatientLabelEntryForm_intended_printer_label);
 
         new Label(composite3, SWT.NONE);
-        new Label(composite3, SWT.NONE).setText("Printer:");
+        new Label(composite3, SWT.NONE)
+            .setText(Messages.PatientLabelEntryForm_printer_label);
 
         printerCombo = new Combo(composite3, SWT.DROP_DOWN | SWT.BORDER
             | SWT.READ_ONLY);
@@ -476,8 +495,11 @@ public class PatientLabelEntryForm extends BgcEntryForm {
                 }
 
             } catch (Exception ee) {
-                BgcPlugin.openAsyncError("Verification Issue",
-                    "Could not load template: " + ee.getMessage());
+                BgcPlugin.openAsyncError(
+                    Messages.PatientLabelEntryForm_verification_error_title,
+                    NLS.bind(
+                        Messages.PatientLabelEntryForm_verification_error_msg,
+                        ee.getMessage()));
             }
 
             if (loadedTemplate != null)
@@ -494,7 +516,8 @@ public class PatientLabelEntryForm extends BgcEntryForm {
         gridData.grabExcessVerticalSpace = false;
         gridData.verticalAlignment = GridData.FILL;
 
-        Composite group1 = createSectionWithClient("Patient Information", page);
+        Composite group1 = createSectionWithClient(
+            Messages.PatientLabelEntryForm_patient_info_title, page);
         group1.setLayoutData(gridData);
         group1.setLayout(new GridLayout());
         createComposite6(group1);
@@ -509,14 +532,21 @@ public class PatientLabelEntryForm extends BgcEntryForm {
         composite5.setLayout(gridLayout2);
         composite5.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
             true, false));
-        new Label(composite5, SWT.NONE).setText("Fields");
-        new Label(composite5, SWT.NONE).setText("Enable");
-        new Label(composite5, SWT.NONE).setText("Field Name");
-        new Label(composite5, SWT.NONE).setText("Enable");
-        new Label(composite5, SWT.NONE).setText("Field Value");
-        new Label(composite5, SWT.NONE).setText("Print Barcode");
+        new Label(composite5, SWT.NONE)
+            .setText(Messages.PatientLabelEntryForm_fields_label);
+        new Label(composite5, SWT.NONE)
+            .setText(Messages.PatientLabelEntryForm_enable_label);
+        new Label(composite5, SWT.NONE)
+            .setText(Messages.PatientLabelEntryForm_field_name_label);
+        new Label(composite5, SWT.NONE)
+            .setText(Messages.PatientLabelEntryForm_enable_label);
+        new Label(composite5, SWT.NONE)
+            .setText(Messages.PatientLabelEntryForm_field_value_label);
+        new Label(composite5, SWT.NONE)
+            .setText(Messages.PatientLabelEntryForm_print_barcode_label);
 
-        new Label(composite5, SWT.NONE).setText("Custom Field 1:");
+        new Label(composite5, SWT.NONE)
+            .setText(Messages.PatientLabelEntryForm_custom_field_1_label);
         label1Checkbox = new Button(composite5, SWT.CHECK);
         label1Checkbox.setSelection(perferenceStore
             .getBoolean(PreferenceConstants.LABEL_CHECKBOX_1));
@@ -558,7 +588,7 @@ public class PatientLabelEntryForm extends BgcEntryForm {
                     printBarcode1Checkbox.setSelection(true);
                     printBarcode1Checkbox.setEnabled(true);
                 } else {
-                    value1Text.setText("");
+                    value1Text.setText(""); //$NON-NLS-1$
                     value1Text.setEnabled(false);
                     printBarcode1Checkbox.setSelection(false);
                     printBarcode1Checkbox.setEnabled(false);
@@ -583,7 +613,8 @@ public class PatientLabelEntryForm extends BgcEntryForm {
         printBarcode1Checkbox.setSelection(perferenceStore
             .getBoolean(PreferenceConstants.BARCODE_CHECKBOX_1));
 
-        new Label(composite5, SWT.NONE).setText("Custom Field 2:");
+        new Label(composite5, SWT.NONE)
+            .setText(Messages.PatientLabelEntryForm_custom_field_2_label);
         label2Checkbox = new Button(composite5, SWT.CHECK);
         label2Checkbox.setSelection(perferenceStore
             .getBoolean(PreferenceConstants.LABEL_CHECKBOX_2));
@@ -624,7 +655,7 @@ public class PatientLabelEntryForm extends BgcEntryForm {
                     printBarcode2Checkbox.setSelection(true);
                     printBarcode2Checkbox.setEnabled(true);
                 } else {
-                    value2Text.setText("");
+                    value2Text.setText(""); //$NON-NLS-1$
                     value2Text.setEnabled(false);
                     printBarcode2Checkbox.setSelection(false);
                     printBarcode2Checkbox.setEnabled(false);
@@ -646,7 +677,8 @@ public class PatientLabelEntryForm extends BgcEntryForm {
         printBarcode2Checkbox.setSelection(perferenceStore
             .getBoolean(PreferenceConstants.BARCODE_CHECKBOX_2));
 
-        new Label(composite5, SWT.NONE).setText("Custom Field 3:");
+        new Label(composite5, SWT.NONE)
+            .setText(Messages.PatientLabelEntryForm_custom_field_3_label);
         label3Checkbox = new Button(composite5, SWT.CHECK);
         label3Checkbox.setSelection(perferenceStore
             .getBoolean(PreferenceConstants.LABEL_CHECKBOX_3));
@@ -687,7 +719,7 @@ public class PatientLabelEntryForm extends BgcEntryForm {
                     printBarcode3Checkbox.setSelection(true);
                     printBarcode3Checkbox.setEnabled(true);
                 } else {
-                    value3Text.setText("");
+                    value3Text.setText(""); //$NON-NLS-1$
                     value3Text.setEnabled(false);
                     printBarcode3Checkbox.setSelection(false);
                     printBarcode3Checkbox.setEnabled(false);
@@ -723,7 +755,8 @@ public class PatientLabelEntryForm extends BgcEntryForm {
         gridLayout3.numColumns = 5;
         Composite composite6 = toolkit.createComposite(group1, SWT.NONE);
         composite6.setLayout(gridLayout3);
-        new Label(composite6, SWT.NONE).setText("Patient Number:");
+        new Label(composite6, SWT.NONE)
+            .setText(Messages.PatientLabelEntryForm_pnumber_label);
         patientNumText = new BgcBaseText(composite6, SWT.BORDER);
         patientNumText.setLayoutData(gridData4);
         patientNumText.setTextLimit(14);
@@ -742,13 +775,14 @@ public class PatientLabelEntryForm extends BgcEntryForm {
         GridLayout gridLayout5 = new GridLayout();
         gridLayout5.numColumns = 4;
 
-        Composite group2 = createSectionWithClient("Additonal Configuration",
-            page);
+        Composite group2 = createSectionWithClient(
+            Messages.PatientLabelEntryForm_more_config_title, page);
         group2.setLayout(gridLayout5);
         group2.setLayoutData(gridData);
 
         specimenTypeCheckbox = new Button(group2, SWT.CHECK | SWT.LEFT);
-        specimenTypeCheckbox.setText("Enable");
+        specimenTypeCheckbox
+            .setText(Messages.PatientLabelEntryForm_enable_label);
         specimenTypeCheckbox.setSelection(perferenceStore
             .getBoolean(PreferenceConstants.SPECIMEN_TYPE_CHECKBOX));
         specimenTypeCheckbox.addSelectionListener(new SelectionListener() {
@@ -765,7 +799,8 @@ public class PatientLabelEntryForm extends BgcEntryForm {
             }
         });
 
-        new Label(group2, SWT.NONE).setText("Specimen Type (on labels):");
+        new Label(group2, SWT.NONE)
+            .setText(Messages.PatientLabelEntryForm_spec_type_label);
 
         specimenTypeText = new BgcBaseText(group2, SWT.BORDER | SWT.V_SCROLL
             | SWT.SINGLE);
@@ -773,7 +808,7 @@ public class PatientLabelEntryForm extends BgcEntryForm {
             .getString(PreferenceConstants.SPECIMEN_TYPE_TEXT));
         specimenTypeText.setTextLimit(25);
         specimenTypeText.setLayoutData(gridData2);
-        new Label(group2, SWT.LEFT | SWT.HORIZONTAL).setText("");
+        new Label(group2, SWT.LEFT | SWT.HORIZONTAL).setText(""); //$NON-NLS-1$
         new Label(group2, SWT.NONE);
 
     }
@@ -791,7 +826,8 @@ public class PatientLabelEntryForm extends BgcEntryForm {
         gridLayout3.numColumns = 1;
         gridLayout3.makeColumnsEqualWidth = true;
 
-        Composite group3 = createSectionWithClient("Branding", page);
+        Composite group3 = createSectionWithClient(
+            Messages.PatientLabelEntryForm_branding_label, page);
         group3.setLayoutData(gridData);
         group3.setLayout(gridLayout3);
 
@@ -813,10 +849,11 @@ public class PatientLabelEntryForm extends BgcEntryForm {
         gridData7.grabExcessHorizontalSpace = true;
         gridData7.horizontalAlignment = GridData.FILL;
 
-        Composite group4 = createSectionWithClient("Actions", page);
+        Composite group4 = createSectionWithClient(
+            Messages.PatientLabelEntryForm_actions_label, page);
 
         savePdfButton = new Button(group4, SWT.NONE);
-        savePdfButton.setText("Export to PDF");
+        savePdfButton.setText(Messages.PatientLabelEntryForm_export_pdf_label);
         savePdfButton.addSelectionListener(savePdfListener);
         savePdfButton.setLayoutData(gridData7);
 
@@ -891,8 +928,9 @@ public class PatientLabelEntryForm extends BgcEntryForm {
             projectTileStr = projectTitleText.getText();
 
             if ((projectTileStr == null) || (projectTileStr.length() == 0)) {
-                throw new CBSRGuiVerificationException("Incorrect Title",
-                    "A valid title is required.");
+                throw new CBSRGuiVerificationException(
+                    Messages.PatientLabelEntryForm_title_error_title,
+                    Messages.PatientLabelEntryForm_title_error_msg);
             }
 
             ByteArrayInputStream bis = null;
@@ -902,7 +940,7 @@ public class PatientLabelEntryForm extends BgcEntryForm {
                 logoImage = ImageIO.read(new File(logoText.getText()));
                 ByteArrayOutputStream binaryOutputStream = new ByteArrayOutputStream();
                 if (logoImage != null) {
-                    ImageIO.write(logoImage, "PNG", binaryOutputStream);
+                    ImageIO.write(logoImage, "PNG", binaryOutputStream); //$NON-NLS-1$
                     bis = new ByteArrayInputStream(
                         binaryOutputStream.toByteArray());
                 } else {
@@ -918,12 +956,13 @@ public class PatientLabelEntryForm extends BgcEntryForm {
                 .getDefaultString(PreferenceConstants.TEXT_FONT_NAME);
 
             if (fontName == null)
-                fontName = "";
+                fontName = ""; //$NON-NLS-1$
 
             patientNumberStr = patientNumText.getText();
             if ((patientNumberStr == null) || (patientNumberStr.length() == 0)) {
-                throw new CBSRGuiVerificationException("Entry Error",
-                    "Please enter a valid patient number.");
+                throw new CBSRGuiVerificationException(
+                    Messages.PatientLabelEntryForm_entry_error_title,
+                    Messages.PatientLabelEntryForm_patient_error_msg);
 
             }
             // ------------ patient info start-----------------
@@ -933,8 +972,8 @@ public class PatientLabelEntryForm extends BgcEntryForm {
 
                 if ((label1Str == null) || (label1Str.length() == 0)) {
                     throw new CBSRGuiVerificationException(
-                        "Entry Error",
-                        "Custom field 1 contains an empty name. Please disable the name field or enter some text.");
+                        Messages.PatientLabelEntryForm_entry_error_title,
+                        Messages.PatientLabelEntryForm_field1_name_error_msg);
                 }
 
             }
@@ -946,8 +985,8 @@ public class PatientLabelEntryForm extends BgcEntryForm {
 
                 if ((value1Str == null) || (value1Str.length() == 0)) {
                     throw new CBSRGuiVerificationException(
-                        "Entry Error",
-                        "Custom field 1 contains an empty value. Please disable the value field or enter some text.");
+                        Messages.PatientLabelEntryForm_entry_error_title,
+                        Messages.PatientLabelEntryForm_field1_value_error_msg);
                 }
             }
 
@@ -957,8 +996,8 @@ public class PatientLabelEntryForm extends BgcEntryForm {
 
                 if ((label2Str == null) || (label2Str.length() == 0)) {
                     throw new CBSRGuiVerificationException(
-                        "Entry Error",
-                        "Custom field 2 contains an empty name. Please disable the name field or enter some text.");
+                        Messages.PatientLabelEntryForm_entry_error_title,
+                        Messages.PatientLabelEntryForm_field2_name_error_msg);
                 }
             }
 
@@ -970,8 +1009,8 @@ public class PatientLabelEntryForm extends BgcEntryForm {
 
                 if ((value2Str == null) || (value2Str.length() == 0)) {
                     throw new CBSRGuiVerificationException(
-                        "Entry Error",
-                        "Custom field 2 contains an empty value. Please disable the value field or enter some text.");
+                        Messages.PatientLabelEntryForm_entry_error_title,
+                        Messages.PatientLabelEntryForm_field2_value_error_msg);
                 }
 
             }
@@ -982,8 +1021,8 @@ public class PatientLabelEntryForm extends BgcEntryForm {
 
                 if ((label3Str == null) || (label3Str.length() == 0)) {
                     throw new CBSRGuiVerificationException(
-                        "Entry Error",
-                        "Custom field 3 contains an empty name. Please disable the name field or enter some text.");
+                        Messages.PatientLabelEntryForm_entry_error_title,
+                        Messages.PatientLabelEntryForm_field3_name_error_msg);
                 }
             }
             value3Str = null;
@@ -994,8 +1033,8 @@ public class PatientLabelEntryForm extends BgcEntryForm {
 
                 if ((value3Str == null) || (value3Str.length() == 0)) {
                     throw new CBSRGuiVerificationException(
-                        "Entry Error",
-                        "Custom field 3 contains an empty value. Please disable the value field or enter some text.");
+                        Messages.PatientLabelEntryForm_entry_error_title,
+                        Messages.PatientLabelEntryForm_field3_value_error_msg);
                 }
 
             }
@@ -1017,13 +1056,15 @@ public class PatientLabelEntryForm extends BgcEntryForm {
             template = loadedTemplate;
 
             if (template == null) {
-                throw new CBSRGuiVerificationException("Verification Issue",
-                    "Could not load template.. Selected template is null.");
+                throw new CBSRGuiVerificationException(
+                    Messages.PatientLabelEntryForm_verif_error_title,
+                    Messages.PatientLabelEntryForm_load_template_error_msg);
             }
 
             if (!(template).jasperTemplateExists()) {
-                throw new CBSRGuiVerificationException("Verification Issue",
-                    "Template is lacking a jasper file.");
+                throw new CBSRGuiVerificationException(
+                    Messages.PatientLabelEntryForm_verif_error_title,
+                    Messages.PatientLabelEntryForm_nojasper_file_error_msg);
             }
         }
     };
@@ -1041,7 +1082,7 @@ public class PatientLabelEntryForm extends BgcEntryForm {
                 fileDialog.setFilterPath(perferenceStore
                     .getString(PreferenceConstants.PDF_DIRECTORY_PATH));
                 fileDialog.setOverwrite(true);
-                fileDialog.setFileName("default.pdf");
+                fileDialog.setFileName("default.pdf"); //$NON-NLS-1$
                 String pdfFilePath = fileDialog.open();
 
                 if (pdfFilePath == null)
@@ -1059,12 +1100,14 @@ public class PatientLabelEntryForm extends BgcEntryForm {
 
                 } catch (InvocationTargetException e1) {
                     saveOperation.saveFailed();
-                    saveOperation.setError("Error",
-                        "InvocationTargetException: "
+                    saveOperation.setError(
+                        Messages.PatientLabelEntryForm_saveop_error_title,
+                        "InvocationTargetException: " //$NON-NLS-1$
                             + e1.getCause().getMessage());
 
                 } catch (InterruptedException e2) {
-                    BgcPlugin.openAsyncError("Save error", e2);
+                    BgcPlugin.openAsyncError(
+                        Messages.PatientLabelEntryForm_save_error_title, e2);
                 }
 
                 if (saveOperation.isSuccessful()) {
@@ -1088,9 +1131,13 @@ public class PatientLabelEntryForm extends BgcEntryForm {
                 BgcPlugin.openAsyncError(e1.title, e1.messsage);
                 return;
             } catch (BiobankServerException e2) {
-                BgcPlugin.openAsyncError("Specimen ID Error", e2.getMessage());
+                BgcPlugin.openAsyncError(
+                    Messages.PatientLabelEntryForm_specId_error_title,
+                    e2.getMessage());
             } catch (ApplicationException e3) {
-                BgcPlugin.openAsyncError("Server Error", e3.getMessage());
+                BgcPlugin.openAsyncError(
+                    Messages.PatientLabelEntryForm_server_error_title,
+                    e3.getMessage());
             }
         }
 

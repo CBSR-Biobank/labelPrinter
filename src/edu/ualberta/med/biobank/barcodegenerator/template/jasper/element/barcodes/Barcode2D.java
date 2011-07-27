@@ -21,13 +21,13 @@ public class Barcode2D extends Element {
         throws ElementCreationException {
 
         if ((message == null) || (message.length() == 0)
-            || (message.replaceAll("[^a-zA-Z0-9]", "").length() != 12))
+            || (message.replaceAll("[^a-zA-Z0-9]", "").length() != 12)) //$NON-NLS-1$ //$NON-NLS-2$
             throw new ElementCreationException(
-                "only a 12 character alphanumeric message is allowed for the 2D barcode element.");
+                Messages.Barcode2D_characters_error);
 
         if (rect == null)
             throw new ElementCreationException(
-                "null dimensions specified to 2D barcode element.");
+                Messages.Barcode2D_null_dim_error);
 
         this.rect = rect;
         this.type = Element.TYPE.DataMatrix;
@@ -42,7 +42,7 @@ public class Barcode2D extends Element {
             barcode2DImg = BarcodeGenerator.generate2DBarcode(message, 300);
         } catch (IOException e) {
             throw new BarcodeCreationException(
-                "Failed to create image buffer for barcode");
+                Messages.Barcode2D_img_buffer_error);
         }
         g.drawImage(barcode2DImg, mmToPixel(rect.getX(), scale),
             mmToPixel(rect.getY(), scale), mmToPixel(rect.getWidth(), scale),

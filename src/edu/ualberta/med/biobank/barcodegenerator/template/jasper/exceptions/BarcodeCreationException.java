@@ -8,7 +8,7 @@ public class BarcodeCreationException extends Exception {
 
 	public BarcodeCreationException() {
 		super();
-		mistake = "not available";
+		mistake = Messages.BarcodeCreationException_mistake_text_notavailable;
 	}
 
 	public BarcodeCreationException(String error) {

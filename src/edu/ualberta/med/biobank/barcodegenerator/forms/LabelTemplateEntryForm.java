@@ -7,6 +7,7 @@ import javax.xml.bind.JAXBException;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -36,7 +37,6 @@ import edu.ualberta.med.biobank.barcodegenerator.trees.TreeException;
 import edu.ualberta.med.biobank.common.wrappers.JasperTemplateWrapper;
 import edu.ualberta.med.biobank.gui.common.BgcPlugin;
 import edu.ualberta.med.biobank.gui.common.BgcSessionState;
-import edu.ualberta.med.biobank.gui.common.forms.Actions;
 import edu.ualberta.med.biobank.gui.common.forms.BgcEntryForm;
 import edu.ualberta.med.biobank.gui.common.forms.BgcEntryFormActions;
 import edu.ualberta.med.biobank.gui.common.widgets.BgcBaseText;
@@ -54,7 +54,11 @@ import gov.nih.nci.system.applicationservice.ApplicationException;
 public class LabelTemplateEntryForm extends BgcEntryForm implements
     SelectionListener {
 
-    public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.forms.TemplateEntryForm";
+    private static final String CBSR_CONFIG_NAME = "CBSR"; //$NON-NLS-1$
+
+    private static final String PRINTER_DEFAULT_NAME = "default"; //$NON-NLS-1$
+
+    public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.forms.TemplateEntryForm"; //$NON-NLS-1$
 
     private Button deleteButton = null;
     private Button copyButton = null;
@@ -78,7 +82,7 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
 
     @Override
     protected void init() throws Exception {
-        setPartName("Label Templates");
+        setPartName(Messages.LabelTemplateEntryForm_title);
     }
 
     @Override
@@ -89,14 +93,14 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
     @Override
     protected void addToolbarButtons() {
         formActions = new BgcEntryFormActions(this);
-        formActions.addConfirmAction(Actions.GUI_COMMON_CONFIRM);
+        addConfirmAction();
         form.updateToolBar();
     }
 
     @Override
     protected void createFormContent() throws Exception {
         super.createFormContent();
-        form.setText("Label Templates");
+        form.setText(Messages.LabelTemplateEntryForm_title);
         form.setMessage(getOkMessage(), IMessageProvider.NONE);
         page.setLayout(new GridLayout(1, false));
 
@@ -147,7 +151,7 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
     }
 
     protected String getOkMessage() {
-        return "Used to create a new template for a printer label";
+        return Messages.LabelTemplateEntryForm_okmsg;
     }
 
     @Override
@@ -166,8 +170,8 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
         masterComp.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
             true, true));
 
-        Composite client = createSectionWithClient("Label Templates",
-            masterComp);
+        Composite client = createSectionWithClient(
+            Messages.LabelTemplateEntryForm_templates_title, masterComp);
         client.setLayout(new GridLayout());
         client.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true,
             true));
@@ -183,17 +187,20 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
         composite4.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
             true, true));
 
-        newButton = toolkit.createButton(composite4, "New", SWT.PUSH);
+        newButton = toolkit.createButton(composite4,
+            Messages.LabelTemplateEntryForm_new_btn, SWT.PUSH);
         newButton.addSelectionListener(this);
         newButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
             true, true));
 
-        copyButton = toolkit.createButton(composite4, "Copy", SWT.PUSH);
+        copyButton = toolkit.createButton(composite4,
+            Messages.LabelTemplateEntryForm_copy_btn, SWT.PUSH);
         copyButton.addSelectionListener(this);
         copyButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
             true, true));
 
-        deleteButton = toolkit.createButton(composite4, "Delete", SWT.PUSH);
+        deleteButton = toolkit.createButton(composite4,
+            Messages.LabelTemplateEntryForm_delete_btn, SWT.PUSH);
         deleteButton.addSelectionListener(this);
         deleteButton.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
             true, true));
@@ -207,28 +214,31 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
         detailsComp.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
             true, true));
 
-        Composite client = createSectionWithClient("Templates Details",
-            detailsComp);
+        Composite client = createSectionWithClient(
+            Messages.LabelTemplateEntryForm_details_label, detailsComp);
         client.setLayout(new GridLayout(2, false));
         client.setLayoutData(new GridData(GridData.FILL,
             GridData.VERTICAL_ALIGN_BEGINNING, true, true));
 
         templateNameText = (BgcBaseText) createLabelledWidget(client,
-            BgcBaseText.class, SWT.NONE, "Template Name");
+            BgcBaseText.class, SWT.NONE,
+            Messages.LabelTemplateEntryForm_template_name_label);
         templateNameText.setLayoutData(new GridData(GridData.FILL,
             GridData.FILL, true, true));
         templateNameText.setEditable(false);
         templateNameText.setEnabled(true);
 
         jasperConfigText = (BgcBaseText) createLabelledWidget(client,
-            BgcBaseText.class, SWT.NONE, "Jasper Configuration");
+            BgcBaseText.class, SWT.NONE,
+            Messages.LabelTemplateEntryForm_jasper_config_label);
         jasperConfigText.setLayoutData(new GridData(GridData.FILL,
             GridData.FILL, true, true));
         jasperConfigText.setEditable(false);
         jasperConfigText.setEnabled(true);
 
         printerNameText = (BgcBaseText) createLabelledWidget(client,
-            BgcBaseText.class, SWT.NONE, "Intended Printer");
+            BgcBaseText.class, SWT.NONE,
+            Messages.LabelTemplateEntryForm_intended_printer_label);
         printerNameText.setEditable(true);
         printerNameText.setLayoutData(new GridData(GridData.FILL,
             GridData.FILL, true, true));
@@ -239,7 +249,8 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
             }
         });
 
-        Label l = toolkit.createLabel(client, "Configuration:");
+        Label l = toolkit.createLabel(client,
+            Messages.LabelTemplateEntryForm_config_label);
         GridData gd = new GridData(GridData.FILL, GridData.FILL, true, true);
         gd.horizontalSpan = 2;
         l.setLayoutData(gd);
@@ -288,8 +299,9 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
 
             }
         } catch (ApplicationException e) {
-            BgcPlugin.openAsyncError("Database Error",
-                "Error while updating form", e);
+            BgcPlugin.openAsyncError(
+                Messages.LabelTemplateEntryForm_db_error_title,
+                Messages.LabelTemplateEntryForm_update_error_msg, e);
         }
     }
 
@@ -309,8 +321,11 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                     try {
                         save(false);
                     } catch (Exception e1) {
-                        BgcPlugin.openAsyncError("Template Saving",
-                            "Failed to save template: " + e1.getMessage());
+                        BgcPlugin.openAsyncError(
+                            Messages.LabelTemplateEntryForm_saving_title,
+                            NLS.bind(
+                                Messages.LabelTemplateEntryForm_save_error_msg,
+                                e1.getMessage()));
                         return;
                     }
 
@@ -320,16 +335,19 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                             selectedTemplate = templateStore
                                 .getTemplate(selectedItems[0]);
                         } catch (Exception e1) {
-                            BgcPlugin.openAsyncError("Template Selection",
-                                "Failed to load the selected template");
+                            BgcPlugin
+                                .openAsyncError(
+                                    Messages.LabelTemplateEntryForm_template_error_title,
+                                    Messages.LabelTemplateEntryForm_template_load_error_msg);
                             return;
                         }
 
                         if (!selectedTemplate.getName()
                             .equals(selectedItems[0])) {
                             BgcPlugin
-                                .openAsyncError("Template Name Error",
-                                    "Severe Error: Internal template names do not match.");
+                                .openAsyncError(
+                                    Messages.LabelTemplateEntryForm_name_error_title,
+                                    Messages.LabelTemplateEntryForm_name_error_msg);
                             return;
                         }
 
@@ -338,10 +356,11 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                             jasperConfigText.setText(selectedTemplate
                                 .getJasperTemplateName());
                         } catch (Exception e1) {
-                            jasperConfigText.setText("");
+                            jasperConfigText.setText(""); //$NON-NLS-1$
                             BgcPlugin
-                                .openAsyncError("Template Selection",
-                                    "Failed to find the jasper configuration name.");
+                                .openAsyncError(
+                                    Messages.LabelTemplateEntryForm_template_error_title,
+                                    Messages.LabelTemplateEntryForm_jasper_config_error_msg);
                             try {
                                 selectedTemplate.delete();
                             } catch (Exception e2) {
@@ -354,14 +373,14 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                             configTree.populateTree(selectedTemplate
                                 .getConfiguration());
                         } catch (Exception ee) {
-                            jasperConfigText.setText("");
+                            jasperConfigText.setText(""); //$NON-NLS-1$
 
                             try {
                                 configTree.populateTree(null);
                             } catch (TreeException e1) {
                                 BgcPlugin
                                     .openAsyncError(
-                                        "Error: Could not set Template Configuration Tree",
+                                        Messages.LabelTemplateEntryForm_template_tree_error_title,
                                         ee.getMessage());
                                 return;
                             }
@@ -376,16 +395,17 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
 
                     } else {
                         prevTemplateName = null;
-                        templateNameText.setText("Please select a template");
-                        printerNameText.setText("");
+                        templateNameText
+                            .setText(Messages.LabelTemplateEntryForm_select_template_msg);
+                        printerNameText.setText(""); //$NON-NLS-1$
                         printerNameText.setEnabled(false);
-                        jasperConfigText.setText("");
+                        jasperConfigText.setText(""); //$NON-NLS-1$
                         try {
                             configTree.populateTree(null);
                         } catch (TreeException e1) {
                             BgcPlugin
                                 .openAsyncError(
-                                    "Error: Could not clear the Template Configuration Tree",
+                                    Messages.LabelTemplateEntryForm_template_tree_clear_error_title,
                                     e1.getError());
                         }
                     }
@@ -404,8 +424,9 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
     @Override
     public void confirm() {
         if (save(true)) {
-            BgcPlugin.openInformation("Template Saved",
-                "Template has been sucessfully saved.");
+            BgcPlugin.openInformation(
+                Messages.LabelTemplateEntryForm_saved_title,
+                Messages.LabelTemplateEntryForm_saved_msg);
         }
     }
 
@@ -414,8 +435,8 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
             try {
                 configTree.resetEditor();
             } catch (TreeException e1) {
-                BgcPlugin.openAsyncError("Tree Editor",
-                    "Failed to reset tree editor");
+                BgcPlugin.openAsyncError("Tree Editor", //$NON-NLS-1$
+                    "Failed to reset tree editor"); //$NON-NLS-1$
             }
 
             if (prevTemplateName != null) {
@@ -427,15 +448,16 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                     if (isConfirmButton
                         || BgcPlugin
                             .openConfirm(
-                                "Template Saving",
-                                "Template "
-                                    + selectedTemplate.getName()
-                                    + " has been modified, do you want to save your changes?")) {
+                                Messages.LabelTemplateEntryForm_saving_confirm_title,
+                                NLS.bind(
+                                    Messages.LabelTemplateEntryForm_saving_confirm_msg,
+                                    selectedTemplate.getName()))) {
 
                         String printerName = printerNameText.getText();
                         if ((printerName == null)
                             || (printerName.length() == 0)) {
-                            selectedTemplate.setPrinterName("default");
+                            selectedTemplate
+                                .setPrinterName(PRINTER_DEFAULT_NAME);
                         } else {
                             if (!printerName.equals(selectedTemplate
                                 .getPrinterName())) {
@@ -459,8 +481,9 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
 
             }
         } catch (Exception e1) {
-            BgcPlugin.openAsyncError("Template Save Error",
-                "Could not save the template to the database", e1);
+            BgcPlugin.openAsyncError(
+                Messages.LabelTemplateEntryForm_save_error_title,
+                Messages.LabelTemplateEntryForm_save_db_error_msg, e1);
         }
         return false;
     }
@@ -474,8 +497,8 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
         } else if (e.getSource() == deleteButton) {
             deleteButtonSelected(e);
         } else {
-            BgcPlugin.openAsyncError("Invalid selection event",
-                "invalid selection source");
+            BgcPlugin.openAsyncError("Invalid selection event", //$NON-NLS-1$
+                "invalid selection source"); //$NON-NLS-1$
         }
     }
 
@@ -494,8 +517,10 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
 
     private void newButtonSelected(SelectionEvent e) {
         try {
-            StringInputDialog dialog = new StringInputDialog("New Template",
-                "Please enter the name for the new template", "Name", shell);
+            StringInputDialog dialog = new StringInputDialog(
+                Messages.LabelTemplateEntryForm_new_label,
+                Messages.LabelTemplateEntryForm_new_description,
+                Messages.LabelTemplateEntryForm_name_label, shell);
             if (dialog.open() == Dialog.OK) {
 
                 String newTemplateName = dialog.getValue();
@@ -504,8 +529,8 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
 
                     // jasper config combo selection
                     ComboInputDialog jasperComboDialog = new ComboInputDialog(
-                        "Jasper Configuration Selection",
-                        "Please select a Jasper Configuration that you would like to base this template on.",
+                        Messages.LabelTemplateEntryForm_jasper_config_selection,
+                        Messages.LabelTemplateEntryForm_jasper_config_selection_msg,
                         JasperTemplateWrapper.getTemplateNames(SessionManager
                             .getAppService()), null, shell);
                     jasperComboDialog.open();
@@ -518,12 +543,12 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                     Template ct = new Template();
 
                     ct.setName(newTemplateName);
-                    ct.setPrinterName("default");
+                    ct.setPrinterName(PRINTER_DEFAULT_NAME);
                     ct.setJasperTemplate(JasperTemplateWrapper
                         .getTemplateByName(SessionManager.getAppService(),
                             selectedJasperConfig));
 
-                    if (selectedJasperConfig.equals("CBSR")) {
+                    if (selectedJasperConfig.equals(CBSR_CONFIG_NAME)) {
                         ct.setConfiguration(CBSRLabelMaker
                             .getDefaultConfiguration());
 
@@ -535,8 +560,9 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                     try {
                         templateStore.addTemplate(ct);
                     } catch (Exception e1) {
-                        BgcPlugin.openAsyncError("Cannot Add Template",
-                            "Failed to add template to the template store.");
+                        BgcPlugin.openAsyncError(
+                            Messages.LabelTemplateEntryForm_add_error_title,
+                            Messages.LabelTemplateEntryForm_add_error_msg);
                         return;
                     }
 
@@ -545,23 +571,27 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                     templateNamesList.redraw();
 
                 } else {
-                    BgcPlugin.openAsyncError("Template Exists",
-                        "Your new template must have a unique name.");
+                    BgcPlugin.openAsyncError(
+                        Messages.LabelTemplateEntryForm_exists_error_title,
+                        Messages.LabelTemplateEntryForm_exists_error_msg);
                     return;
                 }
             }
         } catch (ApplicationException e1) {
-            BgcPlugin.openAsyncError("Template Creation Error",
-                "Application Exception: could not create template", e1);
+            BgcPlugin.openAsyncError(
+                Messages.LabelTemplateEntryForm_creation_error_title,
+                Messages.LabelTemplateEntryForm_creation_error_msg, e1);
         } catch (InvalidOptionsException e1) {
             BgcPlugin
                 .openAsyncError(
-                    "Template Creation Error",
-                    "No Jasper Configurations Exist.\n\nPlease create at least one Jasper Configuration first.",
+                    Messages.LabelTemplateEntryForm_creation_error_title,
+                    Messages.LabelTemplateEntryForm_creation_no_jasper_config_error_msg,
                     e1);
         } catch (JAXBException e1) {
-            BgcPlugin.openAsyncError("Template Creation Error",
-                "Failed to set configuration data.", e1);
+            BgcPlugin.openAsyncError(
+                Messages.LabelTemplateEntryForm_creation_error_title,
+                Messages.LabelTemplateEntryForm_creation_config_data_error_msg,
+                e1);
         }
 
     }
@@ -572,9 +602,10 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                 return;
 
             StringInputDialog dialog = new StringInputDialog(
-                "Cloned Template Name",
-                "What is the name of the cloned template?", "Name", shell);
-            dialog.setValue(prevTemplateName + " copy");
+                Messages.LabelTemplateEntryForm_clone_dialog_title,
+                Messages.LabelTemplateEntryForm_clone_dialog_msg,
+                Messages.LabelTemplateEntryForm_name_label, shell);
+            dialog.setValue(prevTemplateName + " copy"); //$NON-NLS-1$
 
             if (dialog.open() == Dialog.OK) {
 
@@ -598,19 +629,22 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                         templatesNamesSelectLast();
                         templateNamesList.redraw();
                     } else {
-                        BgcPlugin.openAsyncError("Copy Template Error",
-                            "Could not copy template. An error occured.");
+                        BgcPlugin.openAsyncError(
+                            Messages.LabelTemplateEntryForm_copy_error_title,
+                            Messages.LabelTemplateEntryForm_copy_error_msg);
                         return;
                     }
                 } else {
-                    BgcPlugin.openAsyncError("Template Exists",
-                        "Your new template must have a unique name.");
+                    BgcPlugin.openAsyncError(
+                        Messages.LabelTemplateEntryForm_exists_error_title,
+                        Messages.LabelTemplateEntryForm_exists_error_msg);
                     return;
                 }
             }
         } catch (Exception e1) {
-            BgcPlugin.openAsyncError("Template Create Error",
-                "Could not create template", e1);
+            BgcPlugin.openAsyncError(
+                Messages.LabelTemplateEntryForm_create_error_title,
+                Messages.LabelTemplateEntryForm_create_error_msg, e1);
         }
     }
 
@@ -620,9 +654,11 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
             if (prevTemplateName != null) {
                 MessageBox messageBox = new MessageBox(shell, SWT.ICON_QUESTION
                     | SWT.YES | SWT.NO);
-                messageBox.setMessage("Are you sure you want to delete "
-                    + prevTemplateName + "?");
-                messageBox.setText("Deleting Template");
+                messageBox.setMessage(NLS.bind(
+                    Messages.LabelTemplateEntryForm_delete_confirm_msg,
+                    prevTemplateName));
+                messageBox
+                    .setText(Messages.LabelTemplateEntryForm_deleting_title);
 
                 int response = messageBox.open();
                 if (response == SWT.YES) {
@@ -637,13 +673,14 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                         selectedTemplate.delete();
                     }
 
-                    templateNameText.setText("Please select a template");
+                    templateNameText
+                        .setText(Messages.LabelTemplateEntryForm_select_msg);
 
                     prevTemplateName = null;
-                    printerNameText.setText("");
+                    printerNameText.setText(""); //$NON-NLS-1$
                     printerNameText.setEnabled(false);
 
-                    jasperConfigText.setText("");
+                    jasperConfigText.setText(""); //$NON-NLS-1$
 
                     configTree.populateTree(null);
 
@@ -655,8 +692,9 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                 }
             }
         } catch (Exception e1) {
-            BgcPlugin.openAsyncError("Template Delete Error",
-                "Could not delete template", e1);
+            BgcPlugin.openAsyncError(
+                Messages.LabelTemplateEntryForm_delete_error_title,
+                Messages.LabelTemplateEntryForm_delete_error_msg, e1);
         }
     }
 }

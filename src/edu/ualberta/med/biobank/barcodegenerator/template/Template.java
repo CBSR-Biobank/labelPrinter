@@ -16,6 +16,7 @@ import edu.ualberta.med.biobank.barcodegenerator.template.configuration.Configur
 import edu.ualberta.med.biobank.barcodegenerator.template.configuration.Rectangle;
 import edu.ualberta.med.biobank.common.wrappers.JasperTemplateWrapper;
 import edu.ualberta.med.biobank.common.wrappers.PrinterLabelTemplateWrapper;
+import edu.ualberta.med.biobank.gui.common.BgcLogger;
 import gov.nih.nci.system.applicationservice.ApplicationException;
 
 /**
@@ -29,6 +30,9 @@ import gov.nih.nci.system.applicationservice.ApplicationException;
 public class Template implements Serializable {
 
     private static final long serialVersionUID = -4213741888020425604L;
+
+    public static final BgcLogger logger = BgcLogger.getLogger(Template.class
+        .getName());
 
     private PrinterLabelTemplateWrapper plt;
 
@@ -48,7 +52,7 @@ public class Template implements Serializable {
         try {
             clone.setJasperTemplate(this.getJasperTemplate());
         } catch (Exception e1) {
-            System.err.println("Error: Failed to clone jasper template.");
+            logger.error("Error: Failed to clone jasper template.", e1); //$NON-NLS-1$
             return null;
         }
 
@@ -73,7 +77,7 @@ public class Template implements Serializable {
             try {
                 clone.setConfiguration(newConfig);
             } catch (JAXBException e) {
-                System.err.println("Error: Failed to clone configuration.");
+                logger.error("Error: Failed to clone configuration.", e); //$NON-NLS-1$
                 return null;
             }
         }
@@ -115,7 +119,7 @@ public class Template implements Serializable {
     public JasperTemplateWrapper getJasperTemplate() throws Exception {
         JasperTemplateWrapper jasp = plt.getJasperTemplate();
         if (jasp == null) {
-            throw new Exception("jasper template has not been set");
+            throw new Exception(Messages.Template_template_set_error);
         }
         return jasp;
     }
@@ -123,7 +127,7 @@ public class Template implements Serializable {
     public String getJasperTemplateName() throws Exception {
         JasperTemplateWrapper jasp = plt.getJasperTemplate();
         if (jasp == null) {
-            throw new Exception("jasper template has not been set");
+            throw new Exception(Messages.Template_template_set_error);
         }
         return jasp.getName();
     }
