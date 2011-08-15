@@ -33,9 +33,9 @@ public class Configuration {
     // this updates any old key values.
     // call this routine after loading the Configuration object from the
     // database.
-    public void upgradeKeys() {
+    public boolean upgradeKeys() {
 
-        final int NEWEST_VERSION_NUMBER = 1;
+        final int NEWEST_VERSION_NUMBER = 2;
         // CHANGE THIS AND UPDATE ConfigurationTranslator each time you change
         // key names.
 
@@ -54,8 +54,9 @@ public class Configuration {
                 this.settings.put(key, settingsUpgraded.get(key));
 
             this.version = NEWEST_VERSION_NUMBER;
+            return true;
         }
-
+        return false;
     }
 
     public boolean exists() {

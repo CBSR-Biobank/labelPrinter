@@ -152,7 +152,18 @@ public class Template implements Serializable {
                 .getConfigData().getBytes());
             config = (Configuration) u.unmarshal(in);
         }
-        config.upgradeKeys();
+
+        if (config.upgradeKeys()) {
+
+            setConfiguration(config);
+            try {
+                plt.persist();
+            } catch (Exception e) {
+                logger.error(
+                    "Error: Failed to persit key-updated configuration", e); //$NON-NLS-1$
+                return null;
+            }
+        }
 
         return config;
 
@@ -173,8 +184,6 @@ public class Template implements Serializable {
         StringWriter sw = new StringWriter();
         marshaller.marshal(configuration, sw);
         plt.setConfigData(sw.toString());
-
-        configuration.upgradeKeys();
 
         config = configuration;
     }

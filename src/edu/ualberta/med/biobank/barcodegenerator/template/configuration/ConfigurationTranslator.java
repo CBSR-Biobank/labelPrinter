@@ -31,8 +31,21 @@ public class ConfigurationTranslator {
             { "Barcodes.Individual.Barcode %03d.Specimen Text", "Labels.Individual.Barcode %03d.Text" }
         
         };
+        
+        @SuppressWarnings("nls")
+        private static String[][] update2Formatted = new String[][] {
+            
+          { "Labels.Individual.Barcode %03d.Barcode 1D", "Labels.Individual.Label %03d.Barcode 1D" },
+          { "Labels.Individual.Barcode %03d.Barcode 2D", "Labels.Individual.Label %03d.Barcode 2D" },
+          { "Labels.Individual.Barcode %03d.Text" , "Labels.Individual.Label %03d.Text" }
+      
+      };
+        
 
         /* @formatter:on */
+
+    // NOTICE: update NEWEST_VERSION_NUMBER in the Configuration object to
+    // reflect the most latest version number that is being translated to.
 
     public static String translate(String key, Integer configurationVersion) {
 
@@ -44,9 +57,8 @@ public class ConfigurationTranslator {
         }
 
         if (configurationVersion == 1) {
-            int i = 0;
-            i = i + 1;
-            // do nothing
+            key = genericTranslator(key, null, update2Formatted);
+            configurationVersion = 2;
         }
 
         return key;
@@ -56,17 +68,22 @@ public class ConfigurationTranslator {
         String[][] pairsFormatted) {
 
         // translate regualar keys
-        for (int i = 0, n = pairsNormal.length; i < n; i++)
-            if (key.equals(pairsNormal[i][0]))
-                return pairsNormal[i][1];
+        if (pairsNormal != null) {
+            for (int i = 0, n = pairsNormal.length; i < n; i++)
+                if (key.equals(pairsNormal[i][0]))
+                    return pairsNormal[i][1];
+        }
 
         // translate "formatted" keys
-        for (int i = 0, n = pairsFormatted.length; i < n; i++) {
+        if (pairsFormatted != null) {
+            for (int i = 0, n = pairsFormatted.length; i < n; i++) {
 
-            for (int barcodeCount = 1; barcodeCount <= 32; barcodeCount++) {
-                if (key.equals(String
-                    .format(pairsFormatted[i][0], barcodeCount)))
-                    return String.format(pairsFormatted[i][1], barcodeCount);
+                for (int barcodeCount = 1; barcodeCount <= 32; barcodeCount++) {
+                    if (key.equals(String.format(pairsFormatted[i][0],
+                        barcodeCount)))
+                        return String
+                            .format(pairsFormatted[i][1], barcodeCount);
+                }
             }
         }
 

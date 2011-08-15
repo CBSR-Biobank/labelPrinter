@@ -57,9 +57,9 @@ public class CBSRLabelMaker {
     private static final String LABEL_GENERAL_BARCODE_2D = "Labels.General.Barcode 2D"; //$NON-NLS-1$
 
     // per label individual
-    private static final String LABEL_INDIVIDUAL_BARCODE_1D_FORMATTED = "Labels.Individual.Barcode %03d.Barcode 1D"; //$NON-NLS-1$
-    private static final String LABEL_INDIVIDUAL_BARCODE_2D_FORMATTED = "Labels.Individual.Barcode %03d.Barcode 2D"; //$NON-NLS-1$
-    private static final String LABEL_INDIVIDUAL_FIELD_TEXT_FORMATTED = "Labels.Individual.Barcode %03d.Text"; //$NON-NLS-1$
+    private static final String LABEL_INDIVIDUAL_BARCODE_1D_FORMATTED = "Labels.Individual.Label %03d.Barcode 1D"; //$NON-NLS-1$
+    private static final String LABEL_INDIVIDUAL_BARCODE_2D_FORMATTED = "Labels.Individual.Label %03d.Barcode 2D"; //$NON-NLS-1$
+    private static final String LABEL_INDIVIDUAL_FIELD_TEXT_FORMATTED = "Labels.Individual.Label %03d.Text"; //$NON-NLS-1$
 
     /**
      * Generates a jasper outline and creates a pdf file byte array.
