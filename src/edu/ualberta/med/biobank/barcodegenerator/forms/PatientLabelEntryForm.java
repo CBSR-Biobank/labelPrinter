@@ -30,7 +30,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
@@ -740,10 +739,9 @@ public class PatientLabelEntryForm extends BgcEntryForm {
 
             @Override
             public void widgetSelected(SelectionEvent e) {
-                label3Text.setEnabled(label3Checkbox.getSelection());
-                if (label3Checkbox.getSelection()) {
-                    value3Checkbox.setSelection(true);
-                    value3Checkbox.notifyListeners(SWT.Selection, new Event());
+                if (!label3Checkbox.getSelection()) {
+                    label3Text.setText(""); //$NON-NLS-1$
+                    label3Checkbox.setEnabled(false);
                 }
 
             }
@@ -760,10 +758,12 @@ public class PatientLabelEntryForm extends BgcEntryForm {
         label3Text.setTextLimit(12);
         label3Text.setText(perferenceStore
             .getString(PreferenceConstants.LABEL_TEXT_3));
+
         label3Checkbox.setSelection((label3Text.getText() != null)
             && (label3Text.getText().length() > 0));
         label3Checkbox.setEnabled((label3Text.getText() != null)
             && (label3Text.getText().length() > 0));
+
         label3Text.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent e) {
