@@ -202,7 +202,7 @@ public class ConfigurationTree {
         if (config == null)
             return;
 
-        if (config.getSettings() == null)
+        if (!config.exists())
             throw new TreeException(
                 Messages.ConfigurationTree_valid_config_settings_error);
 
@@ -214,7 +214,7 @@ public class ConfigurationTree {
          * config.getSetting(key));
          */
 
-        for (Entry<String, Rectangle> e : config.getSettings().entrySet()) {
+        for (Entry<String, Rectangle> e : config.entrySet()) {
             createTreeItem(e.getKey(), e.getValue());
         }
         configuration = config;
@@ -366,7 +366,7 @@ public class ConfigurationTree {
                             if (c != null)
                                 location = c.getText() + "." + location; //$NON-NLS-1$
                         }
-                        if (configuration.getSettings().containsKey(location)) {
+                        if (configuration.containsKey(location)) {
 
                             configuration.setSetting(location,
                                 TreeItemToRectangle(currentTableItem));

@@ -3,7 +3,6 @@ package edu.ualberta.med.biobank.barcodegenerator.template;
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 import java.io.StringWriter;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.xml.bind.JAXBContext;
@@ -65,9 +64,8 @@ public class Template implements Serializable {
         // clone configuration
         if (config != null) {
             Configuration newConfig = new Configuration();
-            Map<String, Rectangle> settings = config.getSettings();
-            if (settings != null) {
-                for (Entry<String, Rectangle> entry : settings.entrySet()) {
+            if (config.exists()) {
+                for (Entry<String, Rectangle> entry : config.entrySet()) {
                     Rectangle newRect = new Rectangle(entry.getValue().getX(),
                         entry.getValue().getY(), entry.getValue().getWidth(),
                         entry.getValue().getHeight());
@@ -154,6 +152,8 @@ public class Template implements Serializable {
                 .getConfigData().getBytes());
             config = (Configuration) u.unmarshal(in);
         }
+        config.upgradeKeys();
+
         return config;
 
     }
@@ -173,6 +173,8 @@ public class Template implements Serializable {
         StringWriter sw = new StringWriter();
         marshaller.marshal(configuration, sw);
         plt.setConfigData(sw.toString());
+
+        configuration.upgradeKeys();
 
         config = configuration;
     }

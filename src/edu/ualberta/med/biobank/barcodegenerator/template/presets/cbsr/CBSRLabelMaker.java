@@ -39,6 +39,28 @@ public class CBSRLabelMaker {
 
     private static final int BARCODE_COUNT = 32;
 
+    // per sheet
+    private static final String SHEET_INFO_FIELD_1_TEXT = "Sheet Info.Custom Field 1.Text"; //$NON-NLS-1$
+    private static final String SHEET_INFO_FIELD_1_BARCODE_1D = "Sheet Info.Custom Field 1.1D Barcode"; //$NON-NLS-1$
+
+    private static final String SHEET_INFO_FIELD_2_TEXT = "Sheet Info.Custom Field 2.Text"; //$NON-NLS-1$
+    private static final String SHEET_INFO_FIELD_2_BARCODE_1D = "Sheet Info.Custom Field 2.1D Barcode"; //$NON-NLS-1$
+
+    private static final String SHEET_INFO_FIELD_3_TEXT = "Sheet Info.Custom Field 3.Text"; //$NON-NLS-1$
+    private static final String SHEET_INFO_FIELD_3_BARCODE_1D = "Sheet Info.Custom Field 3.1D Barcode"; //$NON-NLS-1$
+
+    private static final String SHEET_INFO_PATIENT_NUM_BARCODE_1D = "Sheet Info.Patient Number.1D Barcode"; //$NON-NLS-1$
+
+    // per label general
+    private static final String LABEL_GENERAL_FIELD_TEXT = "Labels.General.Text"; //$NON-NLS-1$
+    private static final String LABEL_GENERAL_BARCODE_1D = "Labels.General.Barcode 1D"; //$NON-NLS-1$
+    private static final String LABEL_GENERAL_BARCODE_2D = "Labels.General.Barcode 2D"; //$NON-NLS-1$
+
+    // per label individual
+    private static final String LABEL_INDIVIDUAL_BARCODE_1D_FORMATTED = "Labels.Individual.Barcode %03d.Barcode 1D"; //$NON-NLS-1$
+    private static final String LABEL_INDIVIDUAL_BARCODE_2D_FORMATTED = "Labels.Individual.Barcode %03d.Barcode 2D"; //$NON-NLS-1$
+    private static final String LABEL_INDIVIDUAL_FIELD_TEXT_FORMATTED = "Labels.Individual.Barcode %03d.Text"; //$NON-NLS-1$
+
     /**
      * Generates a jasper outline and creates a pdf file byte array.
      * 
@@ -124,31 +146,27 @@ public class CBSRLabelMaker {
         try {
             patientInfo.getElements().addAll(
                 FieldGenerator.generateElements(
-                    tplt.getKey("Patient Info.Custom Field 1.Field Text"), //$NON-NLS-1$
-                    cbsrData.label1Str, cbsrData.value1Str,
-                    baseFont.deriveFont(23),
-                    tplt.getKey("Patient Info.Custom Field 1.1D Barcode"), //$NON-NLS-1$
+                    tplt.getKey(SHEET_INFO_FIELD_1_TEXT), cbsrData.label1Str,
+                    cbsrData.value1Str, baseFont.deriveFont(23),
+                    tplt.getKey(SHEET_INFO_FIELD_1_BARCODE_1D),
                     cbsrData.barcode1Print));
 
             patientInfo.getElements().addAll(
                 FieldGenerator.generateElements(
-                    tplt.getKey("Patient Info.Custom Field 2.Field Text"), //$NON-NLS-1$
-                    cbsrData.label2Str, cbsrData.value2Str,
-                    baseFont.deriveFont(23),
-                    tplt.getKey("Patient Info.Custom Field 2.1D Barcode"), //$NON-NLS-1$
+                    tplt.getKey(SHEET_INFO_FIELD_2_TEXT), cbsrData.label2Str,
+                    cbsrData.value2Str, baseFont.deriveFont(23),
+                    tplt.getKey(SHEET_INFO_FIELD_2_BARCODE_1D),
                     cbsrData.barcode2Print));
 
             patientInfo.getElements().addAll(
                 FieldGenerator.generateElements(
-                    tplt.getKey("Patient Info.Custom Field 3.Field Text"), //$NON-NLS-1$
-                    cbsrData.label3Str, cbsrData.value3Str,
-                    baseFont.deriveFont(23),
-                    tplt.getKey("Patient Info.Custom Field 3.1D Barcode"), //$NON-NLS-1$
+                    tplt.getKey(SHEET_INFO_FIELD_3_TEXT), cbsrData.label3Str,
+                    cbsrData.value3Str, baseFont.deriveFont(23),
+                    tplt.getKey(SHEET_INFO_FIELD_3_BARCODE_1D),
                     cbsrData.barcode3Print));
 
             patientInfo.getElements().add(
-                new Barcode1D(
-                    tplt.getKey("Patient Info.Patient ID.1D Barcode"), //$NON-NLS-1$
+                new Barcode1D(tplt.getKey(SHEET_INFO_PATIENT_NUM_BARCODE_1D),
                     cbsrData.patientNumberStr, baseFont.deriveFont(22)));
 
         } catch (ElementCreationException eee) {
@@ -173,10 +191,9 @@ public class CBSRLabelMaker {
                 if ((cbsrData.patientNumberStr != null)
                     && (cbsrData.patientNumberStr.length() > 0)) {
 
-                    Rectangle master = tplt
-                        .getKey("Barcodes.General.Barcode 1D"); //$NON-NLS-1$
+                    Rectangle master = tplt.getKey(LABEL_GENERAL_BARCODE_1D);
                     Rectangle barcode = tplt.getKey(String.format(
-                        "Barcodes.Individual.Barcode %03d.Barcode 1D", i)); //$NON-NLS-1$
+                        LABEL_INDIVIDUAL_BARCODE_1D_FORMATTED, i));
 
                     Rectangle r = new Rectangle(master.getX() + barcode.getX(),
                         master.getY() + barcode.getY(), master.getWidth()
@@ -196,10 +213,9 @@ public class CBSRLabelMaker {
                     && (rStrArray.length() > 0)
                     && (rStrArray.replaceAll("[^a-zA-Z0-9 ]", "").length() == 12)) { //$NON-NLS-1$ //$NON-NLS-2$
 
-                    Rectangle master = tplt
-                        .getKey("Barcodes.General.Barcode 2D"); //$NON-NLS-1$
+                    Rectangle master = tplt.getKey(LABEL_GENERAL_BARCODE_2D);
                     Rectangle barcode = tplt.getKey(String.format(
-                        "Barcodes.Individual.Barcode %03d.Barcode 2D", i)); //$NON-NLS-1$
+                        LABEL_INDIVIDUAL_BARCODE_2D_FORMATTED, i));
 
                     Rectangle r = new Rectangle(master.getX() + barcode.getX(),
                         master.getY() + barcode.getY(), master.getWidth()
@@ -216,11 +232,10 @@ public class CBSRLabelMaker {
                 if ((cbsrData.specimenTypeStr != null)
                     && (cbsrData.specimenTypeStr.length() > 0)) {
 
-                    Rectangle master = tplt
-                        .getKey("Barcodes.General.Specimen Text"); //$NON-NLS-1$
+                    Rectangle master = tplt.getKey(LABEL_GENERAL_FIELD_TEXT);
 
                     Rectangle barcode = tplt.getKey(String.format(
-                        "Barcodes.Individual.Barcode %03d.Specimen Text", i)); //$NON-NLS-1$
+                        LABEL_INDIVIDUAL_FIELD_TEXT_FORMATTED, i));
 
                     Rectangle rectdim = new Rectangle(master.getX()
                         + barcode.getX(), master.getY() + barcode.getY(),
@@ -274,38 +289,32 @@ public class CBSRLabelMaker {
     public static Configuration getDefaultConfiguration() {
         Configuration config = new Configuration();
 
-        config.setSetting("Patient Info.Custom Field 1.Field Text", //$NON-NLS-1$
-            new Rectangle(1, 4, 0, 0));
-        config.setSetting("Patient Info.Custom Field 1.1D Barcode", //$NON-NLS-1$
-            new Rectangle(38, 1, 29, 8));
-        config.setSetting("Patient Info.Custom Field 2.Field Text", //$NON-NLS-1$
-            new Rectangle(1, 13, 0, 0));
-        config.setSetting("Patient Info.Custom Field 2.1D Barcode", //$NON-NLS-1$
-            new Rectangle(38, 13, 29, 8));
-        config.setSetting("Patient Info.Custom Field 3.Field Text", //$NON-NLS-1$
-            new Rectangle(1, 25, 0, 0));
-        config.setSetting("Patient Info.Custom Field 3.1D Barcode", //$NON-NLS-1$
-            new Rectangle(38, 25, 29, 8));
-        config.setSetting("Patient Info.Patient ID.1D Barcode", new Rectangle( //$NON-NLS-1$
-            1, 33, 29, 8));
-        config.setSetting("Barcodes.General.Barcode 1D", new Rectangle(11, 5, //$NON-NLS-1$
+        config.setSetting(SHEET_INFO_FIELD_1_TEXT, new Rectangle(1, 4, 0, 0));
+        config.setSetting(SHEET_INFO_FIELD_1_BARCODE_1D, new Rectangle(38, 1,
             29, 8));
-        config.setSetting("Barcodes.General.Barcode 2D", new Rectangle(43, 5, //$NON-NLS-1$
-            6, 6));
-        config.setSetting("Barcodes.General.Specimen Text", new Rectangle(11, //$NON-NLS-1$
-            17, 0, 0));
+        config.setSetting(SHEET_INFO_FIELD_2_TEXT, new Rectangle(1, 13, 0, 0));
+        config.setSetting(SHEET_INFO_FIELD_2_BARCODE_1D, new Rectangle(38, 13,
+            29, 8));
+        config.setSetting(SHEET_INFO_FIELD_3_TEXT, new Rectangle(1, 25, 0, 0));
+        config.setSetting(SHEET_INFO_FIELD_3_BARCODE_1D, new Rectangle(38, 25,
+            29, 8));
+        config.setSetting(SHEET_INFO_PATIENT_NUM_BARCODE_1D, new Rectangle(1,
+            33, 29, 8));
+        config
+            .setSetting(LABEL_GENERAL_BARCODE_1D, new Rectangle(11, 5, 29, 8));
+        config.setSetting(LABEL_GENERAL_BARCODE_2D, new Rectangle(43, 5, 6, 6));
+        config
+            .setSetting(LABEL_GENERAL_FIELD_TEXT, new Rectangle(11, 17, 0, 0));
 
         for (int i = 1; i <= BARCODE_COUNT; i++) {
-            config
-                .setSetting(String.format(
-                    "Barcodes.Individual.Barcode %03d.Barcode 1D", i), //$NON-NLS-1$
-                    new Rectangle(0, 0, 0, 0));
-            config
-                .setSetting(String.format(
-                    "Barcodes.Individual.Barcode %03d.Barcode 2D", i), //$NON-NLS-1$
-                    new Rectangle(0, 0, 0, 0));
-            config.setSetting(String.format(
-                "Barcodes.Individual.Barcode %03d.Specimen Text", i), //$NON-NLS-1$
+            config.setSetting(
+                String.format(LABEL_INDIVIDUAL_BARCODE_1D_FORMATTED, i),
+                new Rectangle(0, 0, 0, 0));
+            config.setSetting(
+                String.format(LABEL_INDIVIDUAL_BARCODE_2D_FORMATTED, i),
+                new Rectangle(0, 0, 0, 0));
+            config.setSetting(
+                String.format(LABEL_INDIVIDUAL_FIELD_TEXT_FORMATTED, i),
                 new Rectangle(0, 0, 0, 0));
         }
         return config;
@@ -313,35 +322,28 @@ public class CBSRLabelMaker {
 
     // order does not matter for this.
     private static List<String> getConfigurationKeyList() {
-        String[] configKeyList = new String[] {
-            "Patient Info.Custom Field 1.Field Text", //$NON-NLS-1$
-            "Patient Info.Custom Field 1.1D Barcode", //$NON-NLS-1$
-            "Patient Info.Custom Field 2.Field Text", //$NON-NLS-1$
-            "Patient Info.Custom Field 2.1D Barcode", //$NON-NLS-1$
-            "Patient Info.Custom Field 3.Field Text", //$NON-NLS-1$
-            "Patient Info.Custom Field 3.1D Barcode", //$NON-NLS-1$
-            "Patient Info.Patient ID.1D Barcode", //$NON-NLS-1$
-            "Barcodes.General.Barcode 1D", "Barcodes.General.Barcode 2D", //$NON-NLS-1$ //$NON-NLS-2$
-            "Barcodes.General.Specimen Text" }; //$NON-NLS-1$
+        String[] configKeyList = new String[] { SHEET_INFO_FIELD_1_TEXT,
+            SHEET_INFO_FIELD_1_BARCODE_1D, SHEET_INFO_FIELD_2_TEXT,
+            SHEET_INFO_FIELD_2_BARCODE_1D, SHEET_INFO_FIELD_3_TEXT,
+            SHEET_INFO_FIELD_3_BARCODE_1D, SHEET_INFO_PATIENT_NUM_BARCODE_1D,
+            LABEL_GENERAL_BARCODE_1D, LABEL_GENERAL_BARCODE_2D,
+            LABEL_GENERAL_FIELD_TEXT };
 
         List<String> output = new ArrayList<String>();
         for (String ckl : configKeyList)
             output.add(ckl);
 
         for (int i = 1; i <= BARCODE_COUNT; i++) {
-            output.add(String.format(
-                "Barcodes.Individual.Barcode %03d.Barcode 1D", i)); //$NON-NLS-1$
-            output.add(String.format(
-                "Barcodes.Individual.Barcode %03d.Barcode 2D", i)); //$NON-NLS-1$
-            output.add(String.format(
-                "Barcodes.Individual.Barcode %03d.Specimen Text", i)); //$NON-NLS-1$
+            output.add(String.format(LABEL_INDIVIDUAL_BARCODE_1D_FORMATTED, i));
+            output.add(String.format(LABEL_INDIVIDUAL_BARCODE_2D_FORMATTED, i));
+            output.add(String.format(LABEL_INDIVIDUAL_FIELD_TEXT_FORMATTED, i));
         }
         return output;
 
     }
 
     private static boolean verifyConfiguration(Configuration c) {
-        for (String k : c.getSettings().keySet()) {
+        for (String k : c.keySet()) {
             boolean found = false;
 
             for (String ckl : getConfigurationKeyList()) {
@@ -356,5 +358,4 @@ public class CBSRLabelMaker {
         }
         return true;
     }
-
 }
