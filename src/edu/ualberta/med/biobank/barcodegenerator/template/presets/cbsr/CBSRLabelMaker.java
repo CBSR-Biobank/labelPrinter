@@ -55,10 +55,12 @@ public class CBSRLabelMaker {
     private static final String LABEL_GENERAL_FIELD_TEXT = "Labels.General.Text"; //$NON-NLS-1$
     private static final String LABEL_GENERAL_BARCODE_1D = "Labels.General.Barcode 1D"; //$NON-NLS-1$
     private static final String LABEL_GENERAL_BARCODE_2D = "Labels.General.Barcode 2D"; //$NON-NLS-1$
+    private static final String LABEL_GENERAL_BARCODE_2D_TEXT = "Labels.General.Barcode 2D Text"; //$NON-NLS-1$
 
     // per label individual
     private static final String LABEL_INDIVIDUAL_BARCODE_1D_FORMATTED = "Labels.Individual.Label %03d.Barcode 1D"; //$NON-NLS-1$
     private static final String LABEL_INDIVIDUAL_BARCODE_2D_FORMATTED = "Labels.Individual.Label %03d.Barcode 2D"; //$NON-NLS-1$
+    private static final String LABEL_INDIVIDUAL_BARCODE_2D_TEXT = "Labels.Individual.Label %03d.Barcode 2D Text"; //$NON-NLS-1$
     private static final String LABEL_INDIVIDUAL_FIELD_TEXT_FORMATTED = "Labels.Individual.Label %03d.Text"; //$NON-NLS-1$
 
     /**
@@ -224,6 +226,27 @@ public class CBSRLabelMaker {
 
                     Barcode2D item2D = new Barcode2D(r, rStrArray);
                     bi.getElements().add(item2D);
+
+                    // 2d barcode text:
+                    if (cbsrData.printBarcode2DTextBoolean) {
+                        Rectangle master2 = tplt
+                            .getKey(LABEL_GENERAL_BARCODE_2D_TEXT);
+
+                        Rectangle barcode2DTextRect = tplt.getKey(String
+                            .format(LABEL_INDIVIDUAL_BARCODE_2D_TEXT, i));
+
+                        Rectangle rectdim = new Rectangle(master2.getX()
+                            + barcode2DTextRect.getX(), master2.getY()
+                            + barcode2DTextRect.getY(), master2.getWidth()
+                            + barcode2DTextRect.getWidth(), master2.getHeight()
+                            + barcode2DTextRect.getHeight());
+
+                        Text itemText = new Text(rectdim, rStrArray,
+                            baseFont.deriveFont(22));
+
+                        bi.getElements().add(itemText);
+                    }
+
                 } else {
                     throw new CBSRPdfGenException(
                         Messages.CBSRLabelMaker_barcode_characters_error);
@@ -246,6 +269,7 @@ public class CBSRLabelMaker {
                         baseFont.deriveFont(22));
                     bi.getElements().add(itemText);
                 }
+
                 pbi.getLayout().add(bi);
             }
         } catch (ElementCreationException e2) {
@@ -298,6 +322,10 @@ public class CBSRLabelMaker {
         config.setSetting(SHEET_INFO_FIELD_3_TEXT, new Rectangle(1, 25, 0, 0));
         config.setSetting(SHEET_INFO_FIELD_3_BARCODE_1D, new Rectangle(38, 25,
             29, 8));
+
+        config.setSetting(LABEL_GENERAL_BARCODE_2D_TEXT, new Rectangle(32, 15,
+            0, 0));
+
         config.setSetting(SHEET_INFO_PATIENT_NUM_BARCODE_1D, new Rectangle(1,
             33, 29, 8));
         config
@@ -314,6 +342,9 @@ public class CBSRLabelMaker {
                 String.format(LABEL_INDIVIDUAL_BARCODE_2D_FORMATTED, i),
                 new Rectangle(0, 0, 0, 0));
             config.setSetting(
+                String.format(LABEL_INDIVIDUAL_BARCODE_2D_TEXT, i),
+                new Rectangle(0, 0, 0, 0));
+            config.setSetting(
                 String.format(LABEL_INDIVIDUAL_FIELD_TEXT_FORMATTED, i),
                 new Rectangle(0, 0, 0, 0));
         }
@@ -327,7 +358,7 @@ public class CBSRLabelMaker {
             SHEET_INFO_FIELD_2_BARCODE_1D, SHEET_INFO_FIELD_3_TEXT,
             SHEET_INFO_FIELD_3_BARCODE_1D, SHEET_INFO_PATIENT_NUM_BARCODE_1D,
             LABEL_GENERAL_BARCODE_1D, LABEL_GENERAL_BARCODE_2D,
-            LABEL_GENERAL_FIELD_TEXT };
+            LABEL_GENERAL_BARCODE_2D_TEXT, LABEL_GENERAL_FIELD_TEXT };
 
         List<String> output = new ArrayList<String>();
         for (String ckl : configKeyList)
@@ -336,6 +367,7 @@ public class CBSRLabelMaker {
         for (int i = 1; i <= BARCODE_COUNT; i++) {
             output.add(String.format(LABEL_INDIVIDUAL_BARCODE_1D_FORMATTED, i));
             output.add(String.format(LABEL_INDIVIDUAL_BARCODE_2D_FORMATTED, i));
+            output.add(String.format(LABEL_INDIVIDUAL_BARCODE_2D_TEXT, i));
             output.add(String.format(LABEL_INDIVIDUAL_FIELD_TEXT_FORMATTED, i));
         }
         return output;

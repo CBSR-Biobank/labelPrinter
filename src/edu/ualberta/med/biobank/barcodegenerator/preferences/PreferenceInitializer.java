@@ -40,6 +40,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         store.setDefault(PreferenceConstants.BARCODE_CHECKBOX_2, true);
         store.setDefault(PreferenceConstants.BARCODE_CHECKBOX_3, true);
 
+        store.setDefault(PreferenceConstants.BARCODE_2D_TEXT_TYPE_CHECKBOX,
+            false);
         store.setDefault(PreferenceConstants.SPECIMEN_TYPE_CHECKBOX, true);
         store.setDefault(PreferenceConstants.SPECIMEN_TYPE_TEXT,
             "Sp. Type__________"); //$NON-NLS-1$

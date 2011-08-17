@@ -85,7 +85,8 @@ public class PatientLabelEntryForm extends BgcEntryForm {
     private Button printBarcode2Checkbox = null;
     private Button printBarcode3Checkbox = null;
 
-    private Button specimenTypeCheckbox = null;
+    private Button labelCustomFieldTypeCheckbox = null;
+    private Button labelCustomValueTypeCheckbox = null;
     private Button savePdfButton = null;
 
     private BgcBaseText projectTitleText = null;
@@ -99,8 +100,11 @@ public class PatientLabelEntryForm extends BgcEntryForm {
     private BgcBaseText value2Text = null;
     private BgcBaseText value3Text = null;
 
+    private Button barcode2DTextCheckbox = null;
+
     private BgcBaseText patientNumText = null;
-    private BgcBaseText specimenTypeText = null;
+    private BgcBaseText labelCustomTextField = null;
+    private BgcBaseText labelCustomTextValue = null;
 
     private BgcBaseText printerText = null;
 
@@ -152,6 +156,7 @@ public class PatientLabelEntryForm extends BgcEntryForm {
 
     private void clearFields() {
         patientNumText.setText(""); //$NON-NLS-1$
+        labelCustomTextValue.setText(""); //$NON-NLS-1$
 
         value1Text.setText(""); //$NON-NLS-1$
         value2Text.setText(""); //$NON-NLS-1$
@@ -241,7 +246,7 @@ public class PatientLabelEntryForm extends BgcEntryForm {
         shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 
         brandingGroup();
-        specimenTextGroup();
+        createPerLabelInfo();
         patientInfoGroup();
         actionButtonGroup();
 
@@ -335,7 +340,7 @@ public class PatientLabelEntryForm extends BgcEntryForm {
         value2Text.setEnabled(enable);
         label3Text.setEnabled(enable);
         value3Text.setEnabled(enable);
-        specimenTypeText.setEnabled(enable);
+        labelCustomTextField.setEnabled(enable);
         templateCombo.setEnabled(enable);
         printerCombo.setEnabled(enable);
         savePdfButton.setEnabled(enable);
@@ -865,34 +870,30 @@ public class PatientLabelEntryForm extends BgcEntryForm {
 
     }
 
-    private void createComposite6(Composite group1) {
-        GridData gridData4 = new GridData();
-        gridData4.horizontalAlignment = GridData.FILL;
-        gridData4.grabExcessHorizontalSpace = false;
-        gridData4.horizontalSpan = 4;
-        gridData4.horizontalIndent = 9;
-        gridData4.widthHint = 150;
-        gridData4.verticalAlignment = GridData.CENTER;
-        GridLayout gridLayout3 = new GridLayout();
-        gridLayout3.verticalSpacing = 2;
-        gridLayout3.numColumns = 5;
-        Composite composite6 = toolkit.createComposite(group1, SWT.NONE);
-        composite6.setLayout(gridLayout3);
-        new Label(composite6, SWT.NONE)
+    private void createPatientNumberText(Composite group1) {
+
+        GridData gridData = new GridData();
+        gridData.grabExcessHorizontalSpace = false;
+        gridData.verticalAlignment = GridData.CENTER;
+        gridData.widthHint = 150;
+
+        new Label(group1, SWT.NONE)
             .setText(Messages.PatientLabelEntryForm_pnumber_label);
-        patientNumText = new BgcBaseText(composite6, SWT.BORDER);
-        patientNumText.setLayoutData(gridData4);
+        patientNumText = new BgcBaseText(group1, SWT.BORDER);
         patientNumText.setTextLimit(14);
+        patientNumText.setLayoutData(gridData);
     }
 
-    private void specimenTextGroup() {
+    private void createPerLabelInfo() {
 
         GridData gridData = new GridData();
         gridData.horizontalAlignment = GridData.FILL;
         gridData.grabExcessHorizontalSpace = true;
+        gridData.verticalAlignment = GridData.CENTER;
+        gridData.widthHint = 150;
 
         GridLayout gridLayout5 = new GridLayout();
-        gridLayout5.numColumns = 1;
+        gridLayout5.numColumns = 2;
         gridLayout5.makeColumnsEqualWidth = false;
 
         Composite group2 = createSectionWithClient(
@@ -900,71 +901,142 @@ public class PatientLabelEntryForm extends BgcEntryForm {
         group2.setLayoutData(gridData);
         group2.setLayout(gridLayout5);
 
-        createComposite6(group2);
+        createPatientNumberText(group2);
 
         createCustomFieldText(group2);
+
+        new Label(group2, SWT.NONE).setText("Barcode 2D Text:");
+        barcode2DTextCheckbox = new Button(group2, SWT.CHECK | SWT.LEFT);
+        barcode2DTextCheckbox.setSelection(perferenceStore
+            .getBoolean(PreferenceConstants.BARCODE_2D_TEXT_TYPE_CHECKBOX));
 
     }
 
     private void createCustomFieldText(Composite group2) {
 
-        GridData gridData4 = new GridData();
-        gridData4.horizontalAlignment = GridData.FILL;
-        gridData4.grabExcessHorizontalSpace = false;
-        gridData4.horizontalSpan = 4;
-        gridData4.horizontalIndent = 9;
-        gridData4.widthHint = 150;
-        gridData4.verticalAlignment = GridData.CENTER;
+        GridData gridData = new GridData();
+        gridData.horizontalAlignment = GridData.FILL;
+        gridData.grabExcessHorizontalSpace = true;
+        gridData.grabExcessVerticalSpace = false;
+        gridData.verticalAlignment = GridData.FILL;
+
         GridLayout gridLayout3 = new GridLayout();
-        gridLayout3.verticalSpacing = 2;
-        gridLayout3.numColumns = 6;
+        gridLayout3.verticalSpacing = 1;
+        gridLayout3.numColumns = 4;
+        gridLayout3.horizontalSpacing = 10;
+        gridLayout3.marginWidth = 0;
+        gridLayout3.makeColumnsEqualWidth = false;
+
+        new Label(group2, SWT.NONE)
+            .setText(Messages.PatientLabelEntryForm_spec_type_label);
+
         Composite composite6 = toolkit.createComposite(group2, SWT.NONE);
         composite6.setLayout(gridLayout3);
-        Label specimenLabel = new Label(composite6, SWT.NONE);
-        specimenLabel.setText(Messages.PatientLabelEntryForm_spec_type_label);
+        composite6.setLayoutData(gridData);
 
-        specimenTypeText = new BgcBaseText(composite6, SWT.BORDER);
-        specimenTypeText.setText(perferenceStore
+        labelCustomFieldTypeCheckbox = new Button(composite6, SWT.CHECK
+            | SWT.LEFT);
+        labelCustomFieldTypeCheckbox
+            .addSelectionListener(new SelectionListener() {
+
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    if (!labelCustomFieldTypeCheckbox.getSelection()) {
+                        labelCustomTextField.setText(""); //$NON-NLS-1$
+
+                        labelCustomTextValue.setText(""); //$NON-NLS-1$
+                        labelCustomTextValue.setEnabled(false);
+                        labelCustomValueTypeCheckbox.setSelection(false);
+                        labelCustomValueTypeCheckbox.setEnabled(false);
+                    }
+
+                }
+
+                @Override
+                public void widgetDefaultSelected(SelectionEvent e) {
+                    widgetSelected(e);
+                }
+            });
+
+        labelCustomTextField = new BgcBaseText(composite6, SWT.BORDER);
+        labelCustomTextField.setText(perferenceStore
             .getString(PreferenceConstants.SPECIMEN_TYPE_TEXT));
-        specimenTypeText.setLayoutData(gridData4);
-        specimenTypeText.setTextLimit(25);
-        specimenTypeText.addModifyListener(new ModifyListener() {
+        labelCustomTextField.setLayoutData(gridData);
+        labelCustomTextField.setTextLimit(25);
+        labelCustomTextField.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent e) {
-                if ((specimenTypeText.getText() != null)
-                    && (specimenTypeText.getText().length() > 0)) {
-                    specimenTypeCheckbox.setSelection(true);
-                    specimenTypeCheckbox.setEnabled(true);
+                if ((labelCustomTextField.getText() != null)
+                    && (labelCustomTextField.getText().length() > 0)) {
+                    labelCustomFieldTypeCheckbox.setSelection(true);
+                    labelCustomFieldTypeCheckbox.setEnabled(true);
+
+                    labelCustomTextValue.setEnabled(true);
+
                 } else {
-                    specimenTypeCheckbox.setSelection(false);
-                    specimenTypeCheckbox.setEnabled(false);
+                    labelCustomFieldTypeCheckbox.setSelection(false);
+                    labelCustomFieldTypeCheckbox.setEnabled(false);
+
+                    labelCustomTextValue.setText(""); //$NON-NLS-1$
+                    labelCustomTextValue.setEnabled(false);
+                    labelCustomValueTypeCheckbox.setSelection(false);
+                    labelCustomValueTypeCheckbox.setEnabled(false);
                 }
             }
 
         });
 
-        specimenTypeCheckbox = new Button(composite6, SWT.CHECK | SWT.LEFT);
-        specimenTypeCheckbox
-            .setText(Messages.PatientLabelEntryForm_enable_label);
-        specimenTypeCheckbox.setSelection((specimenTypeText.getText() != null)
-            && (specimenTypeText.getText().length() > 0));
-        specimenTypeCheckbox.setEnabled((specimenTypeText.getText() != null)
-            && (specimenTypeText.getText().length() > 0));
+        labelCustomFieldTypeCheckbox.setSelection((labelCustomTextField
+            .getText() != null)
+            && (labelCustomTextField.getText().length() > 0));
+        labelCustomFieldTypeCheckbox
+            .setEnabled((labelCustomTextField.getText() != null)
+                && (labelCustomTextField.getText().length() > 0));
 
-        specimenTypeCheckbox.addSelectionListener(new SelectionListener() {
+        // /////////////
+        labelCustomValueTypeCheckbox = new Button(composite6, SWT.CHECK
+            | SWT.LEFT);
+        labelCustomValueTypeCheckbox
+            .addSelectionListener(new SelectionListener() {
 
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    if (!labelCustomValueTypeCheckbox.getSelection())
+                        labelCustomTextValue.setText(""); //$NON-NLS-1$
+
+                }
+
+                @Override
+                public void widgetDefaultSelected(SelectionEvent e) {
+                    widgetSelected(e);
+                }
+            });
+
+        labelCustomTextValue = new BgcBaseText(composite6, SWT.BORDER);
+        labelCustomTextValue.setLayoutData(gridData);
+        labelCustomTextValue.setTextLimit(25);
+        labelCustomTextValue.addModifyListener(new ModifyListener() {
             @Override
-            public void widgetSelected(SelectionEvent e) {
-                if (!specimenTypeCheckbox.getSelection())
-                    specimenTypeText.setText(""); //$NON-NLS-1$
-
+            public void modifyText(ModifyEvent e) {
+                if ((labelCustomTextValue.getText() != null)
+                    && (labelCustomTextValue.getText().length() > 0)) {
+                    labelCustomValueTypeCheckbox.setSelection(true);
+                    labelCustomValueTypeCheckbox.setEnabled(true);
+                } else {
+                    labelCustomValueTypeCheckbox.setSelection(false);
+                    labelCustomValueTypeCheckbox.setEnabled(false);
+                }
             }
 
-            @Override
-            public void widgetDefaultSelected(SelectionEvent e) {
-                widgetSelected(e);
-            }
         });
+
+        labelCustomValueTypeCheckbox.setSelection((labelCustomTextValue
+            .getText() != null)
+            && (labelCustomTextValue.getText().length() > 0));
+        labelCustomValueTypeCheckbox
+            .setEnabled((labelCustomTextValue.getText() != null)
+                && (labelCustomTextValue.getText().length() > 0));
+
     }
 
     private void brandingGroup() {
@@ -1069,9 +1141,9 @@ public class PatientLabelEntryForm extends BgcEntryForm {
             printBarcode3Checkbox.getSelection());
 
         perferenceStore.setValue(PreferenceConstants.SPECIMEN_TYPE_CHECKBOX,
-            specimenTypeCheckbox.getSelection());
+            labelCustomFieldTypeCheckbox.getSelection());
         perferenceStore.setValue(PreferenceConstants.SPECIMEN_TYPE_TEXT,
-            specimenTypeText.getText());
+            labelCustomTextField.getText());
 
     }
 
@@ -1202,9 +1274,17 @@ public class PatientLabelEntryForm extends BgcEntryForm {
             else
                 printerNameStr = null;
 
+            printBarcode2DTextBoolean = barcode2DTextCheckbox.getSelection();
+
             specimenTypeStr = null;
-            if (specimenTypeCheckbox.getSelection()) {
-                specimenTypeStr = specimenTypeText.getText();
+            if (labelCustomFieldTypeCheckbox.getSelection()) {
+                specimenTypeStr = labelCustomTextField.getText();
+
+                if (labelCustomValueTypeCheckbox.getSelection()) {
+                    specimenTypeStr = specimenTypeStr + ": " //$NON-NLS-1$
+                        + labelCustomTextValue.getText();
+                }
+
             }
 
             template = loadedTemplate;

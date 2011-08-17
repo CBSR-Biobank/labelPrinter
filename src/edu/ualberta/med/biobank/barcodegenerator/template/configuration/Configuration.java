@@ -30,33 +30,18 @@ public class Configuration {
 
     private Integer version;
 
-    // this updates any old key values.
-    // call this routine after loading the Configuration object from the
-    // database.
+    // this updates any old key values and adds new ones where nessary.
     public boolean upgradeKeys() {
+        Integer newVersion = ConfigurationUpdater.updateKeys(settings,
+            version);
 
-        final int NEWEST_VERSION_NUMBER = 2;
-        // CHANGE THIS AND UPDATE ConfigurationTranslator each time you change
-        // key names.
+        // keys are up to date
+        if ((newVersion == null) || newVersion.equals(version))
+            return false;
 
-        if ((this.version == null) || (this.version < NEWEST_VERSION_NUMBER)) {
-
-            Map<String, Rectangle> settingsUpgraded = new LinkedHashMap<String, Rectangle>();
-
-            for (String key : this.settings.keySet()) {
-                settingsUpgraded.put(
-                    ConfigurationTranslator.translate(key, this.version),
-                    this.settings.get(key));
-            }
-
-            this.settings.clear();
-            for (String key : settingsUpgraded.keySet())
-                this.settings.put(key, settingsUpgraded.get(key));
-
-            this.version = NEWEST_VERSION_NUMBER;
-            return true;
-        }
-        return false;
+        // keys were updated
+        this.version = newVersion;
+        return true;
     }
 
     public boolean exists() {

@@ -16,7 +16,7 @@ public class CBSRData {
     public ByteArrayInputStream logoStream;
 
     public String fontName;
-    
+
     public String patientNumberStr;
 
     public String label1Str;
@@ -32,6 +32,7 @@ public class CBSRData {
     public boolean barcode3Print;
 
     public String specimenTypeStr;
+    public boolean printBarcode2DTextBoolean;
 
     public String printerNameStr;
 

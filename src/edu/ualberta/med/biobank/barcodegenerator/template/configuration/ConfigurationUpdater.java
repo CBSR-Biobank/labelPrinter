@@ -1,6 +1,9 @@
 package edu.ualberta.med.biobank.barcodegenerator.template.configuration;
 
-public class ConfigurationTranslator {
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+public class ConfigurationUpdater {
 
     /* @formatter:off */
         @SuppressWarnings("nls")
@@ -40,9 +43,52 @@ public class ConfigurationTranslator {
           { "Labels.Individual.Barcode %03d.Text" , "Labels.Individual.Label %03d.Text" }
       
       };
-        
-
         /* @formatter:on */
+
+    public static Integer updateKeys(Map<String, Rectangle> settings,
+        Integer version) {
+
+        final int NEWEST_VERSION_NUMBER = 3;
+        // CHANGE THIS AND UPDATE ConfigurationTranslator each time you change
+        // key names.
+
+        if ((version == null) || (version < NEWEST_VERSION_NUMBER)) {
+
+            Map<String, Rectangle> settingsUpgraded = new LinkedHashMap<String, Rectangle>();
+
+            for (String key : settings.keySet()) {
+                settingsUpgraded.put(
+                    ConfigurationUpdater.translate(key, new Integer(version)),
+                    settings.get(key));
+            }
+            addNewKeys(settingsUpgraded, new Integer(version));
+
+            settings.clear();
+            for (String key : settingsUpgraded.keySet())
+                settings.put(key, settingsUpgraded.get(key));
+
+            return NEWEST_VERSION_NUMBER;
+        }
+
+        return null;
+    }
+
+    public static void addNewKeys(Map<String, Rectangle> settings,
+        Integer configurationVersion) {
+
+        if (configurationVersion <= 2) {
+            settings.put("Labels.General.Barcode 2D Text", new Rectangle(32, //$NON-NLS-1$
+                15, 0, 0));
+
+            for (int i = 1; i <= 32; i++) {
+                settings.put(String.format(
+                    "Labels.Individual.Label %03d.Barcode 2D Text", i), //$NON-NLS-1$
+                    new Rectangle(0, 0, 0, 0));
+            }
+            configurationVersion = 3;
+        }
+
+    }
 
     // NOTICE: update NEWEST_VERSION_NUMBER in the Configuration object to
     // reflect the most latest version number that is being translated to.
@@ -59,6 +105,10 @@ public class ConfigurationTranslator {
         if (configurationVersion == 1) {
             key = genericTranslator(key, null, update2Formatted);
             configurationVersion = 2;
+        }
+
+        if (configurationVersion == 2) {
+            configurationVersion = 3;
         }
 
         return key;
