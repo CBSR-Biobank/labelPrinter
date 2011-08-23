@@ -58,10 +58,10 @@ public class ConfigurationUpdater {
 
             for (String key : settings.keySet()) {
                 settingsUpgraded.put(
-                    ConfigurationUpdater.translate(key, new Integer(version)),
+                    ConfigurationUpdater.translate(key, version),
                     settings.get(key));
             }
-            addNewKeys(settingsUpgraded, new Integer(version));
+            addNewKeys(settingsUpgraded, version);
 
             settings.clear();
             for (String key : settingsUpgraded.keySet())
@@ -70,13 +70,13 @@ public class ConfigurationUpdater {
             return NEWEST_VERSION_NUMBER;
         }
 
-        return null;
+        return NEWEST_VERSION_NUMBER;
     }
 
     public static void addNewKeys(Map<String, Rectangle> settings,
         Integer configurationVersion) {
 
-        if (configurationVersion <= 2) {
+        if ((configurationVersion == null) || (configurationVersion <= 2)) {
             settings.put("Labels.General.Barcode 2D Text", new Rectangle(32, //$NON-NLS-1$
                 15, 0, 0));
 

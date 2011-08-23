@@ -374,14 +374,13 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                                 .getConfiguration());
                         } catch (Exception ee) {
                             jasperConfigText.setText(""); //$NON-NLS-1$
-
+                            BgcPlugin
+                                .openAsyncError(
+                                    Messages.LabelTemplateEntryForm_template_tree_error_title,
+                                    ee.getMessage());
                             try {
                                 configTree.populateTree(null);
                             } catch (TreeException e1) {
-                                BgcPlugin
-                                    .openAsyncError(
-                                        Messages.LabelTemplateEntryForm_template_tree_error_title,
-                                        ee.getMessage());
                                 return;
                             }
                         }
