@@ -28,9 +28,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         store.setDefault(PreferenceConstants.LABEL_CHECKBOX_2, true);
         store.setDefault(PreferenceConstants.LABEL_CHECKBOX_3, true);
 
-        store.setDefault(PreferenceConstants.LABEL_TEXT_1, "Patient Name"); //$NON-NLS-1$
+        store.setDefault(PreferenceConstants.LABEL_TEXT_1, Messages.PreferenceInitializer_patient_name);
         store.setDefault(PreferenceConstants.LABEL_TEXT_2, "PHN"); //$NON-NLS-1$
-        store.setDefault(PreferenceConstants.LABEL_TEXT_3, "Patient Type"); //$NON-NLS-1$
+        store.setDefault(PreferenceConstants.LABEL_TEXT_3, Messages.PreferenceInitializer_patient_type);
 
         store.setDefault(PreferenceConstants.VALUE_CHECKBOX_1, true);
         store.setDefault(PreferenceConstants.VALUE_CHECKBOX_2, true);

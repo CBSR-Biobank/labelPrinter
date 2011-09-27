@@ -902,7 +902,7 @@ public class PatientLabelEntryForm extends BgcEntryForm {
     }
 
     private void createBarcode2DTextCheckbox(Composite group2) {
-        new Label(group2, SWT.NONE).setText("Barcode 2D Text:"); //$NON-NLS-1$
+        new Label(group2, SWT.NONE).setText(Messages.PatientLabelEntryForm_barcode2D);
         barcode2DTextCheckbox = new Button(group2, SWT.CHECK | SWT.LEFT);
         barcode2DTextCheckbox.setSelection(perferenceStore
             .getBoolean(PreferenceConstants.BARCODE_2D_TEXT_TYPE_CHECKBOX));

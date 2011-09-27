@@ -99,6 +99,7 @@ public class Messages extends NLS {
     public static String LabelTemplateEntryForm_title;
     public static String LabelTemplateEntryForm_update_error_msg;
     public static String PatientLabelEntryForm_actions_label;
+    public static String PatientLabelEntryForm_barcode2D;
     public static String PatientLabelEntryForm_branding_label;
     public static String PatientLabelEntryForm_browse;
     public static String PatientLabelEntryForm_custom_field_1_label;

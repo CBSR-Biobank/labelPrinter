@@ -22,23 +22,24 @@ public class FieldGenerator {
         String label, String value, Font font, Rectangle barcodeRect,
         boolean printBarcode) throws ElementCreationException {
 
-        if (font == null && (label != null || value != null))
+        if ((font == null) && ((label != null) || (value != null)))
             throw new ElementCreationException(
                 Messages.FieldGenerator_null_font_msg);
 
-        if (textRect == null || barcodeRect == null)
-            throw new ElementCreationException(Messages.FieldGenerator_null_dim_error);
+        if ((textRect == null) || (barcodeRect == null))
+            throw new ElementCreationException(
+                Messages.FieldGenerator_null_dim_error);
 
         List<Element> elements = new ArrayList<Element>();
 
         String textLabel = ""; //$NON-NLS-1$
 
-        if (label != null && label.length() > 0) {
+        if ((label != null) && (label.length() > 0)) {
             textLabel = label;
         }
 
-        if (value != null && value.length() > 0) {
-            textLabel += " : " + value; //$NON-NLS-1$
+        if ((value != null) && (value.length() > 0)) {
+            textLabel += ": " + value; //$NON-NLS-1$
             if (printBarcode) {
                 elements.add(new Barcode1D(barcodeRect, value, font));
             }
