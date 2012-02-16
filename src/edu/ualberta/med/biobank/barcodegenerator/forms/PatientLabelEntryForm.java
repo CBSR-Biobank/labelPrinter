@@ -66,7 +66,8 @@ import gov.nih.nci.system.applicationservice.ApplicationException;
  */
 public class PatientLabelEntryForm extends BgcEntryForm {
 
-    public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.forms.SpecimanLabelEntryForm"; //$NON-NLS-1$
+    public static final String ID =
+        "edu.ualberta.med.biobank.barcodegenerator.forms.SpecimanLabelEntryForm"; //$NON-NLS-1$
 
     public static final BgcLogger logger = BgcLogger
         .getLogger(PatientLabelEntryForm.class.getName());
@@ -139,7 +140,7 @@ public class PatientLabelEntryForm extends BgcEntryForm {
     }
 
     @Override
-    public void reset() {
+    public void setValues() throws Exception {
         clearFields();
     }
 
@@ -902,7 +903,8 @@ public class PatientLabelEntryForm extends BgcEntryForm {
     }
 
     private void createBarcode2DTextCheckbox(Composite group2) {
-        new Label(group2, SWT.NONE).setText(Messages.PatientLabelEntryForm_barcode2D);
+        new Label(group2, SWT.NONE)
+            .setText(Messages.PatientLabelEntryForm_barcode2D);
         barcode2DTextCheckbox = new Button(group2, SWT.CHECK | SWT.LEFT);
         barcode2DTextCheckbox.setSelection(perferenceStore
             .getBoolean(PreferenceConstants.BARCODE_2D_TEXT_TYPE_CHECKBOX));
@@ -1155,7 +1157,8 @@ public class PatientLabelEntryForm extends BgcEntryForm {
                 BufferedImage logoImage;
 
                 logoImage = ImageIO.read(new File(logoText.getText()));
-                ByteArrayOutputStream binaryOutputStream = new ByteArrayOutputStream();
+                ByteArrayOutputStream binaryOutputStream =
+                    new ByteArrayOutputStream();
                 if (logoImage != null) {
                     ImageIO.write(logoImage, "PNG", binaryOutputStream); //$NON-NLS-1$
                     bis = new ByteArrayInputStream(

@@ -45,7 +45,8 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
 
     private static final String JASPER_EXTENSION = "*.jrxml"; //$NON-NLS-1$
 
-    public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.forms.JasperTemplateEntryForm"; //$NON-NLS-1$
+    public static final String ID =
+        "edu.ualberta.med.biobank.barcodegenerator.forms.JasperTemplateEntryForm"; //$NON-NLS-1$
 
     private Button deleteButton = null;
     private Button newButton = null;
@@ -385,8 +386,9 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
                 String jasperConfigName = dialog.getValue();
 
                 if (!templateMap.containsKey(jasperConfigName)) {
-                    JasperTemplateWrapper newTemplate = new JasperTemplateWrapper(
-                        SessionManager.getAppService());
+                    JasperTemplateWrapper newTemplate =
+                        new JasperTemplateWrapper(
+                            SessionManager.getAppService());
 
                     try {
                         newTemplate.setName(jasperConfigName);
@@ -395,11 +397,12 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
 
                         jasperTemplateList.redraw();
                     } catch (Exception e1) {
-                        BgcPlugin.openAsyncError(
-                            Messages.JasperTemplateEntryForm_save_failed_title,
-                            NLS.bind(
-                                Messages.JasperTemplateEntryForm_save_failed_msg,
-                                e1.getMessage()));
+                        BgcPlugin
+                            .openAsyncError(
+                                Messages.JasperTemplateEntryForm_save_failed_title,
+                                NLS.bind(
+                                    Messages.JasperTemplateEntryForm_save_failed_msg,
+                                    e1.getMessage()));
                     }
 
                 } else {
@@ -421,9 +424,11 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
                         MessageBox messageBox = new MessageBox(PlatformUI
                             .getWorkbench().getActiveWorkbenchWindow()
                             .getShell(), SWT.ICON_QUESTION | SWT.YES | SWT.NO);
-                        messageBox.setMessage(NLS.bind(
-                            Messages.JasperTemplateEntryForm_delete_confirm_msg,
-                            selected.getName()));
+                        messageBox
+                            .setMessage(NLS
+                                .bind(
+                                    Messages.JasperTemplateEntryForm_delete_confirm_msg,
+                                    selected.getName()));
                         messageBox
                             .setText(Messages.JasperTemplateEntryForm_deleting);
 
@@ -486,6 +491,12 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
     @Override
     public void widgetDefaultSelected(SelectionEvent e) {
         widgetSelected(e);
+    }
+
+    @Override
+    public void setValues() throws Exception {
+        // TODO Auto-generated method stub
+
     }
 
 }

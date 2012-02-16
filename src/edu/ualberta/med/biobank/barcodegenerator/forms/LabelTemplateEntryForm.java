@@ -58,7 +58,8 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
 
     private static final String PRINTER_DEFAULT_NAME = "default"; //$NON-NLS-1$
 
-    public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.forms.TemplateEntryForm"; //$NON-NLS-1$
+    public static final String ID =
+        "edu.ualberta.med.biobank.barcodegenerator.forms.TemplateEntryForm"; //$NON-NLS-1$
 
     private Button deleteButton = null;
     private Button copyButton = null;
@@ -527,11 +528,13 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                 if (!templateStore.getTemplateNames().contains(newTemplateName)) {
 
                     // jasper config combo selection
-                    ComboInputDialog jasperComboDialog = new ComboInputDialog(
-                        Messages.LabelTemplateEntryForm_jasper_config_selection,
-                        Messages.LabelTemplateEntryForm_jasper_config_selection_msg,
-                        JasperTemplateWrapper.getTemplateNames(SessionManager
-                            .getAppService()), null, shell);
+                    ComboInputDialog jasperComboDialog =
+                        new ComboInputDialog(
+                            Messages.LabelTemplateEntryForm_jasper_config_selection,
+                            Messages.LabelTemplateEntryForm_jasper_config_selection_msg,
+                            JasperTemplateWrapper
+                                .getTemplateNames(SessionManager
+                                    .getAppService()), null, shell);
                     jasperComboDialog.open();
 
                     String selectedJasperConfig = jasperComboDialog.getValue();
@@ -695,5 +698,11 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                 Messages.LabelTemplateEntryForm_delete_error_title,
                 Messages.LabelTemplateEntryForm_delete_error_msg, e1);
         }
+    }
+
+    @Override
+    public void setValues() throws Exception {
+        // TODO Auto-generated method stub
+
     }
 }
