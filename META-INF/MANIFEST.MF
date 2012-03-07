@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: BarcodeGenerator
 Bundle-SymbolicName: barcodeGenerator; singleton:=true
 Bundle-Version: 0.0.2
-Bundle-Activator: edu.ualberta.med.biobank.barcodegenerator.BarcodeGenPlugin
+Bundle-Activator: edu.ualberta.med.biobank.labelprinter.BarcodeGenPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.forms;bundle-version="3.5.2",
  org.eclipse.core.runtime,
@@ -13,7 +13,7 @@ Require-Bundle: org.eclipse.ui,
  biobank;bundle-version="3.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: edu.ualberta.med.biobank.barcodegenerator,
- edu.ualberta.med.biobank.barcodegenerator.handlers
+Export-Package: edu.ualberta.med.biobank.labelprinter,
+ edu.ualberta.med.biobank.labelprinter.handlers
 Bundle-ClassPath: lib/barcode4j-light.jar,
  .

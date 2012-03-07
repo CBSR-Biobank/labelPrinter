@@ -17,19 +17,19 @@
    <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="edu.ualberta.med.biobank.barcodegenerator.forms.LabelTemplateEntryForm"
+            class="edu.ualberta.med.biobank.labelprinter.forms.LabelTemplateEntryForm"
             id="edu.ualberta.med.biobank.barcodegenerator.forms.TemplateEntryForm"
             default="false"
             name="%printer.template.editor.name">
       </editor>
       <editor
-            class="edu.ualberta.med.biobank.barcodegenerator.forms.JasperTemplateEntryForm"
+            class="edu.ualberta.med.biobank.labelprinter.forms.JasperTemplateEntryForm"
             id="edu.ualberta.med.biobank.barcodegenerator.forms.JasperTemplateEntryForm"
             default="false"
             name="%jasper.template.editor.name">
       </editor>
             <editor
-            class="edu.ualberta.med.biobank.barcodegenerator.forms.PatientLabelEntryForm"
+            class="edu.ualberta.med.biobank.labelprinter.forms.PatientLabelEntryForm"
             id="edu.ualberta.med.biobank.barcodegenerator.forms.SpecimanLabelEntryForm"
             default="false"
            name="%patient.labels.editor.name">
@@ -66,7 +66,7 @@
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="edu.ualberta.med.biobank.barcodegenerator.handlers.PatientLabelHandler"
+            class="edu.ualberta.med.biobank.labelprinter.handlers.PatientLabelHandler"
             commandId="edu.ualberta.med.barcodegenerator.commands.patientlabel">
          <enabledWhen>
             <and>
@@ -80,7 +80,7 @@
          </enabledWhen>
       </handler>
       <handler
-            class="edu.ualberta.med.biobank.barcodegenerator.handlers.TemplateEditorHandler"
+            class="edu.ualberta.med.biobank.labelprinter.handlers.TemplateEditorHandler"
             commandId="edu.ualberta.med.barcodegenerator.commands.templateeditor">
          <enabledWhen>
             <and>
@@ -94,7 +94,7 @@
          </enabledWhen>
       </handler>
       <handler
-            class="edu.ualberta.med.biobank.barcodegenerator.handlers.JasperEditorHandler"
+            class="edu.ualberta.med.biobank.labelprinter.handlers.JasperEditorHandler"
             commandId="edu.ualberta.med.barcodegenerator.commands.jaspereditor">
          <enabledWhen>
             <and>
@@ -126,23 +126,23 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
-            class="edu.ualberta.med.biobank.barcodegenerator.preferences.PreferenceInitializer">
+            class="edu.ualberta.med.biobank.labelprinter.preferences.PreferenceInitializer">
       </initializer>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            class="edu.ualberta.med.biobank.barcodegenerator.perspective.PatientLabelPerspective"
+            class="edu.ualberta.med.biobank.labelprinter.perspective.PatientLabelPerspective"
             id="barcodeGenerator.perspective.patientlabel"
             name="%label.printer.view.name">
       </perspective>
       <perspective
-            class="edu.ualberta.med.biobank.barcodegenerator.perspective.TemplateEditorPerspective"
+            class="edu.ualberta.med.biobank.labelprinter.perspective.TemplateEditorPerspective"
             id="barcodeGenerator.perspective.templateeditor"
             name="%template.editor.name">
       </perspective>
       <perspective
-            class="edu.ualberta.med.biobank.barcodegenerator.perspective.JasperEditorPerspective"
+            class="edu.ualberta.med.biobank.labelprinter.perspective.JasperEditorPerspective"
             id="barcodeGenerator.perspective.jaspereditor"
             name="%jasper.configuration.name">
       </perspective>
