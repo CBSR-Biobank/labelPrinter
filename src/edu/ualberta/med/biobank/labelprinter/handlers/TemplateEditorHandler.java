@@ -15,7 +15,7 @@ import edu.ualberta.med.biobank.labelprinter.perspective.TemplateEditorPerspecti
 
 public class TemplateEditorHandler extends AbstractHandler implements IHandler {
 
-    public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.handlers.TemplateEditorHandler"; //$NON-NLS-1$
+    public static final String ID = "edu.ualberta.med.biobank.labelprinter.handlers.TemplateEditorHandler"; //$NON-NLS-1$
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {

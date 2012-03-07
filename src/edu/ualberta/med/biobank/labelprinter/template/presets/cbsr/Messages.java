@@ -3,7 +3,7 @@ package edu.ualberta.med.biobank.labelprinter.template.presets.cbsr;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-    private static final String BUNDLE_NAME = "edu.ualberta.med.biobank.barcodegenerator.template.presets.cbsr.messages"; //$NON-NLS-1$
+    private static final String BUNDLE_NAME = "edu.ualberta.med.biobank.labelprinter.template.presets.cbsr.messages"; //$NON-NLS-1$
     public static String CBSRLabelMaker_barcode_characters_error;
     public static String CBSRLabelMaker_barcodes_size_error;
     public static String CBSRLabelMaker_config_data_invalid_error;

@@ -3,7 +3,7 @@ package edu.ualberta.med.biobank.labelprinter.template.jasper;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-    private static final String BUNDLE_NAME = "edu.ualberta.med.biobank.barcodegenerator.template.jasper.messages"; //$NON-NLS-1$
+    private static final String BUNDLE_NAME = "edu.ualberta.med.biobank.labelprinter.template.jasper.messages"; //$NON-NLS-1$
     public static String JasperFiller_barcode_img_draw_error;
     public static String JasperFiller_barcode_img_error;
     public static String JasperFiller_barcode_img_failed_error_msg;

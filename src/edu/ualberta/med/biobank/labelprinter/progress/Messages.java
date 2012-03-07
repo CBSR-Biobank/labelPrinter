@@ -3,7 +3,7 @@ package edu.ualberta.med.biobank.labelprinter.progress;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-    private static final String BUNDLE_NAME = "edu.ualberta.med.biobank.barcodegenerator.progress.messages"; //$NON-NLS-1$
+    private static final String BUNDLE_NAME = "edu.ualberta.med.biobank.labelprinter.progress.messages"; //$NON-NLS-1$
     public static String PrintOperation_cancel_title;
     public static String PrintOperation_print_cancel_msg;
     public static String PrintOperation_printing_task;

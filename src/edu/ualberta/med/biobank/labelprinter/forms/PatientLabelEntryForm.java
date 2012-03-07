@@ -67,7 +67,7 @@ import gov.nih.nci.system.applicationservice.ApplicationException;
 public class PatientLabelEntryForm extends BgcEntryForm {
 
     public static final String ID =
-        "edu.ualberta.med.biobank.barcodegenerator.forms.SpecimanLabelEntryForm"; //$NON-NLS-1$
+        "edu.ualberta.med.biobank.labelprinter.forms.SpecimanLabelEntryForm"; //$NON-NLS-1$
 
     public static final BgcLogger logger = BgcLogger
         .getLogger(PatientLabelEntryForm.class.getName());

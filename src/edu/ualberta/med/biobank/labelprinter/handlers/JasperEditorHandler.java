@@ -15,7 +15,7 @@ import edu.ualberta.med.biobank.labelprinter.perspective.JasperEditorPerspective
 
 public class JasperEditorHandler extends AbstractHandler implements IHandler {
 
-    public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.handlers.JasperEditorHandler"; //$NON-NLS-1$
+    public static final String ID = "edu.ualberta.med.biobank.labelprinter.handlers.JasperEditorHandler"; //$NON-NLS-1$
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {

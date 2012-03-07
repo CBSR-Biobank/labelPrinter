@@ -3,7 +3,7 @@ package edu.ualberta.med.biobank.labelprinter.trees;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-    private static final String BUNDLE_NAME = "edu.ualberta.med.biobank.barcodegenerator.trees.messages"; //$NON-NLS-1$
+    private static final String BUNDLE_NAME = "edu.ualberta.med.biobank.labelprinter.trees.messages"; //$NON-NLS-1$
     public static String ConfigurationTree_height_column;
     public static String ConfigurationTree_horizontal_column;
     public static String ConfigurationTree_settings_tree_column;

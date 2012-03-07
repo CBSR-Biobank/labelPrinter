@@ -15,7 +15,7 @@ import edu.ualberta.med.biobank.labelprinter.perspective.PatientLabelPerspective
 
 public class PatientLabelHandler extends AbstractHandler implements IHandler {
 
-    public static final String ID = "edu.ualberta.med.biobank.barcodegenerator.handlers.patientlabelHandler"; //$NON-NLS-1$
+    public static final String ID = "edu.ualberta.med.biobank.labelprinter.handlers.patientlabelHandler"; //$NON-NLS-1$
 
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {

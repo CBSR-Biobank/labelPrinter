@@ -3,7 +3,7 @@ package edu.ualberta.med.biobank.labelprinter.forms;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-    private static final String BUNDLE_NAME = "edu.ualberta.med.biobank.barcodegenerator.forms.messages"; //$NON-NLS-1$
+    private static final String BUNDLE_NAME = "edu.ualberta.med.biobank.labelprinter.forms.messages"; //$NON-NLS-1$
     public static String JasperTemplateEntryForm_browse;
     public static String JasperTemplateEntryForm_config_name_label;
     public static String JasperTemplateEntryForm_delete_btn;

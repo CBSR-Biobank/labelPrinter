@@ -18,19 +18,19 @@
          point="org.eclipse.ui.editors">
       <editor
             class="edu.ualberta.med.biobank.labelprinter.forms.LabelTemplateEntryForm"
-            id="edu.ualberta.med.biobank.barcodegenerator.forms.TemplateEntryForm"
+            id="edu.ualberta.med.biobank.labelprinter.forms.TemplateEntryForm"
             default="false"
             name="%printer.template.editor.name">
       </editor>
       <editor
             class="edu.ualberta.med.biobank.labelprinter.forms.JasperTemplateEntryForm"
-            id="edu.ualberta.med.biobank.barcodegenerator.forms.JasperTemplateEntryForm"
+            id="edu.ualberta.med.biobank.labelprinter.forms.JasperTemplateEntryForm"
             default="false"
             name="%jasper.template.editor.name">
       </editor>
             <editor
             class="edu.ualberta.med.biobank.labelprinter.forms.PatientLabelEntryForm"
-            id="edu.ualberta.med.biobank.barcodegenerator.forms.SpecimanLabelEntryForm"
+            id="edu.ualberta.med.biobank.labelprinter.forms.SpecimanLabelEntryForm"
             default="false"
            name="%patient.labels.editor.name">
       </editor>

@@ -46,7 +46,7 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
     private static final String JASPER_EXTENSION = "*.jrxml"; //$NON-NLS-1$
 
     public static final String ID =
-        "edu.ualberta.med.biobank.barcodegenerator.forms.JasperTemplateEntryForm"; //$NON-NLS-1$
+        "edu.ualberta.med.biobank.labelprinter.forms.JasperTemplateEntryForm"; //$NON-NLS-1$
 
     private Button deleteButton = null;
     private Button newButton = null;
