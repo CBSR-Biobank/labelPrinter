@@ -7,7 +7,6 @@ Bundle-Activator: edu.ualberta.med.biobank.labelprinter.BarcodeGenPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.forms;bundle-version="3.5.2",
  org.eclipse.core.runtime,
- org.junit,
  biobank.gui.common;bundle-version="1.0.0",
  biobank.common;bundle-version="1.0.0",
  biobank;bundle-version="3.2.0"
