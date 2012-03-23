@@ -27,7 +27,7 @@ import org.eclipse.ui.PlatformUI;
 import edu.ualberta.med.biobank.SessionManager;
 import edu.ualberta.med.biobank.common.wrappers.JasperTemplateWrapper;
 import edu.ualberta.med.biobank.gui.common.BgcPlugin;
-import edu.ualberta.med.biobank.gui.common.BgcSessionState;
+import edu.ualberta.med.biobank.gui.common.LoginSessionState;
 import edu.ualberta.med.biobank.gui.common.forms.BgcEntryForm;
 import edu.ualberta.med.biobank.gui.common.forms.BgcEntryFormActions;
 import edu.ualberta.med.biobank.gui.common.widgets.BgcBaseText;
@@ -87,7 +87,7 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
     @Override
     public void dispose() {
         if (loginProvider != null) {
-            BgcPlugin.getSessionStateSourceProvider()
+            BgcPlugin.getLoginStateSourceProvider()
                 .removeSourceProviderListener(loginProvider);
             loginProvider = null;
         }
@@ -109,12 +109,12 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
             IMessageProvider.NONE);
         page.setLayout(new GridLayout(1, false));
 
-        BgcSessionState sessionSourceProvider = BgcPlugin
-            .getSessionStateSourceProvider();
+        LoginSessionState sessionSourceProvider = BgcPlugin
+            .getLoginStateSourceProvider();
 
         loggedIn = sessionSourceProvider.getCurrentState()
-            .get(BgcSessionState.SESSION_STATE_SOURCE_NAME)
-            .equals(BgcSessionState.LOGGED_IN);
+            .get(LoginSessionState.LOGIN_STATE_SOURCE_NAME)
+            .equals(LoginSessionState.LOGGED_IN);
 
         createMasterDetail();
 
@@ -128,7 +128,7 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
             public void sourceChanged(int sourcePriority, String sourceName,
                 Object sourceValue) {
                 if (sourceValue != null) {
-                    loggedIn = sourceValue.equals(BgcSessionState.LOGGED_IN);
+                    loggedIn = sourceValue.equals(LoginSessionState.LOGGED_IN);
                     updateForm();
                 }
             }
