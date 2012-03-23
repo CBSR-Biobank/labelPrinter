@@ -25,6 +25,8 @@ import org.eclipse.ui.ISourceProviderListener;
 import org.eclipse.ui.PlatformUI;
 
 import edu.ualberta.med.biobank.SessionManager;
+import edu.ualberta.med.biobank.common.action.labelPrinter.JasperTemplateDeleteAction;
+import edu.ualberta.med.biobank.common.action.labelPrinter.JasperTemplateSaveAction;
 import edu.ualberta.med.biobank.common.wrappers.JasperTemplateWrapper;
 import edu.ualberta.med.biobank.gui.common.BgcPlugin;
 import edu.ualberta.med.biobank.gui.common.LoginSessionState;
@@ -340,7 +342,9 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
 
                         if ((selectedTemplate.getXml() != null)
                             && !selectedTemplate.getXml().isEmpty()) {
-                            selectedTemplate.persist();
+                            SessionManager.getAppService().doAction(
+                                new JasperTemplateSaveAction(selectedTemplate
+                                    .getWrappedObject()));
                             jasperConfigText
                                 .setText(Messages.JasperTemplateEntryForm_loaded_msg);
                             setDirty(false);
@@ -435,8 +439,11 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
                         int response = messageBox.open();
                         if (response == SWT.YES) {
 
-                            if (!selected.isNew())
-                                selected.delete();
+                            if (!selected.isNew()) {
+                                SessionManager.getAppService().doAction(
+                                    new JasperTemplateDeleteAction(selected
+                                        .getWrappedObject()));
+                            }
                             templateMap.remove(prevJasperName);
                             jasperTemplateList.remove(prevJasperName);
 

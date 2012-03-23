@@ -11,6 +11,8 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import edu.ualberta.med.biobank.SessionManager;
+import edu.ualberta.med.biobank.common.action.labelPrinter.PrinterLabelTemplateDeleteAction;
+import edu.ualberta.med.biobank.common.action.labelPrinter.PrinterLabelTemplateSaveAction;
 import edu.ualberta.med.biobank.common.wrappers.JasperTemplateWrapper;
 import edu.ualberta.med.biobank.common.wrappers.PrinterLabelTemplateWrapper;
 import edu.ualberta.med.biobank.gui.common.BgcLogger;
@@ -157,7 +159,8 @@ public class Template implements Serializable {
 
             setConfiguration(config);
             try {
-                plt.persist();
+                SessionManager.getAppService().doAction(
+                    new PrinterLabelTemplateSaveAction(plt.getWrappedObject()));
             } catch (Exception e) {
                 logger.error(
                     "Error: Failed to persit key-updated configuration", e); //$NON-NLS-1$
@@ -193,7 +196,8 @@ public class Template implements Serializable {
     }
 
     public void persist() throws Exception {
-        plt.persist();
+        SessionManager.getAppService().doAction(
+            new PrinterLabelTemplateSaveAction(plt.getWrappedObject()));
     }
 
     public void reload() throws Exception {
@@ -205,7 +209,8 @@ public class Template implements Serializable {
     }
 
     public void delete() throws Exception {
-        plt.delete();
+        SessionManager.getAppService().doAction(
+            new PrinterLabelTemplateDeleteAction(plt.getWrappedObject()));
         plt = null;
     }
 
