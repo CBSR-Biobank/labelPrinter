@@ -8,7 +8,6 @@ import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -70,11 +69,6 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
     @Override
     protected void init() throws Exception {
         setPartName(Messages.JasperTemplateEntryForm_title);
-    }
-
-    @Override
-    protected void performDoubleClick(DoubleClickEvent event) {
-        // do nothing for now
     }
 
     @Override

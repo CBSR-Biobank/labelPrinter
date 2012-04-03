@@ -6,7 +6,6 @@ import javax.xml.bind.JAXBException;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -84,11 +83,6 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
     @Override
     protected void init() throws Exception {
         setPartName(Messages.LabelTemplateEntryForm_title);
-    }
-
-    @Override
-    protected void performDoubleClick(DoubleClickEvent event) {
-        // do nothing
     }
 
     @Override
