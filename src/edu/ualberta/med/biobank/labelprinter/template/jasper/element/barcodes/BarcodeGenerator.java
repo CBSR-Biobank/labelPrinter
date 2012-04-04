@@ -33,10 +33,10 @@ public class BarcodeGenerator {
 
         if (barcodeMsg == null || barcodeMsg.length() == 0)
             throw new BarcodeCreationException(
-                Messages.BarcodeGenerator_empty_msg_2D_error);
+                "null or empty msg specified to 2D barcode generator");
 
         if (dpi < 1 || dpi > 1000)
-            throw new BarcodeCreationException(Messages.BarcodeGenerator_dpi_error);
+            throw new BarcodeCreationException("dpi range is 1-1000");
 
         DataMatrixBean barcodeGenDataMatrix = new DataMatrixBean();
         barcodeGenDataMatrix.setMaxSize(new Dimension(18, 18));
@@ -68,14 +68,14 @@ public class BarcodeGenerator {
 
         if (font == null)
             throw new BarcodeCreationException(
-                Messages.BarcodeGenerator_font_error);
+                "null font specified to 1D barcode generator");
 
         if (barcodeMsg == null || barcodeMsg.length() == 0)
             throw new BarcodeCreationException(
-                Messages.BarcodeGenerator_empty_msg_1D_error);
+                "null or empty msg specified to 1D barcode generator");
 
         if (dpi < 1 || dpi > 1000)
-            throw new BarcodeCreationException(Messages.BarcodeGenerator_dpi_error);
+            throw new BarcodeCreationException("dpi range is 1-1000");
 
         Code128Bean barcodeGenCode128 = new Code128Bean();
         barcodeGenCode128.setBarHeight(5);// 6

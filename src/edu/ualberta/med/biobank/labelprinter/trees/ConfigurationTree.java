@@ -67,23 +67,23 @@ public class ConfigurationTree {
 
         // columns
         TreeColumn column1 = new TreeColumn(tree, SWT.LEFT);
-        column1.setText(Messages.ConfigurationTree_settings_tree_column);
+        column1.setText("Settings Editor Tree");
         column1.setWidth(200);
         TreeColumn column2 = new TreeColumn(tree, SWT.CENTER);
-        column2.setText(Messages.ConfigurationTree_horizontal_column);
+        column2.setText("Horizontal (mm)");
         column2.setWidth(85);
         TreeColumn column3 = new TreeColumn(tree, SWT.CENTER);
-        column3.setText(Messages.ConfigurationTree_vertical_column);
+        column3.setText("Vertical (mm)");
         column3.setWidth(70);
         TreeColumn column4 = new TreeColumn(tree, SWT.CENTER);
-        column4.setText(Messages.ConfigurationTree_width_column);
+        column4.setText("Width (mm)");
         column4.setWidth(70);
         TreeColumn column5 = new TreeColumn(tree, SWT.CENTER);
-        column5.setText(Messages.ConfigurationTree_height_column);
+        column5.setText("Height (mm)");
         column5.setWidth(70);
         TreeColumn column6 = new TreeColumn(tree, SWT.CENTER);
         column6.setWidth(1);
-        column6.setText(""); //$NON-NLS-1$
+        column6.setText(""); 
 
         tree.addListener(SWT.MouseDown, treeListner);
     }
@@ -105,20 +105,20 @@ public class ConfigurationTree {
         throws TreeException {
 
         if (tree == null)
-            throw new TreeException("Cannot create an item in a null tree."); //$NON-NLS-1$
+            throw new TreeException("Cannot create an item in a null tree."); 
 
         if (location == null)
-            throw new TreeException("Cannot create an item in a null location."); //$NON-NLS-1$
+            throw new TreeException("Cannot create an item in a null location."); 
 
         if (value == null)
             throw new TreeException(
-                "Cannot create an item with a null rectangle value."); //$NON-NLS-1$
+                "Cannot create an item with a null rectangle value."); 
 
         int locationIndex = 0;
-        String[] locationSegments = location.split("\\."); //$NON-NLS-1$
+        String[] locationSegments = location.split("\\."); 
         if (locationSegments.length <= 0)
             throw new TreeException(
-                "Location must contain at least one segment."); //$NON-NLS-1$
+                "Location must contain at least one segment."); 
 
         // to traverse through the tree
         Object currentItem = tree;
@@ -174,7 +174,7 @@ public class ConfigurationTree {
                 break;
             } else {
                 throw new TreeException(
-                    "TreeItem searching failed: currentItem is null."); //$NON-NLS-1$
+                    "TreeItem searching failed: currentItem is null."); 
             }
 
         }
@@ -195,7 +195,7 @@ public class ConfigurationTree {
         resetEditor();
 
         if (tree == null)
-            throw new TreeException("Cannot populate tree: Tree is null."); //$NON-NLS-1$
+            throw new TreeException("Cannot populate tree: Tree is null."); 
 
         tree.removeAll();
 
@@ -204,7 +204,7 @@ public class ConfigurationTree {
 
         if (!config.exists())
             throw new TreeException(
-                Messages.ConfigurationTree_valid_config_settings_error);
+                "A valid configuration setting is required.");
 
         /*
          * List<String> mapKeys = new ArrayList<String>(config.getSettings()
@@ -243,7 +243,7 @@ public class ConfigurationTree {
         textEdit = null;
 
         if (editor == null)
-            throw new TreeException("Editor is null."); //$NON-NLS-1$
+            throw new TreeException("Editor is null."); 
 
         editor.setEditor(null, null, 0);
     }
@@ -364,7 +364,7 @@ public class ConfigurationTree {
                         while (c != null) {
                             c = c.getParentItem();
                             if (c != null)
-                                location = c.getText() + "." + location; //$NON-NLS-1$
+                                location = c.getText() + "." + location; 
                         }
                         if (configuration.containsKey(location)) {
 
@@ -373,7 +373,7 @@ public class ConfigurationTree {
                             notifyModifyListeners();
                         } else {
                             logger
-                                .error("Could not find key in configuration: " //$NON-NLS-1$
+                                .error("Could not find key in configuration: " 
                                     + location);
                         }
                     }
@@ -386,7 +386,7 @@ public class ConfigurationTree {
 
             @Override
             public void verifyText(VerifyEvent e) {
-                if (!e.text.matches("[{0-9-}]*")) { //$NON-NLS-1$
+                if (!e.text.matches("[{0-9-}]*")) { 
                     e.doit = false;
                     return;
                 }
@@ -402,7 +402,7 @@ public class ConfigurationTree {
 
         String[] buf = new String[5];
 
-        buf[0] = "null"; //$NON-NLS-1$
+        buf[0] = "null"; 
         buf[1] = String.valueOf(r.getX());
         buf[2] = String.valueOf(r.getY());
         buf[3] = String.valueOf(r.getWidth());

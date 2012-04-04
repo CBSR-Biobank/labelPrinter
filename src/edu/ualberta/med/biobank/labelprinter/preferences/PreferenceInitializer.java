@@ -19,18 +19,18 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
     }
 
     public static void setDefaults(IPreferenceStore store) {
-        store.setDefault(PreferenceConstants.PROJECT_TITLE, "BBPSP"); //$NON-NLS-1$
-        store.setDefault(PreferenceConstants.LOGO_FILE_LOCATION, ""); //$NON-NLS-1$
-        store.setDefault(PreferenceConstants.TEMPLATE_NAME, ""); //$NON-NLS-1$
-        store.setDefault(PreferenceConstants.PRINTER_NAME, ""); //$NON-NLS-1$
+        store.setDefault(PreferenceConstants.PROJECT_TITLE, "BBPSP"); 
+        store.setDefault(PreferenceConstants.LOGO_FILE_LOCATION, ""); 
+        store.setDefault(PreferenceConstants.TEMPLATE_NAME, ""); 
+        store.setDefault(PreferenceConstants.PRINTER_NAME, ""); 
 
         store.setDefault(PreferenceConstants.LABEL_CHECKBOX_1, true);
         store.setDefault(PreferenceConstants.LABEL_CHECKBOX_2, true);
         store.setDefault(PreferenceConstants.LABEL_CHECKBOX_3, true);
 
-        store.setDefault(PreferenceConstants.LABEL_TEXT_1, Messages.PreferenceInitializer_patient_name);
-        store.setDefault(PreferenceConstants.LABEL_TEXT_2, "PHN"); //$NON-NLS-1$
-        store.setDefault(PreferenceConstants.LABEL_TEXT_3, Messages.PreferenceInitializer_patient_type);
+        store.setDefault(PreferenceConstants.LABEL_TEXT_1, "Patient Name");
+        store.setDefault(PreferenceConstants.LABEL_TEXT_2, "PHN"); 
+        store.setDefault(PreferenceConstants.LABEL_TEXT_3, "Patient Type");
 
         store.setDefault(PreferenceConstants.VALUE_CHECKBOX_1, true);
         store.setDefault(PreferenceConstants.VALUE_CHECKBOX_2, true);
@@ -44,8 +44,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
             false);
         store.setDefault(PreferenceConstants.SPECIMEN_TYPE_CHECKBOX, true);
         store.setDefault(PreferenceConstants.SPECIMEN_TYPE_TEXT,
-            "Sp. Type__________"); //$NON-NLS-1$
-        store.setDefault(PreferenceConstants.PDF_DIRECTORY_PATH, ""); //$NON-NLS-1$
+            "Sp. Type__________"); 
+        store.setDefault(PreferenceConstants.PDF_DIRECTORY_PATH, ""); 
 
         // sets the default font.
         GraphicsEnvironment e = GraphicsEnvironment
@@ -63,22 +63,22 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
                 String cFontName = f.getFontName();
                 String cFontLower = f.getFontName().toLowerCase();
 
-                if (cFontLower.contains("times new")) { //$NON-NLS-1$
+                if (cFontLower.contains("times new")) { 
                     defaultFontName = cFontName;
                     break;
-                } else if (cFontLower.contains("courier")) { //$NON-NLS-1$
+                } else if (cFontLower.contains("courier")) { 
                     defaultFontName = cFontName;
                     break;
-                } else if (cFontLower.contains("arial")) { //$NON-NLS-1$
+                } else if (cFontLower.contains("arial")) { 
                     defaultFontName = cFontName;
                     break;
-                } else if (cFontLower.contains("serif")) { //$NON-NLS-1$
+                } else if (cFontLower.contains("serif")) { 
                     defaultFontName = cFontName;
                     break;
-                } else if (cFontLower.contains("sans")) { //$NON-NLS-1$
+                } else if (cFontLower.contains("sans")) { 
                     defaultFontName = cFontName;
                     break;
-                } else if (cFontLower.contains("mono")) { //$NON-NLS-1$
+                } else if (cFontLower.contains("mono")) { 
                     defaultFontName = cFontName;
                     break;
                 }
@@ -86,7 +86,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
             store.setDefault(PreferenceConstants.TEXT_FONT_NAME,
                 defaultFontName);
         } else
-            store.setDefault(PreferenceConstants.TEXT_FONT_NAME, ""); //$NON-NLS-1$
+            store.setDefault(PreferenceConstants.TEXT_FONT_NAME, ""); 
 
     }
 

@@ -37,7 +37,7 @@ public class TemplateStore {
     public Template getTemplate(String name) throws Exception {
         Template t = templates.get(name);
         if (t == null) {
-            throw new Exception(NLS.bind(Messages.TemplateStore_notfound_msg,
+            throw new Exception(NLS.bind("Template with name {0} not found",
                 name));
         }
         return t;
@@ -55,7 +55,7 @@ public class TemplateStore {
     public void deleteTemplate(Template template) throws Exception {
         String name = template.getName();
         if (!templates.containsKey(name)) {
-            throw new Exception(NLS.bind(Messages.TemplateStore_notfound_msg,
+            throw new Exception(NLS.bind("Template with name {0} not found",
                 name));
         }
         templates.remove(name);
@@ -64,7 +64,7 @@ public class TemplateStore {
     public void deleteTemplate(String name) throws Exception {
         Template t = templates.get(name);
         if (t == null) {
-            throw new Exception(NLS.bind(Messages.TemplateStore_notfound_msg,
+            throw new Exception(NLS.bind("Template with name {0} not found",
                 name));
         }
         deleteTemplate(t);

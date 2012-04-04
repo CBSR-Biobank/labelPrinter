@@ -30,18 +30,18 @@ public class PrintOperation extends BarcodeGenerationOperation {
 
         successful = false;
 
-        monitor.beginTask(Messages.PrintOperation_printing_task,
+        monitor.beginTask("Printing Barcode Labels",
             IProgressMonitor.UNKNOWN);
 
         try {
-            monitor.subTask(Messages.PrintOperation_sending_data_subtask);
+            monitor.subTask("Sending Data to Printer");
             CBSRLabelMaker.printLabelsCBSR(guiData, patientNumbers);
             successful = true;
 
         } catch (CBSRPdfGenException e1) {
             monitor.done();
             successful = false;
-            setError(Messages.PrintOperation_validation_error_title,
+            setError("Gui Validation",
                 e1.getError());
             return;
         }
@@ -53,8 +53,8 @@ public class PrintOperation extends BarcodeGenerationOperation {
         // by this method.
         if (monitor.isCanceled()) {
             setError(
-                Messages.PrintOperation_cancel_title,
-                Messages.PrintOperation_print_cancel_msg);
+                "Printing Operation Cancel",
+                "The current set of prints are invalid, please shred any sheets that were printed from this operation.");
         }
     }
 }

@@ -24,22 +24,22 @@ public class FieldGenerator {
 
         if ((font == null) && ((label != null) || (value != null)))
             throw new ElementCreationException(
-                Messages.FieldGenerator_null_font_msg);
+                "must specify font to the draw the provided label,value texts");
 
         if ((textRect == null) || (barcodeRect == null))
             throw new ElementCreationException(
-                Messages.FieldGenerator_null_dim_error);
+                "Null dimensions specified.");
 
         List<Element> elements = new ArrayList<Element>();
 
-        String textLabel = ""; //$NON-NLS-1$
+        String textLabel = ""; 
 
         if ((label != null) && (label.length() > 0)) {
             textLabel = label;
         }
 
         if ((value != null) && (value.length() > 0)) {
-            textLabel += ": " + value; //$NON-NLS-1$
+            textLabel += ": " + value; 
             if (printBarcode) {
                 elements.add(new Barcode1D(barcodeRect, value, font));
             }

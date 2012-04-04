@@ -20,7 +20,7 @@ import edu.ualberta.med.biobank.gui.common.widgets.BgcBaseText;
  */
 public class StringInputDialog extends BgcBaseDialog {
 
-    private static final String MSG_NO_ST_NAME = Messages.StringInputDialog_value_required_msg;
+    private static final String MSG_NO_ST_NAME = "A value is required";
 
     private class ValuePojo {
         public String name;
@@ -77,7 +77,7 @@ public class StringInputDialog extends BgcBaseDialog {
         content.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         createBoundWidgetWithLabel(content, BgcBaseText.class, SWT.BORDER,
-            labelText, null, value, "name", new NonEmptyStringValidator( //$NON-NLS-1$
+            labelText, null, value, "name", new NonEmptyStringValidator( 
                 MSG_NO_ST_NAME));
 
         setOkButtonEnabled(false);

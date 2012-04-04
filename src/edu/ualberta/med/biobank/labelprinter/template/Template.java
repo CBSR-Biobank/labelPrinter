@@ -53,7 +53,7 @@ public class Template implements Serializable {
         try {
             clone.setJasperTemplate(this.getJasperTemplate());
         } catch (Exception e1) {
-            logger.error("Error: Failed to clone jasper template.", e1); //$NON-NLS-1$
+            logger.error("Error: Failed to clone jasper template.", e1); 
             return null;
         }
 
@@ -77,7 +77,7 @@ public class Template implements Serializable {
             try {
                 clone.setConfiguration(newConfig);
             } catch (JAXBException e) {
-                logger.error("Error: Failed to clone configuration.", e); //$NON-NLS-1$
+                logger.error("Error: Failed to clone configuration.", e); 
                 return null;
             }
         }
@@ -119,7 +119,7 @@ public class Template implements Serializable {
     public JasperTemplateWrapper getJasperTemplate() throws Exception {
         JasperTemplateWrapper jasp = plt.getJasperTemplate();
         if (jasp == null) {
-            throw new Exception(Messages.Template_template_set_error);
+            throw new Exception("jasper template has not been set");
         }
         return jasp;
     }
@@ -127,7 +127,7 @@ public class Template implements Serializable {
     public String getJasperTemplateName() throws Exception {
         JasperTemplateWrapper jasp = plt.getJasperTemplate();
         if (jasp == null) {
-            throw new Exception(Messages.Template_template_set_error);
+            throw new Exception("jasper template has not been set");
         }
         return jasp.getName();
     }
@@ -163,7 +163,7 @@ public class Template implements Serializable {
                     new PrinterLabelTemplateSaveAction(plt.getWrappedObject()));
             } catch (Exception e) {
                 logger.error(
-                    "Error: Failed to persit key-updated configuration", e); //$NON-NLS-1$
+                    "Error: Failed to persit key-updated configuration", e); 
                 return null;
             }
         }

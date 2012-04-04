@@ -40,28 +40,28 @@ public class CBSRLabelMaker {
     private static final int BARCODE_COUNT = 32;
 
     // per sheet
-    private static final String SHEET_INFO_FIELD_1_TEXT = "Sheet Info.Custom Field 1.Text"; //$NON-NLS-1$
-    private static final String SHEET_INFO_FIELD_1_BARCODE_1D = "Sheet Info.Custom Field 1.1D Barcode"; //$NON-NLS-1$
+    private static final String SHEET_INFO_FIELD_1_TEXT = "Sheet Info.Custom Field 1.Text"; 
+    private static final String SHEET_INFO_FIELD_1_BARCODE_1D = "Sheet Info.Custom Field 1.1D Barcode"; 
 
-    private static final String SHEET_INFO_FIELD_2_TEXT = "Sheet Info.Custom Field 2.Text"; //$NON-NLS-1$
-    private static final String SHEET_INFO_FIELD_2_BARCODE_1D = "Sheet Info.Custom Field 2.1D Barcode"; //$NON-NLS-1$
+    private static final String SHEET_INFO_FIELD_2_TEXT = "Sheet Info.Custom Field 2.Text"; 
+    private static final String SHEET_INFO_FIELD_2_BARCODE_1D = "Sheet Info.Custom Field 2.1D Barcode"; 
 
-    private static final String SHEET_INFO_FIELD_3_TEXT = "Sheet Info.Custom Field 3.Text"; //$NON-NLS-1$
-    private static final String SHEET_INFO_FIELD_3_BARCODE_1D = "Sheet Info.Custom Field 3.1D Barcode"; //$NON-NLS-1$
+    private static final String SHEET_INFO_FIELD_3_TEXT = "Sheet Info.Custom Field 3.Text"; 
+    private static final String SHEET_INFO_FIELD_3_BARCODE_1D = "Sheet Info.Custom Field 3.1D Barcode"; 
 
-    private static final String SHEET_INFO_PATIENT_NUM_BARCODE_1D = "Sheet Info.Patient Number.1D Barcode"; //$NON-NLS-1$
+    private static final String SHEET_INFO_PATIENT_NUM_BARCODE_1D = "Sheet Info.Patient Number.1D Barcode"; 
 
     // per label general
-    private static final String LABEL_GENERAL_FIELD_TEXT = "Labels.General.Text"; //$NON-NLS-1$
-    private static final String LABEL_GENERAL_BARCODE_1D = "Labels.General.Barcode 1D"; //$NON-NLS-1$
-    private static final String LABEL_GENERAL_BARCODE_2D = "Labels.General.Barcode 2D"; //$NON-NLS-1$
-    private static final String LABEL_GENERAL_BARCODE_2D_TEXT = "Labels.General.Barcode 2D Text"; //$NON-NLS-1$
+    private static final String LABEL_GENERAL_FIELD_TEXT = "Labels.General.Text"; 
+    private static final String LABEL_GENERAL_BARCODE_1D = "Labels.General.Barcode 1D"; 
+    private static final String LABEL_GENERAL_BARCODE_2D = "Labels.General.Barcode 2D"; 
+    private static final String LABEL_GENERAL_BARCODE_2D_TEXT = "Labels.General.Barcode 2D Text"; 
 
     // per label individual
-    private static final String LABEL_INDIVIDUAL_BARCODE_1D_FORMATTED = "Labels.Individual.Label %03d.Barcode 1D"; //$NON-NLS-1$
-    private static final String LABEL_INDIVIDUAL_BARCODE_2D_FORMATTED = "Labels.Individual.Label %03d.Barcode 2D"; //$NON-NLS-1$
-    private static final String LABEL_INDIVIDUAL_BARCODE_2D_TEXT = "Labels.Individual.Label %03d.Barcode 2D Text"; //$NON-NLS-1$
-    private static final String LABEL_INDIVIDUAL_FIELD_TEXT_FORMATTED = "Labels.Individual.Label %03d.Text"; //$NON-NLS-1$
+    private static final String LABEL_INDIVIDUAL_BARCODE_1D_FORMATTED = "Labels.Individual.Label %03d.Barcode 1D"; 
+    private static final String LABEL_INDIVIDUAL_BARCODE_2D_FORMATTED = "Labels.Individual.Label %03d.Barcode 2D"; 
+    private static final String LABEL_INDIVIDUAL_BARCODE_2D_TEXT = "Labels.Individual.Label %03d.Barcode 2D Text"; 
+    private static final String LABEL_INDIVIDUAL_FIELD_TEXT_FORMATTED = "Labels.Individual.Label %03d.Text"; 
 
     /**
      * Generates a jasper outline and creates a pdf file byte array.
@@ -79,7 +79,7 @@ public class CBSRLabelMaker {
 
         if (!verifyConfiguration(configDataStr)) {
             throw new CBSRPdfGenException(
-                Messages.CBSRLabelMaker_config_data_invalid_error);
+                "Configuration data is invalid. Template is corrupt.");
         }
 
         JasperOutline jo = generateJasperOutline(cbsrData, barcodeStrings);
@@ -90,8 +90,8 @@ public class CBSRLabelMaker {
             pdfData = tm.generatePdfData();
         } catch (JasperFillException e) {
             throw new CBSRPdfGenException(
-                Messages.CBSRLabelMaker_fill_config_failed
-                    + "\n" + e.getError()); //$NON-NLS-1$
+                "Failed to fill configuration data into jasper template."
+                    + "\n" + e.getError()); 
         }
         return pdfData;
     }
@@ -114,8 +114,8 @@ public class CBSRLabelMaker {
         } catch (JasperFillException e) {
 
             throw new CBSRPdfGenException(
-                Messages.CBSRLabelMaker_fill_config_print_failed
-                    + "\n" + e.getError()); //$NON-NLS-1$
+                "Failed to fill configuration data into jasper template for printing."
+                    + "\n" + e.getError()); 
         }
     }
 
@@ -126,12 +126,12 @@ public class CBSRLabelMaker {
 
         if (cbsrData.projectTileStr == null) {
             throw new CBSRPdfGenException(
-                Messages.CBSRLabelMaker_null_title_error);
+                "Cannot have a null title");
         }
 
         if ((barcodeStrings == null) || (barcodeStrings.size() == 0)) {
             throw new CBSRPdfGenException(
-                Messages.CBSRLabelMaker_barcodes_size_error);
+                "Require a valid amount of barcode strings");
         }
 
         // -------branding------------a
@@ -173,11 +173,11 @@ public class CBSRLabelMaker {
 
         } catch (ElementCreationException eee) {
             throw new CBSRPdfGenException(NLS.bind(
-                Messages.CBSRLabelMaker_patient_elt_create_error,
+                "Failed to create element in patient info box: {0}",
                 eee.getError()));
         } catch (JAXBException ee) {
             throw new CBSRPdfGenException(NLS.bind(
-                Messages.CBSRLabelMaker_load_config_error, ee.getMessage()));
+                "Failed to load configuration setting: {0}", ee.getMessage()));
         }
         // -------barcode info------------
         JasperOutline.PatientBarcodeInformation pbi = new JasperOutline.PatientBarcodeInformation();
@@ -207,13 +207,13 @@ public class CBSRLabelMaker {
                     bi.getElements().add(item1D);
                 } else {
                     throw new CBSRPdfGenException(
-                        Messages.CBSRLabelMaker_empty_barcode_error);
+                        "Empty or null barcode string was specified.");
                 }
 
                 // 2d barcode;
                 if ((rStrArray != null)
                     && (rStrArray.length() > 0)
-                    && (rStrArray.replaceAll("[^a-zA-Z0-9 ]", "").length() == 12)) { //$NON-NLS-1$ //$NON-NLS-2$
+                    && (rStrArray.replaceAll("[^a-zA-Z0-9 ]", "").length() == 12)) {  
 
                     Rectangle master = tplt.getKey(LABEL_GENERAL_BARCODE_2D);
                     Rectangle barcode = tplt.getKey(String.format(
@@ -249,7 +249,7 @@ public class CBSRLabelMaker {
 
                 } else {
                     throw new CBSRPdfGenException(
-                        Messages.CBSRLabelMaker_barcode_characters_error);
+                        "Barcode ID must be a 12 character alphanumeric string.");
                 }
 
                 if ((cbsrData.specimenTypeStr != null)
@@ -274,16 +274,16 @@ public class CBSRLabelMaker {
             }
         } catch (ElementCreationException e2) {
             throw new CBSRPdfGenException(NLS.bind(
-                Messages.CBSRLabelMaker_info_box_create_error, e2.getError()));
+                "Failed to create element in PatientBarcodeInformation box: {0}", e2.getError()));
         } catch (JAXBException e1) {
             throw new CBSRPdfGenException(NLS.bind(
-                Messages.CBSRLabelMaker_load_config_settings_error,
+                "Failed to load configuration setting: {0}",
                 e1.getMessage()));
         }
 
         if (!tplt.jasperTemplateExists()) {
             throw new CBSRPdfGenException(
-                Messages.CBSRLabelMaker_valid_jasper_error);
+                "A valid jasper file is required.");
         }
 
         try {
@@ -295,7 +295,7 @@ public class CBSRLabelMaker {
             return jo;
         } catch (Exception e5) {
             throw new CBSRPdfGenException(NLS.bind(
-                Messages.CBSRLabelMaker_patient_info_box_create_error,
+                "Failed to create element in patient info box: {0}",
                 e5.getMessage()));
         }
     }

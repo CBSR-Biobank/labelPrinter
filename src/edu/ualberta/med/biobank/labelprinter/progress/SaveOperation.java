@@ -23,7 +23,7 @@ import edu.ualberta.med.biobank.labelprinter.template.presets.cbsr.exceptions.CB
  */
 public class SaveOperation extends BarcodeGenerationOperation {
 
-    private String pdfFilePath = ""; //$NON-NLS-1$
+    private String pdfFilePath = ""; 
 
     public SaveOperation(BarcodeViewGuiData guiData,
         List<String> patientNumbers, String pdfFilePath) {
@@ -37,29 +37,29 @@ public class SaveOperation extends BarcodeGenerationOperation {
         byte[] pdfdata = null;
 
         successful = false;
-        monitor.beginTask(Messages.SaveOperation_saving_barcode_pdf_task,
+        monitor.beginTask("Saving Barcode Labels PDF",
             IProgressMonitor.UNKNOWN);
 
         try {
-            monitor.subTask(Messages.SaveOperation_generating_pdf_subtask);
+            monitor.subTask("Generating PDF");
             pdfdata = CBSRLabelMaker.generatePdfCBSR(guiData, patientNumbers);
 
         } catch (CBSRPdfGenException e1) {
             monitor.done();
             successful = false;
-            setError(Messages.SaveOperation_validation_error_title,
+            setError("Gui Validation",
                 e1.getError());
         } catch (JAXBException e2) {
             monitor.done();
             successful = false;
-            setError(Messages.SaveOperation_validation_error_title,
+            setError("Gui Validation",
                 e2.getMessage());
         }
 
         if (pdfdata != null) {
             FileOutputStream fos;
             try {
-                monitor.subTask(Messages.SaveOperation_saving_pdf_subtask);
+                monitor.subTask("Saving PDF");
                 fos = new FileOutputStream(pdfFilePath);
                 fos.write(pdfdata);
                 fos.close();
@@ -69,8 +69,8 @@ public class SaveOperation extends BarcodeGenerationOperation {
                 monitor.done();
                 successful = false;
                 setError(
-                    Messages.SaveOperation_saving_pdf_error_title,
-                    NLS.bind(Messages.SaveOperation_saving_pdf_error_msg,
+                    "Saving PDF",
+                    NLS.bind("Problem saving file: {0}",
                         e1.getMessage()));
                 return;
 

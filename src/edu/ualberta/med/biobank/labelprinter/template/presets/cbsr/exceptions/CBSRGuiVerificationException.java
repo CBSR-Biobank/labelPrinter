@@ -7,7 +7,7 @@ public class CBSRGuiVerificationException extends Exception {
     public String title, messsage;
 
     public CBSRGuiVerificationException(String title, String message) {
-        this(title + ": " + message); //$NON-NLS-1$
+        this(title + ": " + message); 
         this.title = title;
         this.messsage = message;
     }

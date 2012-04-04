@@ -25,15 +25,15 @@ public class Barcode1D extends Element {
 
         if ((message == null) || (message.length() == 0))
             throw new ElementCreationException(
-                Messages.Barcode1D_empty_msg);
+                "empty or null message specified to 1D barcode element.");
 
         if (rect == null)
             throw new ElementCreationException(
-                Messages.Barcode1D_null_dimensions_msg);
+                "null dimensions specified to 1D barcode element.");
 
         if (font == null)
             throw new ElementCreationException(
-                Messages.Barcode1D_null_font_msg);
+                "null font specified to 1D barcode element.");
 
         this.font = font;
         this.rect = rect;
@@ -50,7 +50,7 @@ public class Barcode1D extends Element {
                 300);
         } catch (IOException e) {
             throw new BarcodeCreationException(
-                Messages.Barcode1D_img_buffer_error);
+                "Failed to create image buffer for barcode");
         }
         g.drawImage(barcode1DImg, mmToPixel(rect.getX(), scale),
             mmToPixel(rect.getY(), scale), mmToPixel(rect.getWidth(), scale),

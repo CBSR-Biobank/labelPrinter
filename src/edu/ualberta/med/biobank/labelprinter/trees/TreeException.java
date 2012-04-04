@@ -8,7 +8,7 @@ public class TreeException extends Exception {
 
 	public TreeException() {
 		super();
-		mistake = Messages.TreeException_mistake_notavailable_text;
+		mistake = "not available";
 	}
 
 	public TreeException(String error) {

@@ -8,7 +8,7 @@ public class CBSRPdfGenException extends Exception {
 
 	public CBSRPdfGenException() {
 		super();
-		mistake = Messages.CBSRPdfGenException_mistake_notavailable_text;
+		mistake = "not available";
 	}
 
 	public CBSRPdfGenException(String error) {
