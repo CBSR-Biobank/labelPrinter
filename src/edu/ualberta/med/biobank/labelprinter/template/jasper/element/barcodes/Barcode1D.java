@@ -8,7 +8,6 @@ import java.io.IOException;
 import edu.ualberta.med.biobank.labelprinter.template.configuration.Rectangle;
 import edu.ualberta.med.biobank.labelprinter.template.jasper.element.Element;
 import edu.ualberta.med.biobank.labelprinter.template.jasper.exceptions.BarcodeCreationException;
-import edu.ualberta.med.biobank.labelprinter.template.jasper.exceptions.ElementCreationException;
 
 /**
  * Used for generating and rendering a 128 Code based 1D barcode.
@@ -16,23 +15,23 @@ import edu.ualberta.med.biobank.labelprinter.template.jasper.exceptions.ElementC
  * @author Thomas Polasek 2011
  * 
  */
+@SuppressWarnings("nls")
 public class Barcode1D extends Element {
 
     Font font;
 
-    public Barcode1D(Rectangle rect, String message, Font font)
-        throws ElementCreationException {
+    public Barcode1D(Rectangle rect, String message, Font font) {
 
         if ((message == null) || (message.length() == 0))
-            throw new ElementCreationException(
+            throw new IllegalArgumentException(
                 "empty or null message specified to 1D barcode element.");
 
         if (rect == null)
-            throw new ElementCreationException(
+            throw new IllegalArgumentException(
                 "null dimensions specified to 1D barcode element.");
 
         if (font == null)
-            throw new ElementCreationException(
+            throw new IllegalArgumentException(
                 "null font specified to 1D barcode element.");
 
         this.font = font;

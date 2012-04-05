@@ -7,7 +7,6 @@ import java.util.List;
 import edu.ualberta.med.biobank.labelprinter.template.configuration.Rectangle;
 import edu.ualberta.med.biobank.labelprinter.template.jasper.element.barcodes.Barcode1D;
 import edu.ualberta.med.biobank.labelprinter.template.jasper.element.text.Text;
-import edu.ualberta.med.biobank.labelprinter.template.jasper.exceptions.ElementCreationException;
 
 /**
  * Generates text element (2x) ,1D barcode elements in a single batch. Useful
@@ -16,30 +15,31 @@ import edu.ualberta.med.biobank.labelprinter.template.jasper.exceptions.ElementC
  * @author Thomas Polasek 2011
  * 
  */
+@SuppressWarnings("nls")
 public class FieldGenerator {
 
     public static List<Element> generateElements(Rectangle textRect,
         String label, String value, Font font, Rectangle barcodeRect,
-        boolean printBarcode) throws ElementCreationException {
+        boolean printBarcode) {
 
         if ((font == null) && ((label != null) || (value != null)))
-            throw new ElementCreationException(
+            throw new IllegalArgumentException(
                 "must specify font to the draw the provided label,value texts");
 
         if ((textRect == null) || (barcodeRect == null))
-            throw new ElementCreationException(
+            throw new IllegalArgumentException(
                 "Null dimensions specified.");
 
         List<Element> elements = new ArrayList<Element>();
 
-        String textLabel = ""; 
+        String textLabel = "";
 
         if ((label != null) && (label.length() > 0)) {
             textLabel = label;
         }
 
         if ((value != null) && (value.length() > 0)) {
-            textLabel += ": " + value; 
+            textLabel += ": " + value;
             if (printBarcode) {
                 elements.add(new Barcode1D(barcodeRect, value, font));
             }

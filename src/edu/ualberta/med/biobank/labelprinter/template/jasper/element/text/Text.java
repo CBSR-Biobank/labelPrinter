@@ -7,7 +7,6 @@ import java.awt.RenderingHints;
 
 import edu.ualberta.med.biobank.labelprinter.template.configuration.Rectangle;
 import edu.ualberta.med.biobank.labelprinter.template.jasper.element.Element;
-import edu.ualberta.med.biobank.labelprinter.template.jasper.exceptions.ElementCreationException;
 
 /**
  * Used for generating and rendering a text fields.
@@ -15,23 +14,23 @@ import edu.ualberta.med.biobank.labelprinter.template.jasper.exceptions.ElementC
  * @author Thomas Polasek 2011
  * 
  */
+@SuppressWarnings("nls")
 public class Text extends Element {
 
     Font font;
 
-    public Text(Rectangle rect, String message, Font font)
-        throws ElementCreationException {
+    public Text(Rectangle rect, String message, Font font) {
 
         if ((message == null) || (message.length() == 0))
-            throw new ElementCreationException(
+            throw new IllegalArgumentException(
                 "empty or null message specified to text element.");
 
         if (rect == null)
-            throw new ElementCreationException(
+            throw new IllegalArgumentException(
                 "null dimensions specified to text element.");
 
         if (font == null)
-            throw new ElementCreationException(
+            throw new IllegalArgumentException(
                 "null font specified to text element.");
 
         this.rect = rect;

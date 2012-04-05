@@ -8,6 +8,7 @@ import java.awt.print.PrinterJob;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -56,6 +57,7 @@ import edu.ualberta.med.biobank.labelprinter.template.jasper.exceptions.JasperFi
  * @author Thomas Polasek 2011
  * 
  */
+@SuppressWarnings("nls")
 public class JasperFiller {
 
     private JasperOutline templateData;
@@ -70,10 +72,10 @@ public class JasperFiller {
      * 
      */
     private class JasperConstants {
-        public static final String titleField = "PROJECT_TITLE"; 
-        public static final String logoField = "LOGO"; 
-        public static final String patientImageField = "PATIENT_INFO_IMG"; 
-        public static final String patientBarcodeBase = "PATIENT_BARCODE_"; 
+        public static final String TITLE_FIELD = "PROJECT_TITLE";
+        public static final String LOGO_FIELD = "LOGO";
+        public static final String PATIENT_IMAGE_FIELD = "PATIENT_INFO_IMG";
+        public static final String PATIENT_BARCODE_BASE = "PATIENT_BARCODE_";
 
         public int barcodeCount = 0;
         public int barcodeImageWidth = 0;
@@ -90,15 +92,13 @@ public class JasperFiller {
      * @param req
      * @throws JasperFillException
      */
-    public JasperFiller(JasperOutline req) throws JasperFillException {
+    public JasperFiller(JasperOutline req) {
 
         if (req == null)
-            throw new JasperFillException("Null request for jasper filler."); 
+            throw new IllegalArgumentException(
+                "Null request for jasper filler.");
 
         this.templateData = req;
-
-        loadTemplateConstants();
-
     }
 
     /**
@@ -111,7 +111,7 @@ public class JasperFiller {
         try {
             templateData.getJasperTemplateStream().reset();
         } catch (IOException e) {
-            throw new JasperFillException(NLS.bind(
+            throw new JasperFillException(MessageFormat.format(
                 "Failed to reset template data stream : {0}", e.getMessage()));
         }
         JasperDesign jasperSubDesign;
@@ -124,7 +124,7 @@ public class JasperFiller {
         }
 
         JRElement patientImg = jasperSubDesign.getTitle().getElementByKey(
-            JasperConstants.patientImageField);
+            JasperConstants.PATIENT_IMAGE_FIELD);
         if ((jasperSubDesign.getTitle() != null) && (patientImg != null)) {
             jasperConstants.patientImageWidth = patientImg.getWidth();
             jasperConstants.patientImageHeight = patientImg.getHeight();
@@ -173,10 +173,12 @@ public class JasperFiller {
      */
     public void printJasperToPrinter(String printerName)
         throws JasperFillException {
-
         if (printerName == null) {
-            throw new JasperFillException("Error: No printer was selected!");
+            throw new IllegalArgumentException(
+                "Error: No printer was selected!");
         }
+
+        loadTemplateConstants();
 
         PrinterJob job = PrinterJob.getPrinterJob();
         PrintService[] services = PrintServiceLookup.lookupPrintServices(null,
@@ -202,7 +204,8 @@ public class JasperFiller {
 
         JasperPrint print = generateJasperPint();
 
-        PrintRequestAttributeSet printRequestAttributeSet = new HashPrintRequestAttributeSet();
+        PrintRequestAttributeSet printRequestAttributeSet =
+            new HashPrintRequestAttributeSet();
         printRequestAttributeSet.add(new Copies(1));
         printRequestAttributeSet.add(PrintQuality.HIGH);
         printRequestAttributeSet.add(MediaSizeName.NA_LETTER);
@@ -241,6 +244,7 @@ public class JasperFiller {
 
         byte[] reportPdfBtyes = null;
 
+        loadTemplateConstants();
         JasperPrint jp = generateJasperPint();
         try {
             reportPdfBtyes = JasperExportManager.exportReportToPdf(jp);
@@ -262,7 +266,8 @@ public class JasperFiller {
      */
     private JasperPrint generateJasperPint() throws JasperFillException {
         ByteArrayInputStream patientInfoImg;
-        List<ByteArrayInputStream> barcodeIDBufferList = new ArrayList<ByteArrayInputStream>();
+        List<ByteArrayInputStream> barcodeIDBufferList =
+            new ArrayList<ByteArrayInputStream>();
 
         // place patient image.
         try {
@@ -329,14 +334,14 @@ public class JasperFiller {
 
         Map<String, Object> parameters = new HashMap<String, Object>();
 
-        parameters.put(JasperConstants.titleField,
+        parameters.put(JasperConstants.TITLE_FIELD,
             templateData.getBranding().projectTitle);
-        parameters.put(JasperConstants.logoField,
+        parameters.put(JasperConstants.LOGO_FIELD,
             templateData.getBranding().logo);
-        parameters.put(JasperConstants.patientImageField, patientInfoImg);
+        parameters.put(JasperConstants.PATIENT_IMAGE_FIELD, patientInfoImg);
 
         for (int i = 0; i < barcodeIDImageList.size(); i++)
-            parameters.put(JasperConstants.patientBarcodeBase + i,
+            parameters.put(JasperConstants.PATIENT_BARCODE_BASE + i,
                 barcodeIDImageList.get(i));
 
         return parameters;
@@ -361,7 +366,7 @@ public class JasperFiller {
         }
 
         ByteArrayOutputStream binaryOutputStream = new ByteArrayOutputStream();
-        ImageIO.write(bi, "PNG", binaryOutputStream); 
+        ImageIO.write(bi, "PNG", binaryOutputStream);
         return new ByteArrayInputStream(binaryOutputStream.toByteArray());
     }
 }

@@ -20,7 +20,6 @@ import edu.ualberta.med.biobank.labelprinter.template.jasper.element.FieldGenera
 import edu.ualberta.med.biobank.labelprinter.template.jasper.element.barcodes.Barcode1D;
 import edu.ualberta.med.biobank.labelprinter.template.jasper.element.barcodes.Barcode2D;
 import edu.ualberta.med.biobank.labelprinter.template.jasper.element.text.Text;
-import edu.ualberta.med.biobank.labelprinter.template.jasper.exceptions.ElementCreationException;
 import edu.ualberta.med.biobank.labelprinter.template.jasper.exceptions.JasperFillException;
 import edu.ualberta.med.biobank.labelprinter.template.presets.cbsr.exceptions.CBSRPdfGenException;
 
@@ -40,28 +39,43 @@ public class CBSRLabelMaker {
     private static final int BARCODE_COUNT = 32;
 
     // per sheet
-    private static final String SHEET_INFO_FIELD_1_TEXT = "Sheet Info.Custom Field 1.Text"; 
-    private static final String SHEET_INFO_FIELD_1_BARCODE_1D = "Sheet Info.Custom Field 1.1D Barcode"; 
+    private static final String SHEET_INFO_FIELD_1_TEXT =
+        "Sheet Info.Custom Field 1.Text";
+    private static final String SHEET_INFO_FIELD_1_BARCODE_1D =
+        "Sheet Info.Custom Field 1.1D Barcode";
 
-    private static final String SHEET_INFO_FIELD_2_TEXT = "Sheet Info.Custom Field 2.Text"; 
-    private static final String SHEET_INFO_FIELD_2_BARCODE_1D = "Sheet Info.Custom Field 2.1D Barcode"; 
+    private static final String SHEET_INFO_FIELD_2_TEXT =
+        "Sheet Info.Custom Field 2.Text";
+    private static final String SHEET_INFO_FIELD_2_BARCODE_1D =
+        "Sheet Info.Custom Field 2.1D Barcode";
 
-    private static final String SHEET_INFO_FIELD_3_TEXT = "Sheet Info.Custom Field 3.Text"; 
-    private static final String SHEET_INFO_FIELD_3_BARCODE_1D = "Sheet Info.Custom Field 3.1D Barcode"; 
+    private static final String SHEET_INFO_FIELD_3_TEXT =
+        "Sheet Info.Custom Field 3.Text";
+    private static final String SHEET_INFO_FIELD_3_BARCODE_1D =
+        "Sheet Info.Custom Field 3.1D Barcode";
 
-    private static final String SHEET_INFO_PATIENT_NUM_BARCODE_1D = "Sheet Info.Patient Number.1D Barcode"; 
+    private static final String SHEET_INFO_PATIENT_NUM_BARCODE_1D =
+        "Sheet Info.Patient Number.1D Barcode";
 
     // per label general
-    private static final String LABEL_GENERAL_FIELD_TEXT = "Labels.General.Text"; 
-    private static final String LABEL_GENERAL_BARCODE_1D = "Labels.General.Barcode 1D"; 
-    private static final String LABEL_GENERAL_BARCODE_2D = "Labels.General.Barcode 2D"; 
-    private static final String LABEL_GENERAL_BARCODE_2D_TEXT = "Labels.General.Barcode 2D Text"; 
+    private static final String LABEL_GENERAL_FIELD_TEXT =
+        "Labels.General.Text";
+    private static final String LABEL_GENERAL_BARCODE_1D =
+        "Labels.General.Barcode 1D";
+    private static final String LABEL_GENERAL_BARCODE_2D =
+        "Labels.General.Barcode 2D";
+    private static final String LABEL_GENERAL_BARCODE_2D_TEXT =
+        "Labels.General.Barcode 2D Text";
 
     // per label individual
-    private static final String LABEL_INDIVIDUAL_BARCODE_1D_FORMATTED = "Labels.Individual.Label %03d.Barcode 1D"; 
-    private static final String LABEL_INDIVIDUAL_BARCODE_2D_FORMATTED = "Labels.Individual.Label %03d.Barcode 2D"; 
-    private static final String LABEL_INDIVIDUAL_BARCODE_2D_TEXT = "Labels.Individual.Label %03d.Barcode 2D Text"; 
-    private static final String LABEL_INDIVIDUAL_FIELD_TEXT_FORMATTED = "Labels.Individual.Label %03d.Text"; 
+    private static final String LABEL_INDIVIDUAL_BARCODE_1D_FORMATTED =
+        "Labels.Individual.Label %03d.Barcode 1D";
+    private static final String LABEL_INDIVIDUAL_BARCODE_2D_FORMATTED =
+        "Labels.Individual.Label %03d.Barcode 2D";
+    private static final String LABEL_INDIVIDUAL_BARCODE_2D_TEXT =
+        "Labels.Individual.Label %03d.Barcode 2D Text";
+    private static final String LABEL_INDIVIDUAL_FIELD_TEXT_FORMATTED =
+        "Labels.Individual.Label %03d.Text";
 
     /**
      * Generates a jasper outline and creates a pdf file byte array.
@@ -91,7 +105,7 @@ public class CBSRLabelMaker {
         } catch (JasperFillException e) {
             throw new CBSRPdfGenException(
                 "Failed to fill configuration data into jasper template."
-                    + "\n" + e.getError()); 
+                    + "\n" + e.getError());
         }
         return pdfData;
     }
@@ -115,7 +129,7 @@ public class CBSRLabelMaker {
 
             throw new CBSRPdfGenException(
                 "Failed to fill configuration data into jasper template for printing."
-                    + "\n" + e.getError()); 
+                    + "\n" + e.getError());
         }
     }
 
@@ -171,16 +185,13 @@ public class CBSRLabelMaker {
                 new Barcode1D(tplt.getKey(SHEET_INFO_PATIENT_NUM_BARCODE_1D),
                     cbsrData.patientNumberStr, baseFont.deriveFont(22)));
 
-        } catch (ElementCreationException eee) {
-            throw new CBSRPdfGenException(NLS.bind(
-                "Failed to create element in patient info box: {0}",
-                eee.getError()));
         } catch (JAXBException ee) {
             throw new CBSRPdfGenException(NLS.bind(
                 "Failed to load configuration setting: {0}", ee.getMessage()));
         }
         // -------barcode info------------
-        JasperOutline.PatientBarcodeInformation pbi = new JasperOutline.PatientBarcodeInformation();
+        JasperOutline.PatientBarcodeInformation pbi =
+            new JasperOutline.PatientBarcodeInformation();
 
         try {
             int i = 0;
@@ -213,7 +224,7 @@ public class CBSRLabelMaker {
                 // 2d barcode;
                 if ((rStrArray != null)
                     && (rStrArray.length() > 0)
-                    && (rStrArray.replaceAll("[^a-zA-Z0-9 ]", "").length() == 12)) {  
+                    && (rStrArray.replaceAll("[^a-zA-Z0-9 ]", "").length() == 12)) {
 
                     Rectangle master = tplt.getKey(LABEL_GENERAL_BARCODE_2D);
                     Rectangle barcode = tplt.getKey(String.format(
@@ -272,9 +283,6 @@ public class CBSRLabelMaker {
 
                 pbi.getLayout().add(bi);
             }
-        } catch (ElementCreationException e2) {
-            throw new CBSRPdfGenException(NLS.bind(
-                "Failed to create element in PatientBarcodeInformation box: {0}", e2.getError()));
         } catch (JAXBException e1) {
             throw new CBSRPdfGenException(NLS.bind(
                 "Failed to load configuration setting: {0}",
