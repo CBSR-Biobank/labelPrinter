@@ -69,7 +69,7 @@ public class JasperFiller {
      * supplied jasper outline class.
      * 
      * @author Thomas Polasek 2011
-     * 
+     *
      */
     private class JasperConstants {
         public static final String TITLE_FIELD = "PROJECT_TITLE";

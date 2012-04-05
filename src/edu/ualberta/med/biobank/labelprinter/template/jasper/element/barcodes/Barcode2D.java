@@ -12,7 +12,7 @@ import edu.ualberta.med.biobank.labelprinter.template.jasper.exceptions.BarcodeC
  * Used for generating and rendering a datamatrix based barcode.
  * 
  * @author Thomas Polasek 2011
- * 
+ *
  */
 @SuppressWarnings("nls")
 public class Barcode2D extends Element {

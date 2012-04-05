@@ -13,7 +13,7 @@ import edu.ualberta.med.biobank.labelprinter.template.jasper.element.text.Text;
  * for patient information fields.
  * 
  * @author Thomas Polasek 2011
- * 
+ *
  */
 @SuppressWarnings("nls")
 public class FieldGenerator {
