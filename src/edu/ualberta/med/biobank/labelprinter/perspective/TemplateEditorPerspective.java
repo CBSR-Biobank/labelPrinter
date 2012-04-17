@@ -5,7 +5,7 @@ import org.eclipse.ui.IPerspectiveFactory;
 
 public class TemplateEditorPerspective implements IPerspectiveFactory {
 
-    public static final String ID = "barcodeGenerator.perspective.templateeditor"; //$NON-NLS-1$
+    public static final String ID = "labelPrinter.perspective.templateeditor"; //$NON-NLS-1$
 
     @Override
     public void createInitialLayout(IPageLayout layout) {

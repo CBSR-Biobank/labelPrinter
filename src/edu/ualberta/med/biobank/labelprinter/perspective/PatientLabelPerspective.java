@@ -5,7 +5,7 @@ import org.eclipse.ui.IPerspectiveFactory;
 
 public class PatientLabelPerspective implements IPerspectiveFactory {
 
-    public static final String ID = "barcodeGenerator.perspective.patientlabel"; //$NON-NLS-1$
+    public static final String ID = "labelPrinter.perspective.patientlabel"; //$NON-NLS-1$
 
     @Override
     public void createInitialLayout(IPageLayout layout) {

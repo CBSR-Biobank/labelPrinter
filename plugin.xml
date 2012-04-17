@@ -5,13 +5,13 @@
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
-            targetID="barcodeGenerator.perspective.patientlabel">
+            targetID="labelPrinter.perspective.patientlabel">
       </perspectiveExtension>
       <perspectiveExtension
-            targetID="barcodeGenerator.perspective.templateeditor">
+            targetID="labelPrinter.perspective.templateeditor">
       </perspectiveExtension>
       <perspectiveExtension
-            targetID="barcodeGenerator.perspective.jaspereditor">
+            targetID="labelPrinter.perspective.jaspereditor">
       </perspectiveExtension>
    </extension>
    <extension
@@ -133,17 +133,17 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             class="edu.ualberta.med.biobank.labelprinter.perspective.PatientLabelPerspective"
-            id="barcodeGenerator.perspective.patientlabel"
+            id="labelPrinter.perspective.patientlabel"
             name="%label.printer.view.name">
       </perspective>
       <perspective
             class="edu.ualberta.med.biobank.labelprinter.perspective.TemplateEditorPerspective"
-            id="barcodeGenerator.perspective.templateeditor"
+            id="labelPrinter.perspective.templateeditor"
             name="%template.editor.name">
       </perspective>
       <perspective
             class="edu.ualberta.med.biobank.labelprinter.perspective.JasperEditorPerspective"
-            id="barcodeGenerator.perspective.jaspereditor"
+            id="labelPrinter.perspective.jaspereditor"
             name="%jasper.configuration.name">
       </perspective>
    </extension>
