@@ -10,6 +10,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
+
 import edu.ualberta.med.biobank.SessionManager;
 import edu.ualberta.med.biobank.common.action.labelPrinter.PrinterLabelTemplateDeleteAction;
 import edu.ualberta.med.biobank.common.action.labelPrinter.PrinterLabelTemplateSaveAction;
@@ -30,6 +33,7 @@ import gov.nih.nci.system.applicationservice.ApplicationException;
  */
 public class Template implements Serializable {
 
+    private static final I18n i18n = I18nFactory.getI18n(Template.class);
     private static final long serialVersionUID = -4213741888020425604L;
 
     public static final BgcLogger logger = BgcLogger.getLogger(Template.class
@@ -43,6 +47,7 @@ public class Template implements Serializable {
         plt = new PrinterLabelTemplateWrapper(SessionManager.getAppService());
     }
 
+    @SuppressWarnings("nls")
     @Override
     public Template clone() {
         Template clone = new Template();
@@ -53,7 +58,8 @@ public class Template implements Serializable {
         try {
             clone.setJasperTemplate(this.getJasperTemplate());
         } catch (Exception e1) {
-            logger.error("Error: Failed to clone jasper template.", e1); 
+            logger
+                .error(i18n.tr("Error: Failed to clone jasper template."), e1);
             return null;
         }
 
@@ -77,7 +83,8 @@ public class Template implements Serializable {
             try {
                 clone.setConfiguration(newConfig);
             } catch (JAXBException e) {
-                logger.error("Error: Failed to clone configuration.", e); 
+                logger.error(i18n.tr("Error: Failed to clone configuration."),
+                    e);
                 return null;
             }
         }
@@ -116,18 +123,20 @@ public class Template implements Serializable {
         return getJasperTemplate().getXml();
     }
 
+    @SuppressWarnings("nls")
     public JasperTemplateWrapper getJasperTemplate() throws Exception {
         JasperTemplateWrapper jasp = plt.getJasperTemplate();
         if (jasp == null) {
-            throw new Exception("jasper template has not been set");
+            throw new Exception(i18n.tr("jasper template has not been set"));
         }
         return jasp;
     }
 
+    @SuppressWarnings("nls")
     public String getJasperTemplateName() throws Exception {
         JasperTemplateWrapper jasp = plt.getJasperTemplate();
         if (jasp == null) {
-            throw new Exception("jasper template has not been set");
+            throw new Exception(i18n.tr("jasper template has not been set"));
         }
         return jasp.getName();
     }
@@ -139,6 +148,7 @@ public class Template implements Serializable {
      * @return
      * @throws JAXBException
      */
+    @SuppressWarnings("nls")
     public Configuration getConfiguration() throws JAXBException {
 
         if (config == null) {
@@ -162,8 +172,10 @@ public class Template implements Serializable {
                 SessionManager.getAppService().doAction(
                     new PrinterLabelTemplateSaveAction(plt.getWrappedObject()));
             } catch (Exception e) {
-                logger.error(
-                    "Error: Failed to persit key-updated configuration", e); 
+                logger
+                    .error(
+                        i18n.tr("Error: Failed to persit key-updated configuration"),
+                        e);
                 return null;
             }
         }

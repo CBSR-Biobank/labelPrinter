@@ -9,7 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.osgi.util.NLS;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 /**
  * For add/editing/listing/removing templates. Contains several helper functions
@@ -21,6 +22,7 @@ import org.eclipse.osgi.util.NLS;
 public class TemplateStore {
 
     private Map<String, Template> templates;
+    private static final I18n i18n = I18nFactory.getI18n(TemplateStore.class);
 
     public TemplateStore() throws ApplicationException {
         templates = new HashMap<String, Template>();
@@ -34,10 +36,11 @@ public class TemplateStore {
         return templates.keySet();
     }
 
+    @SuppressWarnings("nls")
     public Template getTemplate(String name) throws Exception {
         Template t = templates.get(name);
         if (t == null) {
-            throw new Exception(NLS.bind("Template with name {0} not found",
+            throw new Exception(i18n.tr("Template with name {0} not found",
                 name));
         }
         return t;
@@ -52,19 +55,21 @@ public class TemplateStore {
         templates.put(name, updatedTemplate);
     }
 
+    @SuppressWarnings("nls")
     public void deleteTemplate(Template template) throws Exception {
         String name = template.getName();
         if (!templates.containsKey(name)) {
-            throw new Exception(NLS.bind("Template with name {0} not found",
+            throw new Exception(i18n.tr("Template with name {0} not found",
                 name));
         }
         templates.remove(name);
     }
 
+    @SuppressWarnings("nls")
     public void deleteTemplate(String name) throws Exception {
         Template t = templates.get(name);
         if (t == null) {
-            throw new Exception(NLS.bind("Template with name {0} not found",
+            throw new Exception(i18n.tr("Template with name {0} not found",
                 name));
         }
         deleteTemplate(t);

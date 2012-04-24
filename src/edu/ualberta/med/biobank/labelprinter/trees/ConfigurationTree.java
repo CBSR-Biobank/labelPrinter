@@ -22,6 +22,8 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 import edu.ualberta.med.biobank.gui.common.BgcLogger;
 import edu.ualberta.med.biobank.labelprinter.template.configuration.Configuration;
@@ -38,6 +40,8 @@ import edu.ualberta.med.biobank.labelprinter.template.configuration.Rectangle;
  */
 public class ConfigurationTree {
 
+    private static final I18n i18n = I18nFactory
+        .getI18n(ConfigurationTree.class);
     private static final BgcLogger logger = BgcLogger
         .getLogger(ConfigurationTree.class.getName());
 
@@ -48,6 +52,7 @@ public class ConfigurationTree {
     private Configuration configuration;
     private ListenerList modifyListeners = new ListenerList();
 
+    @SuppressWarnings("nls")
     public ConfigurationTree(Composite parent, int style) {
 
         tree = new Tree(parent, style | SWT.BORDER | SWT.H_SCROLL
@@ -67,23 +72,23 @@ public class ConfigurationTree {
 
         // columns
         TreeColumn column1 = new TreeColumn(tree, SWT.LEFT);
-        column1.setText("Settings Editor Tree");
+        column1.setText(i18n.trc("Label", "Settings Editor Tree"));
         column1.setWidth(200);
         TreeColumn column2 = new TreeColumn(tree, SWT.CENTER);
-        column2.setText("Horizontal (mm)");
+        column2.setText(i18n.trc("Label", "Horizontal (mm)"));
         column2.setWidth(85);
         TreeColumn column3 = new TreeColumn(tree, SWT.CENTER);
-        column3.setText("Vertical (mm)");
+        column3.setText(i18n.trc("Label", "Vertical (mm)"));
         column3.setWidth(70);
         TreeColumn column4 = new TreeColumn(tree, SWT.CENTER);
-        column4.setText("Width (mm)");
+        column4.setText(i18n.trc("Label", "Width (mm)"));
         column4.setWidth(70);
         TreeColumn column5 = new TreeColumn(tree, SWT.CENTER);
-        column5.setText("Height (mm)");
+        column5.setText(i18n.trc("Label", "Height (mm)"));
         column5.setWidth(70);
         TreeColumn column6 = new TreeColumn(tree, SWT.CENTER);
         column6.setWidth(1);
-        column6.setText(""); 
+        column6.setText("");
 
         tree.addListener(SWT.MouseDown, treeListner);
     }
@@ -101,24 +106,29 @@ public class ConfigurationTree {
      * @param value eg. new Rectangle(1,2,3,4)
      * @throws TreeException
      */
+    @SuppressWarnings("nls")
     public void createTreeItem(String location, Rectangle value)
         throws TreeException {
 
         if (tree == null)
-            throw new TreeException("Cannot create an item in a null tree."); 
+            throw new TreeException(i18n.trc("Error message",
+                "Cannot create an item in a null tree."));
 
         if (location == null)
-            throw new TreeException("Cannot create an item in a null location."); 
+            throw new TreeException(i18n.trc("Error message",
+                "Cannot create an item in a null location."));
 
         if (value == null)
             throw new TreeException(
-                "Cannot create an item with a null rectangle value."); 
+                i18n.trc("Error message",
+                    "Cannot create an item with a null rectangle value."));
 
         int locationIndex = 0;
-        String[] locationSegments = location.split("\\."); 
+        String[] locationSegments = location.split("\\.");
         if (locationSegments.length <= 0)
             throw new TreeException(
-                "Location must contain at least one segment."); 
+                i18n.trc("Error message",
+                    "Location must contain at least one segment."));
 
         // to traverse through the tree
         Object currentItem = tree;
@@ -161,7 +171,8 @@ public class ConfigurationTree {
                     if (currentItem instanceof Tree) {
                         newItem = new TreeItem((Tree) currentItem, SWT.NONE);
                     } else {
-                        newItem = new TreeItem((TreeItem) currentItem, SWT.NONE);
+                        newItem =
+                            new TreeItem((TreeItem) currentItem, SWT.NONE);
                     }
                     newItem.setText(locationSegments[i]);
                     currentItem = newItem;
@@ -174,7 +185,8 @@ public class ConfigurationTree {
                 break;
             } else {
                 throw new TreeException(
-                    "TreeItem searching failed: currentItem is null."); 
+                    i18n.trc("Error message",
+                        "TreeItem searching failed: currentItem is null."));
             }
 
         }
@@ -190,12 +202,14 @@ public class ConfigurationTree {
      *            specified configuration file.
      * @throws TreeException
      */
+    @SuppressWarnings("nls")
     public void populateTree(Configuration config) throws TreeException {
 
         resetEditor();
 
         if (tree == null)
-            throw new TreeException("Cannot populate tree: Tree is null."); 
+            throw new TreeException(i18n.trc("Error message",
+                "Cannot populate tree: Tree is null."));
 
         tree.removeAll();
 
@@ -204,7 +218,8 @@ public class ConfigurationTree {
 
         if (!config.exists())
             throw new TreeException(
-                "A valid configuration setting is required.");
+                i18n.trc("Error message",
+                    "A valid configuration setting is required."));
 
         /*
          * List<String> mapKeys = new ArrayList<String>(config.getSettings()
@@ -237,13 +252,15 @@ public class ConfigurationTree {
         tree.setEnabled(enable);
     }
 
+    @SuppressWarnings("nls")
     public void resetEditor() throws TreeException {
         if (textEdit != null)
             textEdit.dispose();
         textEdit = null;
 
         if (editor == null)
-            throw new TreeException("Editor is null."); 
+            throw new TreeException(
+                i18n.trc("Error message", "Editor is null."));
 
         editor.setEditor(null, null, 0);
     }
@@ -341,6 +358,7 @@ public class ConfigurationTree {
         });
 
         textEdit.addModifyListener(new ModifyListener() {
+            @SuppressWarnings("nls")
             @Override
             public void modifyText(ModifyEvent me) {
                 Text text = (Text) editor.getEditor();
@@ -364,7 +382,7 @@ public class ConfigurationTree {
                         while (c != null) {
                             c = c.getParentItem();
                             if (c != null)
-                                location = c.getText() + "." + location; 
+                                location = c.getText() + "." + location;
                         }
                         if (configuration.containsKey(location)) {
 
@@ -373,8 +391,9 @@ public class ConfigurationTree {
                             notifyModifyListeners();
                         } else {
                             logger
-                                .error("Could not find key in configuration: " 
-                                    + location);
+                                .error(i18n.trc("Error message",
+                                    "Could not find key in configuration: "
+                                        + location));
                         }
                     }
 
@@ -386,7 +405,7 @@ public class ConfigurationTree {
 
             @Override
             public void verifyText(VerifyEvent e) {
-                if (!e.text.matches("[{0-9-}]*")) { 
+                if (!e.text.matches("[{0-9-}]*")) { //$NON-NLS-1$
                     e.doit = false;
                     return;
                 }
@@ -402,7 +421,7 @@ public class ConfigurationTree {
 
         String[] buf = new String[5];
 
-        buf[0] = "null"; 
+        buf[0] = "null"; //$NON-NLS-1$
         buf[1] = String.valueOf(r.getX());
         buf[2] = String.valueOf(r.getY());
         buf[3] = String.valueOf(r.getWidth());

@@ -8,11 +8,16 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 import edu.ualberta.med.biobank.gui.common.dialogs.BgcBaseDialog;
 import edu.ualberta.med.biobank.gui.common.widgets.utils.ComboSelectionUpdate;
 
 public class ComboInputDialog extends BgcBaseDialog {
+
+    private static final I18n i18n = I18nFactory
+        .getI18n(ComboInputDialog.class);
 
     public class InvalidOptionsException extends Exception {
 
@@ -79,11 +84,13 @@ public class ComboInputDialog extends BgcBaseDialog {
         return title;
     }
 
+    @SuppressWarnings("nls")
     @Override
     protected void createDialogAreaInternal(Composite parent) throws Exception {
 
         if (options.isEmpty())
-            throw new Exception("No options exist. Cannot create combo dialog.");
+            throw new Exception(i18n.trc("Error Message",
+                "No options exist. Cannot create combo dialog."));
 
         if ((defaultOption == null) || !options.contains(defaultOption))
             defaultOption = options.get(0);
@@ -94,7 +101,8 @@ public class ComboInputDialog extends BgcBaseDialog {
 
         value.setName(defaultOption);
 
-        createComboViewer(content, "Jasper Configuration", options,
+        createComboViewer(content,
+            i18n.trc("Combo label", "Jasper Configuration"), options,
             defaultOption, "A jasper configuration should be selected",
             new ComboSelectionUpdate() {
                 @Override

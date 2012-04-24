@@ -5,6 +5,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 import edu.ualberta.med.biobank.gui.common.dialogs.BgcBaseDialog;
 import edu.ualberta.med.biobank.gui.common.validators.NonEmptyStringValidator;
@@ -20,7 +22,10 @@ import edu.ualberta.med.biobank.gui.common.widgets.BgcBaseText;
  */
 public class StringInputDialog extends BgcBaseDialog {
 
-    private static final String MSG_NO_ST_NAME = "A value is required";
+    private static final I18n i18n = I18nFactory
+        .getI18n(StringInputDialog.class);
+    private static final String MSG_NO_ST_NAME = i18n.trc("Error Message", //$NON-NLS-1$
+        "A value is required"); //$NON-NLS-1$
 
     private class ValuePojo {
         public String name;
@@ -77,7 +82,8 @@ public class StringInputDialog extends BgcBaseDialog {
         content.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         createBoundWidgetWithLabel(content, BgcBaseText.class, SWT.BORDER,
-            labelText, null, value, "name", new NonEmptyStringValidator( 
+            labelText, null, value, i18n.tr("name"), //$NON-NLS-1$
+            new NonEmptyStringValidator(
                 MSG_NO_ST_NAME));
 
         setOkButtonEnabled(false);

@@ -4,6 +4,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 import edu.ualberta.med.biobank.labelprinter.forms.PatientLabelEntryForm.BarcodeViewGuiData;
 import edu.ualberta.med.biobank.labelprinter.template.presets.cbsr.CBSRLabelMaker;
@@ -19,22 +21,25 @@ import edu.ualberta.med.biobank.labelprinter.template.presets.cbsr.exceptions.CB
  */
 public class PrintOperation extends BarcodeGenerationOperation {
 
+    private static final I18n i18n = I18nFactory.getI18n(PrintOperation.class);
+
     public PrintOperation(BarcodeViewGuiData guiData,
         List<String> patientNumbers) {
         super(guiData, patientNumbers);
     }
 
+    @SuppressWarnings("nls")
     @Override
     public void run(IProgressMonitor monitor) throws InvocationTargetException,
         InterruptedException {
 
         successful = false;
 
-        monitor.beginTask("Printing Barcode Labels",
+        monitor.beginTask(i18n.tr("Printing Barcode Labels"),
             IProgressMonitor.UNKNOWN);
 
         try {
-            monitor.subTask("Sending Data to Printer");
+            monitor.subTask(i18n.tr("Sending Data to Printer"));
             CBSRLabelMaker.printLabelsCBSR(guiData, patientNumbers);
             successful = true;
 
@@ -53,8 +58,8 @@ public class PrintOperation extends BarcodeGenerationOperation {
         // by this method.
         if (monitor.isCanceled()) {
             setError(
-                "Printing Operation Cancel",
-                "The current set of prints are invalid, please shred any sheets that were printed from this operation.");
+                i18n.tr("Printing Operation Cancel"),
+                i18n.tr("The current set of prints are invalid, please shred any sheets that were printed from this operation."));
         }
     }
 }

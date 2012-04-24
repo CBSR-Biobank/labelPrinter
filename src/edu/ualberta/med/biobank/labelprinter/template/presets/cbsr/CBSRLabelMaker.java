@@ -8,6 +8,8 @@ import java.util.List;
 import javax.xml.bind.JAXBException;
 
 import org.eclipse.osgi.util.NLS;
+import org.xnap.commons.i18n.I18n;
+import org.xnap.commons.i18n.I18nFactory;
 
 import edu.ualberta.med.biobank.labelprinter.template.Template;
 import edu.ualberta.med.biobank.labelprinter.template.configuration.Configuration;
@@ -40,42 +42,44 @@ public class CBSRLabelMaker {
 
     // per sheet
     private static final String SHEET_INFO_FIELD_1_TEXT =
-        "Sheet Info.Custom Field 1.Text";
+        "Sheet Info.Custom Field 1.Text"; //$NON-NLS-1$
     private static final String SHEET_INFO_FIELD_1_BARCODE_1D =
-        "Sheet Info.Custom Field 1.1D Barcode";
+        "Sheet Info.Custom Field 1.1D Barcode"; //$NON-NLS-1$
 
     private static final String SHEET_INFO_FIELD_2_TEXT =
-        "Sheet Info.Custom Field 2.Text";
+        "Sheet Info.Custom Field 2.Text"; //$NON-NLS-1$
     private static final String SHEET_INFO_FIELD_2_BARCODE_1D =
-        "Sheet Info.Custom Field 2.1D Barcode";
+        "Sheet Info.Custom Field 2.1D Barcode"; //$NON-NLS-1$
 
     private static final String SHEET_INFO_FIELD_3_TEXT =
-        "Sheet Info.Custom Field 3.Text";
+        "Sheet Info.Custom Field 3.Text"; //$NON-NLS-1$
     private static final String SHEET_INFO_FIELD_3_BARCODE_1D =
-        "Sheet Info.Custom Field 3.1D Barcode";
+        "Sheet Info.Custom Field 3.1D Barcode"; //$NON-NLS-1$
 
     private static final String SHEET_INFO_PATIENT_NUM_BARCODE_1D =
-        "Sheet Info.Patient Number.1D Barcode";
+        "Sheet Info.Patient Number.1D Barcode"; //$NON-NLS-1$
 
     // per label general
     private static final String LABEL_GENERAL_FIELD_TEXT =
-        "Labels.General.Text";
+        "Labels.General.Text"; //$NON-NLS-1$
     private static final String LABEL_GENERAL_BARCODE_1D =
-        "Labels.General.Barcode 1D";
+        "Labels.General.Barcode 1D"; //$NON-NLS-1$
     private static final String LABEL_GENERAL_BARCODE_2D =
-        "Labels.General.Barcode 2D";
+        "Labels.General.Barcode 2D"; //$NON-NLS-1$
     private static final String LABEL_GENERAL_BARCODE_2D_TEXT =
-        "Labels.General.Barcode 2D Text";
+        "Labels.General.Barcode 2D Text"; //$NON-NLS-1$
 
     // per label individual
     private static final String LABEL_INDIVIDUAL_BARCODE_1D_FORMATTED =
-        "Labels.Individual.Label %03d.Barcode 1D";
+        "Labels.Individual.Label %03d.Barcode 1D"; //$NON-NLS-1$
     private static final String LABEL_INDIVIDUAL_BARCODE_2D_FORMATTED =
-        "Labels.Individual.Label %03d.Barcode 2D";
+        "Labels.Individual.Label %03d.Barcode 2D"; //$NON-NLS-1$
     private static final String LABEL_INDIVIDUAL_BARCODE_2D_TEXT =
-        "Labels.Individual.Label %03d.Barcode 2D Text";
+        "Labels.Individual.Label %03d.Barcode 2D Text"; //$NON-NLS-1$
     private static final String LABEL_INDIVIDUAL_FIELD_TEXT_FORMATTED =
-        "Labels.Individual.Label %03d.Text";
+        "Labels.Individual.Label %03d.Text"; //$NON-NLS-1$
+
+    private static final I18n i18n = I18nFactory.getI18n(CBSRLabelMaker.class);
 
     /**
      * Generates a jasper outline and creates a pdf file byte array.
@@ -86,6 +90,7 @@ public class CBSRLabelMaker {
      * @throws CBSRPdfGenException
      * @throws JAXBException
      */
+    @SuppressWarnings("nls")
     public static byte[] generatePdfCBSR(CBSRData cbsrData,
         List<String> barcodeStrings) throws CBSRPdfGenException, JAXBException {
 
@@ -93,7 +98,8 @@ public class CBSRLabelMaker {
 
         if (!verifyConfiguration(configDataStr)) {
             throw new CBSRPdfGenException(
-                "Configuration data is invalid. Template is corrupt.");
+                i18n.trc("Error message",
+                    "Configuration data is invalid. Template is corrupt."));
         }
 
         JasperOutline jo = generateJasperOutline(cbsrData, barcodeStrings);
@@ -104,7 +110,8 @@ public class CBSRLabelMaker {
             pdfData = tm.generatePdfData();
         } catch (JasperFillException e) {
             throw new CBSRPdfGenException(
-                "Failed to fill configuration data into jasper template."
+                i18n.trc("Error message",
+                    "Failed to fill configuration data into jasper template.")
                     + "\n" + e.getError());
         }
         return pdfData;
@@ -117,6 +124,7 @@ public class CBSRLabelMaker {
      * @param barcodeStrings
      * @throws CBSRPdfGenException
      */
+    @SuppressWarnings("nls")
     public static void printLabelsCBSR(CBSRData cbsrData,
         List<String> barcodeStrings) throws CBSRPdfGenException {
 
@@ -128,11 +136,13 @@ public class CBSRLabelMaker {
         } catch (JasperFillException e) {
 
             throw new CBSRPdfGenException(
-                "Failed to fill configuration data into jasper template for printing."
+                i18n.trc("Error message",
+                    "Failed to fill configuration data into jasper template for printing.")
                     + "\n" + e.getError());
         }
     }
 
+    @SuppressWarnings("nls")
     private static JasperOutline generateJasperOutline(CBSRData cbsrData,
         List<String> barcodeStrings) throws CBSRPdfGenException {
 
@@ -140,12 +150,13 @@ public class CBSRLabelMaker {
 
         if (cbsrData.projectTileStr == null) {
             throw new CBSRPdfGenException(
-                "Cannot have a null title");
+                i18n.trc("Error message", "Cannot have a null title"));
         }
 
         if ((barcodeStrings == null) || (barcodeStrings.size() == 0)) {
             throw new CBSRPdfGenException(
-                "Require a valid amount of barcode strings");
+                i18n.trc("Error message",
+                    "Require a valid amount of barcode strings"));
         }
 
         // -------branding------------a
@@ -187,7 +198,9 @@ public class CBSRLabelMaker {
 
         } catch (JAXBException ee) {
             throw new CBSRPdfGenException(NLS.bind(
-                "Failed to load configuration setting: {0}", ee.getMessage()));
+                i18n.trc("Error message",
+                    "Failed to load configuration setting: {0}"),
+                ee.getMessage()));
         }
         // -------barcode info------------
         JasperOutline.PatientBarcodeInformation pbi =
@@ -218,7 +231,8 @@ public class CBSRLabelMaker {
                     bi.getElements().add(item1D);
                 } else {
                     throw new CBSRPdfGenException(
-                        "Empty or null barcode string was specified.");
+                        i18n.trc("Error message",
+                            "Empty or null barcode string was specified."));
                 }
 
                 // 2d barcode;
@@ -260,7 +274,8 @@ public class CBSRLabelMaker {
 
                 } else {
                     throw new CBSRPdfGenException(
-                        "Barcode ID must be a 12 character alphanumeric string.");
+                        i18n.trc("Error message",
+                            "Barcode ID must be a 12 character alphanumeric string."));
                 }
 
                 if ((cbsrData.specimenTypeStr != null)
@@ -285,13 +300,14 @@ public class CBSRLabelMaker {
             }
         } catch (JAXBException e1) {
             throw new CBSRPdfGenException(NLS.bind(
-                "Failed to load configuration setting: {0}",
+                i18n.trc("Error Message",
+                    "Failed to load configuration setting: {0}"),
                 e1.getMessage()));
         }
 
         if (!tplt.jasperTemplateExists()) {
             throw new CBSRPdfGenException(
-                "A valid jasper file is required.");
+                i18n.trc("Error Message", "A valid jasper file is required."));
         }
 
         try {
@@ -303,7 +319,8 @@ public class CBSRLabelMaker {
             return jo;
         } catch (Exception e5) {
             throw new CBSRPdfGenException(NLS.bind(
-                "Failed to create element in patient info box: {0}",
+                i18n.trc("Error Message",
+                    "Failed to create element in patient info box: {0}"),
                 e5.getMessage()));
         }
     }
