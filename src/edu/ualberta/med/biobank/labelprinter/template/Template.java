@@ -18,7 +18,6 @@ import edu.ualberta.med.biobank.common.wrappers.PrinterLabelTemplateWrapper;
 import edu.ualberta.med.biobank.gui.common.BgcLogger;
 import edu.ualberta.med.biobank.labelprinter.template.configuration.Configuration;
 import edu.ualberta.med.biobank.labelprinter.template.configuration.Rectangle;
-import gov.nih.nci.system.applicationservice.ApplicationException;
 
 /**
  * Contains a name, intented printer name, jasper file reference and a
@@ -43,6 +42,10 @@ public class Template implements Serializable {
         plt = new PrinterLabelTemplateWrapper(SessionManager.getAppService());
     }
 
+    public Template(PrinterLabelTemplateWrapper plTemplate) {
+        plt = plTemplate;
+    }
+
     @Override
     public Template clone() {
         Template clone = new Template();
@@ -53,7 +56,7 @@ public class Template implements Serializable {
         try {
             clone.setJasperTemplate(this.getJasperTemplate());
         } catch (Exception e1) {
-            logger.error("Error: Failed to clone jasper template.", e1); 
+            logger.error("Error: Failed to clone jasper template.", e1);
             return null;
         }
 
@@ -77,7 +80,7 @@ public class Template implements Serializable {
             try {
                 clone.setConfiguration(newConfig);
             } catch (JAXBException e) {
-                logger.error("Error: Failed to clone configuration.", e); 
+                logger.error("Error: Failed to clone configuration.", e);
                 return null;
             }
         }
@@ -159,11 +162,18 @@ public class Template implements Serializable {
 
             setConfiguration(config);
             try {
-                SessionManager.getAppService().doAction(
-                    new PrinterLabelTemplateSaveAction(plt.getWrappedObject()));
+                Integer id =
+                    SessionManager
+                        .getAppService()
+                        .doAction(
+                            new PrinterLabelTemplateSaveAction(plt
+                                .getWrappedObject())).getId();
+
+                plt.setId(id);
+
             } catch (Exception e) {
                 logger.error(
-                    "Error: Failed to persit key-updated configuration", e); 
+                    "Error: Failed to persit key-updated configuration", e);
                 return null;
             }
         }
@@ -196,8 +206,9 @@ public class Template implements Serializable {
     }
 
     public void persist() throws Exception {
-        SessionManager.getAppService().doAction(
-            new PrinterLabelTemplateSaveAction(plt.getWrappedObject()));
+        Integer id = SessionManager.getAppService().doAction(
+            new PrinterLabelTemplateSaveAction(plt.getWrappedObject())).getId();
+        plt.setId(id);
     }
 
     public void reload() throws Exception {
@@ -216,14 +227,6 @@ public class Template implements Serializable {
 
     public boolean hasWrapper() {
         return (plt != null);
-    }
-
-    public static Template getTemplateByName(String name)
-        throws ApplicationException {
-        Template tplt = new Template();
-        tplt.plt = PrinterLabelTemplateWrapper.getTemplateByName(
-            SessionManager.getAppService(), name);
-        return tplt;
     }
 
     @Override

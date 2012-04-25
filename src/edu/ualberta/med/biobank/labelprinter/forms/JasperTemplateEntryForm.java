@@ -25,6 +25,7 @@ import org.eclipse.ui.PlatformUI;
 
 import edu.ualberta.med.biobank.SessionManager;
 import edu.ualberta.med.biobank.common.action.labelPrinter.JasperTemplateDeleteAction;
+import edu.ualberta.med.biobank.common.action.labelPrinter.JasperTemplateGetAllAction;
 import edu.ualberta.med.biobank.common.action.labelPrinter.JasperTemplateSaveAction;
 import edu.ualberta.med.biobank.common.wrappers.JasperTemplateWrapper;
 import edu.ualberta.med.biobank.gui.common.BgcPlugin;
@@ -33,6 +34,7 @@ import edu.ualberta.med.biobank.gui.common.forms.BgcEntryForm;
 import edu.ualberta.med.biobank.gui.common.forms.BgcEntryFormActions;
 import edu.ualberta.med.biobank.gui.common.widgets.BgcBaseText;
 import edu.ualberta.med.biobank.labelprinter.dialogs.StringInputDialog;
+import edu.ualberta.med.biobank.model.JasperTemplate;
 import gov.nih.nci.system.applicationservice.ApplicationException;
 
 /**
@@ -44,10 +46,10 @@ import gov.nih.nci.system.applicationservice.ApplicationException;
 public class JasperTemplateEntryForm extends BgcEntryForm implements
     SelectionListener {
 
-    private static final String JASPER_EXTENSION = "*.jrxml"; 
+    private static final String JASPER_EXTENSION = "*.jrxml";
 
     public static final String ID =
-        "edu.ualberta.med.biobank.labelprinter.forms.JasperTemplateEntryForm"; 
+        "edu.ualberta.med.biobank.labelprinter.forms.JasperTemplateEntryForm";
 
     private Button deleteButton = null;
     private Button newButton = null;
@@ -101,7 +103,8 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
     protected void createFormContent() throws Exception {
         super.createFormContent();
         form.setText("Jasper Configuration Templates");
-        form.setMessage("Add Jasper configurations for different printer labels",
+        form.setMessage(
+            "Add Jasper configurations for different printer labels",
             IMessageProvider.NONE);
         page.setLayout(new GridLayout(1, false));
 
@@ -243,10 +246,14 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
 
                 jasperTemplateList.setEnabled(true);
 
-                for (JasperTemplateWrapper t : JasperTemplateWrapper
-                    .getAllTemplates(SessionManager.getAppService())) {
+                java.util.List<JasperTemplate> jTemplates =
+                    SessionManager.getAppService().doAction(
+                        new JasperTemplateGetAllAction()).getList();
+
+                for (JasperTemplate t : jTemplates) {
                     String name = t.getName();
-                    templateMap.put(name, t);
+                    templateMap.put(name, new JasperTemplateWrapper(
+                        SessionManager.getAppService(), t));
                     jasperTemplateList.add(name);
                 }
                 jasperTemplateList.redraw();
@@ -296,7 +303,7 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
                     } else {
                         jasperNameText
                             .setText("Please select a template");
-                        jasperConfigText.setText(""); 
+                        jasperConfigText.setText("");
                         prevJasperName = null;
                     }
 
@@ -443,7 +450,7 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
 
                             jasperNameText
                                 .setText("Please select a template");
-                            jasperConfigText.setText(""); 
+                            jasperConfigText.setText("");
                             prevJasperName = null;
 
                             jasperTemplateList.deselectAll();
@@ -452,9 +459,11 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
                     }
                 }
             } catch (Exception e1) {
-                BgcPlugin.openAsyncError(
-                    "Template Delete Error",
-                    "Could not delete template. A printer template is using this jasper configuration.", e1);
+                BgcPlugin
+                    .openAsyncError(
+                        "Template Delete Error",
+                        "Could not delete template. A printer template is using this jasper configuration.",
+                        e1);
             }
         } else if (e.getSource() == browseButton) {
             FileDialog fd = new FileDialog(PlatformUI.getWorkbench()
@@ -484,8 +493,8 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
                 }
             }
         } else {
-            BgcPlugin.openAsyncError("Invalid selection event", 
-                "invalid selection source"); 
+            BgcPlugin.openAsyncError("Invalid selection event",
+                "invalid selection source");
         }
     }
 

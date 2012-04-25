@@ -25,6 +25,8 @@ import org.eclipse.ui.ISourceProviderListener;
 import org.eclipse.ui.PlatformUI;
 
 import edu.ualberta.med.biobank.SessionManager;
+import edu.ualberta.med.biobank.common.action.labelPrinter.JasperTemplateGetInfoAction;
+import edu.ualberta.med.biobank.common.action.labelPrinter.JasperTemplateGetInfoAction.JasperTemplateInfo;
 import edu.ualberta.med.biobank.common.wrappers.JasperTemplateWrapper;
 import edu.ualberta.med.biobank.gui.common.BgcPlugin;
 import edu.ualberta.med.biobank.gui.common.LoginSessionState;
@@ -53,12 +55,12 @@ import gov.nih.nci.system.applicationservice.ApplicationException;
 public class LabelTemplateEntryForm extends BgcEntryForm implements
     SelectionListener {
 
-    private static final String CBSR_CONFIG_NAME = "CBSR"; 
+    private static final String CBSR_CONFIG_NAME = "CBSR";
 
-    private static final String PRINTER_DEFAULT_NAME = "default"; 
+    private static final String PRINTER_DEFAULT_NAME = "default";
 
     public static final String ID =
-        "edu.ualberta.med.biobank.labelprinter.forms.TemplateEntryForm"; 
+        "edu.ualberta.med.biobank.labelprinter.forms.TemplateEntryForm";
 
     private Button deleteButton = null;
     private Button copyButton = null;
@@ -351,7 +353,7 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                             jasperConfigText.setText(selectedTemplate
                                 .getJasperTemplateName());
                         } catch (Exception e1) {
-                            jasperConfigText.setText(""); 
+                            jasperConfigText.setText("");
                             BgcPlugin
                                 .openAsyncError(
                                     "Template Selection",
@@ -368,7 +370,7 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                             configTree.populateTree(selectedTemplate
                                 .getConfiguration());
                         } catch (Exception ee) {
-                            jasperConfigText.setText(""); 
+                            jasperConfigText.setText("");
                             BgcPlugin
                                 .openAsyncError(
                                     "Error: Could not set Template Configuration Tree",
@@ -391,9 +393,9 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                         prevTemplateName = null;
                         templateNameText
                             .setText("Please select a template");
-                        printerNameText.setText(""); 
+                        printerNameText.setText("");
                         printerNameText.setEnabled(false);
-                        jasperConfigText.setText(""); 
+                        jasperConfigText.setText("");
                         try {
                             configTree.populateTree(null);
                         } catch (TreeException e1) {
@@ -429,8 +431,8 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
             try {
                 configTree.resetEditor();
             } catch (TreeException e1) {
-                BgcPlugin.openAsyncError("Tree Editor", 
-                    "Failed to reset tree editor"); 
+                BgcPlugin.openAsyncError("Tree Editor",
+                    "Failed to reset tree editor");
             }
 
             if (prevTemplateName != null) {
@@ -491,8 +493,8 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
         } else if (e.getSource() == deleteButton) {
             deleteButtonSelected(e);
         } else {
-            BgcPlugin.openAsyncError("Invalid selection event", 
-                "invalid selection source"); 
+            BgcPlugin.openAsyncError("Invalid selection event",
+                "invalid selection source");
         }
     }
 
@@ -538,11 +540,16 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
 
                     Template ct = new Template();
 
+                    JasperTemplateInfo info =
+                        SessionManager.getAppService().doAction(
+                            new JasperTemplateGetInfoAction(
+                                selectedJasperConfig));
+
                     ct.setName(newTemplateName);
                     ct.setPrinterName(PRINTER_DEFAULT_NAME);
-                    ct.setJasperTemplate(JasperTemplateWrapper
-                        .getTemplateByName(SessionManager.getAppService(),
-                            selectedJasperConfig));
+                    ct.setJasperTemplate(new JasperTemplateWrapper(
+                        SessionManager.getAppService(),
+                        info.jasperTemplate));
 
                     if (selectedJasperConfig.equals(CBSR_CONFIG_NAME)) {
                         ct.setConfiguration(CBSRLabelMaker
@@ -553,15 +560,7 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                             .getDefaultConfiguration());
                     }
 
-                    try {
-                        templateStore.addTemplate(ct);
-                    } catch (Exception e1) {
-                        BgcPlugin.openAsyncError(
-                            "Cannot Add Template",
-                            "Failed to add template to the template store.");
-                        return;
-                    }
-
+                    templateStore.addTemplate(ct);
                     templateNamesList.add(ct.getName());
                     templatesNamesSelectLast();
                     templateNamesList.redraw();
@@ -601,7 +600,7 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                 "Cloned Template Name",
                 "What is the name of the cloned template?",
                 "Name", shell);
-            dialog.setValue(prevTemplateName + " copy"); 
+            dialog.setValue(prevTemplateName + " copy");
 
             if (dialog.open() == Dialog.OK) {
 
@@ -673,10 +672,10 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                         .setText("Please select a template");
 
                     prevTemplateName = null;
-                    printerNameText.setText(""); 
+                    printerNameText.setText("");
                     printerNameText.setEnabled(false);
 
-                    jasperConfigText.setText(""); 
+                    jasperConfigText.setText("");
 
                     configTree.populateTree(null);
 
