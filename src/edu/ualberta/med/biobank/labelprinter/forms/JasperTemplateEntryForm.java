@@ -27,6 +27,7 @@ import org.xnap.commons.i18n.I18nFactory;
 
 import edu.ualberta.med.biobank.SessionManager;
 import edu.ualberta.med.biobank.common.action.labelPrinter.JasperTemplateDeleteAction;
+import edu.ualberta.med.biobank.common.action.labelPrinter.JasperTemplateGetAllAction;
 import edu.ualberta.med.biobank.common.action.labelPrinter.JasperTemplateSaveAction;
 import edu.ualberta.med.biobank.common.wrappers.JasperTemplateWrapper;
 import edu.ualberta.med.biobank.gui.common.BgcPlugin;
@@ -35,6 +36,7 @@ import edu.ualberta.med.biobank.gui.common.forms.BgcEntryForm;
 import edu.ualberta.med.biobank.gui.common.forms.BgcEntryFormActions;
 import edu.ualberta.med.biobank.gui.common.widgets.BgcBaseText;
 import edu.ualberta.med.biobank.labelprinter.dialogs.StringInputDialog;
+import edu.ualberta.med.biobank.model.JasperTemplate;
 import gov.nih.nci.system.applicationservice.ApplicationException;
 
 /**
@@ -46,9 +48,10 @@ import gov.nih.nci.system.applicationservice.ApplicationException;
 public class JasperTemplateEntryForm extends BgcEntryForm implements
     SelectionListener {
 
-    private static final String JASPER_EXTENSION = "*.jrxml"; //$NON-NLS-1$
     private static final I18n i18n = I18nFactory
         .getI18n(JasperTemplateEntryForm.class);
+
+    private static final String JASPER_EXTENSION = "*.jrxml"; //$NON-NLS-1$
 
     public static final String ID =
         "edu.ualberta.med.biobank.labelprinter.forms.JasperTemplateEntryForm"; //$NON-NLS-1$
@@ -255,10 +258,14 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
 
                 jasperTemplateList.setEnabled(true);
 
-                for (JasperTemplateWrapper t : JasperTemplateWrapper
-                    .getAllTemplates(SessionManager.getAppService())) {
+                java.util.List<JasperTemplate> jTemplates =
+                    SessionManager.getAppService().doAction(
+                        new JasperTemplateGetAllAction()).getList();
+
+                for (JasperTemplate t : jTemplates) {
                     String name = t.getName();
-                    templateMap.put(name, t);
+                    templateMap.put(name, new JasperTemplateWrapper(
+                        SessionManager.getAppService(), t));
                     jasperTemplateList.add(name);
                 }
                 jasperTemplateList.redraw();

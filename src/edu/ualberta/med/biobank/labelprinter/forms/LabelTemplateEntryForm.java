@@ -27,6 +27,8 @@ import org.xnap.commons.i18n.I18n;
 import org.xnap.commons.i18n.I18nFactory;
 
 import edu.ualberta.med.biobank.SessionManager;
+import edu.ualberta.med.biobank.common.action.labelPrinter.JasperTemplateGetInfoAction;
+import edu.ualberta.med.biobank.common.action.labelPrinter.JasperTemplateGetInfoAction.JasperTemplateInfo;
 import edu.ualberta.med.biobank.common.wrappers.JasperTemplateWrapper;
 import edu.ualberta.med.biobank.gui.common.BgcPlugin;
 import edu.ualberta.med.biobank.gui.common.LoginSessionState;
@@ -55,9 +57,11 @@ import gov.nih.nci.system.applicationservice.ApplicationException;
 public class LabelTemplateEntryForm extends BgcEntryForm implements
     SelectionListener {
 
-    private static final String CBSR_CONFIG_NAME = "CBSR"; //$NON-NLS-1$
     private static final I18n i18n = I18nFactory
         .getI18n(LabelTemplateEntryForm.class);
+
+    private static final String CBSR_CONFIG_NAME = "CBSR"; //$NON-NLS-1$
+
     private static final String PRINTER_DEFAULT_NAME = i18n.tr("default"); //$NON-NLS-1$
 
     public static final String ID =
@@ -552,11 +556,16 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
 
                     Template ct = new Template();
 
+                    JasperTemplateInfo info =
+                        SessionManager.getAppService().doAction(
+                            new JasperTemplateGetInfoAction(
+                                selectedJasperConfig));
+
                     ct.setName(newTemplateName);
                     ct.setPrinterName(PRINTER_DEFAULT_NAME);
-                    ct.setJasperTemplate(JasperTemplateWrapper
-                        .getTemplateByName(SessionManager.getAppService(),
-                            selectedJasperConfig));
+                    ct.setJasperTemplate(new JasperTemplateWrapper(
+                        SessionManager.getAppService(),
+                        info.jasperTemplate));
 
                     if (selectedJasperConfig.equals(CBSR_CONFIG_NAME)) {
                         ct.setConfiguration(CBSRLabelMaker
@@ -567,16 +576,7 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
                             .getDefaultConfiguration());
                     }
 
-                    try {
-                        templateStore.addTemplate(ct);
-                    } catch (Exception e1) {
-                        BgcPlugin
-                            .openAsyncError(
-                                i18n.tr("Cannot Add Template"),
-                                i18n.tr("Failed to add template to the template store."));
-                        return;
-                    }
-
+                    templateStore.addTemplate(ct);
                     templateNamesList.add(ct.getName());
                     templatesNamesSelectLast();
                     templateNamesList.redraw();

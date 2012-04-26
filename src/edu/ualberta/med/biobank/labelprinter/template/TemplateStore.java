@@ -1,11 +1,16 @@
 package edu.ualberta.med.biobank.labelprinter.template;
 
 import edu.ualberta.med.biobank.SessionManager;
+import edu.ualberta.med.biobank.common.action.labelPrinter.PrinterLabelTemplateGetAllAction;
+import edu.ualberta.med.biobank.common.action.labelPrinter.PrinterLabelTemplateGetInfoAction;
+import edu.ualberta.med.biobank.common.action.labelPrinter.PrinterLabelTemplateGetInfoAction.PrinterLabelTemplateInfo;
 import edu.ualberta.med.biobank.common.wrappers.PrinterLabelTemplateWrapper;
+import edu.ualberta.med.biobank.model.PrinterLabelTemplate;
 import gov.nih.nci.system.applicationservice.ApplicationException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,10 +30,17 @@ public class TemplateStore {
     private static final I18n i18n = I18nFactory.getI18n(TemplateStore.class);
 
     public TemplateStore() throws ApplicationException {
+        List<PrinterLabelTemplate> plTemplates =
+            SessionManager.getAppService().doAction(
+                new PrinterLabelTemplateGetAllAction()).getList();
+
         templates = new HashMap<String, Template>();
-        for (String name : PrinterLabelTemplateWrapper
-            .getTemplateNames(SessionManager.getAppService())) {
-            templates.put(name, Template.getTemplateByName(name));
+        for (PrinterLabelTemplate plTemplate : plTemplates) {
+            Template t =
+                new Template(new PrinterLabelTemplateWrapper(
+                    SessionManager.getAppService(),
+                    plTemplate));
+            templates.put(plTemplate.getName(), t);
         }
     }
 
@@ -77,7 +89,18 @@ public class TemplateStore {
 
     public void reloadTemplate(String name) throws Exception {
         deleteTemplate(name);
-        templates.put(name, Template.getTemplateByName(name));
+
+        PrinterLabelTemplateInfo info =
+            SessionManager.getAppService().doAction(
+                new PrinterLabelTemplateGetInfoAction(name));
+
+        Template t =
+            new Template(new PrinterLabelTemplateWrapper(
+                SessionManager.getAppService(),
+                info.printerLabelTemplate));
+
+        templates.put(name, t);
+
     }
 
     public void purge() {
