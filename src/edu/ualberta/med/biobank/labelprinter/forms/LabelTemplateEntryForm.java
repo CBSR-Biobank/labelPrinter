@@ -29,7 +29,7 @@ import edu.ualberta.med.biobank.common.action.labelPrinter.JasperTemplateGetInfo
 import edu.ualberta.med.biobank.common.action.labelPrinter.JasperTemplateGetInfoAction.JasperTemplateInfo;
 import edu.ualberta.med.biobank.common.wrappers.JasperTemplateWrapper;
 import edu.ualberta.med.biobank.gui.common.BgcPlugin;
-import edu.ualberta.med.biobank.gui.common.LoginSessionState;
+import edu.ualberta.med.biobank.gui.common.LoginPermissionSessionState;
 import edu.ualberta.med.biobank.gui.common.forms.BgcEntryForm;
 import edu.ualberta.med.biobank.gui.common.forms.BgcEntryFormActions;
 import edu.ualberta.med.biobank.gui.common.widgets.BgcBaseText;
@@ -101,12 +101,12 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
         form.setMessage(getOkMessage(), IMessageProvider.NONE);
         page.setLayout(new GridLayout(1, false));
 
-        LoginSessionState sessionSourceProvider = BgcPlugin
+        LoginPermissionSessionState sessionSourceProvider = BgcPlugin
             .getLoginStateSourceProvider();
 
         loggedIn = sessionSourceProvider.getCurrentState()
-            .get(LoginSessionState.LOGIN_STATE_SOURCE_NAME)
-            .equals(LoginSessionState.LOGGED_IN);
+            .get(LoginPermissionSessionState.LOGIN_STATE_SOURCE_NAME)
+            .equals(LoginPermissionSessionState.LOGGED_IN);
 
         shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 
@@ -122,7 +122,7 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
             public void sourceChanged(int sourcePriority, String sourceName,
                 Object sourceValue) {
                 if (sourceValue != null) {
-                    loggedIn = sourceValue.equals(LoginSessionState.LOGGED_IN);
+                    loggedIn = sourceValue.equals(LoginPermissionSessionState.LOGGED_IN);
                     updateForm();
                 }
             }
