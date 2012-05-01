@@ -68,44 +68,44 @@
       <handler
             class="edu.ualberta.med.biobank.labelprinter.handlers.PatientLabelHandler"
             commandId="edu.ualberta.med.barcodegenerator.commands.patientlabel">
-         <enabledWhen>
+         <activeWhen>
             <and>
                <reference
                      definitionId="edu.ualberta.med.biobank.gui.common.loggedIn">
                </reference>
                <reference
-                     definitionId="biobank.hasLabelPrintingRights">
+                     definitionId="edu.ualberta.med.biobank.gui.common.labelPrintingPermission">
                </reference>
             </and>
-         </enabledWhen>
+         </activeWhen>
       </handler>
       <handler
             class="edu.ualberta.med.biobank.labelprinter.handlers.TemplateEditorHandler"
             commandId="edu.ualberta.med.barcodegenerator.commands.templateeditor">
-         <enabledWhen>
+         <activeWhen>
             <and>
                <reference
                      definitionId="edu.ualberta.med.biobank.gui.common.loggedIn">
                </reference>
                <reference
-                     definitionId="biobank.hasLabelPrintingRights">
+                     definitionId="edu.ualberta.med.biobank.gui.common.labelPrintingPermission">
                </reference>
             </and>
-         </enabledWhen>
+         </activeWhen>
       </handler>
       <handler
             class="edu.ualberta.med.biobank.labelprinter.handlers.JasperEditorHandler"
             commandId="edu.ualberta.med.barcodegenerator.commands.jaspereditor">
-         <enabledWhen>
+         <activeWhen>
             <and>
                <reference
                      definitionId="edu.ualberta.med.biobank.gui.common.loggedIn">
                </reference>
                <reference
-                     definitionId="biobank.hasLabelPrintingRights">
+                     definitionId="edu.ualberta.med.biobank.gui.common.labelPrintingPermission">
                </reference>
             </and>
-         </enabledWhen>
+         </activeWhen>
       </handler>
    </extension>
    <extension

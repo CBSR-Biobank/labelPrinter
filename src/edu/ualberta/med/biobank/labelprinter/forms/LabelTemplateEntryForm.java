@@ -129,9 +129,7 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
             public void sourceChanged(int sourcePriority, String sourceName,
                 Object sourceValue) {
                 if (sourceValue != null) {
-                    loggedIn =
-                        sourceValue
-                            .equals(LoginPermissionSessionState.LOGGED_IN);
+                    loggedIn = sourceValue.equals(LoginPermissionSessionState.LOGGED_IN);
                     updateForm();
                 }
             }

@@ -51,7 +51,8 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
     private static final I18n i18n = I18nFactory
         .getI18n(JasperTemplateEntryForm.class);
 
-    private static final String JASPER_EXTENSION = "*.jrxml"; //$NON-NLS-1$
+    @SuppressWarnings("nls")
+    private static final String JASPER_EXTENSION = "*.jrxml"; 
 
     public static final String ID =
         "edu.ualberta.med.biobank.labelprinter.forms.JasperTemplateEntryForm"; //$NON-NLS-1$
@@ -136,9 +137,7 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
             public void sourceChanged(int sourcePriority, String sourceName,
                 Object sourceValue) {
                 if (sourceValue != null) {
-                    loggedIn =
-                        sourceValue
-                            .equals(LoginPermissionSessionState.LOGGED_IN);
+                    loggedIn = sourceValue.equals(LoginPermissionSessionState.LOGGED_IN);
                     updateForm();
                 }
             }
