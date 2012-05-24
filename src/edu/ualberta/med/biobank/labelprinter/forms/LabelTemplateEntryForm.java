@@ -1,7 +1,5 @@
 package edu.ualberta.med.biobank.labelprinter.forms;
 
-import java.util.Map;
-
 import javax.xml.bind.JAXBException;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -21,7 +19,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.ISourceProviderListener;
 import org.eclipse.ui.PlatformUI;
 import org.xnap.commons.i18n.I18n;
 import org.xnap.commons.i18n.I18nFactory;
@@ -31,7 +28,6 @@ import edu.ualberta.med.biobank.common.action.labelPrinter.JasperTemplateGetInfo
 import edu.ualberta.med.biobank.common.action.labelPrinter.JasperTemplateGetInfoAction.JasperTemplateInfo;
 import edu.ualberta.med.biobank.common.wrappers.JasperTemplateWrapper;
 import edu.ualberta.med.biobank.gui.common.BgcPlugin;
-import edu.ualberta.med.biobank.gui.common.LoginPermissionSessionState;
 import edu.ualberta.med.biobank.gui.common.forms.BgcEntryForm;
 import edu.ualberta.med.biobank.gui.common.forms.BgcEntryFormActions;
 import edu.ualberta.med.biobank.gui.common.widgets.BgcBaseText;
@@ -83,10 +79,6 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
 
     private TemplateStore templateStore = null;
 
-    private boolean loggedIn = false;
-
-    private ISourceProviderListener loginProvider = null;
-
     @SuppressWarnings("nls")
     @Override
     protected void init() throws Exception {
@@ -108,50 +100,9 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
         form.setMessage(getOkMessage(), IMessageProvider.NONE);
         page.setLayout(new GridLayout(1, false));
 
-        LoginPermissionSessionState sessionSourceProvider = BgcPlugin
-            .getLoginStateSourceProvider();
-
-        loggedIn = sessionSourceProvider.getCurrentState()
-            .get(LoginPermissionSessionState.LOGIN_STATE_SOURCE_NAME)
-            .equals(LoginPermissionSessionState.LOGGED_IN);
-
         shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-
         createMasterDetail();
-
-        if (loginProvider != null) {
-            sessionSourceProvider.removeSourceProviderListener(loginProvider);
-            loginProvider = null;
-        }
-
-        loginProvider = new ISourceProviderListener() {
-            @Override
-            public void sourceChanged(int sourcePriority, String sourceName,
-                Object sourceValue) {
-                if (sourceValue != null) {
-                    loggedIn = sourceValue.equals(LoginPermissionSessionState.LOGGED_IN);
-                    updateForm();
-                }
-            }
-
-            @Override
-            public void sourceChanged(int sourcePriority,
-                @SuppressWarnings("rawtypes") Map sourceValuesByName) {
-                // do nothing for now
-            }
-        };
-        sessionSourceProvider.addSourceProviderListener(loginProvider);
         updateForm();
-    }
-
-    @Override
-    public void dispose() {
-        if (loginProvider != null) {
-            BgcPlugin.getLoginStateSourceProvider()
-                .removeSourceProviderListener(loginProvider);
-            loginProvider = null;
-        }
-        super.dispose();
     }
 
     @SuppressWarnings("nls")
@@ -288,24 +239,16 @@ public class LabelTemplateEntryForm extends BgcEntryForm implements
     @SuppressWarnings("nls")
     private void updateForm() {
         try {
-            if (loggedIn) {
-                if (templateStore == null) {
-                    templateStore = new TemplateStore();
-                }
-
-                setEnable(true);
-
-                for (String s : templateStore.getTemplateNames())
-                    templateNamesList.add(s);
-
-                templateNamesList.redraw();
-
-            } else {
-                setEnable(false);
-                templateNamesList.removeAll();
-                templateNamesList.redraw();
-
+            if (templateStore == null) {
+                templateStore = new TemplateStore();
             }
+            setEnable(true);
+
+            for (String s : templateStore.getTemplateNames()) {
+                templateNamesList.add(s);
+            }
+
+            templateNamesList.redraw();
         } catch (ApplicationException e) {
             BgcPlugin.openAsyncError(
                 i18n.tr("Database Error"),
