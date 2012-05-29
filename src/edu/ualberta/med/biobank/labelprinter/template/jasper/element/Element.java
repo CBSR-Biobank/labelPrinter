@@ -7,14 +7,17 @@ import edu.ualberta.med.biobank.labelprinter.template.jasper.exceptions.BarcodeC
 
 /**
  * Elements are objects that rendered onto a given jasper template. The jasper
- * filler is responcible for loading and plotting elements.
+ * filler is responsible for loading and plotting elements.
  * 
  * @author Thomas Polasek 2011
  * 
  */
 public abstract class Element {
     public static enum TYPE {
-        GenCode128, DataMatrix, Text, None,
+        GenCode128,
+        DataMatrix,
+        Text,
+        None,
     }
 
     protected static Rectangle scaleToPixels(Rectangle r, int scale, int dpi) {

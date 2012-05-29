@@ -37,7 +37,7 @@ public class JasperOutline {
         return patientInfo;
     }
 
-    public PatientBarcodeInformation getPatientBarcpdeInf() {
+    public PatientBarcodeInformation getPatientBarcodeInf() {
         return patientBarcpdeInf;
     }
 

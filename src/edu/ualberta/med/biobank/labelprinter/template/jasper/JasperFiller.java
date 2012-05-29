@@ -69,7 +69,7 @@ public class JasperFiller {
      * supplied jasper outline class.
      * 
      * @author Thomas Polasek 2011
-     *
+     * 
      */
     private class JasperConstants {
         public static final String TITLE_FIELD = "PROJECT_TITLE";
@@ -155,12 +155,12 @@ public class JasperFiller {
                 "Failed to barcode image dimensions from the jasper report.");
         }
 
-        if (templateData.getPatientBarcpdeInf().getLayout().size() != jasperConstants.barcodeCount) {
+        if (templateData.getPatientBarcodeInf().getLayout().size() != jasperConstants.barcodeCount) {
             throw new JasperFillException(
                 NLS.bind(
                     "Error: jasper file contains {0} barcode IDs. Configuration data is designed for: {1} barcode IDs.",
                     jasperConstants.barcodeCount, templateData
-                        .getPatientBarcpdeInf().getLayout().size()));
+                        .getPatientBarcodeInf().getLayout().size()));
         }
 
     }
@@ -285,7 +285,7 @@ public class JasperFiller {
         }
         // place patient barcode images
         try {
-            for (BarcodeImage bi : templateData.getPatientBarcpdeInf()
+            for (BarcodeImage bi : templateData.getPatientBarcodeInf()
                 .getLayout()) {
                 barcodeIDBufferList.add(drawElementsToPngStream(
                     bi.getElements(), jasperConstants.barcodeImageWidth,
@@ -351,7 +351,7 @@ public class JasperFiller {
         List<Element> elementList, int width, int height) throws IOException,
         BarcodeCreationException {
 
-        int imageScale = 4;
+        int imageScale = 3;
 
         BufferedImage bi = new BufferedImage(width * imageScale, height
             * imageScale, BufferedImage.TYPE_4BYTE_ABGR);
