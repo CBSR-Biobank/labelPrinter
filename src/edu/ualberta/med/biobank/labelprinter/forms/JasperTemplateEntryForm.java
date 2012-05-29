@@ -52,7 +52,7 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
         .getI18n(JasperTemplateEntryForm.class);
 
     @SuppressWarnings("nls")
-    private static final String JASPER_EXTENSION = "*.jrxml"; 
+    private static final String JASPER_EXTENSION = "*.jrxml";
 
     public static final String ID =
         "edu.ualberta.med.biobank.labelprinter.forms.JasperTemplateEntryForm"; //$NON-NLS-1$
@@ -122,8 +122,7 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
             .getLoginStateSourceProvider();
 
         loggedIn = sessionSourceProvider.getCurrentState()
-            .get(LoginPermissionSessionState.LOGIN_STATE_SOURCE_NAME)
-            .equals(LoginPermissionSessionState.LOGGED_IN);
+            .get(LoginPermissionSessionState.LOGIN_STATE_SOURCE_NAME);
 
         createMasterDetail();
 
@@ -136,9 +135,12 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
             @Override
             public void sourceChanged(int sourcePriority, String sourceName,
                 Object sourceValue) {
-                if (sourceValue != null) {
-                    loggedIn = sourceValue.equals(LoginPermissionSessionState.LOGGED_IN);
-                    updateForm();
+                if (sourceName
+                    .equals(LoginPermissionSessionState.LOGIN_STATE_SOURCE_NAME)) {
+                    if (sourceValue != null) {
+                        loggedIn = sourceValue.equals(true);
+                        updateForm();
+                    }
                 }
             }
 

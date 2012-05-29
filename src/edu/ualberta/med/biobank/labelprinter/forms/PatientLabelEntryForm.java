@@ -240,8 +240,7 @@ public class PatientLabelEntryForm extends BgcEntryForm {
             .getLoginStateSourceProvider();
 
         loggedIn = sessionSourceProvider.getCurrentState()
-            .get(LoginPermissionSessionState.LOGIN_STATE_SOURCE_NAME)
-            .equals(LoginPermissionSessionState.LOGGED_IN);
+            .get(LoginPermissionSessionState.LOGIN_STATE_SOURCE_NAME);
 
         loadPreferenceStore();
 
@@ -261,11 +260,12 @@ public class PatientLabelEntryForm extends BgcEntryForm {
             @Override
             public void sourceChanged(int sourcePriority, String sourceName,
                 Object sourceValue) {
-                if (sourceValue != null) {
-                    loggedIn =
-                        sourceValue
-                            .equals(LoginPermissionSessionState.LOGGED_IN);
-                    updateForm();
+                if (sourceName
+                    .equals(LoginPermissionSessionState.LOGIN_STATE_SOURCE_NAME)) {
+                    if (sourceValue != null) {
+                        loggedIn = sourceValue.equals(true);
+                        updateForm();
+                    }
                 }
             }
 
