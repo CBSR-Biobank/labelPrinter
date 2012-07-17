@@ -11,7 +11,7 @@ Require-Bundle: org.eclipse.ui,
  biobank.common;bundle-version="1.0.0",
  biobank;bundle-version="3.2.0"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: edu.ualberta.med.biobank.labelprinter,
  edu.ualberta.med.biobank.labelprinter.dialogs,
  edu.ualberta.med.biobank.labelprinter.forms,
