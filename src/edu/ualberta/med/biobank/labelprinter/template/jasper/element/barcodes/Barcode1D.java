@@ -21,18 +21,20 @@ public class Barcode1D extends Element {
     Font font;
 
     public Barcode1D(Rectangle rect, String message, Font font) {
-
-        if ((message == null) || (message.length() == 0))
-            throw new IllegalArgumentException(
-                "empty or null message specified to 1D barcode element.");
-
-        if (rect == null)
+        if (rect == null) {
             throw new IllegalArgumentException(
                 "null dimensions specified to 1D barcode element.");
+        }
 
-        if (font == null)
+        if ((message == null) || (message.length() == 0)) {
+            throw new IllegalArgumentException(
+                "empty or null message specified to 1D barcode element.");
+        }
+
+        if (font == null) {
             throw new IllegalArgumentException(
                 "null font specified to 1D barcode element.");
+        }
 
         this.font = font;
         this.rect = rect;
@@ -51,8 +53,11 @@ public class Barcode1D extends Element {
             throw new BarcodeCreationException(
                 "Failed to create image buffer for barcode");
         }
-        g.drawImage(barcode1DImg, mmToPixel(rect.getX(), scale),
-            mmToPixel(rect.getY(), scale), mmToPixel(rect.getWidth(), scale),
+
+        g.drawImage(barcode1DImg,
+            mmToPixel(rect.getX(), scale),
+            mmToPixel(rect.getY(), scale),
+            mmToPixel(rect.getWidth(), scale),
             mmToPixel(rect.getHeight(), scale), null);
 
     }

@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.print.PrintService;
@@ -31,7 +30,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.ISourceProviderListener;
 import org.eclipse.ui.PlatformUI;
 import org.xnap.commons.i18n.I18n;
 import org.xnap.commons.i18n.I18nFactory;
@@ -39,7 +37,6 @@ import org.xnap.commons.i18n.I18nFactory;
 import edu.ualberta.med.biobank.SessionManager;
 import edu.ualberta.med.biobank.gui.common.BgcLogger;
 import edu.ualberta.med.biobank.gui.common.BgcPlugin;
-import edu.ualberta.med.biobank.gui.common.LoginPermissionSessionState;
 import edu.ualberta.med.biobank.gui.common.forms.BgcEntryForm;
 import edu.ualberta.med.biobank.gui.common.forms.BgcEntryFormActions;
 import edu.ualberta.med.biobank.gui.common.widgets.BgcBaseText;
@@ -118,9 +115,6 @@ public class PatientLabelEntryForm extends BgcEntryForm {
 
     private Template loadedTemplate;
     private TemplateStore templateStore;
-
-    private boolean loggedIn = false;
-    private ISourceProviderListener loginProvider = null;
 
     @SuppressWarnings("nls")
     @Override
@@ -235,99 +229,46 @@ public class PatientLabelEntryForm extends BgcEntryForm {
         form.setMessage(i18n.tr("Print source specimen labels for a patient"),
             IMessageProvider.NONE);
         page.setLayout(new GridLayout(1, false));
-
-        LoginPermissionSessionState sessionSourceProvider = BgcPlugin
-            .getLoginStateSourceProvider();
-
-        loggedIn = sessionSourceProvider.getCurrentState()
-            .get(LoginPermissionSessionState.LOGIN_STATE_SOURCE_NAME);
-
         loadPreferenceStore();
-
         shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-
         createTopSection();
         createPerLabelInfo();
         createPerSheetInfo();
         createActionButtonsGroup();
-
-        if (loginProvider != null) {
-            sessionSourceProvider.removeSourceProviderListener(loginProvider);
-            loginProvider = null;
-        }
-
-        loginProvider = new ISourceProviderListener() {
-            @Override
-            public void sourceChanged(int sourcePriority, String sourceName,
-                Object sourceValue) {
-                if (sourceName
-                    .equals(LoginPermissionSessionState.LOGIN_STATE_SOURCE_NAME)) {
-                    if (sourceValue != null) {
-                        loggedIn = sourceValue.equals(true);
-                        updateForm();
-                    }
-                }
-            }
-
-            @Override
-            public void sourceChanged(int sourcePriority,
-                @SuppressWarnings("rawtypes") Map sourceValuesByName) {
-                // do nothing for now
-            }
-        };
-        sessionSourceProvider.addSourceProviderListener(loginProvider);
-
         templateStore = null;
         updateForm();
 
     }
 
-    @Override
-    public void dispose() {
-        if (loginProvider != null) {
-            BgcPlugin.getLoginStateSourceProvider()
-                .removeSourceProviderListener(loginProvider);
-            loginProvider = null;
-        }
-        super.dispose();
-    }
-
     @SuppressWarnings("nls")
     private void updateForm() {
         try {
-            if (loggedIn) {
-                if (templateStore == null) {
-                    templateStore = new TemplateStore();
-                }
-                setEnable(true);
-
-                // remove and reload template combo
-                templateCombo.removeAll();
-                for (String templateName : templateStore.getTemplateNames()) {
-                    templateCombo.add(templateName);
-                }
-
-                if (templateCombo.getItemCount() > 0)
-                    templateCombo.select(0);
-
-                for (int i = 0; i < templateCombo.getItemCount(); i++) {
-                    if (templateCombo.getItem(i).equals(
-                        perferenceStore
-                            .getString(PreferenceConstants.TEMPLATE_NAME))) {
-                        templateCombo.select(i);
-                        break;
-                    }
-                }
-                templateCombo.redraw();
-
-                loadSelectedTemplate();
-
-            } else {
-                setEnable(false);
-                templateCombo.removeAll();
-                templateCombo.redraw();
-
+            if (templateStore == null) {
+                templateStore = new TemplateStore();
             }
+            setEnable(true);
+
+            // remove and reload template combo
+            templateCombo.removeAll();
+            for (String templateName : templateStore.getTemplateNames()) {
+                templateCombo.add(templateName);
+            }
+
+            if (templateCombo.getItemCount() > 0)
+                templateCombo.select(0);
+
+            for (int i = 0; i < templateCombo.getItemCount(); i++) {
+                if (templateCombo.getItem(i).equals(
+                    perferenceStore
+                        .getString(PreferenceConstants.TEMPLATE_NAME))) {
+                    templateCombo.select(i);
+                    break;
+                }
+            }
+            templateCombo.redraw();
+
+            loadSelectedTemplate();
+
         } catch (ApplicationException e) {
             BgcPlugin.openAsyncError(i18n.tr("Database Error"),
                 i18n.tr("Error while updating form"), e);

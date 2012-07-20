@@ -164,6 +164,7 @@ public class CBSRLabelMaker {
             cbsrData.projectTileStr, cbsrData.logoStream);
 
         Font baseFont = new Font(cbsrData.fontName, Font.PLAIN, 22);
+        Font patientInfoFont = new Font(cbsrData.fontName, Font.PLAIN, 28);
 
         // Point position, Dimension size, String message,String label, String
         // value, Font font, boolean printBarcode
@@ -174,27 +175,27 @@ public class CBSRLabelMaker {
             patientInfo.getElements().addAll(
                 FieldGenerator.generateElements(
                     tplt.getKey(SHEET_INFO_FIELD_1_TEXT), cbsrData.label1Str,
-                    cbsrData.value1Str, baseFont.deriveFont(23),
+                    cbsrData.value1Str, patientInfoFont.deriveFont(23),
                     tplt.getKey(SHEET_INFO_FIELD_1_BARCODE_1D),
                     cbsrData.barcode1Print));
 
             patientInfo.getElements().addAll(
                 FieldGenerator.generateElements(
                     tplt.getKey(SHEET_INFO_FIELD_2_TEXT), cbsrData.label2Str,
-                    cbsrData.value2Str, baseFont.deriveFont(23),
+                    cbsrData.value2Str, patientInfoFont.deriveFont(23),
                     tplt.getKey(SHEET_INFO_FIELD_2_BARCODE_1D),
                     cbsrData.barcode2Print));
 
             patientInfo.getElements().addAll(
                 FieldGenerator.generateElements(
                     tplt.getKey(SHEET_INFO_FIELD_3_TEXT), cbsrData.label3Str,
-                    cbsrData.value3Str, baseFont.deriveFont(23),
+                    cbsrData.value3Str, patientInfoFont.deriveFont(23),
                     tplt.getKey(SHEET_INFO_FIELD_3_BARCODE_1D),
                     cbsrData.barcode3Print));
 
             patientInfo.getElements().add(
                 new Barcode1D(tplt.getKey(SHEET_INFO_PATIENT_NUM_BARCODE_1D),
-                    cbsrData.patientNumberStr, baseFont.deriveFont(22)));
+                    cbsrData.patientNumberStr, patientInfoFont.deriveFont(22)));
 
         } catch (JAXBException ee) {
             throw new CBSRPdfGenException(NLS.bind(
@@ -221,10 +222,11 @@ public class CBSRLabelMaker {
                     Rectangle barcode = tplt.getKey(String.format(
                         LABEL_INDIVIDUAL_BARCODE_1D_FORMATTED, i));
 
-                    Rectangle r = new Rectangle(master.getX() + barcode.getX(),
-                        master.getY() + barcode.getY(), master.getWidth()
-                            + barcode.getWidth(), master.getHeight()
-                            + barcode.getHeight());
+                    Rectangle r = new Rectangle(
+                        master.getX() + barcode.getX(),
+                        master.getY() + barcode.getY(),
+                        master.getWidth() + barcode.getWidth(),
+                        master.getHeight() + barcode.getHeight());
 
                     Barcode1D item1D = new Barcode1D(r,
                         cbsrData.patientNumberStr, baseFont.deriveFont(22));

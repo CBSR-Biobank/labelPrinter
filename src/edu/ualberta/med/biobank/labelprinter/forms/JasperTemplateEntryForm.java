@@ -20,7 +20,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.ui.ISourceProviderListener;
 import org.eclipse.ui.PlatformUI;
 import org.xnap.commons.i18n.I18n;
 import org.xnap.commons.i18n.I18nFactory;
@@ -31,7 +30,6 @@ import edu.ualberta.med.biobank.common.action.labelPrinter.JasperTemplateGetAllA
 import edu.ualberta.med.biobank.common.action.labelPrinter.JasperTemplateSaveAction;
 import edu.ualberta.med.biobank.common.wrappers.JasperTemplateWrapper;
 import edu.ualberta.med.biobank.gui.common.BgcPlugin;
-import edu.ualberta.med.biobank.gui.common.LoginPermissionSessionState;
 import edu.ualberta.med.biobank.gui.common.forms.BgcEntryForm;
 import edu.ualberta.med.biobank.gui.common.forms.BgcEntryFormActions;
 import edu.ualberta.med.biobank.gui.common.widgets.BgcBaseText;
@@ -71,9 +69,6 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
 
     private Map<String, JasperTemplateWrapper> templateMap = null;
 
-    private boolean loggedIn = false;
-    private ISourceProviderListener loginProvider = null;
-
     @SuppressWarnings("nls")
     @Override
     protected void init() throws Exception {
@@ -92,16 +87,6 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
     }
 
     @Override
-    public void dispose() {
-        if (loginProvider != null) {
-            BgcPlugin.getLoginStateSourceProvider()
-                .removeSourceProviderListener(loginProvider);
-            loginProvider = null;
-        }
-        super.dispose();
-    }
-
-    @Override
     protected void addToolbarButtons() {
         formActions = new BgcEntryFormActions(this);
         addConfirmAction();
@@ -117,41 +102,7 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
             i18n.tr("Add Jasper configurations for different printer labels"),
             IMessageProvider.NONE);
         page.setLayout(new GridLayout(1, false));
-
-        LoginPermissionSessionState sessionSourceProvider = BgcPlugin
-            .getLoginStateSourceProvider();
-
-        loggedIn = sessionSourceProvider.getCurrentState()
-            .get(LoginPermissionSessionState.LOGIN_STATE_SOURCE_NAME);
-
         createMasterDetail();
-
-        if (loginProvider != null) {
-            sessionSourceProvider.removeSourceProviderListener(loginProvider);
-            loginProvider = null;
-        }
-
-        loginProvider = new ISourceProviderListener() {
-            @Override
-            public void sourceChanged(int sourcePriority, String sourceName,
-                Object sourceValue) {
-                if (sourceName
-                    .equals(LoginPermissionSessionState.LOGIN_STATE_SOURCE_NAME)) {
-                    if (sourceValue != null) {
-                        loggedIn = sourceValue.equals(true);
-                        updateForm();
-                    }
-                }
-            }
-
-            @Override
-            public void sourceChanged(int sourcePriority,
-                @SuppressWarnings("rawtypes") Map sourceValuesByName) {
-                // do nothing for now
-            }
-        };
-        sessionSourceProvider.addSourceProviderListener(loginProvider);
-
         updateForm();
     }
 
@@ -255,33 +206,21 @@ public class JasperTemplateEntryForm extends BgcEntryForm implements
         }
 
         try {
+            setEnable(true);
 
-            if (loggedIn) {
-                setEnable(true);
+            jasperTemplateList.setEnabled(true);
 
-                jasperTemplateList.setEnabled(true);
+            java.util.List<JasperTemplate> jTemplates =
+                SessionManager.getAppService().doAction(
+                    new JasperTemplateGetAllAction()).getList();
 
-                java.util.List<JasperTemplate> jTemplates =
-                    SessionManager.getAppService().doAction(
-                        new JasperTemplateGetAllAction()).getList();
-
-                for (JasperTemplate t : jTemplates) {
-                    String name = t.getName();
-                    templateMap.put(name, new JasperTemplateWrapper(
-                        SessionManager.getAppService(), t));
-                    jasperTemplateList.add(name);
-                }
-                jasperTemplateList.redraw();
-            } else {
-
-                setEnable(false);
-
-                templateMap.clear();
-
-                jasperTemplateList.removeAll();
-                jasperTemplateList.setEnabled(false);
-                jasperTemplateList.redraw();
+            for (JasperTemplate t : jTemplates) {
+                String name = t.getName();
+                templateMap.put(name, new JasperTemplateWrapper(
+                    SessionManager.getAppService(), t));
+                jasperTemplateList.add(name);
             }
+            jasperTemplateList.redraw();
         } catch (ApplicationException e) {
             BgcPlugin.openAsyncError(
                 i18n.tr("Database Error"),
