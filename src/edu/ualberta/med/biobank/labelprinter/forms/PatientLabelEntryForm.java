@@ -35,6 +35,7 @@ import org.xnap.commons.i18n.I18n;
 import org.xnap.commons.i18n.I18nFactory;
 
 import edu.ualberta.med.biobank.SessionManager;
+import edu.ualberta.med.biobank.common.action.labelPrinter.GetSourceSpecimenUniqueInventoryIdSetAction;
 import edu.ualberta.med.biobank.gui.common.BgcLogger;
 import edu.ualberta.med.biobank.gui.common.BgcPlugin;
 import edu.ualberta.med.biobank.gui.common.forms.BgcEntryForm;
@@ -54,17 +55,15 @@ import gov.nih.nci.system.applicationservice.ApplicationException;
 
 /**
  * 
- * View for entering patient information, selecting a logo and picking a
- * template file. The user prints and saves the barcode label prints from this
- * interface.
+ * View for entering patient information, selecting a logo and picking a template file. The user
+ * prints and saves the barcode label prints from this interface.
  * 
  * @author Thomas Polasek 2011
  * 
  */
 public class PatientLabelEntryForm extends BgcEntryForm {
 
-    public static final String ID =
-        "edu.ualberta.med.biobank.labelprinter.forms.SpecimanLabelEntryForm"; //$NON-NLS-1$
+    public static final String ID = "edu.ualberta.med.biobank.labelprinter.forms.SpecimanLabelEntryForm"; //$NON-NLS-1$
 
     public static final I18n i18n = I18nFactory
         .getI18n(PatientLabelEntryForm.class);
@@ -165,11 +164,11 @@ public class PatientLabelEntryForm extends BgcEntryForm {
         try {
             guiData = new BarcodeViewGuiData();
 
-            List<String> patientNumbers = SessionManager.getAppService()
-                .executeGetSourceSpecimenUniqueInventoryIds(32);
+            List<String> specimenInventoryIds = SessionManager.getAppService().doAction(
+                new GetSourceSpecimenUniqueInventoryIdSetAction(32)).getList();
 
             // print operation
-            printOperation = new PrintOperation(guiData, patientNumbers);
+            printOperation = new PrintOperation(guiData, specimenInventoryIds);
 
             try {
                 new ProgressMonitorDialog(shell)
@@ -1271,8 +1270,8 @@ public class PatientLabelEntryForm extends BgcEntryForm {
 
                 // save dialog for pdf file.
                 FileDialog fileDialog = new FileDialog(shell, SWT.SAVE);
-                fileDialog.setFilterPath(perferenceStore
-                    .getString(PreferenceConstants.PDF_DIRECTORY_PATH));
+                fileDialog.setFilterPath(perferenceStore.getString(
+                    PreferenceConstants.PDF_DIRECTORY_PATH));
                 fileDialog.setOverwrite(true);
                 fileDialog.setFileName("default.pdf");
                 String pdfFilePath = fileDialog.open();
@@ -1280,15 +1279,14 @@ public class PatientLabelEntryForm extends BgcEntryForm {
                 if (pdfFilePath == null)
                     return;
 
-                List<String> patientNumbers = SessionManager.getAppService()
-                    .executeGetSourceSpecimenUniqueInventoryIds(32);
+                List<String> specimenInventoryIds = SessionManager.getAppService().doAction(
+                    new GetSourceSpecimenUniqueInventoryIdSetAction(32)).getList();
 
                 SaveOperation saveOperation = new SaveOperation(guiData,
-                    patientNumbers, pdfFilePath);
+                    specimenInventoryIds, pdfFilePath);
 
                 try {
-                    new ProgressMonitorDialog(shell).run(true, true,
-                        saveOperation);
+                    new ProgressMonitorDialog(shell).run(true, true, saveOperation);
 
                 } catch (InvocationTargetException e1) {
                     saveOperation.saveFailed();

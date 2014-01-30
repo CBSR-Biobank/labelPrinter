@@ -13,8 +13,8 @@ import edu.ualberta.med.biobank.labelprinter.template.presets.cbsr.exceptions.CB
 
 /**
  * 
- * Loads the guiData and template data into the appropiate jasper maker class.
- * After the jasper operation is completed, the file is sent to a printer .
+ * Loads the guiData and template data into the appropiate jasper maker class. After the jasper
+ * operation is completed, the file is sent to a printer .
  * 
  * @author Thomas Polasek 2011
  * 
@@ -23,9 +23,8 @@ public class PrintOperation extends BarcodeGenerationOperation {
 
     private static final I18n i18n = I18nFactory.getI18n(PrintOperation.class);
 
-    public PrintOperation(BarcodeViewGuiData guiData,
-        List<String> patientNumbers) {
-        super(guiData, patientNumbers);
+    public PrintOperation(BarcodeViewGuiData guiData, List<String> specimenInventoryIds) {
+        super(guiData, specimenInventoryIds);
     }
 
     @SuppressWarnings("nls")
@@ -40,7 +39,7 @@ public class PrintOperation extends BarcodeGenerationOperation {
 
         try {
             monitor.subTask(i18n.tr("Sending Data to Printer"));
-            CBSRLabelMaker.printLabelsCBSR(guiData, patientNumbers);
+            CBSRLabelMaker.printLabelsCBSR(guiData, specimenInventoryIds);
             successful = true;
 
         } catch (CBSRPdfGenException e1) {

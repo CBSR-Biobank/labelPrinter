@@ -9,24 +9,22 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import edu.ualberta.med.biobank.labelprinter.forms.PatientLabelEntryForm.BarcodeViewGuiData;
 
 /**
- * Base class for generating label prints. After the class is run, check
- * isSuccessful() if the operation succeeded. If isSuccessful() fails then
- * obtain the error message with getError().
+ * Base class for generating label prints. After the class is run, check isSuccessful() if the
+ * operation succeeded. If isSuccessful() fails then obtain the error message with getError().
  * 
  * @author Thomas Polasek 2011
  * 
  */
 abstract class BarcodeGenerationOperation implements IRunnableWithProgress {
     protected BarcodeViewGuiData guiData = null;
-    protected List<String> patientNumbers = null;
+    protected List<String> specimenInventoryIds = null;
     protected boolean successful = false;
     protected String errorTitle = null;
     protected String errorMessage = null;
 
-    public BarcodeGenerationOperation(BarcodeViewGuiData guiData,
-        List<String> patientNumbers) {
+    public BarcodeGenerationOperation(BarcodeViewGuiData guiData, List<String> specimenInventoryIds) {
         this.guiData = guiData;
-        this.patientNumbers = patientNumbers;
+        this.specimenInventoryIds = specimenInventoryIds;
         successful = false;
     }
 
@@ -39,7 +37,7 @@ abstract class BarcodeGenerationOperation implements IRunnableWithProgress {
     }
 
     public List<String> getPatientNumbersUsed() {
-        return patientNumbers;
+        return specimenInventoryIds;
     }
 
     public void setError(String title, String msg) {

@@ -45,7 +45,7 @@ public class SaveOperation extends BarcodeGenerationOperation {
 
         try {
             monitor.subTask(i18n.tr("Generating PDF"));
-            pdfdata = CBSRLabelMaker.generatePdfCBSR(guiData, patientNumbers);
+            pdfdata = CBSRLabelMaker.generatePdfCBSR(guiData, specimenInventoryIds);
 
         } catch (CBSRPdfGenException e1) {
             monitor.done();
