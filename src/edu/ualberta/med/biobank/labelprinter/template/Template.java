@@ -26,9 +26,9 @@ import edu.ualberta.med.biobank.labelprinter.template.configuration.Rectangle;
  * Contains a name, intented printer name, jasper file reference and a
  * configuration reference. This class is used to store specific configuration
  * data for a chosen jasper file.
- * 
+ *
  * @author Thomas Polasek 2011
- * 
+ *
  */
 public class Template implements Serializable {
 
@@ -148,7 +148,7 @@ public class Template implements Serializable {
     /**
      * Configuration objects are stored in XML in the database. This method
      * unmarshals the object.
-     * 
+     *
      * @return
      * @throws JAXBException
      */
@@ -185,7 +185,7 @@ public class Template implements Serializable {
             } catch (Exception e) {
                 logger
                     .error(
-                        i18n.tr("Error: Failed to persit key-updated configuration"),
+                        i18n.tr("Could not save changes to the database"),
                         e);
                 return null;
             }
@@ -198,7 +198,7 @@ public class Template implements Serializable {
     /**
      * Configuration objects are stored in XML in the database. This method
      * marshals the object.
-     * 
+     *
      * @param configuration
      * @throws JAXBException
      */
